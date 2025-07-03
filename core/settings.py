@@ -20,9 +20,9 @@ INSTALLED_APPS = [
     'registration',
     'dashboard',
     'settings',
-    'ngopost',
-    'faq',
-]
+    'support',
+    'ngopost'
+    ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
