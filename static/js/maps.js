@@ -122,53 +122,63 @@ $(document).ready(function () {
     clearMarkers();
     allFetchedPlaces = [];
 
-    const amenity = amenityTags[type];
-    const overpassUrl = `
-      https://overpass-api.de/api/interpreter?data=[out:json];
-      node[amenity=${amenity}](around:5000,${currentLat},${currentLon});
-      out body;
-    `;
+        fetch("get_places/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCookie("csrftoken"),
+      },
+      body: JSON.stringify({
+        lat: currentLat,
+        lng: currentLon,
+        type: type,
+        range: 500  // you can increase to 5000 if needed
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.amenities?.length > 0) {
+          data.amenities.forEach((place) => {
+            const lat = place.latitude;
+            const lon = place.longitude;
 
-    // Make a request to Overpass API
-    $.getJSON(overpassUrl.trim(), function (data) {
-      if (data?.elements?.length > 0) {
-        data.elements.forEach((element) => {
-          if (element.lat && element.lon) {
-            const tags = element.tags || {};
-            const name = tags.name || `Unnamed ${type}`;
-            const address = `${tags["addr:street"] || ""} ${tags["addr:housenumber"] || ""}`.trim();
-            const phone = tags["contact:phone"] || tags.phone || "";
-            const place = {
-              name,
-              type,
-              lat: element.lat,
-              lon: element.lon,
-              address,
-              phone,
-              reviews: []
-            };
-            allFetchedPlaces.push(place);
+            // Only add marker if valid coordinates
+            if (typeof lat === "number" && typeof lon === "number") {
+              const marker = L.marker([lat, lon], {
+                icon: icons[type],
+              })
+                .addTo(map)
+                .bindPopup(`
+                  <strong>${place.title}</strong><br>
+                  ${place.address ? place.address + "<br>" : ""}
+                  Phone: ${place.phone_number || ""}
+                `);
 
-            const popupContent = `
-              <strong>${name}</strong><br>
-              ${address ? address + "<br>" : ""}
-              Phone: ${phone}
-            `;
+              const formattedPlace = {
+                name: place.title,
+                type: type,
+                lat,
+                lon,
+                address: place.address,
+                phone: place.phone_number,
+                reviews: place.reviews || [],
+                tags: place.tags || {}
+              };
 
-            const marker = L.marker([element.lat, element.lon], { icon: icons[type] })
-              .addTo(map)
-              .bindPopup(popupContent);
-            activeMarkers.push(marker);
-          }
-        });
-      } else {
-        window.showToaster('error', `No ${type}s found nearby.`);
-      }
-    }).fail(() => {
-      window.showToaster('error', `Failed to load nearby ${type}s.`);
-    });
+              allFetchedPlaces.push(formattedPlace);
+              activeMarkers.push(marker);
+            }
+          });
+        } else {
+          window.showToaster("error", `No ${type}s found nearby.`);
+        }
+
+      })
+      .catch((err) => {
+        console.error("Fetch error:", err);
+        window.showToaster("error", `Failed to load nearby ${type}s.`);
+      });
   }
-
   // Event handlers for amenity buttons
   $(".map-search-btn:contains('Hospital')").on("click", function () {
     fetchPlaces("hospital", this);
@@ -204,7 +214,7 @@ $(document).ready(function () {
 
   // Handle text search input
   const $searchBox = $(".map-view input[type='text']");
-  const $suggestionBox = $("<div class='mt-14 max-h-56 xl:max-h-96 overflow-y-auto scroll'></div>").hide();
+  const $suggestionBox = $("<div class='mt-14 max-h-[73vh] overflow-y-auto scroll'></div>").hide();
   $(".suggestion").append($suggestionBox);
 
   const $bookmarkIcon = $(".bookmark-icon");
@@ -238,81 +248,49 @@ $(document).ready(function () {
       place.name.toLowerCase().includes(query)
     );
 
-    // Render each suggestion result
-    if (matches.length > 0) {
-      matches.forEach(place => {
-        const avgRating = place.reviews.length
-          ? (place.reviews.reduce((sum, r) => sum + r.rating, 0) / place.reviews.length).toFixed(1)
-          : null;
+    function showDirections(lat, lon, place = null) {
+      if (routingControl) {
+        map.removeControl(routingControl);
+      }
 
-        const stars = avgRating
-          ? '★'.repeat(Math.floor(avgRating)) + '☆'.repeat(5 - Math.floor(avgRating))
-          : '★★★☆☆';
+      navigator.geolocation.getCurrentPosition(function (position) {
+        const userLatLng = L.latLng(position.coords.latitude, position.coords.longitude);
+        const destinationLatLng = L.latLng(lat, lon);
 
-        const $item = $(`
-          <div class="px-4 py-3 border-b border-${selectedColor} last:border-b-0 cursor-pointer transition-all hover:bg-opacity-10">
-            <div class="flex flex-col gap-2">
-              <p class="text-lg font-semibold">${place.name}</p>
-              <p class="flex gap-2 items-center"> 4.3 <span class="text-xl text-${selectedColor}">${avgRating ? stars + ` (${avgRating})` : stars}</span> (3,734)</p>
-              <p>Hospital</p>
-              <p class="text-sm">${place.address || "Flat No. 7, 11th Floor, Chembur, Mumbai"}</p>
-              <p class="text-sm">${place.phone ||"+91 9234398042"}</p>
-              <p class="text-sm">${place.email || "monika@ocrpharma.net"}</p>
-            </div>
-            <div class="ml-4 flex justify-between mt-2">
-              <button class="flex flex-col gap-2 text-xs cursor-pointer" data-lat="${place.lat}" data-lon="${place.lon}">
-                <span class='material-symbols-outlined !text-xl'>directions</span><span>Directions</span>
-              </button>
-              <a href="tel:${place.phone}" title="Call" class="flex flex-col gap-2 text-xs cursor-pointer">
-                <span class='material-symbols-outlined !text-xl'>call</span><span>Call</span></a>
-              <button class="flex flex-col gap-2 text-xs cursor-pointer" data-name="${encodeURIComponent(place.name)}">
-                <span class='material-symbols-outlined !text-xl'>share</span><span>Share</span>
-              </button>
-            </div>
-          </div>
-        `);
-
-        // Directions button
-        $item.find("button:contains('Directions')").on("click", function (e) {
-          e.stopPropagation();
-          const lat = $(this).data("lat");
-          const lon = $(this).data("lon");
-
-          if (routingControl) {
-            map.removeControl(routingControl);
+        // Clear non-routing markers
+        for (let i in map._layers) {
+          const layer = map._layers[i];
+          if (layer instanceof L.Marker && !layer._icon.classList.contains('leaflet-routing-icon')) {
+            map.removeLayer(layer);
           }
+        }
 
-          navigator.geolocation.getCurrentPosition(function (position) {
-            const userLatLng = L.latLng(position.coords.latitude, position.coords.longitude);
-            const destinationLatLng = L.latLng(lat, lon);
+        routingControl = L.Routing.control({
+          waypoints: [userLatLng, destinationLatLng],
+          lineOptions: {
+            styles: [{ color: bgColor, weight: 6, opacity: 0.8 }]
+          },
+          show: false,
+          addWaypoints: false,
+          routeWhileDragging: false,
+          draggableWaypoints: false,
+          fitSelectedRoutes: true,
+          createMarker: function (i, waypoint) {
+            return L.marker(waypoint.latLng);
+          }
+        }).addTo(map);
 
-            if (routingControl) {
-              map.removeControl(routingControl);
-            }
+        // Only show directions HTML if place is passed (from item card)
+        if (place) {
+          const avgRating = place.reviews.length
+            ? (place.reviews.reduce((sum, r) => sum + r.rating, 0) / place.reviews.length).toFixed(1)
+            : null;
 
-            for (let i in map._layers) {
-              const layer = map._layers[i];
-              if (layer instanceof L.Marker && !layer._icon.classList.contains('leaflet-routing-icon')) {
-                map.removeLayer(layer);
-              }
-            }
+          const stars = avgRating
+            ? '★'.repeat(Math.floor(avgRating)) + '☆'.repeat(5 - Math.floor(avgRating))
+            : '★★★☆☆';
 
-            routingControl = L.Routing.control({
-              waypoints: [userLatLng, destinationLatLng],
-              lineOptions: {
-                styles: [{ color: bgColor, weight: 6, opacity: 0.8 }]
-              },
-              show: false,
-              addWaypoints: false,
-              routeWhileDragging: false,
-              draggableWaypoints: false,
-              fitSelectedRoutes: true,
-              createMarker: function(i, waypoint) {
-                return L.marker(waypoint.latLng);
-              }
-            }).addTo(map);
-
-            const directionsHtml = `
+          const directionsHtml = `
               <div class="px-4 py-3 suggestion-detail">
                 <div class="h-32 w-full bg-cover bg-center" 
                     style="background-image: url('${place.imageUrl || "/static/images/hospital.svg"}')">
@@ -324,22 +302,22 @@ $(document).ready(function () {
                   </div>
                   ${place.address ? `<p class="text-sm">${place.address}</p>` : ""}
                   ${place.phone ? `<p class="text-sm">${place.phone}</p>` : ""}
-                  <p class="flex gap-2 items-center"> 4.3 <span class="text-xl text-${selectedColor}">${avgRating ? stars + ` (${avgRating})` : stars}</span></p>
+                  <p class="flex gap-2 items-center"> 4.3 <span class="text-xl text-star-orange">${avgRating ? stars + ` (${avgRating})` : stars}</span></p>
                   <p>General Hospital</p>
                 </div>
                 <!-- Tabs -->
                 <div class="flex my-5 justify-between">
                   <button class="tab-button cursor-pointer text-sm px-4 py-2 focus:outline-none hover:text-${selectedColor} flex flex-col" style="border-color: ${bgColor}; color: ${bgColor};" data-tab="best">
-                    <span class="material-symbols-outlined">directions</span>Best
+                    <span class="material-symbols-outlined material-filled !font-semibold">directions</span>Best
                   </button>
                   <button class="tab-button cursor-pointer text-sm px-4 py-2 focus:outline-none hover:text-${selectedColor} flex flex-col" data-tab="car">
-                    <span class="material-symbols-outlined">directions_car</span>Car
+                    <span class="material-symbols-outlined !font-semibold">directions_car</span>Car
                   </button>
                   <button class="tab-button cursor-pointer text-sm px-4 py-2 focus:outline-none hover:text-${selectedColor} flex flex-col" data-tab="bike">
-                    <span class="material-symbols-outlined">two_wheeler</span>Bike
+                    <span class="material-symbols-outlined !font-semibold">two_wheeler</span>Bike
                   </button>
                   <button class="tab-button cursor-pointer text-sm px-4 py-2 focus:outline-none hover:text-${selectedColor} flex flex-col" data-tab="walk">
-                    <span class="material-symbols-outlined">directions_walk</span>Waliking
+                    <span class="material-symbols-outlined !font-semibold">directions_walk</span>Waliking
                   </button>
                 </div>
                 <div class="tab-content" id="best">
@@ -407,11 +385,56 @@ $(document).ready(function () {
               </div>
             `;
 
-            $suggestionBox.fadeOut(100, () => {
-              $suggestionBox.html(directionsHtml).fadeIn(150);
-            });
+          $suggestionBox.fadeOut(100, () => {
+            $suggestionBox.html(directionsHtml).fadeIn(150);
           });
+        }
+      });
+    }
+
+    // Render each suggestion result
+    if (matches.length > 0) {
+      matches.forEach(place => {
+        const avgRating = place.reviews.length
+          ? (place.reviews.reduce((sum, r) => sum + r.rating, 0) / place.reviews.length).toFixed(1)
+          : null;
+
+        const stars = avgRating
+          ? '★'.repeat(Math.floor(avgRating)) + '☆'.repeat(5 - Math.floor(avgRating))
+          : '★★★☆☆';
+
+        const $item = $(`
+          <div class="px-4 py-3 border-b border-${selectedColor} last:border-b-0 cursor-pointer transition-all hover:bg-opacity-10">
+            <div class="flex flex-col gap-2">
+              <p class="text-lg font-semibold">${place.name}</p>
+              <p class="flex gap-2 items-center"> 4.3 <span class="text-xl text-star-orange">${avgRating ? stars + ` (${avgRating})` : stars}</span> (3,734)</p>
+              <p>Hospital</p>
+              <p class="text-sm">${place.address || "Flat No. 7, 11th Floor, Chembur, Mumbai"}</p>
+              <p class="text-sm">${place.phone ||"+91 9234398042"}</p>
+              <p class="text-sm">${place.email || "monika@ocrpharma.net"}</p>
+            </div>
+            <div class="ml-4 flex justify-between mt-2">
+              <button class="flex flex-col gap-2 text-xs cursor-pointer" data-lat="${place.lat}" data-lon="${place.lon}">
+                <span class='material-symbols-outlined material-filled !text-xl !font-semibold'>directions</span><span>Directions</span>
+              </button>
+              <a href="tel:${place.phone}" title="Call" class="flex flex-col gap-2 text-xs cursor-pointer">
+                <span class='material-symbols-outlined material-filled !text-xl !font-semibold'>call</span><span>Call</span></a>
+              <button class="flex flex-col gap-2 text-xs cursor-pointer" data-name="${encodeURIComponent(place.name)}">
+                <span class='material-symbols-outlined material-filled !text-xl !font-semibold'>share</span><span>Share</span>
+              </button>
+            </div>
+          </div>
+        `);
+
+        // Directions button
+        $item.find("button:contains('Directions')").on("click", function (e) {
+          e.stopPropagation();
+          const lat = $(this).data("lat");
+          const lon = $(this).data("lon");
+
+          showDirections(lat, lon, place);
         });
+
 
         // Click on a result shows overview
         $item.on("click", function () {
@@ -429,7 +452,7 @@ $(document).ready(function () {
                 </div>
                 ${place.address ? `<p class="text-sm">${place.address}</p>` : ""}
                 ${place.phone ? `<p class="text-sm">${place.phone}</p>` : ""}
-                <p class="flex gap-2 items-center"> 4.3 <span class="text-xl text-${selectedColor}">${avgRating ? stars + ` (${avgRating})` : stars}</span></p>
+                <p class="flex gap-2 items-center"> 4.3 <span class="text-xl text-star-orange">${avgRating ? stars + ` (${avgRating})` : stars}</span></p>
                 <p>General Hospital</p>
               </div>
               <!-- Tabs -->
@@ -439,13 +462,13 @@ $(document).ready(function () {
               </div>
               <div class="tab-content" id="overview">
                 <div class="ml-4 flex justify-between mt-2">
-                  <button class="flex flex-col gap-2 text-xs cursor-pointer" data-lat="${place.lat}" data-lon="${place.lon}">
-                    <span class='material-symbols-outlined !text-xl'>directions</span><span>Directions</span>
+                  <button class="flex flex-col gap-2 text-xs cursor-pointer overviewDirections" data-lat="${place.lat}" data-lon="${place.lon}">
+                    <span class='material-symbols-outlined material-filled !text-xl !font-semibold'>directions</span><span>Directions</span>
                   </button>
                   <a href="tel:${place.phone}" title="Call" class="flex flex-col gap-2 text-xs cursor-pointer">
-                    <span class='material-symbols-outlined !text-xl'>call</span><span>Call</span></a>
+                    <span class='material-symbols-outlined material-filled !text-xl !font-semibold'>call</span><span>Call</span></a>
                   <button class="flex flex-col gap-2 text-xs cursor-pointer" data-name="${encodeURIComponent(place.name)}">
-                    <span class='material-symbols-outlined !text-xl'>share</span><span>Share</span>
+                    <span class='material-symbols-outlined material-filled !text-xl !font-semibold'>share</span><span>Share</span>
                   </button>
                 </div>
                 <div class="flex flex-col gap-2 text-sm mt-4">
@@ -461,7 +484,7 @@ $(document).ready(function () {
                     <span class="material-symbols-outlined text-${selectedColor}">mail</span>
                     monika@ocrpharma.net
                   </p>
-                  <p class="text-base">Services</p>
+                  <p class="text-base font-semibold">Services</p>
                   <p>Ambulance Service</p>
                   <p>Anaesthesiology</p>
                   <p>Cancer</p>
@@ -470,7 +493,7 @@ $(document).ready(function () {
                 </div>
               </div>
               <div class="tab-content hidden" id="timings">
-                <p>Open Now</p>
+                <p class="font-semibold">Open Now</p>
                 <ul class="text-sm flex flex-col gap-2 mt-2">
                   <li class="flex justify-between">Monday <span>Open 24 hours</span></li>
                   <li class="flex justify-between">Tuesday <span>Open 24 hours</span></li>
@@ -508,31 +531,12 @@ $(document).ready(function () {
             $searchBox.trigger("input");
           });
 
-          $suggestionBox.on("click", "#overviewDirections", function () {
+          $suggestionBox.on("click", ".overviewDirections", function (e) {
+            e.stopPropagation();
             const lat = $(this).data("lat");
             const lon = $(this).data("lon");
 
-            if (routingControl) map.removeControl(routingControl);
-
-            navigator.geolocation.getCurrentPosition(function (position) {
-              const userLatLng = L.latLng(position.coords.latitude, position.coords.longitude);
-              const destinationLatLng = L.latLng(lat, lon);
-
-              routingControl = L.Routing.control({
-                waypoints: [userLatLng, destinationLatLng],
-                lineOptions: { styles: [{ color: '#f26522', weight: 6 }] },
-                show: false, addWaypoints: false, routeWhileDragging: false,
-                draggableWaypoints: false, fitSelectedRoutes: true,
-                createMarker: function (i, waypoint) {
-                  return L.marker(waypoint.latLng, {
-                    icon: L.icon({
-                      iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
-                      shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-                    }),
-                  });
-                }
-              }).addTo(map);
-            });
+            showDirections(lat, lon, place);
           });
 
           $suggestionBox.on("click", "#overviewShare", function () {
@@ -547,7 +551,7 @@ $(document).ready(function () {
 
       // Add filter dropdown
       $suggestionBox.prepend(`<div class='flex justify-between p-2 border-b border-${selectedColor}'>
-        <span>Suggestion</span>
+        <span class="font-semibold">Suggestion</span>
         <div class="relative">
           <span class="material-symbols-outlined cursor-pointer filterToggle">swap_vert</span>
           <div class="filterDropdown absolute right-0 mt-2 w-28 rounded-lg shadow-lg hidden z-50 bg-snow-gray p-2">
@@ -670,7 +674,7 @@ $(document).ready(function () {
         const $item = $(`<div class="px-4 py-3 border-b border-${selectedColor} cursor-pointer transition-all hover:bg-opacity-10">
           <div class="flex flex-col gap-2">
             <p class="text-lg font-semibold">${place.name}</p>
-            <p class="flex gap-2 items-center"><span class="text-xl text-${selectedColor}">${avgRating ? stars + ` (${avgRating})` : stars}</span></p>
+            <p class="flex gap-2 items-center"><span class="text-xl text-star-orange">${avgRating ? stars + ` (${avgRating})` : stars}</span></p>
             <p class="text-sm text-light-gray">${place.address || "Unknown address"}</p>
           </div>
         </div>`);
@@ -763,4 +767,19 @@ $(document).ready(function () {
   $(document).on("click", ".bookmark-fill", function () {
     $(this).addClass(`material-filled text-${selectedColor}`);
   });
+   
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
 });

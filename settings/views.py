@@ -4,6 +4,7 @@ import json
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
+from maps.models import SearchHistory, SavedLocation
 from dashboard.utils import dashboard_login_required
 from registration.models import UserProfile, AdvertiserProfile, ClientProfile, NGOProfile, MedicalProviderProfile,  ContactPerson
 from django.contrib.auth.hashers import make_password, check_password
@@ -389,20 +390,14 @@ def delete_account(request):
 @dashboard_login_required
 def clear_search_history(request):
     user = request.user_obj
-    # Assuming you have a SearchHistory model related to the user
-    # SearchHistory.objects.filter(user=user).delete()
-    
-    # For demonstration, just returning a success message
+    SearchHistory.objects.filter(user=user).delete()
     return JsonResponse({'status': 'search history cleared'})
 
 @require_POST
 @dashboard_login_required
 def clear_saved_data(request):
     user = request.user_obj
-    # Assuming you have a SavedData model related to the user
-    # SavedData.objects.filter(user=user).delete()
-    
-    # For demonstration, just returning a success message
+    SavedLocation.objects.filter(user=user).delete()
     return JsonResponse({'status': 'saved data cleared'})
 
 @dashboard_login_required

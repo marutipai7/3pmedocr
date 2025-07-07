@@ -11,6 +11,7 @@ urlpatterns = [
     path('user/', include('registration.urls')),
     path('dashboard', dashboard_views.dashboard_home, name='dashboard'),
     path('logout', dashboard_views.logout_view, name='logout'),
+    path('map/', include('maps.urls')),
     path('help/', include('support.urls')),
     path('settings/', include('settings.urls')),
     path('posts/', include('ngopost.urls')),

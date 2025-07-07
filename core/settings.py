@@ -1,5 +1,7 @@
 import os
+import gridfs
 from pathlib import Path
+from pymongo import MongoClient
 from mongoengine import connect
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,8 +23,10 @@ INSTALLED_APPS = [
     'dashboard',
     'settings',
     'support',
-    'ngopost'
-    ]
+    'ngopost',
+    'faq',
+    'maps',
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -83,7 +87,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -116,13 +120,25 @@ LOGGING = {
     },
 }
 
-MONGO_DATABASE_NAME = 'database_1'
-MONGO_DATABASE_HOST = "mongodb://192.168.1.100:47016/"
+MONGO_DATABASE_NAME = 'Database_1'
+MONGO_DATABASE_HOST = "mongodb://122.170.111.109:3090/"
 
 connect(
     db=MONGO_DATABASE_NAME,
     host=MONGO_DATABASE_HOST,
 )
+
+MONGO_CLIENT = MongoClient(MONGO_DATABASE_HOST)
+MONGO_DB = MONGO_CLIENT[MONGO_DATABASE_NAME]
+
+# Collections
+MONGO_COLLECTIONS = {
+    "hospital": MONGO_DB["Hospitals"],
+    "pharmacy": MONGO_DB["Pharmacy"],
+    "doctor":   MONGO_DB["Doctors"],
+    "lab":      MONGO_DB["Labs"]
+}
+PLACES_COORDINATES = MONGO_DB["places"]
 
 # AUTH_USER_MODEL = 'registration.User'
 #mail setting 
