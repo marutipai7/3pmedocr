@@ -24,7 +24,6 @@ INSTALLED_APPS = [
     'settings',
     'support',
     'ngopost',
-    'faq',
     'maps',
     'rest_framework',
     'donate',
