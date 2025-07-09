@@ -153,5 +153,5 @@ def get_bot_content_api(request):
         logger.error(f"An unexpected error occurred while fetching chatbot content for {user.email} ({user_type}): {e}", exc_info=True)
         return JsonResponse(
             {"initial_message": "Sorry, an unexpected error occurred. Please try again later."},
-            status=500
+            status=500)
 
