@@ -1,5 +1,6 @@
 from django.db import models
 from registration.models import User
+
 class IssueType(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
@@ -55,3 +56,27 @@ class FAQ(models.Model):
 
     def __str__(self):
         return self.question
+
+CHATBOT_USER_TYPE_CHOICES = [
+        ('advertiser', 'Advertiser'),
+        ('client', 'Client'),
+        ('ngo', 'NGO'),
+        ('provider', 'Medical Provider'),
+        ('user', 'User'),
+    ]
+
+class ChatOptionGroup(models.Model):
+    user_type = models.CharField(max_length=32, choices=CHATBOT_USER_TYPE_CHOICES, unique=True)
+    options_data = models.JSONField(default=dict)
+    is_active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Chat Option Group"
+        verbose_name_plural = "Chat Option Groups"
+        ordering = ['user_type'] # Order by user type in admin
+
+    def __str__(self):
+        return f"Chat Content for {self.get_user_type_display()} (Active: {self.is_active})"

@@ -18,6 +18,7 @@ urlpatterns = [
     path('posts/', include('ngopost.urls')),
     path('donate/', include('donate.urls')),
     path('points/', include('points.urls')),
+    path('support/', include('support.urls')),
     # ... other apps
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
