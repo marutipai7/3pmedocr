@@ -6,7 +6,9 @@ urlpatterns = [
     path('register/<str:role>', views.register_by_role, name='register_by_role'),
     path('save/customer', views.save_user, name='save_user'),
     path('save/ngo', views.save_ngo, name='save_ngo'),
-    path('login', views.login_page, name='login'),
+    path('login', views.login_page, name='login_page'),
     path('auth/login', views.login_auth, name='login_auth'),
-    path('save/client', views.save_client, name='save_client'),
+    path('save/advertiser', views.save_advertiser, name='save_advertiser'),
+    path('save/client/', views.save_client, name='save_client'),    
+    
 ]
