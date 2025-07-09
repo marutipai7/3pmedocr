@@ -5,6 +5,7 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from maps.models import SearchHistory, SavedLocation
+from ngopost.models import NGOPost
 from dashboard.utils import dashboard_login_required
 from registration.models import UserProfile, AdvertiserProfile, ClientProfile, NGOProfile, MedicalProviderProfile,  ContactPerson
 from django.contrib.auth.hashers import make_password, check_password
@@ -382,7 +383,11 @@ def delete_account(request):
     # Log the reason somewhere, like a model or file (optional)
     print(f"Deleted account {user.email}. Reason: {reason}")
 
-    # user.delete()  # OR user.is_active = False; user.save() for soft delete
+    # Soft delete: deactivate user
+    user.is_active = False
+    user.save(update_fields=["is_active"])
+    # user.delete()
+    request.session.flush()
 
     return JsonResponse({'status': 'account deleted'})
 
@@ -398,6 +403,7 @@ def clear_search_history(request):
 def clear_saved_data(request):
     user = request.user_obj
     SavedLocation.objects.filter(user=user).delete()
+    
     return JsonResponse({'status': 'saved data cleared'})
 
 @dashboard_login_required
@@ -408,12 +414,13 @@ def change_password(request):
     new_password = request.POST.get('new_password')
     confirm_password = request.POST.get('confirm_password')
     errors={}
+    print(f"Current Password: {current_password}, New Password: {new_password}, Confirm Password: {confirm_password}")
 
     if not check_password(current_password, user.password):
         errors["current_password"] = "Current password is incorrect."
     if not current_password or len(current_password) < 8:
         errors["new_password"] = "Password is required (min 8 chars)."
-    elif current_password != confirm_password:
+    elif new_password != confirm_password:
         errors["confirm_password"] = "Passwords do not match."
         
     if errors:

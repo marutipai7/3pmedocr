@@ -121,7 +121,7 @@ LOGGING = {
 }
 
 MONGO_DATABASE_NAME = 'Database_1'
-MONGO_DATABASE_HOST = "mongodb://122.170.111.109:3090/"
+MONGO_DATABASE_HOST = "mongodb://localhost:27017/"
 
 connect(
     db=MONGO_DATABASE_NAME,

@@ -25,6 +25,9 @@ class User(models.Model):
     quite_mode = models.BooleanField(default=False)
     quite_mode_start_time = models.TimeField(blank=True, null=True, default=time(22, 0))
     quite_mode_end_time = models.TimeField(blank=True, null=True, default=time(6, 0))
+    is_active = models.BooleanField(default=True)
+    last_login = models.DateTimeField(blank=True, null=True)
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

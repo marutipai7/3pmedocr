@@ -240,16 +240,16 @@ def save_ngo(request):
             referral_code=referral_code,
             email_otp=email_otp
         )
-        send_custom_email(
-        to_email=email,
-        subject="Welcome to Our Platform!",
-        template_name="email/registration_email.html",
-        context={
-            "user_name": "Monika",
-            "login_url": "",
-            "year": timezone.now().year,
-        }
-    )
+    #     send_custom_email(
+    #     to_email=email,
+    #     subject="Welcome to Our Platform!",
+    #     template_name="email/registration_email.html",
+    #     context={
+    #         "user_name": "Monika",
+    #         "login_url": "",
+    #         "year": timezone.now().year,
+    #     }
+    # )
 
 
     return JsonResponse({"success": True, "message": "NGO registered successfully."})
@@ -368,14 +368,21 @@ def login_auth(request):
         if not check_password(password, user.password):
             errors["password"] = "Invalid email or password."
             return JsonResponse({"success": False, "errors": errors})
+        
+        if not user.is_active:
+            errors["account"] = "Your account is deleted. Please contact support."
+            return JsonResponse({"success": False, "errors": errors})
+        
+        # Update last_login here
+        user.last_login = timezone.now()
+        user.save(update_fields=["last_login"])
+        
         request.session['user_id'] = user.id
         dashboard_url = reverse("dashboard")
         return JsonResponse({"success": True, "redirect": dashboard_url})
     except User.DoesNotExist:
         errors["password"] = "Invalid email or password."
         return JsonResponse({"success": False, "errors": errors})
-
-
 
 @csrf_protect
 @require_POST

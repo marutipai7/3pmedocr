@@ -1,4 +1,5 @@
 import json
+import polyline
 import requests
 from bson import ObjectId
 from pymongo import GEOSPHERE
@@ -14,38 +15,9 @@ from django.views.decorators.http import require_POST
 @dashboard_login_required
 def map_view(request):
     user = request.user_obj
-    ngo_profile = NGOProfile.objects.get(user=user)
     return render(request, 'maps/maps.html', {
         'user': user,
-        'ngo_profile': ngo_profile,
     })
-
-def decode_polyline(polyline_str):
-    index, lat, lng = 0, 0, 0
-    coordinates = []
-    changes = {'lat': 0, 'lng': 0}
-
-    while index < len(polyline_str):
-        for unit in ['lat', 'lng']:
-            shift = 0
-            result = 0
-            while True:
-                b = ord(polyline_str[index]) - 63
-                index += 1
-                result |= (b & 0x1f) << shift
-                shift += 5
-                if b < 0x20:
-                    break
-            if (result & 1):
-                changes[unit] = ~(result >> 1)
-            else:
-                changes[unit] = result >> 1
-
-        lat += changes['lat']
-        lng += changes['lng']
-        coordinates.append([lat / 1e5, lng / 1e5])
-    
-    return coordinates
 
 @dashboard_login_required
 @require_POST
@@ -62,7 +34,8 @@ def get_routes(request):
 
     if not all([start_lat, start_lng, end_lat, end_lng]):
         return JsonResponse({'error': 'Missing coordinates'}, status=400)
-    valhalla_url = "http://122.170.111.109:3095/route"
+    print(f"Received route request: {start_lat}, {start_lng} to {end_lat}, {end_lng} via {mode}")
+    valhalla_url = "https://valhalla.openstreetmap.de/route"
     headers = {'Content-Type': 'application/json'}
     
     payload = {
@@ -86,8 +59,7 @@ def get_routes(request):
             summary = leg.get('summary', {})
             maneuvers = leg.get('maneuvers', [])
 
-            decoded_coords = decode_polyline(shape)
-
+            decoded_coords = polyline.decode(shape, precision=6)
             steps = []
             for m in maneuvers:
                 steps.append({
@@ -102,7 +74,7 @@ def get_routes(request):
                 'duration': summary.get('time'),
                 'steps': steps
             })
-
+        print(f"Coordinates decoded: {decoded_coords} routes found")
         return JsonResponse({'routes': routes})
 
     except requests.exceptions.RequestException as e:
@@ -197,18 +169,16 @@ def search_by_name(request):
 
     for type_key, collection in settings.MONGO_COLLECTIONS.items():
         matches = collection.find({
-            "Title": {"$regex": query, "$options": "i"},
+            "title": {"$regex": query, "$options": "i"},
             "location": {
                 "$near": {
                     "$geometry": {
                         "type": "Point",
                         "coordinates": [user_lng, user_lat]
                     }
-                    # No "$maxDistance" — unlimited
                 }
             }
         })
-
         for doc in matches:
             coords = doc.get("location", {}).get("coordinates", [None, None])
             if coords[0] is None or coords[1] is None:
@@ -216,25 +186,25 @@ def search_by_name(request):
 
             # Clean rating (e.g. "4.6 stars" -> 4.6 float)
             try:
-                rating = float(str(doc.get("Rating", "0")).split()[0])
+                rating = float(str(doc.get("rating", "0")).split()[0])
             except:
                 rating = 0.0
 
             # Extract review count (e.g. "5 reviews" -> 5 int)
             try:
-                review_count = int(str(doc.get("Reviews", "0")).split()[0])
+                review_count = int(str(doc.get("reviews", "0")).split()[0])
             except:
                 review_count = 0
 
             results.append({
                 "mongo_id": str(doc.get("_id")),
                 "type": type_key,
-                "title": doc.get("Title"),
+                "title": doc.get("title"),
                 "rating": rating,
                 "reviews": review_count,
-                "phone_number": doc.get("Phone_Number"),
-                "email": doc.get("Email"),
-                "address": doc.get("Address"),
+                "phone_number": doc.get("phone_number"),
+                "email": doc.get("email", ""),
+                "address": doc.get("address"),
                 "latitude": coords[1],
                 "longitude": coords[0],
                 "distance": haversine(user_lat, user_lng, coords[1], coords[0]),
@@ -245,41 +215,41 @@ def search_by_name(request):
                 }
             })
 
-    matches = settings.PLACES_COORDINATES.find({
-        "full_text": {"$regex": query, "$options": "i"},
-        "location": {
-            "$near": {
-                "$geometry": {
-                    "type": "Point",
-                    "coordinates": [user_lng, user_lat]
-                }
-            }
-        }
-    })
-    for place in matches:
-        coords = place.get("location", {}).get("coordinates", [None, None])
-        if coords[0] is None or coords[1] is None:
-            continue
+    # matches = settings.PLACES_COORDINATES.find({
+    #     "full_text": {"$regex": query, "$options": "i"},
+    #     "location": {
+    #         "$near": {
+    #             "$geometry": {
+    #                 "type": "Point",
+    #                 "coordinates": [user_lng, user_lat]
+    #             }
+    #         }
+    #     }
+    # })
+    # for place in matches:
+    #     coords = place.get("location", {}).get("coordinates", [None, None])
+    #     if coords[0] is None or coords[1] is None:
+    #         continue
 
-        places.append({
-            "mongo_id": str(place.get("_id")),
-            "name": place.get("name"),
-            "type": place.get("type"),
-            "class": place.get("class"),
-            "latitude": coords[1],
-            "longitude": coords[0],
-            "distance": haversine(user_lat, user_lng, coords[1], coords[0]),
-            "country_code": place.get("country_code"),
-            "osm_type": place.get("osm_type"),
-            "importance": place.get("importance"),
-            "full_text": place.get("full_text")
-        })
+    #     places.append({
+    #         "mongo_id": str(place.get("_id")),
+    #         "name": place.get("name"),
+    #         "type": place.get("type"),
+    #         "class": place.get("class"),
+    #         "latitude": coords[1],
+    #         "longitude": coords[0],
+    #         "distance": haversine(user_lat, user_lng, coords[1], coords[0]),
+    #         "country_code": place.get("country_code"),
+    #         "osm_type": place.get("osm_type"),
+    #         "importance": place.get("importance"),
+    #         "full_text": place.get("full_text")
+    #     })
         
-    places.sort(key=lambda x: (x["distance"], -x["importance"]))
+    # places.sort(key=lambda x: (x["distance"], -x["importance"]))
     results.sort(key=lambda x: (x["distance"], -x["rating"], -x["reviews"]))
     
     # Limit results to top 5 for both
-    return JsonResponse({"results": results[:5], "places": places[:5]})
+    return JsonResponse({"results": results[:5], "places": None})
 
 @require_POST
 def search_autocomplete(request):
@@ -381,6 +351,7 @@ def saved_amenity(request):
                     "latitude":      d.get("location", {}).get("coordinates", [])[1],
                     "longitude":     d.get("location", {}).get("coordinates", [])[0],
                     "opening_hours": d.get("opening_hours"),
+                    "is_bookmarked": True,
                     "tags": {
                         "payment_modes":    d.get("payment_accepted"),
                         "delivery_options": d.get("delivery_options"),
@@ -446,6 +417,9 @@ def search_history(request):
             mongo_id=mongo_id,
             amenity_type=amenity_type
         )
+        excess = SearchHistory.objects.filter(user=user).order_by('-id')[500:]
+        if excess.exists():
+            excess.delete()
 
         if not created:
             return JsonResponse({"message": "Already logged"})

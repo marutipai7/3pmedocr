@@ -196,10 +196,10 @@ $(".tab-btn").on("click", function () {
     let hasError = false;
 
     // Get field values
-    const currentPassword = $(this).find("input:eq(0)").val().trim();
-    const newPassword = $(this).find("input:eq(1)").val().trim();
-    const confirmPassword = $(this).find("input:eq(2)").val().trim();
-
+    const currentPassword = $(this).find("input:eq(1)").val().trim();
+    const newPassword = $(this).find("input:eq(2)").val().trim();
+    const confirmPassword = $(this).find("input:eq(3)").val().trim();
+    console.log(`Current Password: ${currentPassword}, New Password: ${newPassword}, Confirm Password: ${confirmPassword}`);
     // Validation
     if (currentPassword === "") {
       $(this)
