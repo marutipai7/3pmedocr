@@ -21,9 +21,15 @@
         <!-- ... popup code stays unchanged ... -->
       </div>
       <!-- Icons -->
-      <a href=""><img src="{% static 'images/map.svg' %}" alt="map" title="Map" class="cursor-pointer" /></a>
-      <a href=""><img src="{% static 'images/star.svg' %}" alt="star" title="Saved" class="cursor-pointer" /></a>
-      <a href=""><img src="{% static 'images/cart.svg' %}" alt="cart" title="Cart" class="cursor-pointer" /></a>
+      <a href="{% url 'map_view' %}">
+        <img src="{% static 'images/map.svg' %}" alt="map" title="Map" class="cursor-pointer" />
+      </a>
+      <a href="{% url 'saved' %}">
+        <img src="{% static 'images/star.svg' %}" alt="star" title="Saved" class="cursor-pointer" />
+      </a>
+      <a href="">
+        <img src="{% static 'images/cart.svg' %}" alt="cart" title="Cart" class="cursor-pointer" />
+      </a>
       <img src="{% static 'images/bell.svg' %}" alt="bell" title="Notifications" class="cursor-pointer" id="bell-icon" />
       <!-- Notification Dropdown -->
       <div id="notificationDropdown" class="hidden absolute right-20 top-15 mt-2 bg-white shadow-lg rounded-md z-50 w-130 border border-violet-sky">

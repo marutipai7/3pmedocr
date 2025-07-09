@@ -383,6 +383,73 @@ $(document).ready(function () {
         });
     });
 
+    $(document).on('click', '.bookmark-toggle', function() {
+        console.log('Bookmark clicked!');
+        var $icon = $(this);
+        var postId = $icon.data('post-id');
+        var isSaved = $icon.data('saved') === true || $icon.data('saved') === 'true';
+        var action = isSaved ? 'unsave' : 'save';
+    
+        $.ajax({
+            url: '/posts/toggle-saved/',
+            type: 'POST',
+            data: {
+                post_id: postId,
+                action: action,
+                csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(response) {
+                if (response.success) {
+                    $icon.data('saved', response.saved);
+                    if (response.saved) {
+                        $icon.addClass('material-filled text-violet-sky');
+                    } else {
+                        $icon.removeClass('material-filled text-violet-sky');
+                        // If in Saved Post table, remove the row
+                        if ($icon.closest('.saved-post').length || $icon.closest('table').closest('.saved-post').length) {
+                            $icon.closest('tr').remove();
+                        }
+                    }
+                    window.showToaster('success', response.saved ? 'Post saved!' : 'Post unsaved!');
+                } else {
+                    window.showToaster('error', response.error || 'Could not update saved status.');
+                }
+            },
+            error: function() {
+                window.showToaster('error', 'Could not update saved status.');
+            }
+        });
+    });
+
+    $(document).on('click', '.statusOptions div', function() {
+        var $option = $(this);
+        var $dropdown = $option.closest('.statusDropdown');
+        var $row = $dropdown.closest('tr');
+        var postId = $row.find('.bookmark-toggle, .bookmark-fill').data('post-id');
+        var newStatus = $option.text().trim();
+    
+        $.ajax({
+            url: '/posts/update-status/',
+            type: 'POST',
+            data: {
+                post_id: postId,
+                status: newStatus,
+                csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(response) {
+                if (response.success) {
+                    window.showToaster('success', 'Status updated to ' + response.status);
+                } else {
+                    window.showToaster('error', response.error || 'Could not update status.');
+                }
+            },
+            error: function() {
+                window.showToaster('error', 'Could not update status.');
+            }
+        });
+    });
+    
+
     // Hide any open dropdowns if clicking outside
     $(document).on('click', function (e) {
         if (!$(e.target).closest('.statusDropdown').length) {
@@ -428,6 +495,23 @@ $(document).ready(function () {
                     $('#preview-creative2').attr('src', data.creative2).show();
                 } else {
                     $('#preview-creative2').hide();
+                }
+                // Fill donation table
+                var $tbody = $('#preview-donation-table tbody');
+                $tbody.empty();
+                if (data.donations && data.donations.length > 0) {
+                    data.donations.forEach(function(donation) {
+                        $tbody.append(
+                            '<tr>' +
+                                '<td class="px-4 py-2.5 text-center">' + donation.payment_date + '</td>' +
+                                '<td class="px-4 py-2.5 text-center">' + donation.name + '</td>' +
+                                '<td class="px-4 py-2.5 text-center">' + donation.city + '</td>' +
+                                '<td class="px-4 py-2.5 text-center">₹' + donation.amount + '</td>' +
+                            '</tr>'
+                        );
+                    });
+                } else {
+                    $tbody.append('<tr><td colspan="4" class="text-center py-4">No donations yet.</td></tr>');
                 }
                 // Show the popup
                 $('.preview-popup').removeClass('hidden').addClass('flex');

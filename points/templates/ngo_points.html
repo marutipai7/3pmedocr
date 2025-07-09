@@ -1,0 +1,1016 @@
+{% extends "dashboard/layout.html" %}
+{% load static %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+
+      <!-- Main Content -->
+      <div class="h-full flex-1 flex flex-col gap-8 p-6 overflow-y-auto scroll bg-slate-white relative transition-all duration-300 main-content">
+           <div
+            class="show-sidebar-toggle hidden absolute top-10 left-0 z-50 h-10 w-10 bg-light-gray items-center justify-center rounded-r-md cursor-pointer"
+          >
+            <span
+              class="material-symbols-outlined text-violet-sky font-bold text-2xl"
+            >
+              arrow_forward_ios
+            </span>
+          </div>
+            <div class="bg-white shadow-(--box-shadow-5) rounded-[10px] px-2 sm:px-4 py-4 relative">
+              <div class="flex flex-col lg:flex-row lg:justify-center sm:justify-between lg:items-center">
+                <div class="space-y-2">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined">
+                      trophy
+                    </span>
+                    <p class="font-medium text-xl">Points</p>
+                  </div>
+                  <p class="text-18-nr">
+                   Every Activity Counts: Referral, Maps, & Post = More Points, More Perks!
+                  </p>
+                </div>
+              
+                    <div class="flex flex-col lg:items-center diamond-user absolute right-7 top-0">
+                    <img
+                      src="/static/images/diamond-user.png"
+                      alt=""
+                      class="w-25 h-25"
+                    />
+                    <p class="font-semibold text-sm md:text-lg">Diamond User</p>
+                  </div>
+                
+              </div>
+              
+              <!-- Tabs -->
+              <div
+                class="flex gap-4 sm:gap-5 whitespace-nowrap mt-8 overflow-x-auto no-scrollbar"
+              >
+                <button
+                  class=" tab-btn-ngo active-tab-ngo text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+                  data-tab="points"
+                >
+                  Points
+                </button>
+                <button
+                  class="tab-btn-ngo text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+                  data-tab="points-history"
+                >
+                  Points History
+                </button>
+                <button
+                  class="tab-btn-ngo text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+                  data-tab="all-rewards"
+                >
+                  All Rewards
+                </button>
+                <button
+                  class="tab-btn-ngo text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+                  data-tab="rewards-claimed"
+                >
+                  Rewards Claimed
+                </button>
+                
+              </div>
+
+              <!--Points Tab content-->
+              <div class="tab-content points  pt-6 pb-3 space-y-2">
+               
+
+                <div
+                  class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 pt-6"
+                >
+                  <!-- Custom Legend -->
+                  <div
+                    class="flex flex-wrap items-center gap-10 pl-2"
+                    id="referralCustomLegend"
+                  >
+                    <label class="flex items-center gap-4 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        class="legend-checkbox focus:outline-none focus:ring-0 focus:ring-offset-0 rounded-xs text-violet-sky text-2xl w-5 h-5 cursor-pointer"
+                        data-index="0"
+                        checked
+                      />
+                      <span class="flex items-center gap-1">
+                        <div class="bg-slate-blue w-2 h-2 rounded-full"></div>
+                        Referral
+                      </span>
+                    </label>
+
+                    <label class="flex items-center gap-4 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        class="legend-checkbox focus:outline-none focus:ring-0 focus:ring-offset-0 rounded-xs text-violet-sky text-2xl w-5 h-5 cursor-pointer"
+                        data-index="1"
+                        checked
+                      />
+                      <span class="flex items-center gap-1">
+                        <div class="bg-green w-2 h-2 rounded-full"></div>
+                        Map
+                      </span>
+                    </label>
+
+                    <label class="flex items-center gap-4 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        class="legend-checkbox focus:outline-none focus:ring-0 focus:ring-offset-0 rounded-xs text-violet-sky text-2xl w-5 h-5 cursor-pointer"
+                        data-index="2"
+                        checked
+                      />
+
+                      <span class="flex items-center gap-1">
+                        <div
+                          class="bg-light-sea-green w-2 h-2 rounded-full"
+                        ></div>
+                       Post
+                      </span>
+                    </label>
+                    
+                  </div>
+
+                  <!-- Right Controls -->
+                  <div class="flex flex-wrap gap-4 items-center">
+                    <!-- Filter Dropdown -->
+                  <div class="relative dropdown">
+                     <button
+                      class="filterToggle  flex items-center border border-slate-gray rounded-md p-1 w-8 h-8 cursor-pointer">
+                      <span class="material-symbols-outlined flex justify-center items-center">tune</span>
+                    </button>
+                      <div
+                        class="filterDropdown absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10"
+                      >
+                      
+                        <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-violet-sky hover:text-white rounded">
+                          Custom date<span class="material-symbols-outlined calendar-icon"
+                            >calendar_today</span
+                          >
+                          
+                        </div>
+                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer" >1 Week</div>
+                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Month</div>
+                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Year</div>
+                        
+                      </div>
+                      <div class="datepicker-container hidden px-4 pb-3 absolute  right-43 z-100">
+                        <div class="datepicker-inline" inline-datepicker data-date="06/23/2025"></div>
+                      </div>
+                  </div>
+                  </div>
+                </div>
+
+                <!-- Chart -->
+
+                <canvas id="referralChart" class="max-h-70"></canvas>
+                <div class="flex flex-wrap gap-4 items-center justify-end pt-4">
+                    <div class="relative dropdown">
+                     <button
+                      class="filterToggle  flex items-center border border-slate-gray rounded-md p-1 w-8 h-8 cursor-pointer">
+                      <span class="material-symbols-outlined flex justify-center items-center">tune</span>
+                    </button>
+                      <div
+                        class="filterDropdown absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10"
+                      >
+                      
+                        <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-violet-sky hover:text-white rounded">
+                          Custom date<span class="material-symbols-outlined calendar-icon"
+                            >calendar_today</span
+                          >
+                          
+                        </div>
+                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer" >1 Week</div>
+                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Month</div>
+                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Year</div>
+                        
+                      </div>
+                      <div class="datepicker-container hidden px-4 pb-3 absolute  right-43 z-100">
+                        <div class="datepicker-inline" inline-datepicker data-date="06/23/2025"></div>
+                      </div>
+                  </div>
+                </div>
+
+                <div class="bg-light-violet-sky w-full rounded-md h-28 mt-4 shadow-lg relative">
+                  <div
+                    class="flex flex-col items-center justify-center gap-4 pt-4"
+                  >
+                    <p class="font-bold text-xl">Total Points</p>
+                    <p class="font-bold text-4xl text-violet-sky">{{ total_points }}</p>
+                  </div>
+                  <img src="/static/images/trophy-ngo.svg" alt="trophy" class="absolute right-10 top-8">
+                </div>
+                <div class="flex items-center gap-4 pt-4 flex-col lg:flex-row">
+                  <div class="bg-light-violet-sky rounded-md shadow-lg p-4 w-full sm:w-64">
+                    <div class="flex flex-col gap-3 items-center justify-center">
+                      <p class="font-bold text-xl">Referral</p>
+                      <p class="font-bold text-3xl text-violet-sky">{{ action_points.referral }}</p>
+                    </div>
+                  </div>
+                  <div class="bg-light-violet-sky rounded-md shadow-lg p-4  w-full sm:w-64">
+                    <div class="flex flex-col gap-3 items-center justify-center">
+                      <p class="font-bold text-xl">Map</p>
+                      <p class="font-bold text-3xl text-violet-sky">{{ action_points.map }}</p>
+                    </div>
+                  </div>
+                  <div class="bg-light-violet-sky rounded-md shadow-lg p-4 w-full sm:w-64">
+                    <div class="flex flex-col gap-3 items-center justify-center">
+                      <p class="font-bold text-xl">Post</p>
+                      <p class="font-bold text-3xl text-violet-sky">{{ action_points.post }}</p>
+                    </div>
+                  </div>
+                 
+                </div>
+
+                <div class="bg-pale-lavender mt-4 p-4 rounded-md shadow-lg">
+                  <p class="font-semibold  text-sm lg:text-lg text-jet-black">
+                    Unlock exclusive benefits and upgrade your status through referrals, purchases, sharing & Donation points!
+                  </p>
+
+                  <div class="pt-4">
+                    <!--Silver user-->
+                    <div class="flex flex-col lg:flex-row lg:justify-between  lg:items-center gap-4">
+                      <div class="flex flex-col sm:flex-row gap-4">
+                      <div class="flex items-center justify-center sm:justify-start">
+                          <img
+                            src="/static/images/Silver Badge.svg"
+                            alt="silver badge"
+                            class="h-30 w-30 object-contain"
+                          />
+                        </div>
+                        <div class="flex flex-col">
+                          <p class="font-semibold text-lg text-violet-sky tracking-widest">
+                            SILVER USER
+                          </p>
+                          <p class="font-semibold text-base mt-2">
+                            - Free access to a highly beneficial system.<br />
+                            - Heavy discount on all the purchases by Providers.<br />
+                            - Fast and easy to use platform for navigation, purchases and sharing.<br />
+                            - Recognition as an active community member
+                          </p>
+                        </div>
+                      </div>
+                      <div >
+                        <p class="font-normal text-lg text-violet-sky">
+                          up-to 999 points
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!--Gold User-->
+                  <div class="flex flex-col lg:flex-row lg:justify-between   lg:items-center gap-4 mt-4">
+                    <div class="flex flex-col sm:flex-row gap-4">
+                      <div class="flex items-center justify-center sm:justify-start">
+                        <img
+                          src="/static/images/Gold Badge.svg"
+                          alt="Gold badge"
+                          class="h-30 w-30 object-contain"
+                        />
+                      </div>
+                      <div class="flex flex-col">
+                        <p
+                          class="font-semibold text-lg text-violet-sky tracking-widest"
+                        >
+                          GOLD USER
+                        </p>
+                        <p class="font-semibold text-base">
+                          - All Silver-level benefits. <br />- Priority placement
+                          in engagement-based features. <br />- Access to limited
+                          early feature previews. <br />- Special features and
+                          customized offers by Providers.
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <p class="font-normal text-lg text-violet-sky">
+                        1000 to 2499 points
+                      </p>
+                    </div>
+                  </div>
+
+                  <!--Diamond user-->
+                  <div class="flex flex-col lg:flex-row lg:justify-between  lg:items-center gap-4 mt-4">
+                    <div class="flex flex-col sm:flex-row gap-4">
+                      <div class="flex items-center justify-center sm:justify-start">
+                        <img
+                          src="/static/images/diamond-badge.svg"
+                          alt="diamond-badge"
+                          class="h-30 w-30 object-contain"
+                        />
+                      </div>
+                      <div class="flex flex-col">
+                        <p
+                          class="font-semibold text-lg text-violet-sky tracking-widest"
+                        >
+                          DIAMOND USER
+                        </p>
+                        <p class="font-semibold text-base">
+                          - All Gold-level benefits. <br />- Special mentions in
+                          community spaces (where applicable). <br />- Invitations
+                          to participate in feedback sessions (when available)
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <p class="font-normal text-lg text-violet-sky">
+                        2499 & Above points
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="pt-6">
+                  <p class="font-normal text-xl">✅ Important Note:</p>
+                  <ul class="list-disc pl-6 font-normal text-lg">
+                    <li>
+                      The Badges or User types in the app are for recognition
+                      purposes and experience enhancement only.
+                    </li>
+                    <li>Points may expire due to inactivity of the user.</li>
+                    <li>
+                      Above Point classification, features and access levels may
+                      change over time at the discretion of the company.
+                    </li>
+                    <li>
+                      The Badges or User types are non transferable, do not
+                      represent security, monetary value or contractual benefits.
+                    </li>
+                    <li>
+                      All the Terms and the Usage Policy of this platform may
+                      change over the time at the discretion of the Company.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <!--All Rewards Tab content-->
+              <div class="tab-content hidden all-rewards relative">
+                <!--Rewards section-->
+                 <div class="flex justify-between items-center pt-5">
+                <p class="font-semibold lg:text-lg sm:text-nowrap text-jet-black">New Coupons for you </p>
+                <div class="flex gap-4">
+                  <div
+                  class="lg:w-110  rounded-[6px] bg-light-white flex items-center gap-2 px-2 sm:w-60"
+                >
+                  <span class="material-symbols-outlined text-dark-gray">
+                    search
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="Search by  name or categories"
+                    class="w-full py-2.5 focus:!outline-none placeholder:text-medium-gray border-none bg-transparent focus:ring-0 only-text"
+                  />
+                  
+                </div>
+                 
+                   <div class="relative dropdown">
+                     <button
+                      class="filterToggle  flex items-center border border-slate-gray rounded-md p-1 mt-2 w-8 h-8 cursor-pointer">
+                      <span class="material-symbols-outlined flex justify-center items-center">tune</span>
+                    </button>
+                      <div
+                        class="filterDropdown absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10"
+                      >
+                      
+                        <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-violet-sky hover:text-white rounded">
+                          Custom date<span class="material-symbols-outlined calendar-icon"
+                            >calendar_today</span
+                          >
+                          
+                        </div>
+                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer" >1 Week</div>
+                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Month</div>
+                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Year</div>
+                        
+                      </div>
+                      <div class="datepicker-container hidden px-4 pb-3 absolute  right-43 z-100">
+                        <div class="datepicker-inline" inline-datepicker data-date="06/23/2025"></div>
+                      </div>
+                  </div>
+                
+
+              </div>
+              
+            
+            </div>
+                <!--Cards-->
+                <div class="pt-4 flex items-center justify-between gap-4 flex-col lg:flex-row" id="featured-rewards">
+                  <!--Card1-->
+                  <div
+                    class="max-w-md rounded-xl overflow-hidden shadow-xl bg-white reward-card"
+                  >
+                    <img
+                      class="w-full h-48 object-cover"
+                      src="/static/images/tablets.svg"
+                      alt=" Image"
+                    />
+                    <div class="p-4">
+                      <p
+                        class="font-semibold text-sm text-violet-sky tracking-[0.25em] uppercase"
+                      >
+                       Category : Brand name
+                      </p>
+                      <p class="font-bold text-lg">25% Off Premium Supplements</p>
+                      <p class="font-normal text-base text-light-gray1">
+                        Complete health assessment including blood work, cardiac
+                        evaluation, and nutritionist consultation
+                      </p>
+                      <hr class="text-violet-sky w-full mt-2" />
+                      <div class="flex flex-col pt-4">
+                        <div class="flex justify-between">
+                          <p class="font-normal text-base">Redeemed</p>
+                          <p class="text-xs font-medium">50/100</p>
+                        </div>
+                        <div class="w-1/2 max-w-md pt-4">
+                          <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div
+                              class="bg-violet-sky h-2 rounded-full w-[50%]"
+                            ></div>
+                          </div>
+                        </div>
+
+                        <div class="pt-4">
+                          <button
+                            class="bg-violet-sky font-bold text-lg text-white w-full rounded-md p-2 flex items-center gap-2 justify-center cursor-pointer"
+                          >
+                            #123GHJSAI<span class="material-symbols-outlined">
+                              content_copy
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!--Card2-->
+                  <div
+                    class="max-w-md rounded-xl overflow-hidden shadow-xl bg-white reward-card"
+                  >
+                    <img
+                      class="w-full h-48 object-cover"
+                      src="/static/images/tablets.svg"
+                      alt=" Image"
+                    />
+                    <div class="p-4">
+                      <p
+                        class="font-semibold text-sm text-violet-sky tracking-[0.25em] uppercase"
+                      >
+                       Category : Brand name
+                      </p>
+                      <p class="font-bold text-lg">25% Off Premium Supplements</p>
+                      <p class="font-normal text-base text-light-gray1">
+                        Complete health assessment including blood work, cardiac
+                        evaluation, and nutritionist consultation
+                      </p>
+                      <hr class="text-violet-sky w-full mt-2" />
+                      <div class="flex flex-col pt-4">
+                        <div class="flex justify-between">
+                          <p class="font-normal text-base">Redeemed</p>
+                          <p class="text-xs font-medium">50/100</p>
+                        </div>
+                        <div class="w-1/2 max-w-md pt-4">
+                          <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div
+                              class="bg-violet-sky h-2 rounded-full w-[50%]"
+                            ></div>
+                          </div>
+                        </div>
+
+                        <div class="pt-4">
+                          <button
+                            class="bg-violet-sky font-bold text-lg text-white w-full rounded-md p-2 flex items-center gap-2 justify-center cursor-pointer"
+                          >
+                            #123GHJSAI<span class="material-symbols-outlined">
+                              content_copy
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!--Card3-->
+                  <div
+                    class="max-w-md rounded-xl overflow-hidden shadow-xl bg-white reward-card"
+                  >
+                    <img
+                      class="w-full h-48 object-cover"
+                      src="/static/images/tablets.svg"
+                      alt=" Image"
+                    />
+                    <div class="p-4">
+                      <p
+                        class="font-semibold text-sm text-violet-sky tracking-[0.25em] uppercase"
+                      >
+                       Category : Brand name
+                      </p>
+                      <p class="font-bold text-lg">25% Off Premium Supplements</p>
+                      <p class="font-normal text-base text-light-gray1">
+                        Complete health assessment including blood work, cardiac
+                        evaluation, and nutritionist consultation
+                      </p>
+                      <hr class="text-violet-sky w-full mt-2" />
+                      <div class="flex flex-col pt-4">
+                        <div class="flex justify-between">
+                          <p class="font-normal text-base">Redeemed</p>
+                          <p class="text-xs font-medium">50/100</p>
+                        </div>
+                        <div class="w-1/2 max-w-md pt-4">
+                          <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div
+                              class="bg-violet-sky h-2 rounded-full w-[50%]"
+                            ></div>
+                          </div>
+                        </div>
+
+                        <div class="pt-4">
+                          <button
+                            class="bg-violet-sky font-bold text-lg text-white w-full rounded-md p-2 flex items-center gap-2 justify-center cursor-pointer"
+                          >
+                            #123GHJSAI<span class="material-symbols-outlined">
+                              content_copy
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                 
+                </div>
+                <!--Popular Coupons section-->
+                <div class="flex justify-between items-center pt-6">
+                    <p class="font-semibold text-lg">Popular Coupons</p>
+                    <a href="#" class="font-bold text-lg text-violet-sky underline">View more</a>
+                </div>
+              
+                <div id="popular-coupons"> 
+                  <!--Coupon1-->
+                  <div class="bg-white mt-4 p-4 rounded-md shadow-lg coupon-card">
+                  <div class="flex lg:justify-between lg:items-center flex-col lg:flex-row">
+                    <div class="flex flex-col">
+                      <p
+                        class="font-semibold text-sm text-violet-sky tracking-[0.25em] uppercase"
+                      >
+                        Category : Brand name
+                      </p>
+                      <p class="font-bold text-lg">25% Off Premium Supplements</p>
+                      <p class="font-normal text-base text-light-gray1">
+                        Complete health assessment including blood work, cardiac
+                        evaluation, and nutritionist consultation
+                      </p>
+                    </div>
+                    <div class="flex flex-col pt-4 ">
+                      <div class="flex  lg:justify-between lg:items-center gap-6">
+                        <p class="font-normal text-base">Redeemed</p>
+                        <p class="text-xs font-medium">50/100</p>
+                      </div>
+                      <div class="w-full max-w-md pt-4">
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                          <div
+                            class="bg-violet-sky h-2 rounded-full w-[50%]"
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="hidden lg:block h-20 w-px bg-violet-sky mx-4 "></div>
+                    <div class="pt-4">
+                      <button
+                        class="bg-violet-sky font-bold text-lg text-white w-full rounded-md p-2 flex items-center gap-2 justify-center cursor-pointer"
+                      >
+                        #123GHJSAI<span class="material-symbols-outlined">
+                          content_copy
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <!--Coupon2-->
+                <div class="bg-white mt-4 p-4 rounded-md shadow-lg coupon-card">
+                  <div class="flex lg:justify-between lg:items-center flex-col lg:flex-row">
+                    <div class="flex flex-col">
+                      <p
+                        class="font-semibold text-sm text-violet-sky tracking-[0.25em] uppercase"
+                      >
+                        Category : Brand name
+                      </p>
+                      <p class="font-bold text-lg">25% Off Premium Supplements</p>
+                      <p class="font-normal text-base text-light-gray1">
+                        Complete health assessment including blood work, cardiac
+                        evaluation, and nutritionist consultation
+                      </p>
+                    </div>
+                    <div class="flex flex-col pt-4 ">
+                      <div class="flex  lg:justify-between lg:items-center gap-6">
+                        <p class="font-normal text-base">Redeemed</p>
+                        <p class="text-xs font-medium">50/100</p>
+                      </div>
+                      <div class="w-full max-w-md pt-4">
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                          <div
+                            class="bg-violet-sky h-2 rounded-full w-[50%]"
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="hidden lg:block h-20 w-px bg-violet-sky mx-4 "></div>
+                    <div class="pt-4">
+                      <button
+                        class="bg-violet-sky font-bold text-lg text-white w-full rounded-md p-2 flex items-center gap-2 justify-center cursor-pointer"
+                      >
+                        #123GHJSAI<span class="material-symbols-outlined">
+                          content_copy
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <!--Coupon3-->
+                <div class="bg-white mt-4 p-4 rounded-md shadow-lg coupon-card">
+                  <div class="flex lg:justify-between lg:items-center flex-col lg:flex-row">
+                    <div class="flex flex-col">
+                      <p
+                        class="font-semibold text-sm text-violet-sky tracking-[0.25em] uppercase"
+                      >
+                        Category : Brand name
+                      </p>
+                      <p class="font-bold text-lg">25% Off Premium Supplements</p>
+                      <p class="font-normal text-base text-light-gray1">
+                        Complete health assessment including blood work, cardiac
+                        evaluation, and nutritionist consultation
+                      </p>
+                    </div>
+                    <div class="flex flex-col pt-4 ">
+                      <div class="flex  lg:justify-between lg:items-center gap-6">
+                        <p class="font-normal text-base">Redeemed</p>
+                        <p class="text-xs font-medium">50/100</p>
+                      </div>
+                      <div class="w-full max-w-md pt-4">
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                          <div
+                            class="bg-violet-sky h-2 rounded-full w-[50%]"
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="hidden lg:block h-20 w-px bg-violet-sky mx-4 "></div>
+                    <div class="pt-4">
+                      <button
+                        class="bg-violet-sky font-bold text-lg text-white w-full rounded-md p-2 flex items-center gap-2 justify-center cursor-pointer"
+                      >
+                        #123GHJSAI<span class="material-symbols-outlined">
+                          content_copy
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <!--Coupon4-->
+                <div class="bg-white mt-4 p-4 rounded-md shadow-lg coupon-card">
+                  <div class="flex lg:justify-between lg:items-center flex-col lg:flex-row">
+                    <div class="flex flex-col">
+                      <p
+                        class="font-semibold text-sm text-violet-sky tracking-[0.25em] uppercase"
+                      >
+                        Category : Brand name
+                      </p>
+                      <p class="font-bold text-lg">25% Off Premium Supplements</p>
+                      <p class="font-normal text-base text-light-gray1">
+                        Complete health assessment including blood work, cardiac
+                        evaluation, and nutritionist consultation
+                      </p>
+                    </div>
+                    <div class="flex flex-col pt-4 ">
+                      <div class="flex  lg:justify-between lg:items-center gap-6">
+                        <p class="font-normal text-base">Redeemed</p>
+                        <p class="text-xs font-medium">50/100</p>
+                      </div>
+                      <div class="w-full max-w-md pt-4">
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                          <div
+                            class="bg-violet-sky h-2 rounded-full w-[50%]"
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="hidden lg:block h-20 w-px bg-violet-sky mx-4 "></div>
+                    <div class="pt-4">
+                      <button
+                        class="bg-violet-sky font-bold text-lg text-white w-full rounded-md p-2 flex items-center gap-2 justify-center cursor-pointer"
+                      >
+                        #123GHJSAI<span class="material-symbols-outlined">
+                          content_copy
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+             </div>
+
+              <!--Rewards Claimed Tab section-->
+              <div class="tab-content hidden rewards-claimed relative">
+               <div class="flex justify-between items-center pt-5">
+                  <p class="font-semibold text-lg sm:text-nowrap">Recent Redemptions</p>
+                  <div class="flex gap-4">
+                    <div
+                    class="lg:w-110  rounded-[6px] bg-light-white flex items-center gap-2 px-2 sm:w-45"
+                  >
+                    <span class="material-symbols-outlined text-dark-gray">
+                      search
+                    </span>
+                    <input
+                      type="text"
+                      placeholder="Search by  name or categories"
+                      class="w-full py-2.5 focus:!outline-none placeholder:text-medium-gray border-none bg-transparent focus:ring-0 only-text"
+                    />
+                    
+                  </div>
+                       <div class="relative dropdown">
+                     <button
+                      class="filterToggle  flex items-center border border-slate-gray rounded-md p-1 mt-2 w-8 h-8 cursor-pointer">
+                      <span class="material-symbols-outlined flex justify-center items-center">tune</span>
+                    </button>
+                      <div
+                        class="filterDropdown absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10"
+                      >
+                      
+                        <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-violet-sky hover:text-white rounded">
+                          Custom date<span class="material-symbols-outlined calendar-icon"
+                            >calendar_today</span
+                          >
+                          
+                        </div>
+                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer" >1 Week</div>
+                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Month</div>
+                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Year</div>
+                        
+                      </div>
+                      <div class="datepicker-container hidden px-4 pb-3 absolute  right-43 z-100">
+                        <div class="datepicker-inline" inline-datepicker data-date="06/23/2025"></div>
+                      </div>
+                  </div>
+                </div>
+                
+              
+              </div>
+              <div class="overflow-x-auto pt-4">
+                <table
+                  class="min-w-full table-auto  docTable"
+                >
+                  <thead class="bg-violet-sky text-white text-sm sm:text-18-b">
+                    <tr>
+                      <th class="text-center px-4 py-6 border-r border-white">
+                        <div class="flex items-center justify-center gap-2">
+                          Date Claimed
+                          <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy"/>
+                        </div>
+                      </th>
+                    
+                      <th class="text-center px-4 py-6 border-r border-white">Category</th>
+                      <th class="text-center px-4 py-6 border-r border-white">Brand Name</th>
+                      <th class="text-center px-4 py-6 border-r border-white">
+                        <div class="flex items-center justify-center gap-2">
+                        Expired On
+                          <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy"/>
+                        </div>
+                      </th>
+                    
+                      
+                      
+                    
+                    </tr>
+                  </thead>
+                  <tbody class="bg-snow-gray text-dark-gray text-16-fs">
+                    <tr>
+                      <td class="px-4 py-4.5 text-center flex flex-col items-center">20/03/2025,14:30</td>
+                      <td class="px-4 py-4.5 text-center">Food & Beverages</td>
+                      <td class="px-4 py-4.5 text-center">Zomato</td>
+                     <td class="px-4 py-4.5 text-center flex flex-col items-center">20/03/2025,14:30</td>
+                    </tr>
+                  <tr>
+                      <td class="px-4 py-4.5 text-center flex flex-col items-center">20/03/2025,14:30</td>
+                      <td class="px-4 py-4.5 text-center">Clothing & Fashion</td>
+                      <td class="px-4 py-4.5 text-center">Nike</td>
+                     <td class="px-4 py-4.5 text-center flex flex-col items-center">20/03/2025,14:30</td>
+                    </tr>
+                   <tr>
+                      <td class="px-4 py-4.5 text-center flex flex-col items-center">20/03/2025,14:30</td>
+                      <td class="px-4 py-4.5 text-center">Transport & Travel</td>
+                      <td class="px-4 py-4.5 text-center">Uber</td>
+                     <td class="px-4 py-4.5 text-center flex flex-col items-center">20/03/2025,14:30</td>
+                    </tr>
+                   <tr>
+                      <td class="px-4 py-4.5 text-center flex flex-col items-center">20/03/2025,14:30</td>
+                      <td class="px-4 py-4.5 text-center">Pharmacy & Medical</td>
+                      <td class="px-4 py-4.5 text-center">Apollo Pharmacy</td>
+                     <td class="px-4 py-4.5 text-center flex flex-col items-center">20/03/2025,14:30</td>
+                    </tr>
+                  <tr>
+                      <td class="px-4 py-4.5 text-center flex flex-col items-center">20/03/2025,14:30</td>
+                      <td class="px-4 py-4.5 text-center">Clothing & Fashion</td>
+                      <td class="px-4 py-4.5 text-center">Nike</td>
+                     <td class="px-4 py-4.5 text-center flex flex-col items-center">20/03/2025,14:30</td>
+                    </tr>
+                     <tr>
+                      <td class="px-4 py-4.5 text-center flex flex-col items-center">20/03/2025,14:30</td>
+                      <td class="px-4 py-4.5 text-center">Food & Beverages</td>
+                      <td class="px-4 py-4.5 text-center">Zomato</td>
+                     <td class="px-4 py-4.5 text-center flex flex-col items-center">20/03/2025,14:30</td>
+                    </tr>
+                     <tr>
+                      <td class="px-4 py-4.5 text-center flex flex-col items-center">20/03/2025,14:30</td>
+                      <td class="px-4 py-4.5 text-center">Food & Beverages</td>
+                      <td class="px-4 py-4.5 text-center">Zomato</td>
+                     <td class="px-4 py-4.5 text-center flex flex-col items-center">20/03/2025,14:30</td>
+                    </tr>
+                     <tr>
+                      <td class="px-4 py-4.5 text-center flex flex-col items-center">20/03/2025,14:30</td>
+                      <td class="px-4 py-4.5 text-center">Transport & Travel</td>
+                      <td class="px-4 py-4.5 text-center">Uber</td>
+                     <td class="px-4 py-4.5 text-center flex flex-col items-center">20/03/2025,14:30</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-4.5 text-center flex flex-col items-center">20/03/2025,14:30</td>
+                      <td class="px-4 py-4.5 text-center">Food & Beverages</td>
+                      <td class="px-4 py-4.5 text-center">Zomato</td>
+                     <td class="px-4 py-4.5 text-center flex flex-col items-center">20/03/2025,14:30</td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+            </div>
+
+            <!--Points History Tab Section-->
+            
+      <div class="tab-content points-history relative hidden">
+        <div class="flex justify-between items-center pt-5">
+          <p class="font-semibold lg:text-lg sm:text-nowrap">Points History</p>
+          <div class="flex items-center justify-center gap-4">
+              <div class="lg:w-110 rounded-[6px] bg-light-white flex items-center gap-2 px-2 sm:w-60">
+                <span class="material-symbols-outlined text-dark-gray">
+                  search
+                </span>
+                <form method="get" class="flex items-center gap-2">
+                  <input
+                    type="text"
+                    name="search"
+                    value="{{ request.GET.search }}"
+                    placeholder="Search by name or categories"
+                    class="w-full p-1.5 focus:!outline-none placeholder:text-medium-gray border-none bg-transparent focus:ring-0 only-text"
+                  />
+                </form>
+              </div>
+              <div class="dropdown filter-dropdown relative z-10">
+                <button class="filter-dropdown-btn dropdown-btn flex items-center border border-slate-gray rounded-md p-2 cursor-pointer">
+                    <span class="material-symbols-outlined">tune</span>
+                </button>
+                <form id="filterForm" method="GET" class="relative">
+                  <input type="hidden" name="search" value="{{ request.GET.search }}">
+                  <input type="hidden" name="date_filter" id="dateFilterInput">
+                  <input type="date" name="start_date" id="startDateInput" class="hidden">
+                  <input type="date" name="end_date" id="endDateInput" class="hidden">
+                </form>
+                <div class="filter-dropdown-option dropdown-option absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44">
+                  <div onclick="applyDateFilter('custom')" class="p-2 pl-4 flex justify-between items-center hover:bg-violet-sky hover:text-white rounded cursor-pointer">
+                    Custom date
+                    <span class="material-symbols-outlined">calendar_today</span>
+                  </div>
+                  <div onclick="applyDateFilter('last_week')" class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Week</div>
+
+                  <div onclick="applyDateFilter('last_month')" class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Month</div>
+
+                  <div onclick="applyDateFilter('last_year')" class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Year</div>
+                </div>
+              </div>
+          </div>
+        </div>        
+
+        <div class="overflow-x-auto pt-4" >
+          <table class="min-w-full table-auto whitespace-nowrap docTable">
+            <thead class="bg-violet-sky text-white text-sm sm:text-18-b">
+              <tr>
+                <th class="text-center px-4 py-6 border-r border-white">
+                  <div class="flex items-center justify-center gap-2">
+                    Date & Time
+                    <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy"/>
+                  </div>
+                </th>
+                <th class="text-center px-4 py-6 border-r border-white">Type</th>
+                <th class="text-center px-4 py-6 border-r border-white">Points</th>
+                <th class="text-center px-4 py-6 border-r border-white">
+                  <div class="flex items-center justify-center gap-2">
+                    Status
+                    <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy"/>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-snow-gray text-dark-gray text-16-fs">
+              {% for row in history %}
+              <tr>
+                <td class="px-4 py-4.5 text-center flex flex-col items-center">{{ row.timestamp }}</td>
+                <td class="px-4 py-4.5 text-center">{{ row.action_type }}</td>
+                <td class="px-4 py-4.5 text-center">{{ row.points }}</td>
+                <td class="px-4 py-4.5 text-center justify-center items-center flex">
+                  <div class="bg-mint-cream text-green py-2 rounded-md border-none w-30">
+                    {{ row.status }}
+                  </div>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="4" class="text-center py-5 text-gray-500">No history available</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+<!-- Django Template -->
+{{ chart_labels|json_script:"chartLabelsData" }}
+{{ chart_data|json_script:"chartDataData"}}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const chartLabels = JSON.parse(document.getElementById('chartLabelsData').textContent);
+  const chartData = JSON.parse(document.getElementById('chartDataData').textContent);
+
+  console.log(chartLabels);
+  console.log(chartData);
+
+  const colors = ["#5182E3", "#28A745", "#3AAFA9"];
+  const datasets = Object.keys(chartData).map((actionType, i) => ({
+    label: actionType,
+    data: chartData[actionType],
+    borderColor: colors[i] || "#000000",
+    borderWidth: 2,
+    tension: 0,
+    pointRadius: 3,
+    pointBackgroundColor: '#FFFFFF',
+    pointBorderColor: colors[i] || "#000000",
+    pointHoverRadius: 5,
+    pointHoverBackgroundColor: '#FFFFFF',
+    pointHoverBorderColor: colors[i] || "#000000",
+  }));
+  const allValues = Object.values(chartData).flat();
+  const maxValue = Math.max(...allValues, 0);
+  let roundedMax = Math.ceil(maxValue / 5) * 5;
+
+// Force minimum max of 20 so we get ticks like 0,5,10,15,20
+if (roundedMax < 20) {
+  roundedMax=20;
+}
+  const ctx = document.getElementById("referralChart").getContext("2d");
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: chartLabels,
+      datasets: datasets
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: false
+        }
+    }
+},
+scales: {
+      y: {
+        beginAtZero: true,
+        min: 0,
+        suggestedMax: roundedMax,
+        ticks: {
+          stepSize: 5,
+          precision: 0
+       }
+}
+}
+});
+</script>
+<script>
+  function applyDateFilter(filterType) {
+    const filterInput = document.getElementById('dateFilterInput');
+    filterInput.value = filterType;
+
+    if (filterType === 'custom') {
+      // Show date inputs
+      document.getElementById('startDateInput').classList.remove('hidden');
+      document.getElementById('endDateInput').classList.remove('hidden');
+    } else {
+      // Hide custom date inputs if not custom
+      document.getElementById('startDateInput').classList.add('hidden');
+      document.getElementById('endDateInput').classList.add('hidden');
+
+      // Submit form immediately for non-custom filters
+      document.getElementById('filterForm').submit();
+    }
+  }
+</script>
+
+
+<script src="{% static 'js/tabs.js' %}"></script>
+<script src="{% static 'js/common.js' %}"></script>
+<!-- <script src="{% static 'js/points.js' %}"></script> -->
+<script src="{% static 'js/table-pagination.js' %}"></script>
+<script src="{% static 'js/sidebar.js' %}"></script>
+<script src="{% static 'js/dropdown.js' %}"></script>
+{% endblock %}
+

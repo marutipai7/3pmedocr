@@ -25,6 +25,9 @@ class User(models.Model):
     quite_mode = models.BooleanField(default=False)
     quite_mode_start_time = models.TimeField(blank=True, null=True, default=time(22, 0))
     quite_mode_end_time = models.TimeField(blank=True, null=True, default=time(6, 0))
+    is_active = models.BooleanField(default=True)
+    last_login = models.DateTimeField(blank=True, null=True)
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -94,6 +97,21 @@ class ClientProfile(models.Model):
     tan_doc_virus_scanned = models.BooleanField(default=False)
     email_otp = models.CharField(max_length=16, blank=True, null=True)
     referral_code = models.CharField(max_length=64, blank=True, null=True)
+
+from django.db import models
+
+class ClientType(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return self.name
+
+class AdService(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return self.name
+
 
 class NGOProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

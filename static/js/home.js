@@ -501,65 +501,63 @@ $(".calendar-container").each(function () {
 
 
 
-  //Enquirers Map on Pharmacy Home Page
-  function initMap(){
-  const map = L.map("map").setView([28.6139, 77.209], 10);
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-  }).addTo(map);
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      function (position) {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        map.setView([lat, lng], 13);
-        L.marker([lat, lng]).addTo(map).bindPopup("You are here").openPopup();
-      },
-      function () {
-        window.showToaster('error', 'Geolocation permission denied. Showing default location.');
-      }
-    );
-  } else {
-    window.showToaster('error', 'Geolocation not supported by your browser.');
-  }
-  const enquirerData = [
-    { lat: 18.5308, lng: 73.8476, count: 5 },
-    { lat: 18.509, lng: 73.8077, count: 15 },
-    { lat: 18.5913, lng: 73.7386, count: 25 },
-    { lat: 18.5989, lng: 73.7705, count: 8 },
-    { lat: 18.4966, lng: 73.9489, count: 20 },
+//   //Enquirers Map on Pharmacy Home Page
+//   function initMap(){
+//   const map = L.map("map").setView([28.6139, 77.209], 10);
+//   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+//     attribution:
+//       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+//   }).addTo(map);
+//   if (navigator.geolocation) {
+//     navigator.geolocation.getCurrentPosition(
+//       function (position) {
+//         const lat = position.coords.latitude;
+//         const lng = position.coords.longitude;
+//         map.setView([lat, lng], 13);
+//         L.marker([lat, lng]).addTo(map).bindPopup("You are here").openPopup();
+//       },
+//       function () {
+//         window.showToaster('error', 'Geolocation permission denied. Showing default location.');
+//       }
+//     );
+//   } else {
+//     window.showToaster('error', 'Geolocation not supported by your browser.');
+//   }
+//   const enquirerData = [
+//     { lat: 18.5308, lng: 73.8476, count: 5 },
+//     { lat: 18.509, lng: 73.8077, count: 15 },
+//     { lat: 18.5913, lng: 73.7386, count: 25 },
+//     { lat: 18.5989, lng: 73.7705, count: 8 },
+//     { lat: 18.4966, lng: 73.9489, count: 20 },
 
-    { lat: 19.1197, lng: 72.8468, count: 5 },
-    { lat: 19.0184, lng: 72.8436, count: 15 },
-    { lat: 19.2183, lng: 72.9781, count: 25 },
-  ];
-  enquirerData.forEach((data) => {
-    const color = "#3AAFA9";
-    L.circleMarker([data.lat, data.lng], {
-      radius: data.count * 0.8,
-      color: color,
-      fillColor: color,
-      fillOpacity: 0.5,
-    }).addTo(map);
-    L.marker([data.lat, data.lng], {
-      icon: L.divIcon({
-        className: "custom-label",
-        html: `<div style="color: black; font-weight: bold; font-size: 12px; text-align:center;">${data.count}</div>`,
-        iconSize: [20, 20],
-        iconAnchor: [10, 10],
-      }),
-      interactive: false,
-    }).addTo(map);
-  });
+//     { lat: 19.1197, lng: 72.8468, count: 5 },
+//     { lat: 19.0184, lng: 72.8436, count: 15 },
+//     { lat: 19.2183, lng: 72.9781, count: 25 },
+//   ];
+//   enquirerData.forEach((data) => {
+//     const color = "#3AAFA9";
+//     L.circleMarker([data.lat, data.lng], {
+//       radius: data.count * 0.8,
+//       color: color,
+//       fillColor: color,
+//       fillOpacity: 0.5,
+//     }).addTo(map);
+//     L.marker([data.lat, data.lng], {
+//       icon: L.divIcon({
+//         className: "custom-label",
+//         html: `<div style="color: black; font-weight: bold; font-size: 12px; text-align:center;">${data.count}</div>`,
+//         iconSize: [20, 20],
+//         iconAnchor: [10, 10],
+//       }),
+//       interactive: false,
+//     }).addTo(map);
+//   });
 
-  }
-  if (document.getElementById("map")) {
-  initMap();
-}
+//   }
+//   if (document.getElementById("map")) {
+//   initMap();
+// }
   
-
- 
 
 //Date and Location of User on  Home Page of All Sections
   const now = new Date();

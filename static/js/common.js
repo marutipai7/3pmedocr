@@ -304,7 +304,8 @@ $('#login-form').on('submit', function(e) {
                 if (resp.errors) {
                     if (resp.errors.email) $('#email-error').text(resp.errors.email);
                     if (resp.errors.password) $('#password-error').text(resp.errors.password);
-                    toastr.error('Please correct the errors.');
+                    if (resp.errors.account) toastr.error(resp.errors.account);
+                      else toastr.error('Please correct the errors.');
                 } else {
                     toastr.error(resp.error || "Login failed.");
                 }
@@ -351,7 +352,28 @@ $('.submit-form').on('submit', function(e) {
         }
     });
 });
+$('.filterToggle').click(function (e) {
+    e.stopPropagation();
+    const $container = $(this).closest('.dropdown');
+    const $dropdown = $container.find('.filterDropdown');
 
+    // Hide other dropdowns
+    $('.filterDropdown').not($dropdown).hide();
+    $('.filterDropdown .absolute').hide();
 
-   
+    // Toggle only the current one
+    $dropdown.toggle();
+  });
+
+  // Show specific sub-filter inside dropdown
+  $('.filterItem').click(function (e) {
+    e.stopPropagation();
+    const targetSelector = $(this).data('target');
+    const $target = $(targetSelector);
+
+    // Hide other absolute sub-sections
+    $('.filterDropdown .absolute').not($target).hide();
+    $target.toggle();
+  });
+
 })

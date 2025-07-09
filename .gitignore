@@ -1,9 +1,13 @@
-__pycache__
+__pycache__/
 /document
 .vscode
 .env
 *.pyc
+*.pot
 *.log
 venv/
 myenv/
 document\*
+*.ipynb_checkpoints
+*.ipynb
+env/
