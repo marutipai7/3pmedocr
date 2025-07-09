@@ -14,7 +14,7 @@ urlpatterns = [
     path('help/', include('support.urls')),
     path('settings/', include('settings.urls')),
     path('posts/', include('ngopost.urls')),
-
+    path('support/', include('support.urls')),
     # ... other apps
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
