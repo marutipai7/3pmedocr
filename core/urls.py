@@ -17,9 +17,7 @@ urlpatterns = [
     path('settings/', include('settings.urls')),
     path('posts/', include('ngopost.urls')),
     path('donate/', include('donate.urls')),
-    path('points/', include('points.urls')),
-    path('support/', include('support.urls')),
-    # ... other apps
+    path('points/', include('points.urls')),    # ... other apps
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

@@ -110,6 +110,7 @@ def submit_support_ticket(request):
             image=image
         )
         return redirect("support_view")
+
 @require_GET
 @dashboard_login_required 
 def get_bot_content_api(request):
@@ -153,4 +154,4 @@ def get_bot_content_api(request):
         return JsonResponse(
             {"initial_message": "Sorry, an unexpected error occurred. Please try again later."},
             status=500
-        )
+
