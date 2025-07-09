@@ -1,17 +1,17 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from ngopost.utils import dashboard_login_required
 from datetime import datetime
-from .models import NGOPost
+from .models import NGOPost, PostTypeOption, DonationFrequencyOption, CountryOption, StateOption, CityOption, AgeOption, GenderOption, SpendingPowerOption
 import logging
 from registration.models import UserProfile
-# It's generally better to move reusable functions to a utils.py file
-# in a shared app, but for now, we'll import from registration.
 from registration.views import validate_and_save_file
 from django.http import HttpResponseBadRequest
 from dashboard.utils import dashboard_login_required
 from django.http import JsonResponse, Http404
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_GET, require_POST
+from donate.models import Donation
+from django.db.models import Q
+
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
@@ -63,7 +63,7 @@ def post_view(request):
             is_ajax = (ajax_header == 'XMLHttpRequest' or ajax_meta == 'XMLHttpRequest')
 
             # --- File Validation and Saving ---
-            creative1_path, error = validate_and_save_file(creative1_file, 'post_creatives', 'Creative 1')
+            creative1_path, error = validate_and_save_file(creative1_file, 'post_creatives', 'Creative 1', user_type='ngo')
             if error:
                 if is_ajax:
                     return JsonResponse({'missing_fields': ['Creative Upload']})
@@ -72,7 +72,7 @@ def post_view(request):
 
             creative2_path = None
             if creative2_file:
-                creative2_path, error = validate_and_save_file(creative2_file, 'post_creatives', 'Creative 2')
+                creative2_path, error = validate_and_save_file(creative2_file, 'post_creatives', 'Creative 2', user_type='ngo')
                 if error:
                     if is_ajax:
                         return JsonResponse({'missing_fields': ['Creative Upload']})
@@ -146,24 +146,90 @@ def post_view(request):
             logger.error(f"An unexpected error occurred in post_view: {e}", exc_info=True)
             messages.error(request, f"An unexpected error occurred: {e}")
 
-    # For GET requests, fetch the post history
+    # Search query (optional)
+    history_query = request.GET.get('history_query', '').strip().lower()
+    saved_query = request.GET.get('saved_query', '').strip().lower()
+
+    # Get the limit parameters from the request, default to 10
+    history_limit = request.GET.get('history_limit', '10')
+    try:
+        history_limit_int = int(history_limit)
+    except ValueError:
+        history_limit_int = 10
+    saved_limit = request.GET.get('saved_limit', '10')
+    try:
+        saved_limit_int = int(saved_limit)
+    except ValueError:
+        saved_limit_int = 10
+
+    # Base queries
     post_history = NGOPost.objects.filter(user=user).order_by('-created_at')
-    
-    # Placeholder for saved posts until the logic is defined
-    saved_posts = NGOPost.objects.filter(user=request.user_obj, saved=True) 
+    saved_posts = NGOPost.objects.filter(user=request.user_obj, saved=True)
+
+    # Filter by query (if provided)
+    if history_query:
+        post_history = post_history.filter(
+            Q(post_type__icontains=history_query) |
+            Q(status__icontains=history_query) |
+            Q(created_at__icontains=history_query)
+        )
+    if saved_query:
+        saved_posts = saved_posts.filter(
+            Q(post_type__icontains=saved_query) |
+            Q(status__icontains=saved_query) |
+            Q(created_at__icontains=saved_query)
+        )
+
+    # Apply limits
+    post_history = post_history[:history_limit_int]
+    saved_posts = saved_posts[:saved_limit_int]
+
+    # Attach donations for this post (if needed)
+    for post in post_history:
+        if post.status == post.Status.ONGOING and post.end_date < datetime.now().date():
+            post.update_status_if_needed()
+        post.donation_list = Donation.objects.filter(ngopost=post).select_related('user').order_by('-payment_date')
+    for post in saved_posts:
+        if post.status == post.Status.ONGOING and post.end_date < datetime.now().date():
+            post.update_status_if_needed()
+        post.donation_list = Donation.objects.filter(ngopost=post).select_related('user').order_by('-payment_date')
 
     context = {
         'post_history': post_history,
         'saved_posts': saved_posts,
+        'history_query': history_query,
+        'saved_query': saved_query,
+        'history_limit': str(history_limit),
+        'saved_limit': str(saved_limit),
+        'post_type_options': PostTypeOption.objects.filter(is_active=True),
+        'donation_frequency_options': DonationFrequencyOption.objects.filter(is_active=True),
+        'country_options': CountryOption.objects.filter(is_active=True),
+        'state_options': StateOption.objects.filter(is_active=True),
+        'city_options': CityOption.objects.filter(is_active=True),
+        'age_options': AgeOption.objects.filter(is_active=True),
+        'gender_options': GenderOption.objects.filter(is_active=True),
+        'spending_power_options': SpendingPowerOption.objects.filter(is_active=True),
     }
     return render(request, 'post.html', context)
 
+@dashboard_login_required
 @require_GET
-def post_detail_ajax(request, post_id):
+def post_detail(request, post_id):
     try:
         post = NGOPost.objects.get(id=post_id)
     except NGOPost.DoesNotExist:
         raise Http404('Post not found')
+    # Get donations for this post
+    donations = Donation.objects.filter(ngopost=post).select_related('user', 'user__userprofile').order_by('-payment_date')
+    donation_list = []
+    for d in donations:
+        userprofile = getattr(d.user, 'userprofile', None)
+        donation_list.append({
+            'payment_date': d.payment_date.strftime('%d/%m/%y,%H:%M') if d.payment_date else '',
+            'name': userprofile.name if userprofile and userprofile.name else (d.user.email if d.user else ''),
+            'city': userprofile.city if userprofile and userprofile.city else '',
+            'amount': str(d.amount),
+        })
     data = {
         'id': post.id,
         'header': post.header,
@@ -189,9 +255,38 @@ def post_detail_ajax(request, post_id):
         'end_date': str(post.end_date),
         'creative1': post.creative1.url if post.creative1 else '',
         'creative2': post.creative2.url if post.creative2 else '',
-        # Add more fields as needed
+        'donations': donation_list,
     }
     logger.info(f"AJAX Preview Data for post {post_id}: {data}")
     return JsonResponse(data)
 
+@dashboard_login_required
+@require_POST
+def toggle_saved_post(request):
+    post_id = request.POST.get('post_id')
+    action = request.POST.get('action')  # 'save' or 'unsave'
+    try:
+        post = NGOPost.objects.get(id=post_id, user=request.user_obj)
+        if action == 'save':
+            post.saved = True
+        else:
+            post.saved = False
+        post.save()
+        logger.info(f"User {request.user_obj} set saved={post.saved} for post {post_id} (action={action})")
+        return JsonResponse({'success': True, 'saved': post.saved})
+    except NGOPost.DoesNotExist:
+        logger.warning(f"User {request.user_obj} tried to {action} post {post_id} but it does not exist or does not belong to them.")
+        return JsonResponse({'success': False, 'error': 'Post not found'}, status=404)
 
+@dashboard_login_required
+@require_POST
+def update_post_status(request):
+    post_id = request.POST.get('post_id')
+    new_status = request.POST.get('status')
+    try:
+        post = NGOPost.objects.get(id=post_id, user=request.user_obj)
+        post.status = new_status
+        post.save()
+        return JsonResponse({'success': True, 'status': post.status})
+    except NGOPost.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Post not found'}, status=404)

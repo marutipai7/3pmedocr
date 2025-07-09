@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'faq',
     'maps',
     'rest_framework',
+    'donate',
 ]
 
 MIDDLEWARE = [

@@ -6,6 +6,7 @@ from .utils import dashboard_login_required
 from .models import SettingMenu
 from registration.models import NGOProfile
 from ngopost.models import NGOPost
+from django.db.models import Q
 
 @dashboard_login_required
 def dashboard_home(request):
@@ -47,4 +48,55 @@ def dashboard_home(request):
 
 def logout_view(request):
     request.session.flush()  # clears all session data
-    return reverse('user/login')
+    return reverse('/')
+
+
+@dashboard_login_required
+def saved(request):
+    user = request.user_obj
+    
+    # Search query (optional)
+    query = request.GET.get('query', '').strip().lower()
+
+    # Menu items for sidebar
+    menu_items = SettingMenu.objects.filter(
+        is_active=True, user_types__contains=[user.user_type]
+    ).order_by('order')
+
+    try:
+        ngo_profile = NGOProfile.objects.get(user=user)
+        user_profile = user
+    except NGOProfile.DoesNotExist:
+        return render(request, "dashboard/not_found.html")
+
+    # Get the limit parameter from the request, default to 50
+    limit = request.GET.get('limit', '50')
+    try:
+        limit = int(limit)
+    except ValueError:
+        limit = 50
+
+    # Base saved posts query
+    saved_posts = NGOPost.objects.filter(user=user, saved=True)
+
+    # Filter by query (if provided)
+    if query:
+        saved_posts = saved_posts.filter(
+            Q(post_type__icontains=query) |
+            Q(status__icontains=query) |
+            Q(created_at__icontains=query)
+        )
+
+    # Apply limit
+    saved_posts = saved_posts[:limit]
+
+    context = {
+        'ngo_profile': ngo_profile,
+        'user_profile': user_profile,
+        'menu_items': menu_items,
+        'saved_posts': saved_posts,
+        'query': query,  # To retain search input
+        'limit': str(limit),  # To retain limit select
+    }
+
+    return render(request, "dashboard/saved.html", context)

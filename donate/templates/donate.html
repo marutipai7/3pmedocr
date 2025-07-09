@@ -1,0 +1,311 @@
+{% extends "dashboard/layout.html" %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<body>
+  <main class="h-screen w-full">
+    <!-- Main Content -->
+    <div class="h-[calc(100vh-100px)] w-full flex">
+
+      <!-- Main Content -->
+      <div class="h-full flex-1 overflow-y-auto scroll relative transition-all duration-300 main-content">
+        <div
+          class="show-sidebar-toggle hidden absolute top-10 left-0 z-50 h-10 w-10 bg-light-gray items-center justify-center rounded-r-md cursor-pointer">
+          <span
+            class="material-symbols-outlined text-dark-blue font-bold text-2xl">
+            arrow_forward_ios
+          </span>
+        </div>
+        <div class="shadow-lg p-4 rounded-lg m-4 max-w-full overflow-x-auto bg-white">
+          <div class="flex items-center space-x-2">
+                      <span class="material-symbols-outlined">volunteer_activism</span>
+                      <p class="font-semibold text-2xl">Donate</p>
+          </div>
+          <div class="flex justify-between items-center">
+            <p class="font-normal">Help Us Help Others—Donate Today!</p>
+            <button class="close-expanded text-xl font-bold text-gray-500 hover:text-red-600 hidden">&times;</button>
+          </div>
+          <!-- Tabs -->
+          <div class="flex flex-wrap justify-between  gap-4 w-full mt-8">
+            <!-- Tabs Section -->
+            <div class="tabs-section flex gap-6 sm:gap-8 whitespace-nowrap mt-8 overflow-x-auto no-scrollbar">
+              <button class="tab-btn-client active-tab-client px-4 text-18-fs cursor-pointer  border-dark-blue text-dark-blue"
+                data-tab="report-issue">
+                Organizations
+              </button>
+              <button class="tab-btn-client px-4 text-18-fs cursor-pointer text-dark-blue" data-tab="contact-support">
+                Donation History
+              </button>
+            </div>
+          </div>
+          <div class="report-issue tab-content pt-8 ">
+            <!-- Search + Filter Section for Organizations -->
+            <form method="get" class="search-filter-section flex items-center justify-end gap-5 w-full sm:w-auto mt-2 sm:mt-0 sm:ml-auto">
+              <div class="w-full max-w-[800px] rounded-[6px] bg-light-white flex items-center pl-6 pr-4">
+                <span class="material-symbols-outlined text-dark-gray mr-2">search</span>
+                <input type="text" name="org_query" placeholder="Search by NGO name or post type"
+                  value="{{ org_query }}"
+                  class="w-full py-2.5 bg-light-white text-black placeholder:text-medium-gray border-none focus:outline-none focus:ring-0" />
+                <button type="submit" class="ml-2 px-3 py-2 rounded bg-dark-blue text-white">Search</button>
+              </div>
+            </form>
+            <div class="card-container grid grid-cols-1 md:grid-cols-2 gap-4 justify-items-center">
+              {% for post in ngo_posts %}
+              <div class="donation-card shadow-lg p-4 rounded-lg m-4 w-full bg-white transition-all duration-300 flex flex-col">
+                <img src="{{ post.creative1.url }}" alt="Donation Banner" class="children-banner w-full rounded-md" />
+                <div class="top-section flex justify-between items-start mt-2 flex-wrap">
+                  <div class="heading-area max-w-8xl">
+                    <p class="default-heading text-base font-bold cursor-pointer toggle-expand">
+                      {{ post.ngo_name }}
+                    </p>
+                    <div class="flex items-center mt-1 w-full toggle-expand">
+                      <p class="expanded-heading text-sm font-semibold">
+                        {{ post.city }}, {{ post.state }}
+                      </p>
+                      <a href="#" class="read-more-btn text-sm border-dark-blue text-dark-blue font-semibold underline ml-4" onclick="toggleExpand(this); return false;">
+                        Read More
+                      </a>
+                    </div>
+                    <!-- Post Header -->
+                    {% comment %} <h2 class="text-xl font-bold mt-4">{{ post.header }}</h2> {% endcomment %}
+                    <p class="expanded-para w-full text-base font-normal text-light-gray1 mt-2 hidden">
+                      {{ post.description }}
+                    </p>
+                    <div class="location-line flex items-center text-dark-gray text-sm mt-2">
+                      <span>{{ post.country }}</span>
+                      <span class="mx-2 text-sm">•</span>
+                      <span>{{ post.post_type }}</span>
+                    </div>
+                  </div>
+                  <div class="donate-button-wrapper ml-4 mt-0 flex flex-col items-center gap-1">
+                    <span class="donation-amount text-2xl text-center border-dark-blue text-dark-blue">₹{{ post.target_donation }}</span>
+                    <div class="donate-btn-container relative flex items-center gap-4 ml-auto">
+                      <span class="separator text-vivid-orange text-3xl h-16 flex items-center">|</span>
+                      <!-- At the bottom of the card, before the action buttons -->
+                      <div class="flex items-center justify-between mt-4">
+                        <div class="text-sm text-gray-500">Posted on: {{ post.created_at|date:'d M Y' }}</div>
+                        <div class="flex items-center gap-3">
+                          {% if post.id %}
+                          <a href="{% url 'donate-pay' post.id %}" class="pay-button bg-vivid-orange text-white px-12 py-2 rounded-md">
+                        <span class="text-sm">Donate Now</span>
+                      </a>
+                          {% endif %}
+                </div>
+              </div>
+                    </div>
+                    <div class="expanded-buttons hidden flex gap-3 justify-end items-center mt-4">
+        
+                      <div class="text-sm text-gray-500">Posted on: {{ post.created_at|date:'d M Y' }}</div>
+                      <img src="/static/images/upi.svg" alt="UPI QR" class="h-8 w-auto rounded" />
+                      <a href="{{ post.website_url }}" target="_blank" class="visit-website-btn text-vivid-orange px-4 py-2 rounded-md border border-vivid-orange">
+                        <span class="text-sm">Visit Website</span>
+                        {% if post.id %}
+                        <a href="{% url 'donate-pay' post.id %}" class="pay-button bg-vivid-orange text-white px-12 py-2 rounded-md">
+                        <span class="text-sm">Pay</span>
+                      </a>
+                        {% endif %}
+                      </a>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% empty %}
+              <div class="col-span-2 text-center text-gray-500 py-8">No ongoing NGO posts available at the moment.</div>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="contact-support tab-content pt-8 space-y-6 hidden">
+            <!-- Search + Filter Section for Donation History -->
+            <div class="flex items-center gap-5">
+              <h1 class="font-semibold text-base text-dark-gray">Donation history</h1>
+              <form method="get" action="{% url 'donate' %}" class="flex items-center gap-2 w-full max-w-[400px] h-[40px] rounded-[6px] bg-light-white px-2">
+                <span class="material-symbols-outlined text-dark-gray mr-2">search</span>
+                <input
+                  type="text"
+                  name="donation_query"
+                  placeholder="Search by Post Type or NGO Name"
+                  value="{{ donation_query }}"
+                  class="w-full h-full py-0 text-sm border-none bg-transparent focus:outline-none focus:ring-0 placeholder:text-medium-gray"
+                />
+                <select name="limit" onchange="this.form.submit()" class="rounded-[6px] border border-gray-300 px-3 py-2 text-sm ml-2">
+                  <option value="50" {% if limit == '50' %}selected{% endif %}>Show 50</option>
+                  <option value="100" {% if limit == '100' %}selected{% endif %}>Show 100</option>
+                  <option value="200" {% if limit == '200' %}selected{% endif %}>Show 200</option>
+                </select>
+                <button type="submit" class="ml-2 px-3 py-2 rounded bg-dark-blue text-white">Search</button>
+              </form>
+              <button onclick="document.querySelector('.viewPopup').classList.remove('hidden')"
+                class="cursor-pointer flex items-center gap-1 px-4 py-2 border border-dark-blue rounded-xl text-dark-blue">
+                <span class="material-symbols-outlined">file_export</span>
+                <span>View</span>
+              </button>
+            </div>
+            <div class="relative max-h-[calc(9*2rem)] overflow-y-auto overflow-x-auto no-scrollbar mt-10">
+              <table class="table-auto min-w-full text-sm text-dark-gray whitespace-nowrap">
+                <thead class="bg-dark-blue  text-white">
+                  <tr>
+                    <th class="text-center px-4 py-4 border-r border-white">Date & Time
+                      <img src="/static/images/sort-alt.svg" alt="sort" class="inline ml-2" />
+                    </th>
+                    <th class="px-4 py-4 text-center border-r border-white">Post Name</th>
+                    <th class="text-center px-4 py-4 border-r border-white">NGO Name</th>
+                    <th class="text-center px-4 py-4 border-r border-white">Post Type</th>
+                    <th class="text-center px-4 py-4 border-r border-white">Paid Donation</th>
+                    <th class="text-center px-4 py-4 border-r border-white">Status</th>
+                    <th class="text-center px-4 py-4 border-r border-white">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-snow-gray text-dark-gray text-[16px]">
+                  {% if donations %}
+                    {% for donation in donations %}
+                      <tr>
+                        <td class="px-4 py-2.5 text-center">
+                          {{ donation.payment_date|date:'d/m/y,H:i' }}
+                        </td>
+                        <td class="px-4 py-2.5 text-center">{{ donation.ngopost.header }}</td>
+                        <td class="px-4 py-2.5 text-center">{{ donation.ngopost.user.ngoprofile.ngo_name }}</td>
+                        <td class="px-4 py-2.5 text-center">{{ donation.ngopost.post_type }}</td>
+                        <td class="px-4 py-2.5 text-center">₹{{ donation.amount }}</td>
+                        <td class="px-4 py-2.5 text-center">
+                          {% if donation.payment_status == 'Success' %}
+                            <button class="bg-mint-cream text-green px-5 py-2 rounded-md text-sm font-semibold ">Successful</button>
+                          {% else %}
+                            <button class="bg-soft-pink text-strong-red px-6 py-2 rounded-md text-sm font-semibold ">Failed</button>
+                          {% endif %}
+                        </td>
+                        <td class="px-4 py-2.5 text-center">
+                          <div class="flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined cursor-pointer" title="Bookmark">bookmark</span>
+                            <span class="mx-1">
+                              <img src="/static/images/assignment.svg" alt="Assignment" title="View Platform Bill"
+                                class="inline-block w-6 h-6 align-middle cursor-pointer" onclick="openPopup()" />
+                            </span>
+                            <span>
+                              <img src="/static/images/calendar_today.svg" alt="Calendar" title="View Donation Receipt"
+                                class="inline-block w-6 h-6 align-middle cursor-pointer" onclick="openPopupDonation()" />
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  {% else %}
+                    <tr><td colspan="7" class="text-center py-4">No donation history found.</td></tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
+            <div
+              class="assignmentPopup fixed inset-0 bg-opacity-70 bg-black/30 flex items-center justify-center z-50 hidden">
+              <div class="bg-white rounded-lg shadow-lg p-6 w-96 relative">
+                <button onclick="closePopup()"
+                  class="absolute top-2 right-2 text-gray-500 hover:text-black">&times;</button>
+
+                <!-- Top Bar: Left icons and Center Title -->
+                <div class="relative mb-4 h-10">
+                  <!-- Left Icons -->
+                  <div class="absolute left-0 top-0 flex items-center gap-3">
+                    <span
+                      class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg ">share</span>
+                    <span
+                      class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg">download</span>
+                  </div>
+                  <!-- Centered Title -->
+                  <h2
+                    class="absolute inset-0 flex justify-center items-center text-xl font-semibold text-dark-blue">
+                    Platform Bill</h2>
+                </div>
+                <img src="/static/images/Tax Bill.svg" alt="Tax Bill" class="w-full rounded mb-4" />
+              </div>
+            </div>
+            <div
+              class="donationPopup fixed inset-0 bg-opacity-70 bg-black/30 flex items-center justify-center z-50 hidden">
+              <div class="bg-white rounded-lg shadow-lg p-6 w-[450px] relative">
+                <button onclick="closePopupDonation()"
+                  class="absolute top-2 right-2 text-gray-500 hover:text-black">&times;</button>
+                <!-- Top Bar: Left icons and Center Title -->
+                <div class="relative mb-4 h-10">
+                  <!-- Left Icons -->
+                  <div class="absolute left-0 top-0 flex items-center gap-3">
+                    <span
+                      class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg">share</span>
+                    <span
+                      class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg">download</span>
+                  </div>
+                  <!-- Centered Title -->
+                  <h2
+                    class="absolute inset-0 flex justify-center items-center text-xl font-semibold text-dark-blue">
+                    Donation Receipt</h2>
+                </div>
+                <img src="/static/images/Donate Bill.svg" alt="Donate Bill" class="w-full rounded mb-4" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal for post details -->
+  <div id="postDetailModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-3xl relative">
+      <button onclick="closePostDetail()" class="absolute top-2 right-2 text-gray-500 hover:text-black">&times;</button>
+      <div id="postDetailContent">
+        <h2 id="modalNgoName" class="text-2xl font-bold mb-2"></h2>
+        <h3 id="modalHeader" class="text-xl font-semibold mb-2"></h3>
+        <p id="modalDescription" class="mb-4"></p>
+        <a id="modalWebsite" href="#" target="_blank" class="text-blue-600 underline mb-4 block"></a>
+        {% if post.id %}
+        <a href="{% url 'donate-pay' post.id %}" class="pay-button bg-dark-blue-500 text-white px-12 py-2 rounded-md">
+          <span class="text-sm">Pay</span>
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <script>
+  function openPostDetail(el) {
+    document.getElementById('modalNgoName').textContent = el.getAttribute('data-ngo-name');
+    document.getElementById('modalHeader').textContent = el.getAttribute('data-header');
+    document.getElementById('modalDescription').textContent = el.getAttribute('data-description');
+    var website = el.getAttribute('data-website-url');
+    var websiteLink = document.getElementById('modalWebsite');
+    if (website) {
+      websiteLink.textContent = website;
+      websiteLink.href = website.startsWith('http') ? website : 'https://' + website;
+      websiteLink.style.display = 'block';
+    } else {
+      websiteLink.style.display = 'none';
+    }
+    document.getElementById('postDetailModal').classList.remove('hidden');
+  }
+  function closePostDetail() {
+    document.getElementById('postDetailModal').classList.add('hidden');
+  }
+  function toggleExpand(btn) {
+    const card = btn.closest('.donation-card');
+    const para = card.querySelector('.expanded-para');
+    const buttons = card.querySelector('.expanded-buttons');
+    if (para && buttons) {
+      para.classList.toggle('hidden');
+      buttons.classList.toggle('hidden');
+      btn.textContent = para.classList.contains('hidden') ? 'Read More' : 'Read Less';
+    }
+  }
+  </script>
+</body>
+{% endblock%}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/common.js' %}"></script>
+<script src="{% static 'js/tabs.js' %}"></script>
+<script src="{% static 'js/donate.js' %}"></script>
+<script src="{% static 'js/dropdown.js' %}"></script>
+<script src="{% static 'js/sidebar.js' %}"></script>
+<script src="{% static 'js/table-pagination.js' %}"></script>
+{% endblock %}
+
+
