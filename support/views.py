@@ -65,11 +65,10 @@ def support_view(request):
 @dashboard_login_required
 def get_issue_options(request):
     issue_type_id = request.GET.get('issue_type_id')
-    options = []
-    if issue_type_id:
-        options = IssueOption.objects.filter(issue_type_id=issue_type_id).values('id', 'name')
-    return JsonResponse({'options': list(options)})
-
+    print('Got issue_type_id:', issue_type_id)
+    options = IssueOption.objects.filter(issue_type_id=issue_type_id)
+    data = [{'id': opt.id, 'name': opt.name} for opt in options]
+    return JsonResponse({'options': data})
 
 # 🔍 Optional: Filter support tickets by status/issue type (if you use AJAX filtering)
 @dashboard_login_required
@@ -85,3 +84,25 @@ def filter_support_tickets(request):
 
     data = serializers.serialize("json", tickets.select_related("issue_option", "user"))
     return JsonResponse({"tickets": data})
+
+
+@dashboard_login_required
+def submit_support_ticket(request):
+    if request.method == "POST":
+        issue_option_id = request.POST.get("select_issue")
+        description = request.POST.get("description")
+        image = request.FILES.get("image")
+
+        try:
+            issue_option = IssueOption.objects.get(id=issue_option_id)
+        except IssueOption.DoesNotExist:
+            return redirect("support_view")  # or render with error
+
+        SupportTicket.objects.create(
+            user=request.user,
+            created_by=request.user,
+            issue_option=issue_option,
+            description=description,
+            image=image
+        )
+        return redirect("support_view")
