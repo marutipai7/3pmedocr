@@ -19,6 +19,7 @@ urlpatterns = [
     path('donate/', include('donate.urls')),
     path('post/toggle-save', dashboard_views.toggle_saved_post, name='dashboard_toggle_save'),
     path('post/update-status', dashboard_views.update_post_status, name='dashboard_update_status'),
+    path('points/', include('points.urls')),
     # ... other apps
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

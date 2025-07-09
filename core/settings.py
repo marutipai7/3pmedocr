@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'maps',
     'rest_framework',
     'donate',
+    'points',
 ]
 
 MIDDLEWARE = [
