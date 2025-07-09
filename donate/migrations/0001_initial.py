@@ -10,7 +10,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('ngopost', '0006_alter_ngopost_creative1_alter_ngopost_creative2'),
-        ('registration', '0005_delete_accountsubscriptionfaq'),
     ]
 
     operations = [

@@ -7,7 +7,6 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('registration', '0003_alter_accountsubscriptionfaq_table'),
         ('ngopost', '0002_alter_ngopost_user'),
     ]
 

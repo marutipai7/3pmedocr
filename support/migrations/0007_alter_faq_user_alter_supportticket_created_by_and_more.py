@@ -7,7 +7,6 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('registration', '0005_delete_accountsubscriptionfaq'),
         ('support', '0006_alter_supportticket_created_by'),
     ]
 

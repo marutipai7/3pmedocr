@@ -9,7 +9,6 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('registration', '0005_delete_accountsubscriptionfaq'),
     ]
 
     operations = [

@@ -7,7 +7,6 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('registration', '0003_alter_accountsubscriptionfaq_table'),
     ]
 
     operations = [
