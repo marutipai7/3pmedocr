@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'ngopost',
     'faq',
     'maps',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

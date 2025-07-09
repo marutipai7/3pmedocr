@@ -9,3 +9,4 @@ myenv/
 document\*
 *.ipynb_checkpoints
 *.ipynb
+env/

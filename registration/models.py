@@ -95,6 +95,21 @@ class ClientProfile(models.Model):
     email_otp = models.CharField(max_length=16, blank=True, null=True)
     referral_code = models.CharField(max_length=64, blank=True, null=True)
 
+from django.db import models
+
+class ClientType(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return self.name
+
+class AdService(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return self.name
+
+
 class NGOProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     ngo_name = models.CharField(max_length=255)
