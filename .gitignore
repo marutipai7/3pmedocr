@@ -12,3 +12,4 @@ document\*
 *.ipynb
 env/
 .env
+staticfiles/
