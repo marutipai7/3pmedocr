@@ -82,8 +82,17 @@ TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
 
+
+DJANGO_ENV = os.getenv('DJANGO_ENV', 'development')  # Default to dev
+
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+if DJANGO_ENV == 'production':
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    STATICFILES_DIRS = []
+else:
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+    STATIC_ROOT = None
 
 MEDIA_URL = '/document/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'document')
