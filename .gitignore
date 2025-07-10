@@ -11,3 +11,4 @@ document\*
 *.ipynb_checkpoints
 *.ipynb
 env/
+.env
