@@ -87,11 +87,12 @@ USE_TZ = True
 DJANGO_ENV = os.getenv('DJANGO_ENV', 'development')  # Default to dev
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 if DJANGO_ENV == 'production':
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    STATICFILES_DIRS = []
 else:
-    STATIC_ROOT = None
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
