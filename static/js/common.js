@@ -182,10 +182,11 @@ const csrftoken = getCookie('csrftoken');
 
 $('#register-form').on('submit', function(e) {
     e.preventDefault();
-    // Clear all previous errors and error classes
     $('.border-dark-red').removeClass('border-dark-red');
     $('.placeholder\\:text-semi-transparent-red').removeClass('placeholder:text-semi-transparent-red');
     $('label.text-dark-red').removeClass('text-dark-red');
+    $('.field-error').remove();
+    $('[data-error-for]').text('').removeClass('text-xs text-dark-red'); // <-- Clear all data-error-for spans
 
     var pwd = $('[name="password"]').val();
     var cpwd = $('[name="confirm_password"]').val();
@@ -216,10 +217,10 @@ $('#register-form').on('submit', function(e) {
         return;
     }
 
-
     var formType = $(this).data('type');
     var formUrl = $(this).attr('action');
     var formData = new FormData(this);
+
     $.ajax({
         url: formUrl,
         type: 'POST',
@@ -228,6 +229,12 @@ $('#register-form').on('submit', function(e) {
         processData: false,
         contentType: false,
         success: function(resp) {
+            $('.field-error').remove();
+            $('[data-error-for]').text('').removeClass('text-xs text-dark-red');
+            $('.border-dark-red').removeClass('border-dark-red');
+            $('.placeholder\\:text-semi-transparent-red').removeClass('placeholder:text-semi-transparent-red');
+            $('label.text-dark-red').removeClass('text-dark-red');
+            
             if (resp.success) {
                 toastr.success(resp.message || 'Registration successful!');
                 setTimeout(function() {
@@ -251,24 +258,39 @@ $('#register-form').on('submit', function(e) {
             }
         },
         error: function(xhr) {
+            $('.field-error').remove();
+            $('[data-error-for]').text('').removeClass('text-xs text-dark-red');
+            $('.border-dark-red').removeClass('border-dark-red');
+            $('.placeholder\\:text-semi-transparent-red').removeClass('placeholder:text-semi-transparent-red');
+            $('label.text-dark-red').removeClass('text-dark-red');
+
             if (xhr.responseJSON && xhr.responseJSON.errors) {
                 $.each(xhr.responseJSON.errors, function(field, message) { 
-                var $input = $('[name="' + field + '"]');
-                $input.next('.field-error').remove();
-                $('<span class="field-error text-xs text-dark-red"></span>')
-                    .text(message)
-                    .insertAfter($input);
-                $input
-                    .addClass('border-dark-red placeholder:text-semi-transparent-red')
-                    .removeClass('border-primary-color placeholder:text-blue-teal');
-                $input.prev('label').addClass('text-dark-red');
-            });
+                    var $input = $('[name="' + field + '"]');
+                    $input.next('.field-error').remove();
+                    $('<span class="field-error text-xs text-dark-red"></span>')
+                        .text(message)
+                        .insertAfter($input);
+                    $input
+                        .addClass('border-dark-red placeholder:text-semi-transparent-red')
+                        .removeClass('border-primary-color placeholder:text-blue-teal');
+                    $input.prev('label').addClass('text-dark-red');
+                });
                 toastr.error("Please correct the highlighted errors.");
             } else {
                 toastr.error("Server error. Try again.");
             }
         }
     });
+});
+
+// Optional: Remove error style when field is corrected
+$('#register-form input').on('input change', function() {
+    var $input = $(this);
+    $input.removeClass('border-dark-red placeholder:text-semi-transparent-red');
+    $input.prev('label').removeClass('text-dark-red');
+    $input.next('.field-error').remove();
+    $('[data-error-for="' + $input.attr('name') + '"]').text('').removeClass('text-xs text-dark-red');
 });
 
 $('#login-form').on('submit', function(e) {
