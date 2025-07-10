@@ -10,7 +10,7 @@ SECRET_KEY = 'django-insecure-zpf%ym5!640&3vgl5npe@2t=trxnsjrg66h(9-!ysyj4i5jp*5
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["192.168.1.99","mediocr.aibuzz.net"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
