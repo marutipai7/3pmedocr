@@ -9,6 +9,10 @@ from donate.models import Donation
 from registration.views import validate_and_save_file
 from settings.views import validate_and_save_file
 from decimal import Decimal
+from points.models import PointsActionType, PointsHistory
+import logging
+
+logger = logging.getLogger(__name__)
 
 @dashboard_login_required
 def donate_view(request):
@@ -114,5 +118,14 @@ def donate_pay_view(request, post_id=None):
         # Increment donation_received
         post.donation_received = (post.donation_received or Decimal('0.00')) + Decimal(str(amount))
         post.save(update_fields=['donation_received'])
+        try:
+            action_type_obj = PointsActionType.objects.get(action_type='Donate')
+            PointsHistory.objects.create(
+                user=user,
+                action_type=action_type_obj,
+                points=action_type_obj.default_points
+            )
+        except PointsActionType.DoesNotExist:
+            logger.warning("PointsActionType for 'Donate' does not exist. No points awarded.")
         return JsonResponse({'success': True, 'order_id': order_id, 'transaction_id': transaction_id})
     return render(request, "donate-pay.html", {"post": post, "ngo_profile": ngo_profile})

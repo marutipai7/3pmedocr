@@ -1,0 +1,111 @@
+{% load static %}
+
+<div class="download-popup popup hidden fixed inset-0 items-center justify-center bg-black/40 px-3 z-50">
+  <div class="bg-white pb-3 rounded-[10px] shadow-lg max-w-[560px] h-[640px] w-full space-y-4 overflow-y-auto no-scrollbar">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between text-white h-10 bg-living-coral px-3">
+      <div class="flex items-center gap-4">
+        <span class="material-symbols-outlined cursor-pointer">share</span>
+        <span class="material-symbols-outlined cursor-pointer download-btn">download</span>
+      </div>
+      <span class="font-medium">Coupon Details</span>
+      <span class="material-symbols-outlined cursor-pointer close-popup">close</span>
+    </div>
+
+    <!-- Body -->
+    <div class="px-4">
+
+      <!-- Coupon Image -->
+      <div class="w-full rounded-[4px] overflow-hidden">
+        <img src="{% static 'images/no-img.jpg' %}" alt="coupon" loading="lazy"
+             class="w-full h-40 object-cover download-image">
+      </div>
+
+      <!-- Audience Profile -->
+      <div class="my-4 pt-4 border-t-2 border-dashed border-semi-transparent-black">
+        <div class="text-18-fs text-living-coral mb-3">Audience Profile</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8 text-jet-black">
+          <div class="text-14-nr flex justify-between gap-3">
+            <div class="w-2/5"><span class="text-14-fs">Age</span> :</div>
+            <div class="download-age">—</div>
+          </div>
+          <div class="text-14-nr flex justify-between gap-3">
+            <div class="w-2/5"><span class="text-14-fs">Gender</span> :</div>
+            <div class="download-gender">—</div>
+          </div>
+          <div class="text-14-nr flex justify-between gap-3">
+            <div class="w-2/5"><span class="text-14-fs">City</span> :</div>
+            <div class="download-city">—</div>
+          </div>
+          <div class="text-14-nr flex justify-between gap-3">
+            <div class="w-2/5"><span class="text-14-fs">Spending Power</span> :</div>
+            <div class="download-spending">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coupon Details -->
+      <div class="py-3">
+        <div class="text-18-fs text-living-coral mb-3">Coupon Details</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8 text-jet-black">
+
+          <div class="text-14-nr flex justify-between gap-3">
+            <div class="w-2/5"><span class="text-14-fs">Name</span> :</div>
+            <div class="download-title">—</div>
+          </div>
+          <div class="text-14-nr flex justify-between gap-3">
+            <div class="w-2/5"><span class="text-14-fs">Offer Type</span> :</div>
+            <div class="download-offer-type">—</div>
+          </div>
+          <div class="text-14-nr flex justify-between gap-3">
+            <div class="w-2/5"><span class="text-14-fs">Category</span> :</div>
+            <div class="download-category">—</div>
+          </div>
+          <div class="text-14-nr flex justify-between gap-3">
+            <div class="w-2/5"><span class="text-14-fs">Brand Name</span> :</div>
+            <div class="download-brand">—</div>
+          </div>
+          <div class="text-14-nr flex justify-between gap-3">
+            <div class="w-2/5"><span class="text-14-fs">Issued</span> :</div>
+            <div class="download-issued">—</div>
+          </div>
+          <div class="text-14-nr flex justify-between gap-3">
+            <div class="w-2/5"><span class="text-14-fs">Redeemed</span> :</div>
+            <div class="download-redeemed">—</div>
+          </div>
+          <div class="text-14-nr flex justify-between gap-3">
+            <div class="w-2/5"><span class="text-14-fs">Valid Till</span> :</div>
+            <div class="download-validity">—</div>
+          </div>
+          <div class="text-14-nr flex justify-between gap-3">
+            <div class="w-2/5"><span class="text-14-fs">Status</span> :</div>
+            <span class="text-14-fs download-status px-4 py-1 rounded-md bg-mint-cream text-green">—</span>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="text-14-nr flex items-start mt-6 gap-3">
+          <div class="w-1/4"><span class="text-14-fs">Description</span> :</div>
+          <p class="download-description">—</p>
+        </div>
+      </div>
+
+      <!-- Footer Metadata -->
+      <div class="border-t-2 border-dashed py-3 border-semi-transparent-black grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8 text-jet-black">
+        <div class="text-14-nr flex justify-between gap-3">
+          <div class="w-1/2"><span class="text-14-fs">Coupon Ref. ID</span> :</div>
+          <div class="download-ref-id">—</div>
+        </div>
+        <div class="text-14-nr flex justify-between gap-3">
+          <div class="w-1/2"><span class="text-14-fs">Issued By</span> :</div>
+          <div class="download-issued-by">—</div>
+        </div>
+        <div class="text-14-nr flex justify-between gap-3">
+          <div class="w-1/2"><span class="text-14-fs">Downloaded On</span> :</div>
+          <div class="download-downloaded-on">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,45 @@
+{% load static %}
+
+<div class="preview-popup popup hidden fixed inset-0 items-center justify-center bg-black/40 px-3 z-50">
+  <div class="bg-white w-full max-w-[500px] max-h-[90vh] rounded-lg shadow-lg overflow-y-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between text-white h-10 bg-living-coral px-3">
+      <div class="flex items-center gap-4">
+        <span class="material-symbols-outlined cursor-pointer">share</span>
+        <span class="material-symbols-outlined cursor-pointer">download</span>
+      </div>
+      <span class="font-medium">Coupon Details</span>
+      <span class="material-symbols-outlined cursor-pointer close-popup">close</span>
+    </div>
+    <div class="h-[calc(100%-40px)] overflow-y-auto scroll space-y-2 pb-6">
+      <div class="flex flex-col items-center px-4 py-3">
+        <img class="popup-image w-full max-h-60 object-contain rounded-md mb-2" src="" alt="Coupon Image" style="background:#f5f5f5;"/>
+      </div>
+      <div class="border-t border-dashed border-gray-300 mb-2"></div>
+      <div class="px-6">
+        <div class="font-semibold text-living-coral text-lg mb-2">Audience Profile</div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-y-2 gap-x-4 text-base mb-4">
+          <div>Age : <span class="popup-age font-medium"></span></div>
+          <div>Gender : <span class="popup-gender font-medium"></span></div>
+          <div>City : <span class="popup-city font-medium"></span></div>
+          <div>Spending Power : <span class="popup-spending font-medium"></span></div>
+        </div>
+        <div class="font-semibold text-living-coral text-lg mb-2">Coupon Details</div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-y-2 gap-x-4 text-base mb-4">
+          <div>Name : <span class="popup-title font-medium"></span></div>
+          <div>Offer Type : <span class="popup-offer-type font-medium"></span></div>
+          <div>Category : <span class="popup-category font-medium"></span></div>
+          <div>Brand Name : <span class="popup-brand font-medium"></span></div>
+          <div>Issued : <span class="popup-issued font-medium"></span></div>
+          <div>Redeemed : <span class="popup-redeemed font-medium"></span></div>
+          <div>Valid Till : <span class="popup-validity font-medium"></span></div>
+          <div>Status : <span class="popup-status font-medium inline-block px-3 py-1 rounded-md bg-mint-cream text-green"></span></div>
+        </div>
+        <div class="font-semibold text-living-coral text-lg mb-2">Description</div>
+        <div class="text-base mb-2">
+          <span class="popup-description"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
