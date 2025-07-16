@@ -3,10 +3,13 @@ from django.urls import reverse
 from django.db.models import Sum
 from django.utils import timezone
 from .utils import dashboard_login_required
-from .models import SettingMenu
+from .models import SettingMenu, CouponPerformance
 from registration.models import NGOProfile, ClientProfile, AdvertiserProfile
 from ngopost.models import NGOPost
 from django.db.models import Q
+from .models import TrendingCoupon
+from django.shortcuts import render
+from django.http import JsonResponse
 
 @dashboard_login_required
 def dashboard_home(request):
@@ -16,7 +19,7 @@ def dashboard_home(request):
     # Get sidebar menu
     menu_items = SettingMenu.objects.filter(
         is_active=True, user_types__contains=[user_type]
-    ).order_by('order')
+        ).order_by('order')
 
     context = {
         'user_profile': user,
@@ -38,7 +41,7 @@ def dashboard_home(request):
                     created_at__gte=timezone.now() - timezone.timedelta(days=30)
                 ).order_by('-views')[:4],
             })
-            return render(request, "dashboard/home.html", context)
+            return render(request, "dashboard/home_NGO.html", context)
 
         elif user_type == 'client':
             client_profile = ClientProfile.objects.get(user=user)
@@ -50,18 +53,43 @@ def dashboard_home(request):
 
         elif user_type == 'advertiser':
             advertiser_profile = AdvertiserProfile.objects.get(user=user)
+            performance = CouponPerformance.objects.order_by('-date').first()
+            trending_coupons = TrendingCoupon.objects.order_by('-created_at')[:5]
+
+            # New chart data logic
+            performances = CouponPerformance.objects.order_by('date')[:8]  # last 8 entries
+            
             context.update({
                 'advertiser_profile': advertiser_profile,
-                # Add advertiser-specific context
+                'performance': performance,
+                'trending_coupons': trending_coupons,
+                
             })
-            return render(request, "dashboard/home.html", context)
 
-        else:
-            return render(request, "dashboard/not_found.html")
+            print("DEBUG PERFORMANCE:", performance)
+            return render(request, "dashboard/home_advertiser.html", context)
+
+
+
+        # else:
+        #     return render(request, "dashboard/not_found.html")
 
     except Exception as e:
         # Log e if needed
         return render(request, "dashboard/not_found.html")
+    
+def get_coupon_chart_data(request):
+    # Fetch the most recent 8 entries for the chart (or more if needed)
+    performances = CouponPerformance.objects.order_by('-date')[:8][::-1]
+
+    data = {
+        # 'labels': [perf.date.strftime('%Y-%m-%d') for perf in performances],
+        'total_coupons': [perf.total_coupons for perf in performances],
+        'total_redemptions': [perf.total_redemptions for perf in performances],
+        'active_coupons': [perf.active_coupons for perf in performances],
+    }
+
+    return JsonResponse(data)
 
 
 def logout_view(request):

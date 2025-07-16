@@ -113,6 +113,7 @@ def settings_page(request):
             'contact_role': contact_persons.role,
         })
         return render(request, 'settings/settings_page_advertiser.html', context)
+    
     elif user.user_type == 'client':
         profile = ClientProfile.objects.filter(user=user).first()
         profile_id = profile.id

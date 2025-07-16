@@ -19,6 +19,7 @@ urlpatterns = [
     path('donate/', include('donate.urls')),
     path('points/', include('points.urls')),    # ... other apps
     path('coupons/', include('coupon.urls')),
+    path('dashboard/', include('dashboard.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
