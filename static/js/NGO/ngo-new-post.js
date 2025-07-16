@@ -12,7 +12,9 @@ $(document).ready(function () {
         e.stopPropagation();
         const $wrapper = $(this).closest('.dropdown-wrapper');
         const selectedText = $(this).text();
+        const selectedId = $(this).text();
         $wrapper.find('.dropdown-input').val(selectedText);
+        $wrapper.find('.dropdown-hidden-input').val(selectedId);
         $wrapper.find('.dropdown-list').hide();
     });
 
@@ -67,77 +69,98 @@ $(document).ready(function () {
         });
     });
 
-    // 1. Upload area click to trigger file input
-    $('.upload-area').on('click', function (e) {
-        const previewVisible = $(this).find('.upload-preview').is(':visible');
-        if (
-            !previewVisible &&
+    $(document).ready(function () {
+        // 1. Upload area click to trigger file input
+        $('.upload-area').on('click', function (e) {
+            const previewVisible = $(this).find('.upload-preview').is(':visible');
+            if (
             !$(e.target).is('input[type="file"]') &&
-            !$(e.target).hasClass('cancel-upload')
-        ) {
+            !$(e.target).hasClass('cancel-upload') &&
+            !$(e.target).closest('.uploaded-img-wrapper').length
+            ) {
             $(this).find('input[type="file"]').trigger('click');
+            }
+        });
+
+        // 2. Drag and drop
+        $('.upload-area').on('dragover dragleave drop', function (e) {
+            e.preventDefault();
+        });
+
+        $('.upload-area').on('drop', function (e) {
+            const files = e.originalEvent.dataTransfer.files;
+            handleFileSelection($(this), files);
+        });
+
+        // 3. Change image
+        $('.upload-area').on('click', '.change-image-btn', function (e) {
+            e.stopPropagation();
+            const area = $(this).closest('.upload-area');
+            area.find('input[type="file"]').trigger('click');
+        });
+
+        // 4. On file input change
+        $('.upload-input').on('change', function () {
+            const files = this.files;
+            const area = $(this).closest('.upload-area');
+            handleFileSelection(area, files);
+        });
+
+        // 5. Cancel all uploads
+        $('.upload-area').on('click', '.cancel-upload', function (e) {
+            e.stopPropagation();
+            const area = $(this).closest('.upload-area');
+            const input = area.find('input[type="file"]');
+            const preview = area.find('.upload-preview');
+            const placeholder = area.find('.upload-placeholder');
+
+            input.val('');
+            preview.html('').addClass('hidden');
+            placeholder.removeClass('hidden');
+        });
+
+        // 🔁 Helper: File handler
+        function handleFileSelection(area, files) {
+            const preview = area.find('.upload-preview');
+            const placeholder = area.find('.upload-placeholder');
+            const input = area.find('input[type="file"]');
+
+            if (files.length > 2) {
+                toastr.error("You can upload only 2 images. Please select again.");
+                input.val('');
+                preview.html('').addClass('hidden');
+                placeholder.removeClass('hidden');
+                return;
+            }
+
+            // Clear previous
+            preview.html('');
+
+            Array.from(files).forEach((file, index) => {
+                if (file.type.startsWith("image/")) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const imgWrapper = $(`
+                            <div class="uploaded-img-wrapper relative w-1/2 h-full flex items-center justify-center p-2">
+                            <img src="${e.target.result}" class="uploaded-img object-contain max-h-60 w-full" alt="Preview" />
+                            </div>
+                        `);
+                        preview.append(imgWrapper);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            $('.creativesVirusScan').removeClass('');
+            placeholder.addClass('hidden');
+            preview.removeClass('hidden').addClass('flex');
+            preview.append(`
+            <button type="button" class="cancel-upload absolute -top-8 sm:-top-2 right-2 z-10">
+                <span class="material-symbols-outlined cursor-pointer">close</span>
+            </button>
+            `);
         }
-    });
+        });
 
-    // 2. Drag and drop handling
-    $('.upload-area').on('dragover', function (e) {
-        e.preventDefault();
-    });
-
-    $('.upload-area').on('dragleave', function (e) {
-        e.preventDefault();
-    });
-
-    $('.upload-area').on('drop', function (e) {
-        e.preventDefault();
-        const file = e.originalEvent.dataTransfer.files[0];
-        if (file && file.type.startsWith('image/')) {
-            const fileInput = $(this).find('input[type="file"]')[0];
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            fileInput.files = dataTransfer.files;
-            $(fileInput).trigger('change');
-        }
-    });
-
-    // 3. Change image
-    $('.upload-area').on('click', '.change-image-btn', function (e) {
-        e.stopPropagation();
-        const area = $(this).closest('.upload-area');
-        area.find('input[type="file"]').trigger('click');
-    });
-
-    // 4. File input change handler
-    $('.upload-input').on('change', function () {
-        const file = this.files[0];
-        const area = $(this).closest('.upload-area');
-        const preview = area.find('.upload-preview');
-        const placeholder = area.find('.upload-placeholder');
-
-        if (file && file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                preview.find('.uploaded-img').attr('src', e.target.result);
-                placeholder.addClass('hidden');
-                preview.removeClass('hidden').addClass("flex");
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // 5. Cancel upload
-    $('.upload-area').on('click', '.cancel-upload', function (e) {
-        e.stopPropagation(); // Prevent triggering upload
-        const area = $(this).closest('.upload-area');
-        const input = area.find('input[type="file"]');
-        const preview = area.find('.upload-preview');
-        const placeholder = area.find('.upload-placeholder');
-
-        // Reset
-        input.val('');
-        preview.addClass('hidden').removeClass("flex");
-        placeholder.removeClass('hidden');
-    });
 
     // Title and Description Change
 
@@ -239,7 +262,7 @@ $(document).ready(function () {
     });
 
     // AJAX validation for missing fields on NGO post form
-    $('#new-post-form').on('submit', function (e) {
+    $('#new-post-forms').on('submit', function (e) {
         e.preventDefault();
         var form = this;
         var formData = new FormData(form);
@@ -346,6 +369,68 @@ $(document).ready(function () {
             }
         });
     });
+
+    $('#new-post-form').on('submit', function (e) {
+      e.preventDefault(); // prevent default form submission
+
+      let form = $(this);
+      let isValid = true;
+      let missingFields = [];
+
+      // 1. Check required input, textarea, select
+      form.find('input[required], select[required], textarea[required]').each(function () {
+          let input = $(this);
+          let value = input.val().trim();
+          
+          // If input is hidden (like hidden file input or custom dropdowns), skip
+          if (input.is(':hidden') && !input.hasClass('upload-input')) return;
+
+          if (!value || value === 'Select') {
+              isValid = false;
+              missingFields.push(input.attr('name'));
+          }
+      });
+
+      // 2. Check creative file uploads (only if upload-input is visible)
+      let creativeInput = form.find('input.upload-input')[0];
+      if (creativeInput && creativeInput.files.length === 0) {
+          isValid = false;
+          missingFields.push('creatives[]');
+      }
+
+      // 3. Handle validation result
+      if (!isValid) {
+          console.warn("Missing required fields:", missingFields);
+          return;
+      }
+
+      console.log("All validations passed.");
+
+      // You can now proceed to send the data via AJAX here...
+      let formData = new FormData(this);
+
+        $.ajax({
+            url: 'post_save/',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                if (res.success) {
+                    toastr.success("Post created successfully!" + res.message);
+                    window.location.href = "/posts/";  // Change to your actual posts page
+                } else {
+                    toastr.error("Unexpected error." + res.message || '');
+                }
+            },
+            error: function (xhr) {
+                console.error("Error:", xhr.responseJSON);
+                toastr.error("Error: " + (xhr.responseJSON?.error || "Unknown error"));
+            }
+        });
+  });
+
+
 
     $(document).on("click", ".bookmark-fill", function () {
         $(this).toggleClass(`material-filled text-violet-sky`);

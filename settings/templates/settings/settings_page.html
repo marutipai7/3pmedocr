@@ -999,6 +999,7 @@
                 <!-- Country Code -->
                 <div class="pl-4 lg:w-1/4">
                   <select name="countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}"></select>
+                  <span class="error countryCodesError text-red-500 text-sm mt-1 hidden"></span>
                 </div>
 
                 <!-- Phone -->
@@ -1058,54 +1059,58 @@
                 </div>
                 {% endfor %}
               </div>
+              <span class="error ngo_servicesError text-red-500 text-sm mt-1 hidden"></span>
             </div>
 
 
-
+            <div class="relative dropdown-container">
           <!--Address-->
           <input name="address" type="text" class="w-full rounded" placeholder="Address" value="{{address}}"/>
+              <span class="error addressError text-red-500 text-sm mt-1 hidden"></span>
+              </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm">
             <!-- City,Town,District -->
             <div class="flex flex-col">
               <input name="city" type="text" class="border rounded px-3 py-2" placeholder="City,Town,District" value="{{city}}"/>
-              <span class="error adminNameError text-red-500 text-sm mt-1 hidden"></span>
+              <span class="error cityError text-red-500 text-sm mt-1 hidden"></span>
             </div>
             <!-- State -->
             <div class="flex flex-col">
               <input name="state" type="text" class="border rounded px-3 py-2" placeholder="State" value="{{state}}"/>
-              <span class="error genderError text-red-500 text-sm mt-1 hidden"></span>
+              <span class="error stateError text-red-500 text-sm mt-1 hidden"></span>
             </div>
             <!-- Country -->
             <div class="flex flex-col">
               <input name="country" type="text" class="border rounded px-3 py-2" placeholder="Country" value="{{country}}"/>
-              <span class="error addressError text-red-500 text-sm mt-1 hidden"></span>
+              <span class="error countryError text-red-500 text-sm mt-1 hidden"></span>
             </div>
             <!-- Pincode -->
             <div class="flex flex-col">
               <input name="pincode" type="text" class="border rounded px-3 py-2" placeholder="Pincode" value="{{pincode}}"/>
-              <span class="error licenseError text-red-500 text-sm mt-1 hidden"></span>
+              <span class="error pincodeError text-red-500 text-sm mt-1 hidden"></span>
             </div>
             <!-- contact -->
             <div class="flex flex-col">
               <input name="contact_name" type="text" class="border rounded px-3 py-2" placeholder="Contact Person Name" value="{{contact_name}}"/>
-              <span class="error licenseError text-red-500 text-sm mt-1 hidden"></span>
+              <span class="error contact_nameError text-red-500 text-sm mt-1 hidden"></span>
             </div>
             <!-- ROle -->
             <div class="flex flex-col">
               <input name="contact_role" type="text" class="border rounded px-3 py-2" placeholder="Role" value="{{contact_role}}"/>
-              <span class="error licenseError text-red-500 text-sm mt-1 hidden"></span>
+              <span class="error contact_roleError text-red-500 text-sm mt-1 hidden"></span>
             </div>
             <!-- Country code + Phone -->
             <div class="flex flex-col lg:flex-row gap-4">
               <!-- Country Code -->
               <div class="lg:w-1/4">
                 <select name="countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}" placeholder="India (+91)"></select>
+                <span class="error countryCodesError text-red-500 text-sm mt-1 hidden"></span>
               </div>
 
               <!-- Phone -->
               <div class="flex-1">
                 <input name="contact_phone_number" type="text" class="border rounded px-3 py-2 w-full" placeholder="Phone Number" value="{{contact_phone_number}}"/>
-                <span class="error phoneError text-red-500 text-sm mt-1 hidden"></span>
+                <span class="error contact_phone_numberError text-red-500 text-sm mt-1 hidden"></span>
               </div>
             </div>
             <!--Send OTP-->
@@ -1194,7 +1199,6 @@
 {% block extra_js %}
   <script src="{% static 'js/forms.js' %}"></script>
   <script src="{% static 'js/countryCodes.js' %}"></script>
-  <script src="{% static 'js/toaster.js' %}"></script>
   <script src="{% static 'js/Purchase.js' %}"></script>
   <script src="{% static 'js/tabs.js' %}"></script>
   <script src="{% static 'js/settings.js' %}"></script>

@@ -20,6 +20,11 @@ from django.views.decorators.http import require_GET, require_POST
 from donate.models import Donation
 from django.db.models import Q
 from points.models import PointsActionType, PointsHistory
+from django.views.decorators.csrf import csrf_exempt
+from django.template.loader import render_to_string
+from datetime import datetime
+from django.core.paginator import Paginator
+
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
@@ -27,126 +32,6 @@ logger = logging.getLogger(__name__)
 @dashboard_login_required
 def post_view(request):
     user = request.user_obj
-    
-    if request.method == 'POST':
-        try:
-            # Extract and validate data
-            header = request.POST.get('header', '').strip()
-            description = request.POST.get('description', '').strip()
-            tags = request.POST.get('tags', '').strip()
-            post_type = request.POST.get('post_type', '').strip()
-            donation_frequency = request.POST.get('donation_frequency', '').strip()
-            target_donation = request.POST.get('target_donation', '').strip()
-            
-            country = request.POST.get('country', '').strip()
-            state = request.POST.get('state', '').strip()
-            city = request.POST.get('city', '').strip()
-            pincode = request.POST.get('pincode', '').strip()
-
-            age_group = request.POST.get('age', '').strip()
-            gender = request.POST.get('gender', '').strip()
-            spending_power = request.POST.get('spending_power', '').strip()
-            start_date = request.POST.get('start-date','').strip()
-            end_date = request.POST.get('end-date','').strip()
-
-            creative_files = request.FILES.getlist('creatives')
-            creative1_file = creative_files[0] if len(creative_files) > 0 else None
-            creative2_file = creative_files[1] if len(creative_files) > 1 else None
-
-            # Basic validation
-            required_fields = {
-                'Header': header, 'Description': description, 'Tags': tags,
-                'Post Type': post_type, 'Target Donation': target_donation,
-                'Country': country, 'State': state, 'City': city, 'Pincode': pincode,
-                'Start Date': start_date, 'End Date': end_date,
-                'Creative Upload': creative1_file
-            }
-            missing_fields = [name for name, value in required_fields.items() if not value]
-            
-            # Check if request is AJAX
-            is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-
-            # File validation
-            creative1_path, error = validate_and_save_file(creative1_file, 'post_creatives', 'Creative 1', user_type='ngo')
-            if error:
-                if is_ajax:
-                    return JsonResponse({'error': error, 'missing_fields': ['Creative Upload']})
-                messages.error(request, error)
-                return render(request, 'post.html', {'form_data': request.POST})
-
-            creative2_path = None
-            if creative2_file:
-                creative2_path, error = validate_and_save_file(creative2_file, 'post_creatives', 'Creative 2', user_type='ngo')
-                if error:
-                    if is_ajax:
-                        return JsonResponse({'error': error, 'missing_fields': ['Creative Upload']})
-                    messages.error(request, error)
-                    return render(request, 'post.html', {'form_data': request.POST})
-
-            # Return validation errors for AJAX
-            if is_ajax and missing_fields:
-                return JsonResponse({'missing_fields': missing_fields})
-            
-            # Return validation errors for normal POST
-            if missing_fields:
-                messages.error(request, f"Please fill all required fields: {', '.join(missing_fields)}")
-                return render(request, 'post.html', {'form_data': request.POST})
-
-            # Save post (ONLY ONCE)
-            post = NGOPost(
-                user=user,
-                header=header,
-                description=description,
-                tags=tags,
-                post_type=post_type,
-                donation_frequency=donation_frequency,
-                target_donation=target_donation.replace('Rs', '').replace(',', '').strip(),
-                country=country,
-                state=state,
-                city=city,
-                pincode=pincode,
-                age_group=age_group,
-                gender=gender,
-                spending_power=spending_power,
-                start_date=start_date,
-                end_date=end_date,
-                creative1=creative1_path,
-                creative2=creative2_path
-            )
-            post.save()
-            
-            # Award points
-            try:
-                action_type_obj = PointsActionType.objects.get(action_type='Post')
-                PointsHistory.objects.create(
-                    user=user,
-                    action_type=action_type_obj,
-                    points=action_type_obj.default_points
-                )
-            except PointsActionType.DoesNotExist:
-                logger.warning("PointsActionType for 'Post' does not exist. No points awarded.")
-            
-            logger.info(f"Successfully saved new post with ID: {post.id}")
-            
-            # Return appropriate response
-            if is_ajax:
-                return JsonResponse({'success': True, 'message': 'Post created successfully!'})
-            else:
-                messages.success(request, "Your post has been successfully created!")
-                return redirect('posts')
-
-        except (ValueError, TypeError) as e:
-            logger.error(f"Error processing form data: {e}", exc_info=True)
-            error_msg = f"Invalid data submitted. Please check your inputs. Error: {e}"
-            if is_ajax:
-                return JsonResponse({'error': error_msg})
-            messages.error(request, error_msg)
-        except Exception as e:
-            logger.error(f"An unexpected error occurred in post_view: {e}", exc_info=True)
-            error_msg = f"An unexpected error occurred: {e}"
-            if is_ajax:
-                return JsonResponse({'error': error_msg})
-            messages.error(request, error_msg)
 
     # GET request handling - load form data
     history_query = request.GET.get('history_query', '').strip().lower()
@@ -213,6 +98,96 @@ def post_view(request):
         'spending_power_options': SpendingPowerOption.objects.filter(is_active=True),
     }
     return render(request, 'post.html', context)
+
+
+
+@dashboard_login_required
+def post_history_ajax(request):
+    user = request.user_obj
+    query = request.GET.get('query', '').strip()
+    page = int(request.GET.get('page', 1))
+    limit = int(request.GET.get('limit', 10))
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    filters = Q(user=user)
+    if query:
+        filters &= Q(post_type__icontains=query) | Q(status__icontains=query)
+    if start_date:
+        try:
+            filters &= Q(created_at__date__gte=datetime.strptime(start_date, '%Y-%m-%d').date())
+        except: pass
+    if end_date:
+        try:
+            filters &= Q(created_at__date__lte=datetime.strptime(end_date, '%Y-%m-%d').date())
+        except: pass
+
+    posts = NGOPost.objects.filter(filters).order_by('-created_at')
+    paginator = Paginator(posts, limit)
+    page_obj = paginator.get_page(page)
+
+    html = render_to_string("partials/post_history_rows.html", {
+        "post_history": page_obj.object_list,
+    })
+
+    return JsonResponse({
+        "html": html,
+        "current_page": page_obj.number,
+        "total_pages": paginator.num_pages,
+    })
+
+@dashboard_login_required
+@csrf_exempt
+def save_ngo_post(request):
+    if request.method != "POST":
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+    user = request.user_obj  # You said this is set in middleware
+
+    data = request.POST
+    files = request.FILES.getlist('creatives[]')
+
+    required_fields = [
+        'header', 'description', 'tags', 'post_type', 'donation_frequency',
+        'target_donation', 'country', 'state', 'city', 'pincode',
+        'age', 'gender', 'spending_power', 'start-date', 'end-date'
+    ]
+    missing_fields = [f for f in required_fields if not data.get(f)]
+    if len(files) == 0:
+        missing_fields.append('creatives[]')
+
+    if missing_fields:
+        return JsonResponse({'error': 'Missing required fields', 'missing_fields': missing_fields}, status=400)
+
+    try:
+        post = NGOPost.objects.create(
+            user=user,
+            header=data['header'].strip()[:80],
+            description=data['description'].strip()[:500],
+            tags=data['tags'].strip()[:255],
+            post_type=data['post_type'],
+            donation_frequency=data['donation_frequency'],
+            target_donation=data['target_donation'].replace('Rs', '').replace(',', ''),
+            country=data['country'],
+            state=data['state'],
+            city=data['city'],
+            pincode=data['pincode'],
+            age_group=data['age'],
+            gender=data['gender'],
+            spending_power=data['spending_power'],
+            start_date=datetime.strptime(data['start-date'], '%Y-%m-%d'),
+            end_date=datetime.strptime(data['end-date'], '%Y-%m-%d'),
+            creative1=files[0] if len(files) > 0 else None,
+            creative2=files[1] if len(files) > 1 else None
+        )
+
+        return JsonResponse({'success': True, 'post_id': post.id, 'message':'NGO Post Saved.'})
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({'error': 'Something went wrong.', 'message':'NGO Post not Saved.', 'details': str(e)}, status=500)
+    
 
 @dashboard_login_required
 @require_GET

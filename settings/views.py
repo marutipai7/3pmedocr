@@ -438,3 +438,84 @@ def change_password(request):
     user.password = make_password(new_password)
     user.save()
     return JsonResponse({'success': 'Password changed successfully'})
+
+def update_ngo_profile(request):
+    if request.method != "POST":
+        return JsonResponse({"success": False, "message": "Invalid request method."}, status=405)
+
+    data = request.POST
+    errors = {}
+    user = request.user_obj
+    print("post_data:", data.dict())
+    print("user_obj:", user)
+
+    # return JsonResponse({"stop": True})
+
+    # --- Basic Validations ---
+    email = data.get("email", "").strip()
+    phone_number = data.get("phone", "").strip()
+    country_code = data.get("countryCodes", "").strip()
+
+    if not email:
+        errors["email"] = "Email is required."
+    else:
+        try:
+            validate_email(email)
+        except ValidationError:
+            errors["email"] = "Enter a valid email address."
+
+    if not phone_number or not re.match(r"^\d{8,15}$", phone_number):
+        errors["phone"] = "Enter a valid phone number (8-15 digits)."
+
+    ngo_services = data.getlist("ngo_services")
+    if not ngo_services:
+        errors["services"] = "Select at least one NGO service."
+
+    required_fields = [
+        "ngo_name", "address", "city", "state", "pincode",
+        "country", "contact_name", "contact_phone_number"
+    ]
+
+    for field in required_fields:
+        if not data.get(field, "").strip():
+            errors[field] = f"{field.replace('_', ' ').capitalize()} is required."
+
+    # If validation fails, return errors before saving anything
+    if errors:
+        return JsonResponse({"success": False, "errors": errors}, status=400)
+
+    # --- Update User model ---
+    user.email = email
+    user.phone_country_code = country_code
+    user.phone_number = phone_number
+    user.save()
+
+    # --- Update NGOProfile ---
+    ngo_profile = NGOProfile.objects.filter(user=user).first()
+    if ngo_profile:
+        ngo_profile.ngo_name = data.get("ngo_name", "").strip()
+        ngo_profile.website_url = data.get("website_url", "").strip()
+        ngo_profile.address = data.get("address", "").strip()
+        ngo_profile.city = data.get("city", "").strip()
+        ngo_profile.state = data.get("state", "").strip()
+        ngo_profile.country = data.get("country", "").strip()
+        ngo_profile.pincode = data.get("pincode", "").strip()
+        ngo_profile.ngo_services = ngo_services
+        ngo_profile.referral_code = data.get("referral_code", "").strip()
+        ngo_profile.save()
+
+        # --- Update ContactPerson ---
+        contact_person = ContactPerson.objects.filter(
+            profile_type='ngo', profile_id=ngo_profile.id
+        ).first()
+
+        if contact_person:
+            contact_person.name = data.get("contact_name", "").strip()
+            contact_person.phone_country_code = country_code
+            contact_person.phone_number = data.get("contact_phone_number", "").strip()
+            contact_person.role = data.get("contact_role", "").strip()
+            contact_person.save()
+
+    return JsonResponse({"success": True, "message": "NGO profile updated successfully."})
+
+
