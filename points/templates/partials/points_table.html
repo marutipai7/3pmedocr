@@ -1,0 +1,26 @@
+<table class="min-w-full table-auto whitespace-nowrap docTable">
+  <thead class="bg-violet-sky text-white text-sm sm:text-18-b">
+    <tr>
+      <th class="text-center px-4 py-6 border-r border-white">Date & Time</th>
+      <th class="text-center px-4 py-6 border-r border-white">Type</th>
+      <th class="text-center px-4 py-6 border-r border-white">Points</th>
+      <th class="text-center px-4 py-6 border-r border-white">Status</th>
+    </tr>
+  </thead>
+  <tbody class="bg-snow-gray text-dark-gray text-16-fs">
+    {% for row in history %}
+    <tr>
+      <td class="px-4 py-4.5 text-center">{{ row.timestamp }}</td>
+      <td class="px-4 py-4.5 text-center">{{ row.action_type }}</td>
+      <td class="px-4 py-4.5 text-center">{{ row.points }}</td>
+      <td class="px-4 py-4.5 text-center">
+        <div class="bg-mint-cream text-green py-2 rounded-md border-none w-30">{{ row.status }}</div>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="4" class="text-center py-5 text-gray-500">No history available</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

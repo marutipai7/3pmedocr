@@ -31,13 +31,23 @@
                 </div>
               
                     <div class="flex flex-col lg:items-center diamond-user absolute right-7 top-0">
-                    <img
-                      src="/static/images/diamond-user.png"
-                      alt=""
-                      class="w-25 h-25"
-                    />
-                    <p class="font-semibold text-sm md:text-lg">Diamond User</p>
-                  </div>
+  {% if badge %}
+    <img
+      src="{{ badge.image_url }}"
+      alt="{{ badge.name }}"
+      class="w-25 h-25"
+    />
+    <p class="font-semibold text-sm md:text-lg">{{ badge.name }}</p>
+  {% else %}
+    <img
+      src="/static/images/diamond-badge.svg"
+      alt="No Badge"
+      class="w-25 h-25"
+    />
+    <p class="font-semibold text-sm md:text-lg">No Badge</p>
+  {% endif %}
+</div>
+
                 
               </div>
               
@@ -80,53 +90,24 @@
                   class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 pt-6"
                 >
                   <!-- Custom Legend -->
-                  <div
-                    class="flex flex-wrap items-center gap-10 pl-2"
-                    id="referralCustomLegend"
-                  >
-                    <label class="flex items-center gap-4 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        class="legend-checkbox focus:outline-none focus:ring-0 focus:ring-offset-0 rounded-xs text-violet-sky text-2xl w-5 h-5 cursor-pointer"
-                        data-index="0"
-                        checked
-                      />
-                      <span class="flex items-center gap-1">
-                        <div class="bg-slate-blue w-2 h-2 rounded-full"></div>
-                        Referral
-                      </span>
-                    </label>
+                  <div class="flex flex-wrap items-center gap-10 pl-2" id="referralCustomLegend">
+                    {% for label, value in action_points.items %}
+                      <label class="flex items-center gap-4 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          class="legend-checkbox focus:outline-none focus:ring-0 focus:ring-offset-0 rounded-xs text-violet-sky text-2xl w-5 h-5 cursor-pointer"
+                          data-index="{{ forloop.counter0 }}"
+                          {% if value > 0 %}checked{% endif %}
+                        />
+                  <span class="flex items-center gap-1">
+                    <div class="w-2 h-2 rounded-full"> 
+                    </div>
+        {{ label }}
+      </span>
+    </label>
+  {% endfor %}
+</div>
 
-                    <label class="flex items-center gap-4 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        class="legend-checkbox focus:outline-none focus:ring-0 focus:ring-offset-0 rounded-xs text-violet-sky text-2xl w-5 h-5 cursor-pointer"
-                        data-index="1"
-                        checked
-                      />
-                      <span class="flex items-center gap-1">
-                        <div class="bg-green w-2 h-2 rounded-full"></div>
-                        Map
-                      </span>
-                    </label>
-
-                    <label class="flex items-center gap-4 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        class="legend-checkbox focus:outline-none focus:ring-0 focus:ring-offset-0 rounded-xs text-violet-sky text-2xl w-5 h-5 cursor-pointer"
-                        data-index="2"
-                        checked
-                      />
-
-                      <span class="flex items-center gap-1">
-                        <div
-                          class="bg-light-sea-green w-2 h-2 rounded-full"
-                        ></div>
-                       Post
-                      </span>
-                    </label>
-                    
-                  </div>
 
                   <!-- Right Controls -->
                   <div class="flex flex-wrap gap-4 items-center">
@@ -197,125 +178,69 @@
                   </div>
                   <img src="/static/images/trophy-ngo.svg" alt="trophy" class="absolute right-10 top-8">
                 </div>
-                <div class="flex items-center gap-4 pt-4 flex-col lg:flex-row">
-                  <div class="bg-light-violet-sky rounded-md shadow-lg p-4 w-full sm:w-64">
-                    <div class="flex flex-col gap-3 items-center justify-center">
-                      <p class="font-bold text-xl">Referral</p>
-                      <p class="font-bold text-3xl text-violet-sky">{{ action_points.referral }}</p>
-                    </div>
+                  <div class="flex items-center gap-4 pt-4 flex-col lg:flex-row">
+                      {% for label, value in action_points.items %}
+                        <div class="bg-light-violet-sky rounded-md shadow-lg p-4 w-full sm:w-64">
+                          <div class="flex flex-col gap-3 items-center justify-center">
+                            <p class="font-bold text-xl">{{ label }}</p>
+                            <p class="font-bold text-3xl text-violet-sky">{{ value }}</p>
+                          </div>
+                        </div>
+                      {% endfor %}
                   </div>
-                  <div class="bg-light-violet-sky rounded-md shadow-lg p-4  w-full sm:w-64">
-                    <div class="flex flex-col gap-3 items-center justify-center">
-                      <p class="font-bold text-xl">Map</p>
-                      <p class="font-bold text-3xl text-violet-sky">{{ action_points.map }}</p>
-                    </div>
-                  </div>
-                  <div class="bg-light-violet-sky rounded-md shadow-lg p-4 w-full sm:w-64">
-                    <div class="flex flex-col gap-3 items-center justify-center">
-                      <p class="font-bold text-xl">Post</p>
-                      <p class="font-bold text-3xl text-violet-sky">{{ action_points.post }}</p>
-                    </div>
-                  </div>
-                 
-                </div>
+
 
                 <div class="bg-pale-lavender mt-4 p-4 rounded-md shadow-lg">
-                  <p class="font-semibold  text-sm lg:text-lg text-jet-black">
-                    Unlock exclusive benefits and upgrade your status through referrals, purchases, sharing & Donation points!
-                  </p>
+                <p class="font-semibold text-sm lg:text-lg text-jet-black">
+                  Unlock exclusive benefits and upgrade your status through referrals, purchases, sharing & Donation points!
+                </p>
 
-                  <div class="pt-4">
-                    <!--Silver user-->
-                    <div class="flex flex-col lg:flex-row lg:justify-between  lg:items-center gap-4">
+                <div class="pt-4">
+                  {% for badge in all_badges %}
+                    <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 {% if not forloop.first %}mt-4{% endif %}">
                       <div class="flex flex-col sm:flex-row gap-4">
-                      <div class="flex items-center justify-center sm:justify-start">
-                          <img
-                            src="/static/images/Silver Badge.svg"
-                            alt="silver badge"
-                            class="h-30 w-30 object-contain"
-                          />
+                        <div class="flex items-center justify-center sm:justify-start">
+                         {% if badge.image_url %}
+                        <img
+                          src="{{ badge.image_url }}"
+                          alt="{{ badge.name }}"
+                          class="h-30 w-30 object-contain"
+                        />
+                      {% else %}
+                        <img
+                          src="/static/images/diamond-badge.svg"
+                          alt="{{ badge.name }}"
+                          class="h-30 w-30 object-contain"
+                        />
+                      {% endif %}
+
                         </div>
                         <div class="flex flex-col">
                           <p class="font-semibold text-lg text-violet-sky tracking-widest">
-                            SILVER USER
+                            {{ badge.name|upper }}
                           </p>
-                          <p class="font-semibold text-base mt-2">
-                            - Free access to a highly beneficial system.<br />
-                            - Heavy discount on all the purchases by Providers.<br />
-                            - Fast and easy to use platform for navigation, purchases and sharing.<br />
-                            - Recognition as an active community member
-                          </p>
+                          <div class="badge-description font-semibold text-base mt-2 whitespace-pre-line">
+  {{ badge.description }}
+</div>
+<ul class="badge-description-list list-disc pl-6 mt-2 font-semibold text-base"></ul>
+
                         </div>
                       </div>
-                      <div >
+                      <div>
                         <p class="font-normal text-lg text-violet-sky">
-                          up-to 999 points
+                          {% if badge.max_points %}
+                            {{ badge.min_points }} to {{ badge.max_points }} points
+                          {% else %}
+                            {{ badge.min_points }} & Above points
+                          {% endif %}
                         </p>
                       </div>
                     </div>
-                  </div>
-                  
-                  <!--Gold User-->
-                  <div class="flex flex-col lg:flex-row lg:justify-between   lg:items-center gap-4 mt-4">
-                    <div class="flex flex-col sm:flex-row gap-4">
-                      <div class="flex items-center justify-center sm:justify-start">
-                        <img
-                          src="/static/images/Gold Badge.svg"
-                          alt="Gold badge"
-                          class="h-30 w-30 object-contain"
-                        />
-                      </div>
-                      <div class="flex flex-col">
-                        <p
-                          class="font-semibold text-lg text-violet-sky tracking-widest"
-                        >
-                          GOLD USER
-                        </p>
-                        <p class="font-semibold text-base">
-                          - All Silver-level benefits. <br />- Priority placement
-                          in engagement-based features. <br />- Access to limited
-                          early feature previews. <br />- Special features and
-                          customized offers by Providers.
-                        </p>
-                      </div>
-                    </div>
-                    <div>
-                      <p class="font-normal text-lg text-violet-sky">
-                        1000 to 2499 points
-                      </p>
-                    </div>
-                  </div>
-
-                  <!--Diamond user-->
-                  <div class="flex flex-col lg:flex-row lg:justify-between  lg:items-center gap-4 mt-4">
-                    <div class="flex flex-col sm:flex-row gap-4">
-                      <div class="flex items-center justify-center sm:justify-start">
-                        <img
-                          src="/static/images/diamond-badge.svg"
-                          alt="diamond-badge"
-                          class="h-30 w-30 object-contain"
-                        />
-                      </div>
-                      <div class="flex flex-col">
-                        <p
-                          class="font-semibold text-lg text-violet-sky tracking-widest"
-                        >
-                          DIAMOND USER
-                        </p>
-                        <p class="font-semibold text-base">
-                          - All Gold-level benefits. <br />- Special mentions in
-                          community spaces (where applicable). <br />- Invitations
-                          to participate in feedback sessions (when available)
-                        </p>
-                      </div>
-                    </div>
-                    <div>
-                      <p class="font-normal text-lg text-violet-sky">
-                        2499 & Above points
-                      </p>
-                    </div>
-                  </div>
+                  {% endfor %}
                 </div>
+              </div>
+
+
                 <div class="pt-6">
                   <p class="font-normal text-xl">✅ Important Note:</p>
                   <ul class="list-disc pl-6 font-normal text-lg">
@@ -881,45 +806,8 @@
           </div>
         </div>        
 
-        <div class="overflow-x-auto pt-4" >
-          <table class="min-w-full table-auto whitespace-nowrap docTable">
-            <thead class="bg-violet-sky text-white text-sm sm:text-18-b">
-              <tr>
-                <th class="text-center px-4 py-6 border-r border-white">
-                  <div class="flex items-center justify-center gap-2">
-                    Date & Time
-                    <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy"/>
-                  </div>
-                </th>
-                <th class="text-center px-4 py-6 border-r border-white">Type</th>
-                <th class="text-center px-4 py-6 border-r border-white">Points</th>
-                <th class="text-center px-4 py-6 border-r border-white">
-                  <div class="flex items-center justify-center gap-2">
-                    Status
-                    <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy"/>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody class="bg-snow-gray text-dark-gray text-16-fs">
-              {% for row in history %}
-              <tr>
-                <td class="px-4 py-4.5 text-center flex flex-col items-center">{{ row.timestamp }}</td>
-                <td class="px-4 py-4.5 text-center">{{ row.action_type }}</td>
-                <td class="px-4 py-4.5 text-center">{{ row.points }}</td>
-                <td class="px-4 py-4.5 text-center justify-center items-center flex">
-                  <div class="bg-mint-cream text-green py-2 rounded-md border-none w-30">
-                    {{ row.status }}
-                  </div>
-                </td>
-              </tr>
-              {% empty %}
-              <tr>
-                <td colspan="4" class="text-center py-5 text-gray-500">No history available</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+        <div class="overflow-x-auto pt-4" id="pointsTable">
+          {% include 'partials/points_table.html' %}
         </div>
       </div>
 <!-- Django Template -->
@@ -984,6 +872,28 @@ scales: {
 }
 }
 });
+ // Create checkboxes dynamically
+  const checkboxContainer = document.getElementById("referralCustomLegend");
+
+  datasets.forEach((dataset, index) => {
+    const label = document.createElement("label");
+    label.style.marginRight = "10px";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = true;
+    checkbox.dataset.index = index;
+
+    checkbox.addEventListener("change", function () {
+      const i = this.dataset.index;
+      referralChart.data.datasets[i].hidden = !this.checked;
+      referralChart.update();
+    });
+
+    // label.appendChild(checkbox);
+    // label.appendChild(document.createTextNode(dataset.label));
+    // checkboxContainer.appendChild(label);
+  });
 </script>
 <script>
   function applyDateFilter(filterType) {
@@ -1004,6 +914,105 @@ scales: {
     }
   }
 </script>
+<script>
+  document.querySelectorAll('.badge-description').forEach(function(descElem) {
+    const text = descElem.textContent;
+    const listElem = descElem.nextElementSibling;
+
+    // Split by period and trim
+    const lines = text.split('.').map(line => line.trim()).filter(line => line.length > 0);
+
+    // Add each line to the list
+    lines.forEach(line => {
+      const li = document.createElement('li');
+      li.textContent = line;
+      listElem.appendChild(li);
+    });
+
+    // Optionally hide original text
+    descElem.style.display = 'none';
+  });
+</script>
+
+<script>
+  $(document).ready(function () {
+    // Listen for button click with data-tab="all-rewards"
+    $('[data-tab="all-rewards"]').on('click', function () {
+      $.ajax({
+        url: 'get-cards/',  // your Django view URL
+        method: 'GET',
+        success: function (response) {
+          $('#featured-rewards').html(response.html); // Replace card container HTML
+        },
+        error: function () {
+          alert("Failed to load rewards.");
+        }
+      });
+    });
+  });
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+function fetchFilteredData() {
+    const search = $("input[name='search']").val();
+    const startDate = $("#startDateInput").val();
+    const endDate = $("#endDateInput").val();
+
+    $.ajax({
+        url: "history/",
+        data: {
+            search: search,
+            start_date: startDate,
+            end_date: endDate
+        },
+        success: function(data) {
+            $("#pointsTable").html(data);
+        }
+    });
+}
+
+$("input[name='search']").on("input", function () {
+    clearTimeout(window.searchTimeout);
+    window.searchTimeout = setTimeout(fetchFilteredData, 400); // debounce
+});
+
+$("#startDateInput, #endDateInput").on("change", function () {
+    fetchFilteredData();
+});
+
+function applyDateFilter(type) {
+    const today = new Date();
+    let start = "", end = "";
+
+    if (type === "last_week") {
+        start = new Date(today.setDate(today.getDate() - 7));
+        end = new Date();
+    } else if (type === "last_month") {
+        start = new Date(today.setMonth(today.getMonth() - 1));
+        end = new Date();
+    } else if (type === "last_year") {
+        start = new Date(today.setFullYear(today.getFullYear() - 1));
+        end = new Date();
+    } else if (type === "custom") {
+        $("#startDateInput").removeClass("hidden");
+        $("#endDateInput").removeClass("hidden");
+        return;
+    }
+
+    if (start && end) {
+        $("#startDateInput").val(start.toISOString().split('T')[0]);
+        $("#endDateInput").val(end.toISOString().split('T')[0]);
+        fetchFilteredData();
+    }
+}
+$('[data-tab="points-history"]').on('click', function () {
+fetchFilteredData();
+});
+</script>
+
+
+
 
 
 <script src="{% static 'js/tabs.js' %}"></script>
