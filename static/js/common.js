@@ -327,7 +327,7 @@ $('#login-form').on('submit', function(e) {
                     if (resp.errors.email) $('#email-error').text(resp.errors.email);
                     if (resp.errors.password) $('#password-error').text(resp.errors.password);
                     if (resp.errors.account) toastr.error(resp.errors.account);
-                      else toastr.error('Please correct the errors.');
+                        else toastr.error('Please correct the errors.');
                 } else {
                     toastr.error(resp.error || "Login failed.");
                 }

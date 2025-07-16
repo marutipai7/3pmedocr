@@ -66,7 +66,6 @@ $(document).ready(function () {
     // Apply inline styles to matching sidebar link
   $(".sidebar nav a").each(function () {
     const href = $(this).attr("href"); // ✅ define href here
-    console.log(href, currentPath);
     if (
         href === currentPath ||
         (currentPath === '/' && href.includes('index.html')) ||

@@ -13,3 +13,4 @@ document\*
 env/
 .env
 staticfiles/
+*/migrations

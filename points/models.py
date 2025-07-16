@@ -30,3 +30,18 @@ class PointsHistory(models.Model):
 
     def __str__(self):
         return f"{self.user.email} - {self.action_type.action_type} - {self.points} pts"
+
+class PointsBadge(models.Model):
+    name = models.CharField(max_length=100)
+    min_points = models.PositiveIntegerField()
+    max_points = models.PositiveIntegerField(null=True, blank=True)  # NULL for "no upper limit"
+    description = models.TextField()
+    image_url = models.CharField(max_length=255, blank=True, null=True)  # Or use ImageField if you're uploading
+
+    class Meta:
+        ordering = ['min_points']
+
+    def _str_(self):
+        if self.max_points:
+            return f"{self.name} ({self.min_points} - {self.max_points} pts)"
+        return f"{self.name} ({self.min_points}+ pts)"

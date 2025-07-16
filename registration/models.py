@@ -28,7 +28,6 @@ class User(models.Model):
     is_active = models.BooleanField(default=True)
     last_login = models.DateTimeField(blank=True, null=True)
 
-
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
@@ -98,8 +97,6 @@ class ClientProfile(models.Model):
     email_otp = models.CharField(max_length=16, blank=True, null=True)
     referral_code = models.CharField(max_length=64, blank=True, null=True)
 
-from django.db import models
-
 class ClientType(models.Model):
     name = models.CharField(max_length=100, unique=True)
     is_active = models.BooleanField(default=True)
@@ -111,7 +108,6 @@ class AdService(models.Model):
     is_active = models.BooleanField(default=True)
     def __str__(self):
         return self.name
-
 
 class NGOProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -196,3 +192,15 @@ class ContactPerson(models.Model):
     otp = models.CharField(max_length=16, blank=True, null=True)
     referral_code = models.CharField(max_length=64, blank=True, null=True)
     email_otp = models.CharField(max_length=16, blank=True, null=True)
+
+class CompanyType(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
+    def _str_(self):
+        return self.name
+
+class AdServiceReq(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
+    def _str_(self):
+        return self.name 

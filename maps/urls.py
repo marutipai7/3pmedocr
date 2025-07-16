@@ -10,4 +10,5 @@ urlpatterns = [
     path('search_history/', views.search_history, name='search_history'),
     path('remove_saved_location/', views.remove_from_saved, name='remove_saved_location'),
     path('remove_search_history/', views.remove_from_history, name='get_saved_locations'),
+    path('reverse_geocode/', views.reverse_geocode, name='reverse_geocode'), 
 ]

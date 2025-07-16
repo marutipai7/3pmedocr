@@ -1,12 +1,13 @@
+import re
 import json
 import polyline
 import requests
 from bson import ObjectId
-from pymongo import GEOSPHERE
 from django.conf import settings
 from django.http import JsonResponse
-from .models import SavedLocation, SearchHistory
-from registration.models import NGOProfile
+from .models import SavedLocation, SearchHistory, PincodeLocation
+from registration.models import UserProfile, NGOProfile, AdvertiserProfile, ClientProfile
+from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from math import radians, cos, sin, sqrt, atan2
 from dashboard.utils import dashboard_login_required
@@ -15,9 +16,25 @@ from django.views.decorators.http import require_POST
 @dashboard_login_required
 def map_view(request):
     user = request.user_obj
-    return render(request, 'maps/maps.html', {
-        'user': user,
-    })
+    if user.user_type == 'ngo':
+        profile = NGOProfile.objects.filter(user=user).first()
+    elif user.user_type == 'advertiser':
+        profile = AdvertiserProfile.objects.filter(user=user).first()
+    elif user.user_type == 'client':
+        profile = ClientProfile.objects.filter(user=user).first()
+    else:
+        pass
+    if profile:
+        return render(request, 'maps/maps.html', {
+            'user': user,
+            'address': profile.address,
+            'city': profile.city,
+            'state': profile.state,
+            'pincode': profile.pincode,
+        })
+    else:
+        return JsonResponse({"error": "Invalid input"}, status=400)
+
 
 @dashboard_login_required
 @require_POST
@@ -32,56 +49,71 @@ def get_routes(request):
     except Exception as e:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
+    print(f"Received route request: {start_lat}, {start_lng} to {end_lat}, {end_lng} via {mode}")
     if not all([start_lat, start_lng, end_lat, end_lng]):
         return JsonResponse({'error': 'Missing coordinates'}, status=400)
-    print(f"Received route request: {start_lat}, {start_lng} to {end_lat}, {end_lng} via {mode}")
-    valhalla_url = "https://valhalla.openstreetmap.de/route"
-    headers = {'Content-Type': 'application/json'}
-    
+    urls = [
+        "http://122.170.111.109:3095/route",  # Local
+        "https://valhalla.openstreetmap.de/route"  # Public fallback
+    ]
     payload = {
         "locations": [
             {"lat": float(start_lat), "lon": float(start_lng)},
             {"lat": float(end_lat), "lon": float(end_lng)}
         ],
-        "costing": mode,  # auto, bicycle, pedestrian
+        "costing": mode,
+        "alternatives": True,
+        "directions_options": {
+            "units": "kilometers",
+            "language": "en-US"
+        },
         "alternatives": {
-            "target_count": 2
+            "target_count": 3
         }
     }
-    try:
-        response = requests.post(valhalla_url, json=payload, headers=headers)
-        response.raise_for_status()
-        data = response.json()
-        
-        routes = []
-        for leg in data.get('trip', {}).get('legs', []):
-            shape = leg.get('shape')
-            summary = leg.get('summary', {})
-            maneuvers = leg.get('maneuvers', [])
+    headers = {'Content-Type': 'application/json'}
+    last_exception = None
+    
+    for valhalla_url in urls:
+        try:
+            response = requests.post(valhalla_url, data=json.dumps(payload), headers=headers, timeout=5)
+            response.raise_for_status()
+            data = response.json()
 
-            decoded_coords = polyline.decode(shape, precision=6)
-            steps = []
-            for m in maneuvers:
-                steps.append({
-                    'instruction': m.get('instruction'),
-                    'length': m.get('length'),  # km
-                    'time': m.get('time')       # seconds
+            routes = []
+            for leg in data.get('trip', {}).get('legs', []):
+                shape = leg.get('shape')
+                summary = leg.get('summary', {})
+                maneuvers = leg.get('maneuvers', [])
+
+                decoded_coords = polyline.decode(shape, precision=6)
+                steps = []
+                for m in maneuvers:
+                    steps.append({
+                        'instruction': m.get('instruction'),
+                        'length': m.get('length'),
+                        'time': m.get('time')
+                    })
+
+                routes.append({
+                    'coordinates': decoded_coords,
+                    'distance': summary.get('length'),
+                    'duration': summary.get('time'),
+                    'steps': steps
                 })
+            # print(f"Coordinates decoded from {valhalla_url} — {len(routes)} route(s) found")
+            return JsonResponse({'routes': routes})
 
-            routes.append({
-                'coordinates': decoded_coords,  # this is ready for Leaflet
-                'distance': summary.get('length'),
-                'duration': summary.get('time'),
-                'steps': steps
-            })
-        print(f"Coordinates decoded: {decoded_coords} routes found")
-        return JsonResponse({'routes': routes})
+        except requests.exceptions.RequestException as e:
+            print(f"Failed to fetch from {valhalla_url}: {e}")
+            last_exception = e
+            continue
 
-    except requests.exceptions.RequestException as e:
-        return JsonResponse({'error': str(e)}, status=500)
+    return JsonResponse({'error': f"All routing servers failed: {last_exception}"}, status=500)
 
-@dashboard_login_required
+# @dashboard_login_required
 @require_POST
+@csrf_exempt
 def get_amenities(request):
     """
     Expects JSON body:
@@ -490,3 +522,68 @@ def remove_from_history(request):
         return JsonResponse({"message": "Not found in search history"}, status=404)
 
     return JsonResponse({"message": "Removed from search history"})
+
+@require_POST
+def reverse_geocode(request):
+    try:
+        body = json.loads(request.body)
+
+        # Extract input
+        city = body.get("profile_city", "").strip()
+        pincode = body.get("profile_pincode", "").strip()
+        if not city or pincode:
+            return JsonResponse({"error": "City name is required"}, status=400)
+        
+        if pincode:
+            pincode_match = PincodeLocation.objects.filter(pincode=pincode).first()
+            if pincode_match:
+                return JsonResponse({
+                    "latitude": pincode_match.latitude,
+                    "longitude": pincode_match.longitude,
+                    "location_name": f"Pincode {pincode}"
+                })
+
+
+        # Build regex for city name
+        regex_query = {"$regex": re.escape(city), "$options": "i"}
+
+        # Only search for type: city to avoid noise
+        mongo_query = {
+            "full_text": regex_query,
+            "type": "city"
+        }
+
+        # No geospatial filtering
+        matches = settings.PLACES_COORDINATES.find(mongo_query).limit(20)
+
+        places = []
+        for place in matches:
+            coords = place.get("location", {}).get("coordinates", [None, None])
+            if coords[0] is None or coords[1] is None:
+                continue
+
+            places.append({
+                "name": place.get("name"),
+                "type": place.get("type"),
+                "latitude": coords[1],
+                "longitude": coords[0],
+                "importance": place.get("importance"),
+                "full_text": place.get("full_text")
+            })
+
+        if not places:
+            return JsonResponse({"error": "No matching city found"}, status=404)
+
+        # Sort only by importance (no distance, since not spatial)
+        places.sort(key=lambda x: -x["importance"])
+
+        top = places[0]
+
+        return JsonResponse({
+            "latitude": top["latitude"],
+            "longitude": top["longitude"],
+            "location_name": top["full_text"] or top["name"]
+        })
+
+    except Exception as e:
+        return JsonResponse({"error": "Reverse geocoding failed", "details": str(e)}, status=500)

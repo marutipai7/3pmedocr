@@ -5,7 +5,6 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from maps.models import SearchHistory, SavedLocation
-from ngopost.models import NGOPost
 from dashboard.utils import dashboard_login_required
 from registration.models import UserProfile, AdvertiserProfile, ClientProfile, NGOProfile, MedicalProviderProfile,  ContactPerson
 from django.contrib.auth.hashers import make_password, check_password
