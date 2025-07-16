@@ -3,9 +3,14 @@ from . import views
 
 urlpatterns = [
     path('', views.support_view, name='support_view'),
-    path('api/issue-options/', views.get_issue_options, name='get_issue_options'),
     path('submit-ticket/', views.submit_support_ticket, name='submit_support_ticket'),
     path('filter-tickets/', views.filter_support_tickets, name='filter_support_tickets'),
     path('get-bot-content/', views.get_bot_content_api, name='get_bot_content_api'),
     path('get-user-tickets/', views.get_user_tickets, name='get_user_tickets'),
+    path('get-issue-options/', views.get_issue_options, name='get-issue-options'),
+    path('get-tickets-list/', views.get_ticket_lists, name='get-tickets-list'),
+    path('get-tickets-details/', views.ticket_details, name='get-tickets-details'),
+    path('get-tickets-filters/', views.filter_tickets, name='get-tickets-filters'),
+    path('get-faq-lists/', views.faq_lists, name='get-faq-lists'),
+    path('send-support-email/', views.send_support_email, name='send-support-email'),
 ]

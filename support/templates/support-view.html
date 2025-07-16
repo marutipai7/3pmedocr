@@ -1,0 +1,576 @@
+<!-- view  -->
+<div
+  class="view-modal-progress fixed inset-0 bg-opacity-70 bg-black/30 flex items-center justify-center z-50 hidden"
+>
+  <div
+    class="bg-white w-full max-w-[70%] sm:max-w-[80%] md:max-w-[600px] lg:max-w-[640px] rounded-lg p-4 sm:p-6"
+  >
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+      <p class="font-bold text-lg sm:text-xl">Ticket Tracking</p>
+      <span
+        class="material-symbols-outlined close-popup cursor-pointer"
+        onclick="closeModalProgress()"
+        >close</span
+      >
+    </div>
+    <!-- User Info -->
+    <div
+      class="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-6 gap-4 sm:gap-0"
+    >
+      <div class="flex items-center gap-4">
+        <div
+          class="help-email-short bg-transparent-violet-sky rounded-full w-10 h-10 flex justify-center items-center font-semibold text-base"
+        >
+          
+        </div>
+        <div class="flex flex-col gap-1">
+          <p class="help-email font-bold text-base"></p>
+
+          <div class="flex gap-2 items-center">
+            <p class="help-usertype font-normal text-sm"></p>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col gap-1 pt-4 lg:pt-0">
+        <p class="font-semibold text-base">
+          Created on:
+          <span class="help-created-date font-normal text-jet-black"></span>
+        </p>
+        <div class="flex justify-end">
+          <p class="font-semibold text-base">
+            Assigned to:
+            <span class="font-normal text-medium-gray"></span>
+          </p>
+        </div>
+        <div class="flex justify-end">
+          <p class="font-semibold text-base">
+            Status:
+            <span class="help-status font-semibold text-burnt-orange text-base"
+              ></span
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="text-violet-sky mt-4" />
+    <div class="overflow-y-auto max-h-96 scroll">
+      <!-- Order Info -->
+      <div
+        class="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-4 gap-4 sm:gap-0"
+      >
+        <div class="flex flex-col gap-1">
+          <p class="font-semibold text-base">
+            Ticket ID : <span class="help-ticket-id font-normal">#3454645</span>
+          </p>
+
+          <p class="font-semibold text-base">
+            Subject : <span class="help-description font-normal text-lg">:</span>
+          </p>
+        </div>
+        <div class="flex flex-col gap-1 sm:text-right">
+          <p class="font-semibold text-base">
+            Last Updated:
+            <span class="help-updated-date font-normal text-medium-gray"></span>
+          </p>
+
+          <p class="font-normal text-base"></p>
+        </div>
+      </div>
+
+      <div class="bg-slate-white border border-violet-sky p-4 mt-4 rounded-md">
+        <!-- Ref Image + Note Section -->
+        <div class="mt-6">
+          <!-- <p class="font-semibold text-sm text-jet-black mb-2">Ref image :</p> -->
+          <div class="flex justify-center">
+            <img
+              src=""
+              alt="Ref Image"
+              class="help-img w-4/5 h-auto rounded-lg shadow-lg"
+            />
+          </div>
+          <div
+            class="flex items-center justify-between w-full text-sm text-jet-black mt-4"
+          >
+            <!-- <span class="font-semibold whitespace-nowrap">Note:</span>
+            <p class="flex-1 text-center font-normal">
+              Reported login failure. Getting error 404
+            </p> -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Tracker -->
+      <div class="flex flex-col">
+        <!-- Header Row -->
+        <div class="flex justify-between items-center pt-4">
+          <p class="font-semibold text-base">Status</p>
+          <p class="font-semibold text-base">Date &amp; Time</p>
+        </div>
+
+        <!-- Data Rows with Dots and Lines -->
+        <div class="flex flex-col mt-2">
+          <!-- Row 1 -->
+          <div class="flex items-start gap-3 status-step" data-status="Open">
+            <div class="flex flex-col items-center">
+              <div class="dot bg-violet-sky rounded-full h-4 w-4"></div>
+              <div class="line h-6 w-px bg-violet-sky"></div>
+            </div>
+            <div class="flex justify-between w-full">
+              <p class="help-status text-base"></p>
+              <p class="help-updated-date-status text-base font-semibold"></p>
+            </div>
+          </div>
+
+          <!-- Row 2 -->
+          <div class="flex items-start gap-3 status-step" data-status="In Progress">
+            <div class="flex flex-col items-center">
+              <div class="bg-violet-sky rounded-full h-4 w-4"></div>
+              <div class="h-6 w-px bg-violet-sky"></div>
+            </div>
+            <div class="flex justify-between w-full">
+              <p class="text-base">In Progress</p>
+              <p class="text-base font-semibold">02/05/2025, 16:30</p>
+            </div>
+          </div>
+
+          <!-- Row 3 -->
+          <div class="flex items-start gap-3 status-step" data-status="On Hold">
+            <div class="flex flex-col items-center">
+              <div class="bg-violet-sky rounded-full h-4 w-4"></div>
+              <div class="h-6 w-px bg-violet-sky"></div>
+            </div>
+            <div class="flex justify-between w-full">
+              <p class="text-base">On Hold</p>
+              <p class="text-base font-semibold">02/05/2025, 16:30</p>
+            </div>
+          </div>
+
+          <!-- Row 4 -->
+          <div class="flex items-start gap-3 status-step" data-status="Resolved">
+            <div class="flex flex-col items-center">
+              <div class="bg-violet-sky rounded-full h-4 w-4"></div>
+              <div class="h-6 w-px bg-violet-sky"></div>
+            </div>
+            <div class="flex justify-between w-full">
+              <p class="text-base">Resolved</p>
+              <p class="text-base font-semibold">02/05/2025, 16:30</p>
+            </div>
+          </div>
+
+          <!-- Row 5 (last dot without line) -->
+          <div class="flex items-start gap-3 status-step" data-status="Cancelled">
+            <div class="flex flex-col items-center">
+              <div class="bg-violet-sky rounded-full h-4 w-4"></div>
+            </div>
+            <div class="flex justify-between w-full">
+              <p class="text-base">Cancelled</p>
+              <p class="text-base font-semibold">02/05/2025, 16:30</p>
+            </div>
+          </div>
+
+          <!-- Row 5 (last dot without line) -->
+          <div class="flex items-start gap-3 status-step" data-status="Closed">
+            <div class="flex flex-col items-center">
+              <div class="bg-violet-sky rounded-full h-4 w-4"></div>
+            </div>
+            <div class="flex justify-between w-full">
+              <p class="text-base">Closed</p>
+              <p class="text-base font-semibold">02/05/2025, 16:30</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div
+        class="flex flex-col border border-violet-sky rounded-lg p-4 mt-4 bg-slate-white"
+      >
+        <!-- Chat Header -->
+        <div class="pb-3">
+          <p class="font-semibold text-base">Chat History :</p>
+        </div>
+
+        <!-- Chat Messages Container -->
+        <div class="flex flex-col space-y-4 pt-3">
+          <!-- User Questions Block -->
+          <div
+            class="m:w-60 lg:w-1/2 p-2 rounded-2xl bg-white shadow border border-violet-sky"
+          >
+            <p>Is Cash on Delivery (COD) available?</p>
+            <p class="pt-2">How do I apply a coupon or discount code?</p>
+            <p class="pt-2">How do I get a refund if my order is cancelled?</p>
+          </div>
+
+          <!-- User Message -->
+          <div class="flex flex-col items-end">
+            <div
+              class="bg-pastel-violet-sky text-black rounded-2xl rounded-br-none p-3 max-w-xs shadow w-full"
+            >
+              <div class="flex justify-between items-end">
+                <p class="text-sm">Is Cash on Delivery (COD) available</p>
+              </div>
+              <div class="flex justify-end">
+                <span class="text-xs text-gray-400 mt-1">13:40</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assistant Reply -->
+        <div class="flex flex-col items-start mt-10">
+          <div
+            class="bg-white text-black rounded-2xl rounded-tl-none p-3 max-w-xs shadow w-full"
+          >
+            <p class="text-sm">Yes, Cash on Delivery (COD) available.</p>
+            <div class="flex justify-end">
+              <span class="text-xs text-gray-400 mt-1">13:41</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Message -->
+        <div class="flex flex-col items-end mt-10">
+          <div
+            class="bg-pastel-violet-sky text-black rounded-2xl rounded-tl-none rounded-br-none p-3 max-w-xs shadow w-full"
+          >
+            <p class="text-sm">Thanks, for the info</p>
+            <div class="flex justify-end">
+              <span class="text-xs text-gray-400 mt-1">13:42</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assistant Reply -->
+        <div class="flex flex-col items-start mt-10">
+          <div
+            class="bg-white text-black rounded-2xl rounded-tl-none p-3 max-w-xs shadow w-full"
+          >
+            <p class="text-sm">You're most welcome!</p>
+            <div class="flex justify-end">
+              <span class="text-xs text-gray-400 mt-1">13:41</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col items-start mt-10">
+          <div
+            class="bg-white text-black rounded-2xl rounded-tl-none p-3 max-w-xs shadow w-full"
+          >
+            <p class="text-sm">
+              If you need anything else, feel free to ask anytime. I'm here to
+              help 💬😊
+            </p>
+            <div class="flex justify-end">
+              <span class="text-xs text-gray-400 mt-1">13:41</span>
+            </div>
+          </div>
+        </div>
+        <!-- Message Input Row -->
+        <div class="flex items-center gap-2 mt-8 w-full">
+          <!-- Input with embedded icons -->
+          <div class="relative w-full">
+            <input
+              type="text"
+              class="w-full bg-white rounded-md px-4 pr-20 py-3 text-sm"
+              placeholder="Message..."
+            />
+            <!-- Gallery & Pin Icons inside input -->
+            <div class="absolute inset-y-0 right-2 flex items-center gap-2">
+              <!-- Gallery Icon (Black, Rounded) -->
+              <button
+                type="button"
+                class="w-8 h-8 flex items-center justify-center rounded-md bg-transparent-violet-sky"
+              >
+                <span class="material-symbols-outlined text-black text-xl"
+                  >photo_library</span
+                >
+              </button>
+              <!-- Pin Icon (Black, Rounded & Centered) -->
+              <button
+                type="button"
+                class="w-8 h-8 flex items-center justify-center rounded-md bg-transparent-violet-sky"
+              >
+                <span class="material-symbols-outlined text-black text-xl"
+                  >attach_file</span
+                >
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="flex items-center justify-center w-10 h-10 rounded-full bg-violet-sky"
+          >
+            <span class="material-symbols-outlined text-white text-xl"
+              >send</span
+            >
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- view  -->
+<div
+  class="view-modal fixed inset-0 bg-opacity-70 bg-black/30 flex items-center justify-center z-50 hidden"
+>
+  <div
+    class="bg-white w-full max-w-[70%] sm:max-w-[80%] md:max-w-[600px] lg:max-w-[640px] rounded-lg p-4 sm:p-6"
+  >
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+      <p class="font-bold text-lg sm:text-xl">Ticket Tracking</p>
+      <span
+        class="material-symbols-outlined close-popup cursor-pointer"
+        onclick="closeModal()"
+        >close</span
+      >
+    </div>
+    <!-- User Info -->
+    <div
+      class="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-6 gap-4 sm:gap-0"
+    >
+      <div class="flex items-center gap-4">
+        <div
+          class="bg-transparent-violet-sky rounded-full w-10 h-10 flex justify-center items-center font-semibold text-base"
+        >
+          MS
+        </div>
+        <div class="flex flex-col gap-1">
+          <p class="font-bold text-base">Monika Singh</p>
+
+          <div class="flex gap-2 items-center">
+            <p class="font-normal text-sm">(User)</p>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col gap-1 pt-4 lg:pt-0">
+        <p class="font-semibold text-base">
+          Created on:
+          <span class="font-normal text-jet-black">12/05/2025 14:40</span>
+        </p>
+        <div class="flex justify-end">
+          <p class="font-semibold text-base">
+            Assigned to:
+            <span class="font-normal text-medium-gray">Ali</span>
+          </p>
+        </div>
+        <div class="flex justify-end">
+          <p class="font-semibold text-base">
+            Status:
+            <span class="font-semibold text-light-sea-green text-base"
+              >Resolved</span
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="text-violet-sky mt-4" />
+    <div class="overflow-y-auto max-h-96 scroll">
+      <!-- Order Info -->
+      <div
+        class="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-4 gap-4 sm:gap-0"
+      >
+        <div class="flex flex-col gap-1">
+          <p class="font-normal text-base">
+            Ticket ID : <span class="font-normal">#3454645</span>
+          </p>
+
+          <p class="font-semibold text-base">
+            Subject <span class="font-normal text-lg">:</span>
+          </p>
+        </div>
+        <div class="flex flex-col gap-1 sm:text-right">
+          <p class="font-semibold text-base">
+            Last Updated:
+            <span class="font-normal text-medium-gray">12/05/2025 14:40</span>
+          </p>
+
+          <p class="font-normal text-base">Login not working</p>
+        </div>
+      </div>
+
+      <div class="bg-slate-white border border-violet-sky p-4 mt-4 rounded-md">
+        <!-- Ref Image + Note Section -->
+        <div class="mt-6">
+          <p class="font-semibold text-sm text-jet-black mb-2">Ref image :</p>
+          <div class="flex justify-center">
+            <img
+              src="/public/images/Ticket-tracking.svg"
+              alt="Ref Image"
+              class="w-4/5 h-auto rounded-lg shadow-lg"
+            />
+          </div>
+          <div
+            class="flex items-center justify-between w-full text-sm text-jet-black mt-4"
+          >
+            <span class="font-semibold whitespace-nowrap">Note:</span>
+            <p class="flex-1 text-center font-normal">
+              Reported login failure. Getting error 404
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Tracker -->
+      <div class="flex flex-col">
+        <!-- Header Row -->
+        <div class="flex justify-between items-center pt-4">
+          <p class="font-semibold text-base">Status</p>
+          <p class="font-semibold text-base">Date &amp; Time</p>
+        </div>
+
+        <!-- Data Rows with Dots and Lines -->
+        <div class="flex flex-col mt-2">
+          <!-- Row 1 -->
+          <div class="flex items-start gap-3">
+            <div class="flex flex-col items-center">
+              <div class="bg-violet-sky rounded-full h-4 w-4"></div>
+              <div class="h-6 w-px bg-violet-sky"></div>
+            </div>
+            <div class="flex justify-between w-full">
+              <p class="text-base">Open</p>
+              <p class="text-base font-semibold">02/05/2025, 16:30</p>
+            </div>
+          </div>
+
+          <!-- Row 2 -->
+          <div class="flex items-start gap-3">
+            <div class="flex flex-col items-center">
+              <div class="bg-violet-sky rounded-full h-4 w-4"></div>
+              <div class="h-6 w-px bg-violet-sky"></div>
+            </div>
+            <div class="flex justify-between w-full">
+              <p class="text-base">In-Progress</p>
+              <p class="text-base font-semibold">02/05/2025, 16:30</p>
+            </div>
+          </div>
+
+          <!-- Row 3 -->
+          <div class="flex items-start gap-3">
+            <div class="flex flex-col items-center">
+              <div class="bg-violet-sky rounded-full h-4 w-4"></div>
+              <div class="h-6 w-px bg-violet-sky"></div>
+            </div>
+            <div class="flex justify-between w-full">
+              <p class="text-base">On Hold</p>
+              <p class="text-base font-semibold">02/05/2025, 16:30</p>
+            </div>
+          </div>
+
+          <!-- Row 4 -->
+          <div class="flex items-start gap-3">
+            <div class="flex flex-col items-center">
+              <div class="bg-violet-sky rounded-full h-4 w-4"></div>
+              <div class="h-6 w-px bg-violet-sky"></div>
+            </div>
+            <div class="flex justify-between w-full">
+              <p class="text-base">Resolved</p>
+              <p class="text-base font-semibold">02/05/2025, 16:30</p>
+            </div>
+          </div>
+
+          <!-- Row 5 (last dot without line) -->
+          <div class="flex items-start gap-3">
+            <div class="flex flex-col items-center">
+              <div class="bg-violet-sky rounded-full h-4 w-4"></div>
+            </div>
+            <div class="flex justify-between w-full">
+              <p class="text-base">Cancelled</p>
+              <p class="text-base font-semibold">02/05/2025, 16:30</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="flex flex-col border border-violet-sky rounded-lg p-4 mt-4 bg-slate-white"
+      >
+        <!-- Chat Header -->
+        <div class="pb-3">
+          <p class="font-semibold text-base">Chat History :</p>
+        </div>
+
+        <!-- Chat Messages Container -->
+        <div class="flex flex-col space-y-4 pt-3">
+          <!-- User Questions Block -->
+          <div
+            class="m:w-60 lg:w-1/2 p-2 rounded-2xl bg-white shadow border border-violet-sky"
+          >
+            <p>Is Cash on Delivery (COD) available?</p>
+            <p class="pt-2">How do I apply a coupon or discount code?</p>
+            <p class="pt-2">How do I get a refund if my order is cancelled?</p>
+          </div>
+
+          <!-- User Message -->
+          <div class="flex flex-col items-end">
+            <div
+              class="bg-pastel-violet-sky text-black rounded-2xl rounded-br-none p-3 max-w-xs shadow w-full"
+            >
+              <div class="flex justify-between items-end">
+                <p class="text-sm">Is Cash on Delivery (COD) available</p>
+              </div>
+              <div class="flex justify-end">
+                <span class="text-xs text-gray-400 mt-1">13:40</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assistant Reply -->
+        <div class="flex flex-col items-start mt-10">
+          <div
+            class="bg-white text-black rounded-2xl rounded-tl-none p-3 max-w-xs shadow w-full"
+          >
+            <p class="text-sm">Yes, Cash on Delivery (COD) available.</p>
+            <div class="flex justify-end">
+              <span class="text-xs text-gray-400 mt-1">13:41</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Message -->
+        <div class="flex flex-col items-end mt-10">
+          <div
+            class="bg-pastel-violet-sky text-black rounded-2xl rounded-tl-none rounded-br-none p-3 max-w-xs shadow w-full"
+          >
+            <p class="text-sm">Thanks, for the info</p>
+            <div class="flex justify-end">
+              <span class="text-xs text-gray-400 mt-1">13:42</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assistant Reply -->
+        <div class="flex flex-col items-start mt-10">
+          <div
+            class="bg-white text-black rounded-2xl rounded-tl-none p-3 max-w-xs shadow w-full"
+          >
+            <p class="text-sm">You're most welcome!</p>
+            <div class="flex justify-end">
+              <span class="text-xs text-gray-400 mt-1">13:41</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col items-start mt-10">
+          <div
+            class="bg-white text-black rounded-2xl rounded-tl-none p-3 max-w-xs shadow w-full"
+          >
+            <p class="text-sm">
+              If you need anything else, feel free to ask anytime. I'm here to
+              help 💬😊
+            </p>
+            <div class="flex justify-end">
+              <span class="text-xs text-gray-400 mt-1">13:41</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
