@@ -1,7 +1,8 @@
-from django.views.decorators.http import require_http_methods, require_GET
+from django.views.decorators.http import require_http_methods, require_GET, require_POST
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.http import JsonResponse
+from django.core.serializers.json import DjangoJSONEncoder
 from .models import IssueType, IssueOption, SupportTicket
 from dashboard.utils import dashboard_login_required
 from django.core.exceptions import ValidationError
@@ -9,6 +10,7 @@ from rest_framework import serializers
 from registration.models import User
 from .models import ChatOptionGroup, CHATBOT_USER_TYPE_CHOICES
 import logging
+import json
 
 logger = logging.getLogger(__name__) #for debugging purposes
 
@@ -18,6 +20,8 @@ def support_view(request):
     user = request.user_obj  # ✅ Make sure this is a real user
     issue_types = IssueType.objects.all()
     search_query = request.GET.get('search', '').strip()
+
+    issue_types = IssueType.objects.exclude(name='chatbot_query').all()
 
     # 🔍 Ticket filtering — do NOT run this if user is anonymous
     tickets = SupportTicket.objects.filter(user_id=user.id).order_by('-created_at')
@@ -100,16 +104,104 @@ def submit_support_ticket(request):
         try:
             issue_option = IssueOption.objects.get(id=issue_option_id)
         except IssueOption.DoesNotExist:
-            return redirect("support_view")  # or render with error
+            return redirect("support_view") 
 
         SupportTicket.objects.create(
-            user=request.user,
-            created_by=request.user,
+            user=request.user_obj,
+            created_by=request.user_obj,
             issue_option=issue_option,
             description=description,
             image=image
         )
         return redirect("support_view")
+
+
+# no use for now
+@require_POST
+@dashboard_login_required
+def log_custom_query(request):
+    user = request.user_obj
+    try:
+        data = json.loads(request.body)
+        query_text = data.get('query')
+
+        if not query_text:
+            logger.warning("log_custom_query: Received request with no query text.")
+            return JsonResponse({'message': 'Query text is required.'}, status=400)
+        
+        if not user:
+             logger.error("log_custom_query: Unauthenticated user attempted to submit custom query.")
+             return JsonResponse({'message': 'User not authenticated.'}, status=401)
+        
+        try:
+            chatbot_issue_option = IssueOption.objects.get(
+                issue_type__name='chatbot_query', 
+                name='custome user query'         
+            )
+        except IssueOption.DoesNotExist:
+            logger.error(
+                "log_custom_query: Predefined 'chatbot_query - custom user query' "
+                "IssueOption not found. Please ensure it exists in your database."
+            )
+            return JsonResponse(
+                {'message': 'System error: Could not categorize query. Please contact direct support.'},
+                status=500
+            )
+        except Exception as e:
+            logger.error(f"log_custom_query: Error retrieving chatbot issue option: {e}", exc_info=True)
+            return JsonResponse(
+                {'message': 'An internal error occurred while setting up the ticket.'},
+                status=500
+            )
+        
+        ticket = SupportTicket.objects.create(
+            user=user,
+            created_by=user, 
+            issue_option=chatbot_issue_option, 
+            description=query_text, 
+            image=None 
+        )
+
+        return JsonResponse({
+            'success': True,
+            'ticket_id': ticket.ticket_id(),
+            'message': 'Your query has been submitted as a ticket! We will get back to you shortly.'
+        }, status=200)
+    
+    except json.JSONDecodeError:
+        logger.error("log_custom_query: Invalid JSON format in request body.")
+        return JsonResponse({'message': 'Invalid data format.'}, status=400)
+    
+    except Exception as e:
+        logger.exception(f"log_custom_query: An unexpected error occurred: {e}") 
+        return JsonResponse({'message': 'An unexpected server error occurred. Please try again.'}, status=500)
+    
+
+@require_GET
+@dashboard_login_required 
+def get_user_tickets(request):
+    try:
+        user = request.user_obj
+        user_tickets = SupportTicket.objects.filter(user=user).order_by('-created_at')
+
+        tickets_data = []
+        for ticket in user_tickets:
+            tickets_data.append({
+                'ticket_id': ticket.ticket_id(),
+                'description': ticket.description,
+                'status': ticket.status,
+                'issue_option_name': ticket.issue_option.name if ticket.issue_option else 'N/A',
+                'created_at': ticket.created_at.isoformat(), 
+                # 'last_updated_at': ticket.created_at.isoformat(),
+            })
+
+        logger.info(f"Fetched {len(tickets_data)} tickets for user: {user.email}")
+        return JsonResponse({'success': True, 'tickets': tickets_data}, safe=False, encoder=DjangoJSONEncoder)
+
+    except Exception as e:
+        logger.exception(f"Error fetching user tickets for {request.user.email if request.user.is_authenticated else 'unauthenticated user'}: {e}")
+        return JsonResponse({'success': False, 'message': 'Failed to retrieve tickets.'}, status=500)
+
 
 @require_GET
 @dashboard_login_required 
@@ -138,15 +230,15 @@ def get_bot_content_api(request):
         try:
             user_group = ChatOptionGroup.objects.get(user_type='user', is_active=True)
             fallback_data = user_group.options_data.copy()
-            if user_type != 'user': # Only prepend if it was actually a fallback
+            if user_type != 'user': 
                 fallback_data["initial_message"] = f"No specific content found for your type ({user_type}). " + fallback_data.get("initial_message", "Here's some general information:")
-            return JsonResponse(fallback_data, status=200) # Use 200 for successful fallback
+            return JsonResponse(fallback_data, status=200) 
 
         except ChatOptionGroup.DoesNotExist:
             logger.error(f"No active ChatOptionGroup found for default 'user' type either. Chatbot content not configured.")
             return JsonResponse(
                 {"initial_message": "Sorry, chatbot content is not configured. Please contact support."},
-                status=500 # 500 indicates a server-side configuration issue
+                status=500 
             )
 
     except Exception as e:

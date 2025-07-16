@@ -15,6 +15,7 @@ urlpatterns = [
     path('map/', include('maps.urls')),
     path('help/', include('support.urls')),
     path('settings/', include('settings.urls')),
+    path('support/', include('support.urls')),
     path('posts/', include('ngopost.urls')),
     path('donate/', include('donate.urls')),
     path('points/', include('points.urls')),    # ... other apps

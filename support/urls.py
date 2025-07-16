@@ -7,4 +7,5 @@ urlpatterns = [
     path('submit-ticket/', views.submit_support_ticket, name='submit_support_ticket'),
     path('filter-tickets/', views.filter_support_tickets, name='filter_support_tickets'),
     path('get-bot-content/', views.get_bot_content_api, name='get_bot_content_api'),
+    path('get-user-tickets/', views.get_user_tickets, name='get_user_tickets'),
 ]
