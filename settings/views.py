@@ -106,13 +106,21 @@ def settings_page(request):
             profile_type=user.user_type,
             profile_id=profile_id
         ).first()
-        context.update({
-            'contact_name': contact_persons.name,
-            'contact_phone_country_code': contact_persons.phone_country_code,
-            'contact_phone_number': contact_persons.phone_number,
-            'contact_role': contact_persons.role,
-        })
-        return render(request, 'settings/settings_page_advertiser.html', context)
+        if contact_persons:
+            context.update({
+                'contact_name': contact_persons.name,
+                'contact_phone_country_code': contact_persons.phone_country_code,
+                'contact_phone_number': contact_persons.phone_number,
+                'contact_role': contact_persons.role,
+            })
+        else:
+            context.update({
+                'contact_name': 'N/A',
+                'contact_phone_country_code': '',
+                'contact_phone_number': '',
+                'contact_role': '',
+            })
+        return render(request, 'settings/setting_page_advertiser.html', context)
     
     elif user.user_type == 'client':
         profile = ClientProfile.objects.filter(user=user).first()
