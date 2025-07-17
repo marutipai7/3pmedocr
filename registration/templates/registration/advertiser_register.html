@@ -52,10 +52,10 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
   <!-- Company Type -->
   <div class="relative w-full">
-    <label for="client_type" class="block text-sm font-medium text-gray-700 mb-1">Advertiser Type</label>
-    <select id="client_type" name="client_type" class="block w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 text-sm">
+    <label for="advertiser_type" class="block text-sm font-medium text-gray-700 mb-1">Advertiser Type</label>
+    <select id="advertiser_type" name="advertiser_type" class="block w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 text-sm">
       <option value="">Select</option>
-      {% for type in client_types %}
+      {% for type in advertiser_types %}
         <option value="{{ type.id }}">{{ type.name }}</option>
       {% endfor %}
     </select>
@@ -63,10 +63,10 @@
 
   <!-- Ad Services -->
   <div class="relative w-full">
-    <label for="ad_services" class="block text-sm font-medium text-gray-700 mb-1">Ad Service required</label>
-    <select id="ad_services" name="ad_services" class="block w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 text-sm">
+    <label for="ad_service_req" class="block text-sm font-medium text-gray-700 mb-1">Ad Service Required</label>
+    <select id="ad_service_req" name="ad_service_req" class="block w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 text-sm">
       <option value="">Select</option>
-      {% for service in ad_services %}
+      {% for service in ad_service_reqs %}
         <option value="{{ service.id }}">{{ service.name }}</option>
       {% endfor %}
     </select>

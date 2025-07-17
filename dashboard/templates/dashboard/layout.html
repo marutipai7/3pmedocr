@@ -40,6 +40,11 @@
 <script src="{% static 'js/common.js' %}"></script>
 <script src="{% static 'js/home.js' %}"></script>
 <script src="{% static 'js/dropdown.js' %}"></script>
+
+<!-- Charts -->
+<script>
+const getChartData = "{% url 'coupon_chart_data' %}";
+</script>
 {% block extra_js %} 
 {% endblock %}    
 </html>

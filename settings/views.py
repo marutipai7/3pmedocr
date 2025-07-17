@@ -89,6 +89,7 @@ def settings_page(request):
                 'city': profile.city,
                 'state': profile.state,
                 'country': profile.country,
+                'pincode': profile.pincode,
                 'description': profile.brand_description,
                 'brand_image_path': profile.brand_image_path,
                 'referral_code': profile.referral_code if profile.referral_code else "",

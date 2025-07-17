@@ -19,7 +19,7 @@ from .models import (
     AdvertiserProfile,
     ClientType,
     AdService,
-    CompanyType,
+    AdvertiserType,
     AdServiceReq
     )
 from registration.utils import send_custom_email  
@@ -50,7 +50,7 @@ def register_by_role(request, role):
         context["ad_services"] = AdService.objects.filter(is_active=True)
     
     elif role == "advertiser":
-        context["company_types"] = CompanyType.objects.filter(is_active=True)
+        context["advertiser_types"] = AdvertiserType.objects.filter(is_active=True)
         context["ad_service_reqs"] = AdServiceReq.objects.filter(is_active=True)
 
 
@@ -447,8 +447,8 @@ def save_advertiser(request):
     if not company_name:
         errors["company_name"] = "Company name is required."
 
-    advertiser_type = data.getlist("advertiser_type[]") or []
-    ad_services = data.getlist("ad_services[]") or []
+    advertiser_type = data.getlist("advertiser_type") or []
+    ad_services = data.getlist("ad_service_req") or []
     website = data.get("website", "")
 
     address = data.get("address")

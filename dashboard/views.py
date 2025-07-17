@@ -78,17 +78,16 @@ def dashboard_home(request):
         # Log e if needed
         return render(request, "dashboard/not_found.html")
     
+    
 def get_coupon_chart_data(request):
-    # Fetch the most recent 8 entries for the chart (or more if needed)
-    performances = CouponPerformance.objects.order_by('-date')[:8][::-1]
+    performances = CouponPerformance.objects.order_by('-date')[:8][::-1]  # last 8 entries, ascending
 
     data = {
-        # 'labels': [perf.date.strftime('%Y-%m-%d') for perf in performances],
+        'labels': [perf.date.strftime('%d %b') for perf in performances],  # e.g., "17 Jul"
         'total_coupons': [perf.total_coupons for perf in performances],
         'total_redemptions': [perf.total_redemptions for perf in performances],
         'active_coupons': [perf.active_coupons for perf in performances],
     }
-
     return JsonResponse(data)
 
 
