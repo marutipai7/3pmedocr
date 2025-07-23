@@ -9,7 +9,7 @@
                   <span class="material-symbols-outlined text-dark-gray">
                     search
                   </span>
-                  <input type="text" placeholder="Search by name or categories"
+                  <input id="saved_coupon_history_query" name="saved_coupon_history_query" type="text" placeholder="Search by name or categories"
                     class="w-full py-2.5 border-none bg-transparent focus:outline-none focus:ring-0 placeholder:text-medium-gray" />
                 </div>
                 <div class="dropdown relative flex justify-end">
@@ -22,7 +22,7 @@
                   Filter
                 </button>
                   <div
-                    class="filterDropdown absolute right-0 top-10 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10"
+                    class="filterDropdowns absolute right-0 top-10 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] rounded-md w-44 z-10"
                   >
                     <div
                       class="p-2 pl-4 flex justify-between items-center hover:bg-living-coral hover:text-white rounded"
@@ -32,17 +32,20 @@
                       </span>
                     </div>
                     <div
-                      class="p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
+                      class="coupondaterange p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
+                      data-range="1 Week"
                     >
                       1 Week
                     </div>
                     <div
-                      class="p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
+                      class="coupondaterange p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
+                      data-range="1 Month"
                     >
                       1 Month
                     </div>
                     <div
-                      class="p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
+                      class="coupondaterange p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
+                      data-range="1 Year"
                     >
                       1 Year
                     </div>
@@ -60,7 +63,7 @@
 
             <!-- Table -->
             <div class="overflow-x-auto no-scrollbar">
-              <table class="min-w-full table-auto whitespace-nowrap docTable">
+              <table class="couponSavedHistoryTable min-w-full table-auto whitespace-nowrap docTable">
                 <thead class="bg-living-coral text-white text-sm sm:text-18-b">
                   <tr>
                     <th class="text-center p-4 text-sm border-r border-white">
@@ -106,67 +109,8 @@
                   </tr>
                 </thead>
                 <tbody class="bg-snow-gray text-dark-gray text-16-fs">
-                  {% for coupon in saved_coupon %}
-                    <tr>
-                      <td class="px-4 py-4.5 text-center">
-                        {{ coupon.created_at|date:"d/m/y,H:i" }}
-                      </td>
-                      <td class="px-4 py-4.5 text-center">
-                        {{ coupon.category }}
-                      </td>
-                      <td class="px-4 py-4.5 text-center">
-                        {{ coupon.brand_name }}
-                      </td>
-                      <td class="px-4 py-4.5 text-center">
-                        {{ coupon.max_redemptions }}
-                      </td>
-                      <td class="px-4 py-4.5 text-center">
-                        {{ coupon.redeemed_count|default:"0" }}
-                      </td>
-                      <td class="px-4 py-4.5 text-center">
-                        {{ coupon.max_redemptions|add:"-"|add:coupon.redeemed_count|default:coupon.max_redemptions }}
-                      </td>
-                      <td class="px-4 py-4.5 text-center">
-                        {{ coupon.validity|date:"dM Y" }}
-                      </td>
-                      <td class="px-6 py-4.5 text-center">
-                        <div class="{% if coupon.validity > today %}bg-mint-cream text-green{% else %}bg-soft-pink text-strong-red{% endif %} py-2 rounded-md border-none px-8">
-                          {% if coupon.validity > today %}Active{% else %}Expired{% endif %}
-                        </div>
-                      </td>
-                      <td class="px-4 py-4.5 text-center flex items-center justify-center gap-2">
-                        <!-- Actions (bookmark, view, download, etc.) -->
-                        <span title="Saved"
-                              data-saved="true"
-                              data-coupon-id="{{ coupon.id }}"
-                              class="material-symbols-outlined saved-icon material-filled text-living-coral cursor-pointer hover:bg-transparent-living-coral rounded-full p-1 transition-all">
-                          bookmark
-                        </span>
-                        <span title="View Coupon History"
-                          class="material-symbols-outlined cursor-pointer hover:bg-transparent-living-coral rounded-full p-1 transition-all visibility"
-                          data-popup="preview"
-                          data-coupon-id="{{ coupon.id }}">
-                          visibility
-                        </span>
-                        <span title="Download Coupon Details"
-                          class="material-symbols-outlined cursor-pointer hover:bg-transparent-living-coral rounded-full p-1 transition-all download"
-                          data-popup="preview"
-                          data-coupon-id="{{ coupon.id }}">
-                          download
-                        </span>
-                        <span
-                            class="cursor-pointer platform-bill-view hover:bg-transparent-living-coral rounded-full p-1 transition-all"
-                          >
-                            <img src="/static/images/assignment.svg" alt="Icon" />
-                          </span>
-                      </td>
-                    </tr>
-                  {% empty %}
-                    <tr>
-                      <td colspan="9" class="text-center py-4">No saved coupons found.</td>
-                    </tr>
-                  {% endfor %}
                 </tbody>
               </table>
+              <div id="saved-coupon-pagination-container" class="flex justify-center gap-2 mt-4"></div>
             </div>
           </div>

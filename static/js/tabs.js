@@ -24,15 +24,15 @@ $(document).ready(function () {
     }
   });
 
-  // $('.tab-btn-client').click(function () {
-  //     var target = $(this).data('tab');
+  $('.tab-btn-client').click(function () {
+      var target = $(this).data('tab');
 
-  //     $('.tab-btn-client').removeClass('active-tab-client');
-  //     $(this).addClass('active-tab-client');
+      $('.tab-btn-client').removeClass('active-tab-client');
+      $(this).addClass('active-tab-client');
 
-  //     $('.tab-content').addClass('hidden');
-  //     $('.' + target).removeClass('hidden');
-  // });
+      $('.tab-content').addClass('hidden');
+      $('.' + target).removeClass('hidden');
+  });
 
   $(".tab-btn-advertiser").click(function () {
     var target = $(this).data("tab");

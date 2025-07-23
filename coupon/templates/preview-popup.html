@@ -1,44 +1,64 @@
 {% load static %}
 
-<div class="preview-popup popup hidden fixed inset-0 items-center justify-center bg-black/40 px-3 z-50">
-  <div class="bg-white w-full max-w-[500px] max-h-[90vh] rounded-lg shadow-lg overflow-y-auto">
+<style>
+  div::-webkit-scrollbar {
+    display: none;
+  }
+</style>
+<div class="preview-popup popup hidden fixed inset-0 items-center justify-center" style="background: rgba(0, 0, 0, 0.4); padding-left: 0.75rem; padding-right: 0.75rem; z-index: 50;">
+  <div style="background: white; padding-bottom: 0.75rem; border-radius: 10px; box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); max-width: 560px; height: 640px; width: 100%; display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;">
     <!-- Header -->
-    <div class="flex items-center justify-between text-white h-10 bg-living-coral px-3">
-      <div class="flex items-center gap-4">
+    <div style="display: flex; align-items: center; justify-content: space-between; height: 2.5rem; background: rgba(255, 111, 97, 1); color: white; padding-left: 0.75rem; padding-right: 0.75rem;">
+      <div style="display: flex; align-items: center; gap: 1rem;">
         <span class="material-symbols-outlined cursor-pointer">share</span>
-        <span class="material-symbols-outlined cursor-pointer">download</span>
+        <span class="material-symbols-outlined cursor-pointer download-btn">download</span>
       </div>
-      <span class="font-medium">Coupon Details</span>
+      <span style="font-weight: 500;">Coupon Details</span>
       <span class="material-symbols-outlined cursor-pointer close-popup">close</span>
     </div>
-    <div class="h-[calc(100%-40px)] overflow-y-auto scroll space-y-2 pb-6">
-      <div class="flex flex-col items-center px-4 py-3">
-        <img class="popup-image w-full max-h-60 object-contain rounded-md mb-2" src="" alt="Coupon Image" style="background:#f5f5f5;"/>
+    <div class="download-container" style="height: calc(100% - 40px); overflow-y: auto; scroll-behavior: smooth; padding-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
+      <div style="display: flex; flex-direction: column; align-items: center; padding: 0.75rem 1rem;">
+        <img class="popup-image" src="" alt="Coupon Image" style="width: 100%; max-height: 15rem; object-fit: contain; border-radius: 0.375rem; margin-bottom: 0.5rem; background: #f5f5f5;" />
       </div>
-      <div class="border-t border-dashed border-gray-300 mb-2"></div>
-      <div class="px-6">
-        <div class="font-semibold text-living-coral text-lg mb-2">Audience Profile</div>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-y-2 gap-x-4 text-base mb-4">
-          <div>Age : <span class="popup-age font-medium"></span></div>
-          <div>Gender : <span class="popup-gender font-medium"></span></div>
-          <div>City : <span class="popup-city font-medium"></span></div>
-          <div>Spending Power : <span class="popup-spending font-medium"></span></div>
+      <div style="border-top: 1px dashed #d1d5db; margin-bottom: 0.5rem;"></div>
+      <div style="padding-left: 1.5rem; padding-right: 1.5rem;">
+        <div style="font-weight: 600; color: rgba(255, 111, 97, 1); font-size: 1.125rem; margin-bottom: 0.5rem;">Audience Profile</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill,minmax(100px,1fr)); gap: 0.5rem 1rem; font-size: 1rem; margin-bottom: 1rem;">
+          <div>Age : <span class="popup-age" style="font-weight: 500;"></span></div>
+          <div>Gender : <span class="popup-gender" style="font-weight: 500;"></span></div>
+          <div>City : <span class="popup-city" style="font-weight: 500;"></span></div>
+          <div>Spending Power : <span class="popup-spending" style="font-weight: 500;"></span></div>
         </div>
-        <div class="font-semibold text-living-coral text-lg mb-2">Coupon Details</div>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-y-2 gap-x-4 text-base mb-4">
-          <div>Name : <span class="popup-title font-medium"></span></div>
-          <div>Offer Type : <span class="popup-offer-type font-medium"></span></div>
-          <div>Category : <span class="popup-category font-medium"></span></div>
-          <div>Brand Name : <span class="popup-brand font-medium"></span></div>
-          <div>Issued : <span class="popup-issued font-medium"></span></div>
-          <div>Redeemed : <span class="popup-redeemed font-medium"></span></div>
-          <div>Valid Till : <span class="popup-validity font-medium"></span></div>
-          <div>Status : <span class="popup-status font-medium inline-block px-3 py-1 rounded-md bg-mint-cream text-green"></span></div>
+        <div style="font-weight: 600; color: rgba(255, 111, 97, 1); font-size: 1.125rem; margin-bottom: 0.5rem;">Coupon Details</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill,minmax(100px,1fr)); gap: 0.5rem 1rem; font-size: 1rem; margin-bottom: 1rem;">
+          <div>Name : <span class="popup-title" style="font-weight: 500;"></span></div>
+          <div>Offer Type : <span class="popup-offer-type" style="font-weight: 500;"></span></div>
+          <div>Category : <span class="popup-category" style="font-weight: 500;"></span></div>
+          <div>Brand Name : <span class="popup-brand" style="font-weight: 500;"></span></div>
+          <div>Issued : <span class="popup-issued" style="font-weight: 500;"></span></div>
+          <div>Redeemed : <span class="popup-redeemed" style="font-weight: 500;"></span></div>
+          <div>Valid Till : <span class="popup-validity" style="font-weight: 500;"></span></div>
+          <div>Status : <span class="popup-status" style="font-weight: 500; display: inline-block; padding: 0.25rem 0.75rem; border-radius: 0.375rem; background: rgba(245, 255, 250, 1); color: rgba(40, 167, 69, 1);"></span></div>
         </div>
-        <div class="font-semibold text-living-coral text-lg mb-2">Description</div>
-        <div class="text-base mb-2">
+        <div style="font-weight: 600; color: rgba(255, 111, 97, 1); font-size: 1.125rem; margin-bottom: 0.5rem;">Description</div>
+        <div style="font-size: 1rem; margin-bottom: 0.5rem;">
           <span class="popup-description"></span>
         </div>
+        <!-- Footer Metadata -->
+      <div class="border-t-2 border-dashed py-3 border-semi-transparent-black grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8 text-jet-black">
+        <div class="text-14-nr flex justify-between gap-3">
+          <div class="w-1/2"><span class="text-14-fs">Coupon Ref. ID</span> :</div>
+          <div class="popup-id font-medium">—</div>
+        </div>
+        <div class="text-14-nr flex justify-between gap-3">
+          <div class="w-1/2"><span class="text-14-fs">Issued By</span> :</div>
+          <div class="popup-issued-by font-medium">—</div>
+        </div>
+        <div class="text-14-nr flex justify-between gap-3">
+          <div class="w-1/2"><span class="text-14-fs">Uploaded On</span> :</div>
+          <div class="popup-uploaded-on font-medium">—</div>
+        </div>
+      </div>
       </div>
     </div>
   </div>

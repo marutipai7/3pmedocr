@@ -1,0 +1,61 @@
+{% for coupon in coupon_history %}
+                    <tr>
+                      <td class="px-4 py-4.5 text-center">
+                        {{ coupon.created_at|date:"d/m/y,H:i" }}
+                      </td>
+                      <td class="px-4 py-4.5 text-center">
+                        {{ coupon.category }}
+                      </td>
+                      <td class="px-4 py-4.5 text-center">
+                        {{ coupon.brand_name }}
+                      </td>
+                      <td class="px-4 py-4.5 text-center">
+                        {{ coupon.max_redemptions }}
+                      </td>
+                      <td class="px-4 py-4.5 text-center">
+                        {{ coupon.redeemed_count|default:"0" }}
+                      </td>
+                      <td class="px-4 py-4.5 text-center">
+                        {{ coupon.max_redemptions|add:"-"|add:coupon.redeemed_count|default:coupon.max_redemptions }}
+                      </td>
+                      <td class="px-4 py-4.5 text-center">
+                        {{ coupon.validity|date:"dM Y" }}
+                      </td>
+                      <td class="px-6 py-4.5 text-center">
+                        <div class="{% if coupon.validity > today %}bg-mint-cream text-green{% else %}bg-soft-pink text-strong-red{% endif %} py-2 rounded-md border-none px-8">
+                          {% if coupon.validity > today %}Active{% else %}Expired{% endif %}
+                        </div>
+                      </td>
+                      <td class="px-4 py-4.5 text-center flex items-center justify-center gap-2">
+                        <!-- Actions (bookmark, view, download, etc.) -->
+                        <span title="Saved" data-saved="false"
+                              class="material-symbols-outlined saved-icon cursor-pointer {% if coupon.saved %}material-filled text-living-coral{% else %}text-dark-blue{% endif %}"
+                              data-coupon-id="{{ coupon.id }}"
+                              data-saved="{{ coupon.saved|yesno:'true,false' }}">
+                          bookmark
+                        </span>
+                        <span title="View Coupon History"
+                          class="material-symbols-outlined cursor-pointer hover:bg-transparent-living-coral rounded-full p-1 transition-all visibility"
+                          data-popup="preview"
+                          data-coupon-id="{{ coupon.id }}">
+                          visibility
+                        </span>
+                        <span title="Download Coupon Details"
+                          class="material-symbols-outlined cursor-pointer hover:bg-transparent-living-coral rounded-full p-1 transition-all download"
+                          data-popup="download"
+                          data-coupon-id="{{ coupon.id }}">
+                          download
+                        </span>
+                        <span
+                            class="cursor-pointer platform-bill-view hover:bg-transparent-living-coral rounded-full p-1 transition-all"
+                            data-id="{{ coupon.id }}"
+                          >
+                            <img src="/static/images/assignment.svg" alt="Icon" />
+                          </span>
+                      </td>
+                    </tr>
+                  {% empty %}
+                    <tr>
+                      <td colspan="9" class="text-center py-4">No coupons history found.</td>
+                    </tr>
+                  {% endfor %}
