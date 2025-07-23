@@ -1089,11 +1089,87 @@ if (document.getElementById('dataTrendsChart')) {
 
 
 // Register as Advertiser Home Page Chart  
-  document.addEventListener("DOMContentLoaded", function () {
+  // document.addEventListener("DOMContentLoaded", function () {
+  //   fetch(getChartData)  // Use the URL pattern name
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       const ctx = document.getElementById("advertiserChart").getContext("2d");
+
+  //       const chart = new Chart(ctx, {
+  //         type: "line",
+  //         data: {
+  //           labels: data.labels,
+  //           datasets: [
+  //             {
+  //               label: "Total Coupons",
+  //               data: data.total_coupons,
+  //               borderColor: "#5182E3",
+  //               borderWidth: 2,
+  //               tension: 0,
+  //               pointRadius: 3,
+  //               pointBackgroundColor: "#FFFFFF",
+  //               pointBorderColor: "#5182E3",
+  //               pointHoverRadius: 5,
+  //               pointHoverBackgroundColor: "#FFFFFF",
+  //               pointHoverBorderColor: "#5182E3",
+  //             },
+  //             {
+  //               label: "Total Redemptions",
+  //               data: data.total_redemptions,
+  //               borderColor: "#FF6F61",
+  //               borderWidth: 2,
+  //               tension: 0,
+  //               pointRadius: 3,
+  //               pointBackgroundColor: "#FFFFFF",
+  //               pointBorderColor: "#FF6F61",
+  //               pointHoverRadius: 5,
+  //               pointHoverBackgroundColor: "#FFFFFF",
+  //               pointHoverBorderColor: "#FF6F61",
+  //             },
+  //             {
+  //               label: "Active Coupons",
+  //               data: data.active_coupons,
+  //               borderColor: "#3AAFA9",
+  //               borderWidth: 2,
+  //               tension: 0,
+  //               pointRadius: 3,
+  //               pointBackgroundColor: "#FFFFFF",
+  //               pointBorderColor: "#3AAFA9",
+  //               pointHoverRadius: 5,
+  //               pointHoverBackgroundColor: "#FFFFFF",
+  //               pointHoverBorderColor: "#3AAFA9",
+  //             },
+  //           ],
+  //         },
+  //         options: {
+  //           responsive: true,
+  //           plugins: {
+  //             legend: {
+  //               position: "top",
+  //             },
+  //             title: {
+  //               display: true,
+  //               text: "Coupon Performance",
+  //             },
+  //           },
+  //           scales: {
+  //             y: {
+  //               beginAtZero: true,
+  //             },
+  //           },
+  //         },
+  //       });
+  //     });
+  // });
+document.addEventListener("DOMContentLoaded", function () {
+  const chartElement = document.getElementById("advertiserChart");
+
+  // Only run if the canvas exists
+  if (chartElement) {
     fetch(getChartData)  // Use the URL pattern name
       .then((response) => response.json())
       .then((data) => {
-        const ctx = document.getElementById("advertiserChart").getContext("2d");
+        const ctx = chartElement.getContext("2d");
 
         const chart = new Chart(ctx, {
           type: "line",
@@ -1159,5 +1235,9 @@ if (document.getElementById('dataTrendsChart')) {
             },
           },
         });
+      })
+      .catch((error) => {
+        console.error("Chart data fetch error:", error);
       });
-  });
+  }
+});

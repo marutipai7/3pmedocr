@@ -1,5 +1,6 @@
 from django.db import models 
-from registration.models import User # This is your custom user model
+from registration.models import User
+from coupon.models import Coupon 
 
 # Table 1: Action types and their fixed point values
 class PointsActionType(models.Model):
@@ -45,3 +46,12 @@ class PointsBadge(models.Model):
         if self.max_points:
             return f"{self.name} ({self.min_points} - {self.max_points} pts)"
         return f"{self.name} ({self.min_points}+ pts)"
+    
+class CouponClaimed(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='claimed_coupons')
+    coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE, related_name='claims')
+    date_claimed = models.DateTimeField(auto_now_add=True)
+    expiry_date = models.DateField()
+
+    def __str__(self):
+        return f"{self.user.username} claimed {self.coupon.code}"

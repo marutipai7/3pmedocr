@@ -1,4 +1,4 @@
-<table class="min-w-full table-auto whitespace-nowrap docTable">
+<table class="min-w-full table-auto whitespace-nowrap">
   <thead class="bg-violet-sky text-white text-sm sm:text-18-b">
     <tr>
       <th class="text-center px-4 py-6 border-r border-white">Date & Time</th>
@@ -8,7 +8,7 @@
     </tr>
   </thead>
   <tbody class="bg-snow-gray text-dark-gray text-16-fs">
-    {% for row in history %}
+    {% for row in data %}
     <tr>
       <td class="px-4 py-4.5 text-center">{{ row.timestamp }}</td>
       <td class="px-4 py-4.5 text-center">{{ row.action_type }}</td>
@@ -24,3 +24,24 @@
     {% endfor %}
   </tbody>
 </table>
+{% if page_obj.has_other_pages %}
+  <div id="pagination-container" class="flex justify-center gap-2 mt-4">
+    
+    {% if page_obj.has_previous %}
+      <button class="pagination-btn px-2 py-1 border text-violet-sky" data-page="{{ page_obj.previous_page_number }}">« Prev</button>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+        <button class="pagination-btn px-2 py-1 border bg-violet-sky text-white font-bold" data-page="{{ num }}">{{ num }}</button>
+      {% else %}
+        <button class="pagination-btn px-2 py-1 border text-violet-sky" data-page="{{ num }}">{{ num }}</button>
+      {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+      <button class="pagination-btn px-2 py-1 border text-violet-sky" data-page="{{ page_obj.next_page_number }}">Next »</button>
+    {% endif %}
+
+  </div>
+{% endif %}
