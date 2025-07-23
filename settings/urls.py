@@ -13,4 +13,5 @@ urlpatterns = [
     path('delete-account/', views.delete_account, name='delete_account'),
     path('change-password/', views.change_password, name='change_password'),
     path('get_user_theme_api/', views.get_user_theme_api, name='get_user_theme_api'),
+    path('account-details/', views.get_account_details, name='account-details'),
 ]

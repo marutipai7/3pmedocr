@@ -20,7 +20,8 @@ $(document).ready(function () {
   });
 
   // Form submit for edit details
-  $("#editForm").off("submit").on("submit", function (e) {
+  // $("#editForm").off("submit").on("submit", function (e) {
+  $(document).off("submit").on("submit", "#editForm", function (e) {
     e.preventDefault();
 
     const $form = $(this);
@@ -44,13 +45,14 @@ $(document).ready(function () {
     };
 
     for (let field in requiredFields) {
-      const value = $form.find(`[name="${field}"]`).val().trim();
+      const value = $form.find(`[name="${field}"]`).val() || '';
       if (!value) {
-        $(`.${field}Error`).text(requiredFields[field]).removeClass("hidden");
+        console.log(`.${field}Error`);
+        $(`.${field}Error`).text(requiredFields[field] || `${field} is required`).removeClass("hidden");
         hasError = true;
       }
     }
-
+      console.log(hasError);
     if (hasError) return;
 
     // AJAX submit
@@ -58,15 +60,20 @@ $(document).ready(function () {
       url: actionUrl,
       type: method,
       data: formData,
+      beforesend:function(){
+        $('.save-btn').text('Saving....').attr('disabled', true);
+      },
       headers: {
         "X-CSRFToken": $("input[name=csrfmiddlewaretoken]").val()
       },
       success: function (response) {
         if(response.success == true){
           toastr.success(response.message || "Updated successfully.");
+          location.reload();
         } else {
           toastr.success(response.message || "Error Occurs, Please Try Again.");
         }
+        $('.save-btn').text('Saved').attr('disabled', false);
       },
       error: function (xhr) {
         if (xhr.status === 422 || xhr.status === 400) {
@@ -78,6 +85,7 @@ $(document).ready(function () {
         } else {
           toastr.error("An unexpected error occurred.");
         }
+        $('.save-btn').text('Save Changes').attr('disabled', false);
       }
     });
   });

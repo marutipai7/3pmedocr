@@ -307,3 +307,58 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
+$("button[data-tab=account-details]").on("click", function (e) {
+    getAccountDetails();
+});
+
+$(document).on("click", ".cancel-btn", function(){
+    $('.tabs').show();
+    $('.edit-toggle').removeClass('hidden').show();
+    $('.edit-details').addClass('hidden');
+    $('.account-details').show();
+    $('#edit-account-details-render').html('');
+    getAccountDetails();
+});
+
+$(".editIcon").on("click", function (e) {
+    $.ajax({
+        url: "account-details/?type=edit",
+        type: "GET",
+        beforesend:function(){
+            $("#edit-account-details-render").html(`<h3>Loading....</h3>`);
+        },
+        success: function (response) {
+            if (response.success) {
+                $("#edit-account-details-render").html(response.html);
+            } else {
+                toastr.error(responses.messsage || 'Error Occured!');
+            }
+        },
+        error: function () {
+            console.error("Failed to load account details.");
+        }
+    });
+});
+
+function getAccountDetails(){
+    $.ajax({
+        url: "account-details/",
+        type: "GET",
+        beforesend:function(){
+            $("#account-details-render").html(`<h3>Loading....</h3>`);
+        },
+        success: function (response) {
+            if (response.success) {
+                $("#account-details-render").html(response.html);
+            } else {
+                toastr.error(responses.messsage || 'Error Occured!');
+            }
+        },
+        error: function () {
+        console.error("Failed to load account details.");
+        }
+    });
+}
+
+
+

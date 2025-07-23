@@ -254,6 +254,7 @@ $(document).ready(function () {
             }
         }
     });
+    
 
     $('#tag-container').on('click', 'button', function () {
         let index = $(this).data('index');

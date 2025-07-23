@@ -3,15 +3,28 @@ import os
 import json
 from django.conf import settings
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from maps.models import SearchHistory, SavedLocation
 from dashboard.utils import dashboard_login_required
-from registration.models import UserProfile, AdvertiserProfile, ClientProfile, NGOProfile, MedicalProviderProfile,  ContactPerson
+from registration.models import (
+    User,
+    NGOProfile,
+    ClientProfile,
+    ContactPerson,
+    UserProfile,
+    AdvertiserProfile,
+    ClientType,
+    AdService,
+    AdvertiserType,
+    AdServiceReq,MedicalProviderProfile
+    )
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.files.storage import default_storage
 from django.views.decorators.http import require_POST, require_GET
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from django.template.loader import render_to_string
+from django.db import transaction
 import logging
 from .models import UserColorScheme
 
@@ -20,6 +33,10 @@ logger = logging.getLogger(__name__)
 ALLOWED_EXTENSIONS = {'.pdf', '.jpg', '.jpeg', '.png'}
 MAX_FILE_SIZE = 5 * 1024 * 1024 
 
+def load_country_codes():
+    json_path = os.path.join(settings.BASE_DIR, 'static', 'data', 'countryCodes.json')
+    with open(json_path, 'r', encoding='utf-8') as f:
+        return json.load(f)
 def is_file_clean(file_obj):
     return True
 
@@ -221,9 +238,195 @@ def settings_page(request):
 
     return render(request, 'settings/settings_page.html', context)
 
+
+def get_base_context(user):
+    context = {
+        'email': user.email,
+        'country_code': '+91',
+        'phone_no': user.phone_number or '',
+        'user_type': user.user_type,
+        'created_at': user.created_at,
+        'updated_at': user.updated_at,
+        'inapp_notifications': user.inapp_notifications,
+        'email_notifications': user.email_notifications,
+        'push_notifications': user.push_notifications,
+        'regulatory_alerts': user.regulatory_alerts,
+        'promotions_and_offers': user.promotions_and_offers,
+        'quite_mode': user.quite_mode,
+        'quite_mode_start_time': user.quite_mode_start_time,
+        'quite_mode_end_time': user.quite_mode_end_time,
+    }
+
+    user_profile = UserProfile.objects.filter(user=user).first()
+    if user_profile:
+        context.update({
+            'name': user_profile.name,
+            'date_of_birth': user_profile.dob,
+            'gender': user_profile.gender,
+            'address': user_profile.address,
+            'city': user_profile.city,
+            'state': user_profile.state,
+            'country': user_profile.country,
+            'pincode': user_profile.pincode,
+            'referral_code': user_profile.referral_code or '',
+        })
+
+    return context
+
+def handle_contact_person(profile_type, profile_id):
+    contact = ContactPerson.objects.filter(profile_type=profile_type, profile_id=profile_id).first()
+    return {
+        'contact_name': contact.name if contact else 'N/A',
+        'contact_phone_country_code': getattr(contact, 'phone_country_code', ''),
+        'contact_phone_number': getattr(contact, 'phone_number', ''),
+        'contact_role': getattr(contact, 'role', ''),
+    }
+
+def handle_advertiser_profile(user):
+    profile = AdvertiserProfile.objects.filter(user=user).first()
+    if not profile:
+        return {}
+
+    data = {
+        'company_name': profile.company_name,
+        'advertiser_type': profile.advertiser_type,
+        'all_types': ['Brand', 'Agency', 'Influencer', 'Other'],
+        'services_interested': profile.ad_services_required,
+        'all_services': [...],  # same list as before
+        'website_url': profile.website_url,
+        'address': profile.address,
+        'city': profile.city,
+        'state': profile.state,
+        'country': profile.country,
+        'pincode': profile.pincode,
+        'description': profile.brand_description,
+        'brand_image_path': os.path.basename(profile.brand_image_path),
+        'referral_code': profile.referral_code or '',
+        'incorporation_number': profile.incorporation_number,
+        'incorporation_doc_path': os.path.basename(profile.incorporation_doc_path),
+        'gst_number': profile.gst_number,
+        'gst_doc_path': os.path.basename(profile.gst_doc_path),
+        'pan_number': profile.pan_number,
+        'pan_doc_path': os.path.basename(profile.pan_doc_path),
+        'tan_number': profile.tan_number,
+        'tan_doc_path': os.path.basename(profile.tan_doc_path),
+    }
+    data.update(handle_contact_person(user.user_type, profile.id))
+    return data
+
+def handle_client_profile(user):
+    profile = ClientProfile.objects.filter(user=user).first()
+    if not profile:
+        return {}
+    data = {
+        'company_name': profile.company_name,
+        'company_type': profile.company_type,
+        'all_types': [...],  # company types
+        'services_interested': profile.services_interested,
+        'all_services': [...],  # same service list
+        'website_url': profile.website_url,
+        'address': profile.address,
+        'city': profile.city,
+        'state': profile.state,
+        'country': profile.country,
+        'pincode': profile.pincode,
+        'referral_code': profile.referral_code or '',
+        'incorporation_number': profile.incorporation_number,
+        'incorporation_doc_path': os.path.basename(profile.incorporation_doc_path),
+        'gst_number': profile.gst_number,
+        'gst_doc_path': os.path.basename(profile.gst_doc_path),
+        'pan_number': profile.pan_number,
+        'pan_doc_path': os.path.basename(profile.pan_doc_path),
+        'tan_number': profile.tan_number,
+        'tan_doc_path': os.path.basename(profile.tan_doc_path),
+    }
+    data.update(handle_contact_person(user.user_type, profile.id))
+    return data
+
+def handle_ngo_profile(user):
+    profile = NGOProfile.objects.filter(user=user).first()
+    if not profile:
+        return {}
+    data = {
+        'ngo_name': profile.ngo_name,
+        'ngo_services': profile.ngo_services,
+        'all_services': [...],
+        'website_url': profile.website_url,
+        'address': profile.address,
+        'city': profile.city,
+        'state': profile.state,
+        'country': profile.country,
+        'pincode': profile.pincode,
+        'ngo_registration_number': profile.ngo_registration_number,
+        'ngo_registration_doc_path': os.path.basename(profile.ngo_registration_doc_path),
+        'pan_number': profile.pan_number,
+        'pan_doc_path': os.path.basename(profile.pan_doc_path),
+        'gst_number': profile.gst_number,
+        'gst_doc_path': os.path.basename(profile.gst_doc_path),
+        'tan_number': profile.tan_number,
+        'tan_doc_path': os.path.basename(profile.tan_doc_path),
+        'section8_number': profile.section8_number,
+        'section8_doc_path': os.path.basename(profile.section8_doc_path),
+        'doc_12a_number': profile.doc_12a_number,
+        'doc_12a_path': os.path.basename(profile.doc_12a_path),
+        'brand_description': profile.brand_description,
+        'brand_image_path': os.path.basename(profile.brand_image_path),
+        'referral_code': profile.referral_code or '',
+    }
+    data.update(handle_contact_person(user.user_type, profile.id))
+    return data
+
+def handle_provider_profile(user):
+    profile = MedicalProviderProfile.objects.filter(user=user).first()
+    return {
+        'company_name': profile.company_name,
+        'provider_type': profile.provider_type,
+        'services_offered': profile.services_offered,
+        'website_url': profile.website_url,
+        'storefront_image_path': profile.storefront_image_path,
+    } if profile else {}
+
+
+
+@require_GET
+@dashboard_login_required
+def get_account_details(request):
+    try:
+        user = request.user_obj
+        context = get_base_context(user)
+
+        # Map user_type to its handler function
+        user_type_handlers = {
+            'ngo': handle_ngo_profile,
+            'client': handle_client_profile,
+            'advertiser': handle_advertiser_profile,
+            'provider': handle_provider_profile,
+        }
+
+        handler_func = user_type_handlers.get(user.user_type)
+        if handler_func:
+            context.update(handler_func(user))
+        type = request.GET.get('type', 'view')
+        # load_country_codes
+        context['country_codes'] = load_country_codes()
+        context['all_types'] = AdvertiserType.objects.filter(is_active=True)
+        context["all_services"] = AdServiceReq.objects.filter(is_active=True)
+        
+        if type == 'view':
+            html = render_to_string('partials/account_details.html', context, request=request)
+        elif  type == 'edit':
+            html = render_to_string('partials/edit-account-details.html', context, request=request)
+
+        return JsonResponse({'success': True, 'html': html})
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': f'Error loading account details: {str(e)}'})
+
+
 def logout_view(request):
     request.session.flush()  # clears all session data
     return redirect('/login/')
+
+
 
 @require_POST
 @dashboard_login_required
@@ -379,12 +582,76 @@ def update_ngo_profile(request):
 @require_POST
 @dashboard_login_required
 def update_advertiser_profile(request):
-    pass
+    try:
+        post_data = request.POST
+        user = request.user_obj  # Assuming you're using `request.user_obj` as set in your middleware
+
+        with transaction.atomic():
+            # --- Update User ---
+            user.email = post_data.get('email', user.email)
+            user.phone_number = post_data.get('phone', user.phone_number)
+            user.save()
+
+            # --- Update AdvertiserProfile ---
+            advertiser_profile = get_object_or_404(AdvertiserProfile, user=user)
+            advertiser_profile.company_name = post_data.get('company_name', advertiser_profile.company_name)
+            advertiser_profile.advertiser_type = post_data.getlist('advertiser_type') or None
+            advertiser_profile.ad_services_required = post_data.getlist('company_services') or None
+            advertiser_profile.website_url = post_data.get('website_url')
+            advertiser_profile.city = post_data.get('city')
+            advertiser_profile.state = post_data.get('state')
+            advertiser_profile.country = post_data.get('country')
+            advertiser_profile.pincode = post_data.get('pincode')
+            advertiser_profile.save()
+
+            # --- Update ContactPerson (optional) ---
+            contact_name = post_data.get('contact_name')
+            contact_role = post_data.get('contact_role')
+            contact_phone = post_data.get('contact_phone_number')
+
+            if contact_name or contact_phone:
+                contact, created = ContactPerson.objects.get_or_create(
+                    profile_type='advertiser',
+                    profile_id=advertiser_profile.id
+                )
+                contact.name = contact_name
+                contact.role = contact_role
+                contact.phone_number = contact_phone
+                contact.phone_country_code = user.phone_country_code or '+91'  # Default if needed
+                contact.save()
+
+        return JsonResponse({'success': True, 'message': 'Advertiser profile updated successfully'})
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
 
 @require_POST
 @dashboard_login_required
 def update_client_profile(request):
-    pass
+    try:
+        post_data = request.POST
+        user = request.user_obj
+
+        profile, _ = ClientProfile.objects.get_or_create(user=user)
+        profile.company_name = post_data.get('company_name')
+        profile.company_type = post_data.get('company_type')
+        profile.website_url = post_data.get('website_url')
+        profile.address = post_data.get('address')
+        profile.city = post_data.get('city')
+        profile.state = post_data.get('state')
+        profile.pincode = post_data.get('pincode')
+        profile.country = post_data.get('country')
+        profile.services_interested = post_data.getlist('company_services') or []
+
+        # Optional: Save phone if field exists
+        profile.phone = post_data.get('phone')
+        profile.phone_country_code = post_data.get('countryCodes')
+
+        profile.save()
+
+        return JsonResponse({'success': True, 'message': 'Client profile updated successfully.'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': f'Error updating profile: {str(e)}'})
 
 @require_POST
 @dashboard_login_required
@@ -444,15 +711,19 @@ def change_password(request):
     user.save()
     return JsonResponse({'success': 'Password changed successfully'})
 
-def update_ngo_profile(request):
+@require_POST
+@dashboard_login_required
+def update_ngo_profile_extra(request):
     if request.method != "POST":
         return JsonResponse({"success": False, "message": "Invalid request method."}, status=405)
 
+    user = getattr(request, "user_obj", None)
+    if not user:
+        return JsonResponse({"success": False, "message": "Unauthorized."}, status=401)
+
     data = request.POST
     errors = {}
-    user = request.user_obj
-    print("post_data:", data.dict())
-    print("user_obj:", user)
+
 
     # return JsonResponse({"stop": True})
 

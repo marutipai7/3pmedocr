@@ -8,6 +8,7 @@ $(document).ready(function () {
     $(".tab-content").addClass("hidden");
     $("#" + target).removeClass("hidden");
   });
+  $(".tab-btn").eq(0).click();
 
   $(".tab-btn-customer").click(function () {
     var target = $(this).data("tab");
@@ -23,16 +24,17 @@ $(document).ready(function () {
       $(".diamond-user").hide();
     }
   });
+  $(".tab-btn-customer").eq(0).click();
 
-  $('.tab-btn-client').click(function () {
-      var target = $(this).data('tab');
+  // $('.tab-btn-client').click(function () {
+  //     var target = $(this).data('tab');
 
-      $('.tab-btn-client').removeClass('active-tab-client');
-      $(this).addClass('active-tab-client');
+  //     $('.tab-btn-client').removeClass('active-tab-client');
+  //     $(this).addClass('active-tab-client');
 
-      $('.tab-content').addClass('hidden');
-      $('.' + target).removeClass('hidden');
-  });
+  //     $('.tab-content').addClass('hidden');
+  //     $('.' + target).removeClass('hidden');
+  // });
 
   $(".tab-btn-advertiser").click(function () {
     var target = $(this).data("tab");
@@ -48,6 +50,8 @@ $(document).ready(function () {
       $(".diamond-user").hide();
     }
   });
+  $(".tab-btn-advertiser").eq(0).click();
+
 
   $(".tab-btn-pharmacy").click(function () {
     var target = $(this).data("tab");
@@ -68,6 +72,8 @@ $(document).ready(function () {
           $('.chat-profile[data-id="2"]').removeClass('hidden');
     }
   });
+  $(".tab-btn-pharmacy").eq(0).click();
+
 
   $(".tab-btn-ngo").click(function () {
     var target = $(this).data("tab");
@@ -76,6 +82,7 @@ $(document).ready(function () {
     $(this).addClass("active-tab1-ngo");
 
     $(".tab-content").addClass("hidden");
+    console.log('target', target);
     $("." + target).removeClass("hidden");
     if (target === "points") {
       $(".referral").removeClass("hidden");
@@ -88,6 +95,8 @@ $(document).ready(function () {
       $(".diamond-user").hide();
     }
   });
+  $(".tab-btn-ngo").eq(0).click();
+
 
   $(".tab-btn-client").click(function () {
     var target = $(this).data("tab");
@@ -104,4 +113,6 @@ $(document).ready(function () {
     }
     
   });
+  $(".tab-btn-client").eq(0).click();
+
 });

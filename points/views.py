@@ -51,9 +51,6 @@ def points_dashboard(request):
             Q(max_points__gte=user_points) | Q(max_points__isnull=True)
         ).order_by('min_points').first()
 
-    
-
-
     badge_name='';
     badge_image='';
     if badge:
@@ -63,10 +60,6 @@ def points_dashboard(request):
     else:
         badge_name = "No Badge"
         badge_image = "/static/images/default-badge.svg"
-    
-
-    
-
 
 
     # 📊 Chart data (last 7 days)
@@ -99,9 +92,6 @@ def points_dashboard(request):
         'all_badges': all_badges,
         'badge': badge,
     })
-
-
- 
 
 def get_coupon_cards(request):
     # Join with category and brand using select_related
@@ -165,14 +155,8 @@ def get_popular_coupon_cards(request):
                 "max_redemptions": max_redemptions,
                 "percent_used": percent_used,
             })
-
-
     html = render_to_string("partials/coupon_card_layout.html", {"coupons": coupon_data})
     return JsonResponse({"html": html})
-
-
-
-
 
 
 def points_history_view(request):
