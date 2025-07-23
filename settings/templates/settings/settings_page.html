@@ -404,7 +404,7 @@
             <span title="View"
               data-doc-type="ngo_registration_doc"
               data-doc-path="{{ ngo_registration_doc_path }}"
-              class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+              class="material-symbols-outlined border p-1 rounded-md cursor-pointer ngo-view-icon"
               >visibility</span
             >
             <span title="Upload  Document"
@@ -445,7 +445,7 @@
             <span  title="View"
               data-doc-type="gst_doc"
               data-doc-path="{{ gst_doc_path }}"
-              class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+              class="material-symbols-outlined border p-1 rounded-md cursor-pointer ngo-view-icon"
               >visibility</span
             >
             <span title="Upload  Document"
@@ -486,7 +486,7 @@
             <span  title="View"
               data-doc-type="pan_doc"
               data-doc-path="{{ pan_doc_path }}"
-              class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+              class="material-symbols-outlined border p-1 rounded-md cursor-pointer ngo-view-icon"
               >visibility</span
             >
             <span title="Upload  Document"
@@ -527,7 +527,7 @@
             <span  title="View"
               data-doc-type="tan_doc"
               data-doc-path="{{ tan_doc_path }}"
-              class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+              class="material-symbols-outlined border p-1 rounded-md cursor-pointer ngo-view-icon"
               >visibility</span
             >
             <span title="Upload  Document"
@@ -568,7 +568,7 @@
             <span  title="View"
               data-doc-type="doc_12a"
               data-doc-path="{{ doc_12a_path }}"
-              class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+              class="material-symbols-outlined border p-1 rounded-md cursor-pointer ngo-view-icon"
               >visibility</span
             >
             <span title="Upload  Document"
@@ -609,7 +609,7 @@
             <span  title="View"
               data-doc-type="section8_doc"
               data-doc-path="{{ section8_doc_path }}"
-              class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+              class="material-symbols-outlined border p-1 rounded-md cursor-pointer ngo-view-icon"
               >visibility</span
             >
             <span title="Upload  Document"
@@ -648,7 +648,7 @@
             <span  title="View"
               data-doc-type="brand_image"
               data-doc-path="{{ brand_image_path }}"
-              class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+              class="material-symbols-outlined border p-1 rounded-md cursor-pointer ngo-view-icon"
               >visibility</span
             >
             <span title="Upload  Document"
@@ -1148,8 +1148,8 @@
     </div>
 </div>
 
-  <!--Document Popup-->
-  <div id="viewModal"
+  <!--Document Popup--> 
+  <div id="negoViewModal"
     class="flex popup fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50">
     <div class="bg-soft-gray p-6 rounded-xl shadow-lg max-w-md w-full">
       <div id="userTypeHolder" data-user-type="{{ request.user_obj.user_type }}" hidden></div>

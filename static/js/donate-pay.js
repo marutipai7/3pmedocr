@@ -19,7 +19,8 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     window.goToDonatePage = function () {
-        window.location.href = "donate.html";
+        window.location.href = "/donate/";
+        // window.location.href = "donate.html";
     };
 
     document.addEventListener("keydown", function (e) {
@@ -105,7 +106,8 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showToast('Donation successful!', 'success');
+                    toastr.success('Donation successful');
+                    // showToast('Donation successful!', 'success');
 
                     // --- DYNAMIC POPUP UPDATE START ---
                     // Calculate values
@@ -131,11 +133,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     openPopup();
                 } else {
-                    showToast(data.error || 'Donation failed', 'error');
+                    toastr.error(data.error || 'Donation failed');
+                    // showToast(data.error || 'Donation failed', 'error');
                 }
             })
             .catch(() => {
-                showToast('Something went wrong!', 'error');
+                toastr.error('Something went wrong!');
+                // showToast('Something went wrong!', 'error');
             });
         });
     }
@@ -145,10 +149,29 @@ document.addEventListener("DOMContentLoaded", function () {
         if (window.toaster && typeof window.toaster.show === 'function') {
             window.toaster.show(message, type);
         } else {
-            alert(message); // fallback
+            toastr.error(message);
+            // alert(message); // fallback
         }
     }
 
+    //close success page after pay
+    const openBtn = document.getElementById("openDonatePopup");
+    const popupClose = document.getElementById("donatePopup");
+
+    openBtn.addEventListener("click", function () {
+        popupClose.classList.remove("hidden");
+        popupClose.classList.add("flex");
+    });
+    // Attach event to all close buttons inside the modal
+    popupClose.addEventListener("click", function (e) {
+        if (
+            e.target.classList.contains("donate-close-btn") ||
+            e.target.id === "donatePopup"
+        ) {
+            popupClose.classList.remove("flex");
+            popupClose.classList.add("hidden");
+        }
+    });
 })
 
 
@@ -197,4 +220,3 @@ if (uploadTrigger && panInput) {
         }
     });
 }
-

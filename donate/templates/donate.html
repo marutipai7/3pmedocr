@@ -100,6 +100,9 @@
                       <a href="{{ post.website_url }}" target="_blank" class="visit-website-btn text-vivid-orange px-4 py-2 rounded-md border border-vivid-orange">
                         <span class="text-sm">Visit Website</span>
                         {% if post.id %}
+                        <a href="{% url 'donate' %}" class="pay-button bg-vivid-orange text-white px-12 py-2 rounded-md">
+                        <span class="text-sm">Cancel</span>
+                      </a>
                         <a href="{% url 'donate-pay' post.id %}" class="pay-button bg-vivid-orange text-white px-12 py-2 rounded-md">
                         <span class="text-sm">Pay</span>
                       </a>
@@ -117,30 +120,44 @@
           </div>
           <div class="contact-support tab-content pt-8 space-y-6 hidden">
             <!-- Search + Filter Section for Donation History -->
-            <div class="flex items-center gap-5">
+            <div class="flex items-center gap-5 mb-4">
               <h1 class="font-semibold text-base text-dark-gray">Donation history</h1>
-              <form method="get" action="{% url 'donate' %}" class="flex items-center gap-2 w-full max-w-[400px] h-[40px] rounded-[6px] bg-light-white px-2">
-                <span class="material-symbols-outlined text-dark-gray mr-2">search</span>
-                <input
-                  type="text"
-                  name="donation_query"
-                  placeholder="Search by Post Type or NGO Name"
-                  value="{{ donation_query }}"
-                  class="w-full h-full py-0 text-sm border-none bg-transparent focus:outline-none focus:ring-0 placeholder:text-medium-gray"
-                />
-                <select name="limit" onchange="this.form.submit()" class="rounded-[6px] border border-gray-300 px-3 py-2 text-sm ml-2">
-                  <option value="50" {% if limit == '50' %}selected{% endif %}>Show 50</option>
-                  <option value="100" {% if limit == '100' %}selected{% endif %}>Show 100</option>
-                  <option value="200" {% if limit == '200' %}selected{% endif %}>Show 200</option>
-                </select>
-                <button type="submit" class="ml-2 px-3 py-2 rounded bg-dark-blue text-white">Search</button>
-              </form>
-              <button onclick="document.querySelector('.viewPopup').classList.remove('hidden')"
-                class="cursor-pointer flex items-center gap-1 px-4 py-2 border border-dark-blue rounded-xl text-dark-blue">
-                <span class="material-symbols-outlined">file_export</span>
-                <span>View</span>
-              </button>
+              <div class="flex items-center gap-2 w-full max-w-[400px] h-[40px] rounded-[6px] bg-light-white px-2">
+                <!-- <form method="get" action="{% url 'donate' %}" class="flex items-center gap-2 w-full max-w-[400px] h-[40px] rounded-[6px] bg-light-white px-2"> -->
+                  <span class="material-symbols-outlined text-dark-gray mr-2">search</span>
+                  <input
+                    id="donation_search"
+                    type="text"
+                    name="donation_query"
+                    placeholder="Search by Post Type or NGO Name"
+                    value="{{ donation_query }}"
+                    class="w-full h-full py-0 text-sm border-none bg-transparent focus:outline-none focus:ring-0 placeholder:text-medium-gray"
+                  />
+              </div>
+                  <select id="limitSelect" name="limit" class="cursor-pointer flex items-center gap-1 px-7 py-2 border border-dark-blue rounded-xl text-dark-blue">
+                    <!-- <option value="10" selected>10 Rows</option> -->
+                    <option value="50" selected>50 Rows</option>
+                    <option value="100">100 Rows</option>
+                    <option value="200">200 Rows</option>
+                  </select>
+
+                  <button id="exportCSVBtn"
+                    data-url="{% url 'export_donations_csv' %}"
+                    class="cursor-pointer flex items-center gap-1 px-4 py-2 border border-dark-blue rounded-xl text-dark-blue">
+                    <span class="material-symbols-outlined">file_export</span>
+                    <span>Export</span>
+                  </button>
+
+                  <!-- <button type="submit" class="ml-2 px-3 py-2 rounded bg-dark-blue text-white">Search</button> -->
+                <!-- </form> -->
+                <!-- <button onclick="document.querySelector('.viewPopup').classList.remove('hidden')"
+                  class="cursor-pointer flex items-center gap-1 px-4 py-2 border border-dark-blue rounded-xl text-dark-blue">
+                  <span class="material-symbols-outlined">file_export</span>
+                  <span>Export</span>
+                </button> -->
+              
             </div>
+            
             <div class="relative max-h-[calc(9*2rem)] overflow-y-auto overflow-x-auto no-scrollbar mt-10">
               <table class="table-auto min-w-full text-sm text-dark-gray whitespace-nowrap">
                 <thead class="bg-dark-blue  text-white">
@@ -156,59 +173,37 @@
                     <th class="text-center px-4 py-4 border-r border-white">Actions</th>
                   </tr>
                 </thead>
-                <tbody class="bg-snow-gray text-dark-gray text-[16px]">
-                  {% if donations %}
-                    {% for donation in donations %}
-                      <tr>
-                        <td class="px-4 py-2.5 text-center">
-                          {{ donation.payment_date|date:'d/m/y,H:i' }}
-                        </td>
-                        <td class="px-4 py-2.5 text-center">{{ donation.ngopost.header }}</td>
-                        <td class="px-4 py-2.5 text-center">{{ donation.ngopost.user.ngoprofile.ngo_name }}</td>
-                        <td class="px-4 py-2.5 text-center">{{ donation.ngopost.post_type }}</td>
-                        <td class="px-4 py-2.5 text-center">₹{{ donation.amount }}</td>
-                        <td class="px-4 py-2.5 text-center">
-                          {% if donation.payment_status == 'Success' %}
-                            <button class="bg-mint-cream text-green px-5 py-2 rounded-md text-sm font-semibold ">Successful</button>
-                          {% else %}
-                            <button class="bg-soft-pink text-strong-red px-6 py-2 rounded-md text-sm font-semibold ">Failed</button>
-                          {% endif %}
-                        </td>
-                        <td class="px-4 py-2.5 text-center">
-                          <div class="flex items-center justify-center gap-2">
-                            <span class="material-symbols-outlined cursor-pointer" title="Bookmark">bookmark</span>
-                            <span class="mx-1">
-                              <img src="/static/images/assignment.svg" alt="Assignment" title="View Platform Bill"
-                                class="inline-block w-6 h-6 align-middle cursor-pointer" onclick="openPopup()" />
-                            </span>
-                            <span>
-                              <img src="/static/images/calendar_today.svg" alt="Calendar" title="View Donation Receipt"
-                                class="inline-block w-6 h-6 align-middle cursor-pointer" onclick="openPopupDonation()" />
-                            </span>
-                          </div>
-                        </td>
-                      </tr>
-                    {% endfor %}
-                  {% else %}
-                    <tr><td colspan="7" class="text-center py-4">No donation history found.</td></tr>
-                  {% endif %}
+                <tbody class="donate-history">
+                  {% include 'donate-history.html' %}
                 </tbody>
               </table>
             </div>
+            <div id="paginationWrapper" class="pagination mt-4 flex justify-end gap-2 items-center"></div>
+
             <div
               class="assignmentPopup fixed inset-0 bg-opacity-70 bg-black/30 flex items-center justify-center z-50 hidden">
               <div class="bg-white rounded-lg shadow-lg p-6 w-96 relative">
-                <button onclick="closePopup()"
-                  class="absolute top-2 right-2 text-gray-500 hover:text-black">&times;</button>
+                <!-- <button
+                  class="material-symbols-outlined absolute top-2 right-2 text-gray-500 hover:text-black px-5"></button> -->
+                  <button id="downloadBillBtn"
+                    onclick="downloadBill()"
+                          data-url="/static/images/Tax%20Bill.svg"
+                          class="material-symbols-outlined cursor-pointer absolute top-2 right-2 text-gray-500 hover:text-black px-5 text-sm">
+                      download
+                  </button>
+                  
+                  <button onclick="closePopup()"
+                  class="absolute top-2 right-2 text-gray-500 hover:text-black text-sm">&times;</button>
 
                 <!-- Top Bar: Left icons and Center Title -->
                 <div class="relative mb-4 h-10">
                   <!-- Left Icons -->
                   <div class="absolute left-0 top-0 flex items-center gap-3">
-                    <span
-                      class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg ">share</span>
-                    <span
-                      class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg">download</span>
+                    <!-- <span
+                      class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg ">share</span> -->
+                    <!-- <span
+                      class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg">download</span> -->
+                     
                   </div>
                   <!-- Centered Title -->
                   <h2
@@ -221,16 +216,23 @@
             <div
               class="donationPopup fixed inset-0 bg-opacity-70 bg-black/30 flex items-center justify-center z-50 hidden">
               <div class="bg-white rounded-lg shadow-lg p-6 w-[450px] relative">
+                <button id="downloadDonationBillBtn"
+                    onclick="downloadDonationBill()" 
+                          data-url="/static/images/Donate%20Bill.svg"
+                          class="material-symbols-outlined cursor-pointer absolute top-2 right-2 text-gray-500 hover:text-black px-5 text-sm">
+                      download
+                  </button>
+
                 <button onclick="closePopupDonation()"
                   class="absolute top-2 right-2 text-gray-500 hover:text-black">&times;</button>
                 <!-- Top Bar: Left icons and Center Title -->
                 <div class="relative mb-4 h-10">
                   <!-- Left Icons -->
                   <div class="absolute left-0 top-0 flex items-center gap-3">
-                    <span
+                    <!-- <span
                       class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg">share</span>
                     <span
-                      class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg">download</span>
+                      class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg">download</span> -->
                   </div>
                   <!-- Centered Title -->
                   <h2
@@ -264,47 +266,12 @@
     </div>
   </div>
 
-  <script>
-  function openPostDetail(el) {
-    document.getElementById('modalNgoName').textContent = el.getAttribute('data-ngo-name');
-    document.getElementById('modalHeader').textContent = el.getAttribute('data-header');
-    document.getElementById('modalDescription').textContent = el.getAttribute('data-description');
-    var website = el.getAttribute('data-website-url');
-    var websiteLink = document.getElementById('modalWebsite');
-    if (website) {
-      websiteLink.textContent = website;
-      websiteLink.href = website.startsWith('http') ? website : 'https://' + website;
-      websiteLink.style.display = 'block';
-    } else {
-      websiteLink.style.display = 'none';
-    }
-    document.getElementById('postDetailModal').classList.remove('hidden');
-  }
-  function closePostDetail() {
-    document.getElementById('postDetailModal').classList.add('hidden');
-  }
-  function toggleExpand(btn) {
-    const card = btn.closest('.donation-card');
-    const para = card.querySelector('.expanded-para');
-    const buttons = card.querySelector('.expanded-buttons');
-    if (para && buttons) {
-      para.classList.toggle('hidden');
-      buttons.classList.toggle('hidden');
-      btn.textContent = para.classList.contains('hidden') ? 'Read More' : 'Read Less';
-    }
-  }
-  </script>
 </body>
 {% endblock%}
 
 {% block extra_js %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="{% static 'js/common.js' %}"></script>
 <script src="{% static 'js/tabs.js' %}"></script>
 <script src="{% static 'js/donate.js' %}"></script>
-<script src="{% static 'js/dropdown.js' %}"></script>
-<script src="{% static 'js/sidebar.js' %}"></script>
 <script src="{% static 'js/table-pagination.js' %}"></script>
 {% endblock %}
 

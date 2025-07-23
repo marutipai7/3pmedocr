@@ -1229,26 +1229,6 @@ function highlightCurrentStatus(currentStatus) {
   });
 }
 
-
-// function highlightCurrentStatus(currentStatus) {
-//   const allSteps = document.querySelectorAll(".status-step");
-
-//   allSteps.forEach((step) => {
-//     const status = step.getAttribute("data-status");
-
-//     // Get the dot element
-//     const dot = step.querySelector(".rounded-full");
-
-//     if (status.trim().toLowerCase() === currentStatus.trim().toLowerCase()) {
-//       dot.classList.remove("bg-violet-sky");
-//       dot.classList.add("bg-green-500");
-//     } else {
-//       dot.classList.remove("bg-green-500");
-//       dot.classList.add("bg-violet-sky");
-//     }
-//   });
-// }
-
 //filter date and custome date wise
 document.querySelectorAll(".help-filter-option").forEach((el) => {
   el.addEventListener("click", function () {
@@ -1340,10 +1320,10 @@ $(document).ready(function () {
   let faqLoaded = false;
 
   // Handle tab switching
-  $(".tab-btn-ngo").click(function () {
+  $(".ngo-sprt-tab-btn").click(function () {
     const target = $(this).data("tab");
 
-    $(".tab-btn-ngo").removeClass("active-tab-ngo");
+    $(".ngo-sprt-tab-btn").removeClass("active-tab-ngo");
     $(this).addClass("active-tab-ngo");
 
     $(".tab-content").addClass("hidden");

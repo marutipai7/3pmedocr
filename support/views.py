@@ -388,6 +388,20 @@ def filter_tickets_old(request):
 # get faq lists 
 @dashboard_login_required
 def faq_lists(request):
+    user = request.user_obj
+    query = request.GET.get('search', '').strip()
+
+    if query:
+        faqs = FAQ.objects.filter(
+            Q(question__icontains=query) | Q(answer__icontains=query),
+            user=user
+        )
+    else:
+       faqs = FAQ.objects.filter(user=user)
+
+    return render(request, 'support-faq.html', {'faqs': faqs})
+
+def faq_lists_old(request):
     query = request.GET.get('search', '').strip()
 
     if query:
