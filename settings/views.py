@@ -9,9 +9,13 @@ from dashboard.utils import dashboard_login_required
 from registration.models import UserProfile, AdvertiserProfile, ClientProfile, NGOProfile, MedicalProviderProfile,  ContactPerson
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.files.storage import default_storage
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+import logging
+from .models import UserColorScheme
+
+logger = logging.getLogger(__name__)
 
 ALLOWED_EXTENSIONS = {'.pdf', '.jpg', '.jpeg', '.png'}
 MAX_FILE_SIZE = 5 * 1024 * 1024 
@@ -519,4 +523,57 @@ def update_ngo_profile(request):
 
     return JsonResponse({"success": True, "message": "NGO profile updated successfully."})
 
+@require_GET
+@dashboard_login_required
+def get_user_theme_api(request):
+    user = request.user_obj
+    user_type = None
 
+    try:
+        if hasattr(user, 'ngoprofile') and user.ngoprofile is not None:
+            user_type = 'ngo'
+        elif hasattr(user, 'advertiserprofile') and user.advertiserprofile is not None:
+            user_type = 'advertiser'
+        elif hasattr(user, 'clientprofile') and user.clientprofile is not None:
+            user_type = 'client'
+        elif hasattr(user, 'medicalproviderprofile') and user.medicalproviderprofile is not None:
+            user_type = 'provider'
+        elif hasattr(user, 'userprofile') and user.userprofile is not None:
+             user_type = 'user'
+        else:
+            user_type = None 
+            logger.warning(f"Theme API: No specific profile found for user {user.username}. User type could not be determined for theme.")
+
+    except Exception as e:
+        logger.error(f"ERROR: Exception during user profile determination for user {user.id} in theme API: {e}", exc_info=True)
+        user_type = None 
+
+    if not user_type:
+        logger.error(f"Theme API: User '{user.username if hasattr(user, 'username') else user.id}' has no determined user type for theme. Aborting.")
+        return JsonResponse(
+            {"error": "User type for theme could not be determined. Please ensure your profile is complete."},
+            status=400
+        )
+
+    #logger.info(f"Theme requested for user: {user.username if hasattr(user, 'username') else user.id}, determined type: {user_type}")
+
+    try:
+        color_scheme_obj = UserColorScheme.objects.get(user_type=user_type, is_active=True)
+        return JsonResponse(color_scheme_obj.color_data) 
+
+    except UserColorScheme.DoesNotExist:
+        logger.warning(f"No active UserColorScheme found for type: {user_type}. Falling back to 'user' theme.")
+        try:
+            default_color_scheme_obj = UserColorScheme.objects.get(user_type='user', is_active=True)
+            return JsonResponse(default_color_scheme_obj.color_data, status=200)
+
+        except UserColorScheme.DoesNotExist:
+            logger.error(f"No active UserColorScheme found for default 'user' type either. Returning server error for theme config.")
+            return JsonResponse(
+                {"error": "Site theme not configured for your user type or default. Contact admin."},
+                status=500
+            )
+
+    except Exception as e:
+        logger.exception(f"An unexpected error occurred while fetching UserColorScheme for {user.username if hasattr(user, 'username') else user.id}: {e}")
+        return JsonResponse({"error": "An unexpected server error occurred while loading theme. Please try again."}, status=500)
