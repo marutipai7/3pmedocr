@@ -16,11 +16,11 @@
     <div class="flex items-center justify-center gap-2">
       <span class="mx-1">
         <img src="/static/images/assignment.svg" alt="Assignment" title="View Platform Bill"
-          class="inline-block w-6 h-6 align-middle cursor-pointer" onclick="openPopup()" />
+          class="inline-block w-6 h-6 align-middle cursor-pointer" onclick="openPlatformPopup({{ donation.id }})" />
       </span>
       <span>
         <img src="/static/images/calendar_today.svg" alt="Calendar" title="View Donation Receipt"
-          class="inline-block w-6 h-6 align-middle cursor-pointer" onclick="openPopupDonation()" />
+          class="inline-block w-6 h-6 align-middle cursor-pointer" onclick="openDonatePopup({{ donation.id }})" />
       </span>
     </div>
   </td>

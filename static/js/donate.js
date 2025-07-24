@@ -125,7 +125,7 @@ cards.forEach((card) => {
 });
 
 
-
+ 
 function openPopup() {
   document.querySelector(".assignmentPopup").classList.remove("hidden");
 }
@@ -276,72 +276,169 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 //dwnld bills
-function downloadBill() {
-    const downloadBtn = document.getElementById("downloadBillBtn");
+// function downloadBill() {
+//     const downloadBtn = document.getElementById("downloadBillBtn");
 
-    if (!downloadBtn) {
-      console.error("Download button not found.");
-      return;
-    }
+//     if (!downloadBtn) {
+//       console.error("Download button not found.");
+//       return;
+//     }
 
-    const imageUrl = downloadBtn.getAttribute("data-url");
-    const fileName = "platform_bill.svg";
+//     const imageUrl = downloadBtn.getAttribute("data-url");
+//     const fileName = "platform_bill.svg";
 
-    fetch(imageUrl)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.blob();
-      })
-      .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-      })
-      .catch(error => {
-        console.error("Download failed:", error);
-        alert("Download failed. Please try again.");
-      });
-  }
+//     fetch(imageUrl)
+//       .then(response => {
+//         if (!response.ok) {
+//           throw new Error("Network response was not ok");
+//         }
+//         return response.blob();
+//       })
+//       .then(blob => {
+//         const url = window.URL.createObjectURL(blob);
+//         const a = document.createElement("a");
+//         a.href = url;
+//         a.download = fileName;
+//         document.body.appendChild(a);
+//         a.click();
+//         a.remove();
+//         window.URL.revokeObjectURL(url);
+//       })
+//       .catch(error => {
+//         console.error("Download failed:", error);
+//         alert("Download failed. Please try again.");
+//       });
+//   }
 
-//downloadDonationBill
-function downloadDonationBill() {
-    const downloadBtn = document.getElementById("downloadDonationBillBtn");
+//img downloadDonationBill
+// function downloadDonationBill() {
+//     const downloadBtn = document.getElementById("downloadDonationBillBtn");
 
-    if (!downloadBtn) {
-      console.error("Download button not found.");
-      return;
-    }
+//     if (!downloadBtn) {
+//       console.error("Download button not found.");
+//       return;
+//     }
 
-    const imageUrl = downloadBtn.getAttribute("data-url");
-    const fileName = "donation_bill.svg";
+//     const imageUrl = downloadBtn.getAttribute("data-url");
+//     const fileName = "donation_bill.svg";
 
-    fetch(imageUrl)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.blob();
-      })
-      .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-      })
-      .catch(error => {
-        console.error("Download failed:", error);
-        alert("Download failed. Please try again.");
-      });
-  }
+//     fetch(imageUrl)
+//       .then(response => {
+//         if (!response.ok) {
+//           throw new Error("Network response was not ok");
+//         }
+//         return response.blob();
+//       })
+//       .then(blob => {
+//         const url = window.URL.createObjectURL(blob);
+//         const a = document.createElement("a");
+//         a.href = url;
+//         a.download = fileName;
+//         document.body.appendChild(a);
+//         a.click();
+//         a.remove();
+//         window.URL.revokeObjectURL(url);
+//       })
+//       .catch(error => {
+//         console.error("Download failed:", error);
+//         alert("Download failed. Please try again.");
+//       });
+// }
 
+//open donate popup
+function openDonatePopup(donationId) {
+  fetch(`/donate/get-donate-bill/${donationId}/`)
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById("receiptNo").innerText = data.receipt_no;
+      document.getElementById("paymentDate").innerText = data.payment_date;
+      document.getElementById("ngoName").innerText = data.ngo_name;
+      document.getElementById("sign").innerText = data.ngo_name;
+      document.getElementById("panNumber").innerText = data.pan;
+      document.getElementById("address").innerText = data.address;
+      document.getElementById("name").innerText = data.name;
+      document.getElementById("email").innerText = data.email;
+      document.getElementById("amount").innerText = data.amount;
+      document.getElementById("payMode").innerText = data.pay_mode;
+      
+      document.getElementById("donateReceiptModal").style.display = 'block'; 
+    })
+    .catch(err => {
+      console.error("Error loading receipt:", err);
+      alert("Unable to load receipt.");
+    });
+}
+
+//close donate popup
+function closeDonatePopup() {
+  const modal = document.querySelector(".donateReceiptPopup");
+  modal.classList.add("hidden");
+  modal.style.display = "none"; // This ensures it hides regardless of inline flex
+}
+
+//download donate pdf 
+function downloadDonatePDF() {
+  const element = document.getElementById('donateReceiptContent');
+  const opt = {
+    margin:       0.5,
+    filename:     'donate-receipt.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+  };
+
+  html2pdf().set(opt).from(element).save();
+}
+
+
+
+
+////////////
+//open platform popup
+function openPlatformPopup(donationId) {
+  fetch(`/donate/get-platform-bill/${donationId}/`)
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById("receiptNoPlatform").innerText = data.receipt_no;
+      document.getElementById("paymentDatePlatform").innerText = data.payment_date;
+      document.getElementById("ngoNamePlatform").innerText = data.ngo_name;
+      document.getElementById("signPlatform").innerText = data.ngo_name;
+      // document.getElementById("panNumberPlatform").innerText = data.pan;
+      document.getElementById("addressPlatform").innerText = data.address;
+      document.getElementById("namePlatform").innerText = data.name;
+      document.getElementById("emailPlatform").innerText = data.email;
+      document.getElementById("amountPlatform").innerText = data.amount;
+      document.getElementById("actualAmountPlatform").innerText = data.amount;
+      document.getElementById("subTotalPlatform").innerText = data.amount;
+      document.getElementById("gstPlatform").innerText = data.gst;
+      document.getElementById("finalTotalPlatform").innerText = data.finalTotal;
+      // document.getElementById("payModePlatform").innerText = data.pay_mode;
+      
+      document.getElementById("platformReceiptModal").style.display = 'block'; 
+    })
+    .catch(err => {
+      console.error("Error loading receipt:", err);
+      alert("Unable to load bill.");
+    });
+}
+
+//close platform popup
+function closePlatformPopup() {
+  const modal = document.querySelector(".platformReceiptPopup");
+  modal.classList.add("hidden");
+  modal.style.display = "none"; // This ensures it hides regardless of inline flex
+}
+
+//download platform pdf 
+function downloadPlatformPDF() {
+  const element = document.getElementById('platformReceiptContent');
+  const opt = {
+    margin:       0.5,
+    filename:     'platform-bill.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+  };
+
+  html2pdf().set(opt).from(element).save();
+}

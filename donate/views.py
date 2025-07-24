@@ -19,6 +19,7 @@ from django.template.loader import render_to_string
 import csv
 from django.http import HttpResponse
 from django.utils.encoding import smart_str
+from registration.models import ContactPerson, User
 
 logger = logging.getLogger(__name__)
 
@@ -164,8 +165,72 @@ def donation_history_ajax(request):
         "current_page": page_obj.number,
         "total_pages": paginator.num_pages
     })
+
+# show data on receipt 
+@dashboard_login_required    
+def get_donate_bill(request, donation_id):
+    donation = Donation.objects.select_related('ngopost__user__ngoprofile').get(id=donation_id)
+    ngoprofile = donation.ngopost.user.ngoprofile
     
-    # csv 
+    # Get the related NGO user
+    ngo_user = donation.ngopost.user
+    
+     # Try to get the ContactPerson for the NGO profile
+    contact_person = ContactPerson.objects.filter(
+        profile_type='ngo',
+        profile_id=ngoprofile.id
+    ).first()  # use .first() to avoid MultipleObjectsReturned
+
+
+    response_data = {
+        "receipt_no": donation.id,
+        "payment_date": donation.payment_date.strftime("%d-%b-%Y"),
+        "ngo_name": donation.ngopost.user.ngoprofile.ngo_name,
+        "pan": donation.pan_number,
+        "amount": f"₹{donation.amount}",
+        "pay_mode": f"₹{donation.payment_method}",
+        "address": f"{donation.ngopost.user.ngoprofile.address}, {donation.ngopost.user.ngoprofile.city}, {donation.ngopost.user.ngoprofile.state}, {donation.ngopost.user.ngoprofile.pincode}",
+        "name": contact_person.name,
+        "email": ngo_user.email,
+    }
+
+    return JsonResponse(response_data)
+
+
+# show data on receipt 
+@dashboard_login_required    
+def get_platform_bill(request, donation_id):
+    donation = Donation.objects.select_related('ngopost__user__ngoprofile').get(id=donation_id)
+    ngoprofile = donation.ngopost.user.ngoprofile
+    
+    # Get the related NGO user
+    ngo_user = donation.ngopost.user
+    
+     # Try to get the ContactPerson for the NGO profile
+    contact_person = ContactPerson.objects.filter(
+        profile_type='ngo',
+        profile_id=ngoprofile.id
+    ).first()  # use .first() to avoid MultipleObjectsReturned
+
+
+    response_data = {
+        "receipt_no": donation.id,
+        "payment_date": donation.payment_date.strftime("%d-%b-%Y"),
+        "ngo_name": donation.ngopost.user.ngoprofile.ngo_name,
+        "pan": donation.pan_number,
+        "gst": donation.gst,
+        "amount": f"₹{donation.amount}",
+        "pay_mode": f"₹{donation.payment_method}",
+        "address": f"{donation.ngopost.user.ngoprofile.address}, {donation.ngopost.user.ngoprofile.city}, {donation.ngopost.user.ngoprofile.state}, {donation.ngopost.user.ngoprofile.pincode}",
+        "name": contact_person.name,
+        "email": ngo_user.email,
+        "finalTotal": f"{(donation.amount + donation.gst):.2f}",
+    }
+
+    return JsonResponse(response_data)
+
+  
+# csv 
 @dashboard_login_required
 def export_donations_csv(request):
     donations = Donation.objects.filter(user=request.user_obj).select_related(
@@ -191,41 +256,4 @@ def export_donations_csv(request):
         ])
 
     return response
-    
-# def donation_history_ajax(request):
-#     donation_query = request.GET.get("donation_query", "").strip()
-#     page_number = request.GET.get("page", 1)
 
-#     donations = Donation.objects.filter(user=request.user_obj).select_related(
-#         'ngopost', 'ngopost__user', 'ngopost__user__ngoprofile'
-#     )
-
-#     if donation_query:
-#         donations = donations.filter(
-#             Q(ngopost__header__icontains=donation_query) |
-#             Q(ngopost__user__ngoprofile__ngo_name__icontains=donation_query)
-#         )
-
-#     paginator = Paginator(donations, 1)  # Show 10 rows per page
-
-#     try:
-#         page_obj = paginator.page(page_number)
-#     except:
-#         page_obj = paginator.page(1)
-
-#     return render(request, "donate-history.html", {"donations": page_obj})
-
-
-
-
-# def donation_history_ajax(request):
-#     donation_query = request.GET.get("donation_query", "").strip()
-#     donations = Donation.objects.all()
-
-#     if donation_query:
-#         donations = donations.filter(
-#             Q(ngopost__header__icontains=donation_query) |
-#             Q(ngopost__user__ngoprofile__ngo_name__icontains=donation_query)
-#         )
-
-#     return render(request, "donate-history.html", {"donations": donations})

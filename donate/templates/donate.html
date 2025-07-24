@@ -16,6 +16,7 @@
             arrow_forward_ios
           </span>
         </div>
+
         <div class="shadow-lg p-4 rounded-lg m-4 max-w-full overflow-x-auto bg-white">
           <div class="flex items-center space-x-2">
                       <span class="material-symbols-outlined">volunteer_activism</span>
@@ -25,6 +26,7 @@
             <p class="font-normal">Help Us Help Others—Donate Today!</p>
             <button class="close-expanded text-xl font-bold text-gray-500 hover:text-red-600 hidden">&times;</button>
           </div>
+
           <!-- Tabs -->
           <div class="flex flex-wrap justify-between  gap-4 w-full mt-8">
             <!-- Tabs Section -->
@@ -38,6 +40,7 @@
               </button>
             </div>
           </div>
+
           <div class="report-issue tab-content pt-8 ">
             <!-- Search + Filter Section for Organizations -->
             <form method="get" class="search-filter-section flex items-center justify-end gap-5 w-full sm:w-auto mt-2 sm:mt-0 sm:ml-auto">
@@ -49,6 +52,7 @@
                 <button type="submit" class="ml-2 px-3 py-2 rounded bg-dark-blue text-white">Search</button>
               </div>
             </form>
+
             <div class="card-container grid grid-cols-1 md:grid-cols-2 gap-4 justify-items-center">
               {% for post in ngo_posts %}
               <div class="donation-card shadow-lg p-4 rounded-lg m-4 w-full bg-white transition-all duration-300 flex flex-col">
@@ -118,13 +122,13 @@
               {% endfor %}
             </div>
           </div>
+
           <div class="contact-support tab-content pt-8 space-y-6 hidden">
             <!-- Search + Filter Section for Donation History -->
             <div class="flex items-center gap-5 mb-4">
               <h1 class="font-semibold text-base text-dark-gray">Donation history</h1>
               <div class="flex items-center gap-2 w-full max-w-[400px] h-[40px] rounded-[6px] bg-light-white px-2">
-                <!-- <form method="get" action="{% url 'donate' %}" class="flex items-center gap-2 w-full max-w-[400px] h-[40px] rounded-[6px] bg-light-white px-2"> -->
-                  <span class="material-symbols-outlined text-dark-gray mr-2">search</span>
+                <span class="material-symbols-outlined text-dark-gray mr-2">search</span>
                   <input
                     id="donation_search"
                     type="text"
@@ -135,27 +139,17 @@
                   />
               </div>
                   <select id="limitSelect" name="limit" class="cursor-pointer flex items-center gap-1 px-7 py-2 border border-dark-blue rounded-xl text-dark-blue">
-                    <!-- <option value="10" selected>10 Rows</option> -->
                     <option value="50" selected>50 Rows</option>
                     <option value="100">100 Rows</option>
                     <option value="200">200 Rows</option>
                   </select>
 
                   <button id="exportCSVBtn"
-                    data-url="{% url 'export_donations_csv' %}"
+                    data-url="{% url 'export-donations-csv' %}"
                     class="cursor-pointer flex items-center gap-1 px-4 py-2 border border-dark-blue rounded-xl text-dark-blue">
                     <span class="material-symbols-outlined">file_export</span>
                     <span>Export</span>
-                  </button>
-
-                  <!-- <button type="submit" class="ml-2 px-3 py-2 rounded bg-dark-blue text-white">Search</button> -->
-                <!-- </form> -->
-                <!-- <button onclick="document.querySelector('.viewPopup').classList.remove('hidden')"
-                  class="cursor-pointer flex items-center gap-1 px-4 py-2 border border-dark-blue rounded-xl text-dark-blue">
-                  <span class="material-symbols-outlined">file_export</span>
-                  <span>Export</span>
-                </button> -->
-              
+                  </button>              
             </div>
             
             <div class="relative max-h-[calc(9*2rem)] overflow-y-auto overflow-x-auto no-scrollbar mt-10">
@@ -180,68 +174,249 @@
             </div>
             <div id="paginationWrapper" class="pagination mt-4 flex justify-end gap-2 items-center"></div>
 
-            <div
-              class="assignmentPopup fixed inset-0 bg-opacity-70 bg-black/30 flex items-center justify-center z-50 hidden">
-              <div class="bg-white rounded-lg shadow-lg p-6 w-96 relative">
-                <!-- <button
-                  class="material-symbols-outlined absolute top-2 right-2 text-gray-500 hover:text-black px-5"></button> -->
-                  <button id="downloadBillBtn"
-                    onclick="downloadBill()"
-                          data-url="/static/images/Tax%20Bill.svg"
-                          class="material-symbols-outlined cursor-pointer absolute top-2 right-2 text-gray-500 hover:text-black px-5 text-sm">
-                      download
-                  </button>
+            <!-- donate receipt  -->
+            <div id="donateReceiptModal" class="donateReceiptPopup popup bg-opacity-70 bg-black/30 flex z-50 fixed inset-0 items-center justify-center hidden" style="padding-left: 0.75rem; padding-right: 0.75rem;">
+              <div class="bg-white rounded-lg max-w-[560px] h-[640px] w-full overflow-y-auto shadow-lg p-3 flex flex-col gap-4 mx-auto">
+
+              <!-- <div style="background-color: #ffffff; border-radius: 10px; max-width: 560px; height: 640px; width: 100%; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 0.75rem; display: flex; flex-direction: column; gap: 16px;"> -->
+                <div style="display: flex; align-items: center; justify-content: space-between; height: 2.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <span
+                        class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg">
+                        share
+                        </span>
+                        <span
+                        onclick="downloadDonatePDF()"
+                        class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg">
+                        download
+                        </span>
+                    </div>
+                    <p class="text-xl font-semibold text-dark-blue">
+                        Donation Receipt
+                    </p>
+                    <button
+                      onclick="closeDonatePopup()"
+                      class="close-platform-bill" style="background: none; border: none; padding: 0;">
+                        <span
+                        class="material-symbols-outlined"
+                        style="cursor: pointer;">
+                        close
+                        </span>
+                    </button>
+                </div>
+                <div class="download-container" style="font-family: 'Courier New', Courier, monospace; font-size: 14px; line-height: 1.6; max-width: 650px; max-height:700px; color: #000;">
+                  <div id="donateReceiptContent">
+                    <div style="text-align: center; font-weight: bold; font-size: 16px;">DONATION RECEIPT</div>
+                    <hr style="border-top: 1px dashed #000; margin: 15px 0;">
+                    <!-- Invoice Details -->
+                    <table style="width: 100%; margin-bottom: 10px;">
+                        <tr>
+                            <td style="width: 30%;"><strong>Receipt No:</strong></td>
+                            <td>NGO/2025/<span id="receiptNo"></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Date:</strong></td>
+                            <td id="paymentDate"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>NGO Name:</strong></td>
+                            <td id="ngoName"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>PAN:</strong></td>
+                            <td id="panNumber"></td>
+                        </tr>
+                        <!-- <tr>
+                            <td><strong>80G Reg. No:</strong></td>
+                            <td>80G/98765/2023-24</td>
+                        </tr> -->
+                        <tr>
+                            <td><strong>Address:</strong></td>
+                            <td id="address"></td>
+                        </tr>
+                    </table>
+                    <hr style="border-top: 1px dashed #000; margin: 15px 0;">
+                    <!-- Billing Details -->
+                    <table style="width: 100%; margin-bottom: 10px;">
+                        <tr>
+                            <td style="width: 30%;"><strong>Donor Details:</strong></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Name:</strong></td>
+                            <td id="name"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Email:</strong></td>
+                            <td id="email"></td>
+                        </tr>
+                    </table>
+
+                    <hr style="border-top: 1px dashed #000; margin: 15px 0;">
+                    <!-- Billing Details -->
+                    <table style="width: 100%; margin-bottom: 10px;">
+                        <tr>
+                            <td><strong>Amount Donated:</strong></td>
+                            <td id="amount"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mode of Payment:</strong></td>
+                            <td id="payMode"></td>
+                        </tr>
+                        <!-- <tr>
+                            <td><strong>Reference No:</strong></td>
+                            <td>TXN_UPI_2398472</td>
+                        </tr> -->
+                    </table>
+                    <hr style="border-top: 1px dashed #000; margin: 15px 0;">
+                    <!-- <div style="margin-top: 20px;"><strong>Purpose of Donation:</strong> Medical Aid for Child in Need</div> -->
+                    <!-- <div><strong>Eligible for 80G deduction:</strong> Yes</div> -->
+                    <!-- <div style="margin-top: 20px;"><strong>Amount in Words:</strong> INR One Hundred Only</div> -->
+
+                    <!-- Note -->
+                    <div style="margin-top: 20px; font-style: italic; font-size: 13px;">
+                        *This receipt acknowledges that we have received the above-mentioned donation voluntarily. Thank you for your support.
+                    </div>
+
+                    <!-- Signature -->
+                    <div style="margin-top: 30px;">
+                        Authorized Signatory,<br><br>
+                        [Signature]<br>
+                        <strong id="sign"></strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- platform bill  -->             
+            <div id="platformReceiptModal" 
+              class="platformReceiptPopup popup bg-opacity-70 bg-black/30 flex z-50 fixed inset-0 items-center justify-center hidden" style="padding-left: 0.75rem; padding-right: 0.75rem;">
+              <div class="bg-white rounded-lg max-w-[560px] h-[640px] w-full overflow-y-auto shadow-lg p-3 flex flex-col gap-4 mx-auto">
+              <!-- <div style="background-color: #ffffff; border-radius: 10px; max-width: 560px; height: 640px; width: 100%; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 0.75rem; display: flex; flex-direction: column; gap: 16px;"> -->
+                <div style="display: flex; align-items: center; justify-content: space-between; height: 2.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <span
+                        class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg">
+                        share
+                        </span>
+                        <span
+                        onclick="downloadPlatformPDF()"
+                        class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg">
+                        download
+                        </span>
+                    </div>
+                    <p class="text-xl font-semibold text-dark-blue">
+                        Platform Bill
+                    </p>
+                    <button
+                      onclick="closePlatformPopup()"
+                      class="close-platform-bill" style="background: none; border: none; padding: 0;">
+                        <span
+                        class="material-symbols-outlined"
+                        style="cursor: pointer;">
+                        close
+                        </span>
+                    </button>
+                </div>
+                <div class="download-container" style="font-family: 'Courier New', Courier, monospace; font-size: 14px; line-height: 1.6; max-width: 700px; max-height:700px; color: #000;">
+                  <div id="platformReceiptContent">
+                    <div style="text-align: center; font-weight: bold; font-size: 16px;">TAX INVOICE</div>
+                    <hr style="border-top: 1px dashed #000; margin: 15px 0;">
+                    <!-- Invoice Details -->
+                    <table style="width: 100%; margin-bottom: 10px;">
+                        <tr>
+                            <td style="width: 30%;"><strong>Receipt No:</strong></td>
+                            <td>INV/2025/<span id="receiptNoPlatform"></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Date:</strong></td>
+                            <td id="paymentDatePlatform"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Platform Name:</strong></td>
+                            <td id="ngoNamePlatform"></td>
+                        </tr>
+                       
+                        <tr>
+                            <td><strong>Address:</strong></td>
+                            <td id="addressPlatform"></td>
+                        </tr>
+                    </table>
+                    <hr style="border-top: 1px dashed #000; margin: 15px 0;">
+                    <!-- Billing Details -->
+                    <table style="width: 100%; margin-bottom: 10px;">
+                        <tr>
+                            <td style="width: 30%;"><strong>Bill To:</strong></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Name:</strong></td>
+                            <td id="namePlatform"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Email:</strong></td>
+                            <td id="emailPlatform"></td>
+                        </tr>
+                    </table>
+
+                    <hr style="border-top: 1px dashed #000; margin: 15px 0;">
+                    <!-- Billing Details -->
+                     <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid #000;">
+                                <th style="text-align: left; padding: 8px;">Description</th>
+                                <!-- <th style="text-align: center; padding: 8px;">HSN/SAC</th>
+                                <th style="text-align: center; padding: 8px;">Qty</th>
+                                <th style="text-align: right; padding: 8px;">Rate</th> -->
+                                <th style="text-align: right; padding: 8px;">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 8px;">Donation facilitation fee</td>
+                                <!-- <td style="text-align: center; padding: 8px;">998599</td>
+                                <td style="text-align: center; padding: 8px;">1</td>
+                                <td style="text-align: right; padding: 8px;">₹2.00</td> -->
+                                <td style="text-align: right; padding: 8px;" id="amountPlatform"></td>
+                            </tr>
+                        </tbody>
+                    </table>
                   
-                  <button onclick="closePopup()"
-                  class="absolute top-2 right-2 text-gray-500 hover:text-black text-sm">&times;</button>
+                     <hr style="border-top: 1px dashed #000; margin: 15px 0;">
+                    <!-- Totals -->
+                    <table style="width: 100%; margin-top: 10px;">
+                        <tr>
+                            <td style="display: flex;justify-content: space-between;"><strong>Subtotal:</strong> 
+                              <span id="subTotalPlatform" style="text-align: right; padding: 8px;"></span></td>
+                        </tr>
+                        <tr>
+                            <td style="display: flex;justify-content: space-between;"><span>Add:GST @ 18% (CGST 9% + SGST 9%):</span> <span id="gstPlatform" style="text-align: right; padding: 8px;"></span></td>
+                        </tr>
+                        <tr>
+                            <td><hr style="border-top: 1px dashed #000; margin: 10px 0;"></td>
+                        </tr>
+                        <tr>
+                            <td style="display: flex;justify-content: space-between;font-weight: bold;">Total Invoice Amount (INR): <span id="finalTotalPlatform" style="text-align: right; padding: 8px;"></span></td>
+                        </tr>
+                    </table>
+                    
+                    <div style="margin-top: 20px; font-style: italic; font-size: 13px;">
+                        *This invoice is generated for the facilitation of the donation process.<br>
+                        The actual donation amount of <span id="actualAmountPlatform"></span> was made directly to the NGO.*
+                    </div>
 
-                <!-- Top Bar: Left icons and Center Title -->
-                <div class="relative mb-4 h-10">
-                  <!-- Left Icons -->
-                  <div class="absolute left-0 top-0 flex items-center gap-3">
-                    <!-- <span
-                      class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg ">share</span> -->
-                    <!-- <span
-                      class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg">download</span> -->
-                     
+                    <!-- Signature -->
+                    <div style="margin-top: 30px;">
+                        Authorized Signatory,<br><br>
+                        [Signature]<br>
+                        <strong id="signPlatform"></strong>
+                    </div>
                   </div>
-                  <!-- Centered Title -->
-                  <h2
-                    class="absolute inset-0 flex justify-center items-center text-xl font-semibold text-dark-blue">
-                    Platform Bill</h2>
                 </div>
-                <img src="/static/images/Tax Bill.svg" alt="Tax Bill" class="w-full rounded mb-4" />
               </div>
             </div>
-            <div
-              class="donationPopup fixed inset-0 bg-opacity-70 bg-black/30 flex items-center justify-center z-50 hidden">
-              <div class="bg-white rounded-lg shadow-lg p-6 w-[450px] relative">
-                <button id="downloadDonationBillBtn"
-                    onclick="downloadDonationBill()" 
-                          data-url="/static/images/Donate%20Bill.svg"
-                          class="material-symbols-outlined cursor-pointer absolute top-2 right-2 text-gray-500 hover:text-black px-5 text-sm">
-                      download
-                  </button>
 
-                <button onclick="closePopupDonation()"
-                  class="absolute top-2 right-2 text-gray-500 hover:text-black">&times;</button>
-                <!-- Top Bar: Left icons and Center Title -->
-                <div class="relative mb-4 h-10">
-                  <!-- Left Icons -->
-                  <div class="absolute left-0 top-0 flex items-center gap-3">
-                    <!-- <span
-                      class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg">share</span>
-                    <span
-                      class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg">download</span> -->
-                  </div>
-                  <!-- Centered Title -->
-                  <h2
-                    class="absolute inset-0 flex justify-center items-center text-xl font-semibold text-dark-blue">
-                    Donation Receipt</h2>
-                </div>
-                <img src="/static/images/Donate Bill.svg" alt="Donate Bill" class="w-full rounded mb-4" />
-              </div>
-            </div>
           </div>
         </div>
       </div>
