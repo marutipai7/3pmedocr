@@ -95,7 +95,6 @@ def points_dashboard(request):
 
 def get_coupon_cards(request):
     # Join with category and brand using select_related
-    couponss = Coupon.objects.select_related('category', 'brand_name').all()
     
     query = request.GET.get('search', '').strip().lower()
     if query:
@@ -131,11 +130,21 @@ def get_coupon_cards(request):
 
 def get_popular_coupon_cards(request):
     # Fetch top 10 popular coupons based on redeemed_count
-    coupons = (
-        Coupon.objects.select_related("category", "brand_name")
-        .all()
-        .order_by("-redeemed_count")[:10]
-    )
+    query = request.GET.get('search', '').strip().lower()
+    if query:
+        coupons = Coupon.objects.filter(
+            Q(title__icontains=query) |
+            Q(code__icontains=query) |
+            Q(category__name__icontains=query) |
+            Q(brand_name__name__icontains=query)
+        ).select_related('category', 'brand_name').order_by("-redeemed_count")
+    else:
+        coupons = Coupon.objects.all()
+    # coupons = (
+    #     Coupon.objects.select_related("category", "brand_name")
+    #     .all()
+    #     .order_by("-redeemed_count")[:10]
+    # )
 
     coupon_data = []
     for c in coupons:
