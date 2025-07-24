@@ -327,7 +327,7 @@ $('#login-form').on('submit', function(e) {
                     if (resp.errors.email) $('#email-error').text(resp.errors.email);
                     if (resp.errors.password) $('#password-error').text(resp.errors.password);
                     if (resp.errors.account) toastr.error(resp.errors.account);
-                      else toastr.error('Please correct the errors.');
+                        else toastr.error('Please correct the errors.');
                 } else {
                     toastr.error(resp.error || "Login failed.");
                 }
@@ -374,18 +374,18 @@ $('.submit-form').on('submit', function(e) {
         }
     });
 });
-$('.filterToggle').click(function (e) {
-    e.stopPropagation();
-    const $container = $(this).closest('.dropdown');
-    const $dropdown = $container.find('.filterDropdown');
+// $('.filterToggle').click(function (e) {
+//     e.stopPropagation();
+//     const $container = $(this).closest('.dropdown');
+//     const $dropdown = $container.find('.filterDropdown');
 
-    // Hide other dropdowns
-    $('.filterDropdown').not($dropdown).hide();
-    $('.filterDropdown .absolute').hide();
+//     // Hide other dropdowns
+//     $('.filterDropdown').not($dropdown).hide();
+//     // $('.filterDropdown .absolute').hide();
 
-    // Toggle only the current one
-    $dropdown.toggle();
-  });
+//     // Toggle only the current one
+//     $dropdown.toggle();
+//   });
 
   // Show specific sub-filter inside dropdown
   $('.filterItem').click(function (e) {
@@ -397,5 +397,29 @@ $('.filterToggle').click(function (e) {
     $('.filterDropdown .absolute').not($target).hide();
     $target.toggle();
   });
+// Hide dropdown if clicking outside
+// $(document).click(function () {
+//   $('.filterDropdown').hide();
+// });
+$(document).ready(function () {
+  // Toggle dropdown visibility
+  $('.filterToggle').on('click', function (e) {
+    e.stopPropagation(); // Prevent event from bubbling up to document
+
+    const $dropdown = $(this).closest('.dropdown').find('.filterDropdown');
+    $('.filterDropdown').not($dropdown).hide(); // Hide others
+    $dropdown.toggle(); // Toggle current
+  });
+
+  // Close dropdown when clicking outside
+  $(document).on('click', function () {
+    $('.filterDropdown').hide();
+  });
+
+  // Prevent dropdown from closing when clicked inside
+//   $('.filterDropdown').on('click', function (e) {
+//     e.stopPropagation();
+//   });
+});
 
 })

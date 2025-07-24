@@ -1,172 +1,58 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from datetime import datetime
-from .models import NGOPost, PostTypeOption, DonationFrequencyOption, CountryOption, StateOption, CityOption, AgeOption, GenderOption, SpendingPowerOption
+from .models import (
+    NGOPost, 
+    PostTypeOption, 
+    DonationFrequencyOption, 
+    CountryOption, 
+    StateOption, 
+    CityOption, 
+    AgeOption, 
+    GenderOption, 
+    SpendingPowerOption
+    )
 import logging
-from registration.models import UserProfile
 from registration.views import validate_and_save_file
-from django.http import HttpResponseBadRequest
 from dashboard.utils import dashboard_login_required
 from django.http import JsonResponse, Http404
 from django.views.decorators.http import require_GET, require_POST
 from donate.models import Donation
 from django.db.models import Q
+from points.models import PointsActionType, PointsHistory
+from django.views.decorators.csrf import csrf_exempt
+from django.template.loader import render_to_string
+from datetime import datetime
+from django.core.paginator import Paginator
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
+
 @dashboard_login_required
 def post_view(request):
     user = request.user_obj
-    logger.info(f"User: {user.email} (ID: {user.id})")
-    logger.info(f"Request method: {request.method}")
-    if request.method == 'POST':
-        logger.info(f"POST data: {request.POST}")
-        logger.info(f"FILES data: {request.FILES}")
-        try:
-            # --- Extract data and strip whitespace ---
-            header = request.POST.get('header', '').strip()
-            description = request.POST.get('description', '').strip()
-            tags = request.POST.get('tags', '').strip()
-            post_type = request.POST.get('post_type', '').strip()
-            donation_frequency = request.POST.get('donation_frequency', '').strip()
-            target_donation = request.POST.get('target_donation', '').strip()
-            
-            country = request.POST.get('country', '').strip()
-            state = request.POST.get('state', '').strip()
-            city = request.POST.get('city', '').strip()
-            pincode = request.POST.get('pincode', '').strip()
 
-            age_group = request.POST.get('age', '').strip()
-            gender = request.POST.get('gender', '').strip()
-            spending_power = request.POST.get('spending_power', '').strip()
-            start_date = request.POST.get('start-date','').strip()
-            end_date = request.POST.get('end-date','').strip()
-
-            creative_files = request.FILES.getlist('creatives')
-            logger.info(f"Found {len(creative_files)} creative files.")
-
-            creative1_file = creative_files[0] if len(creative_files) > 0 else None
-            creative2_file = creative_files[1] if len(creative_files) > 1 else None
-            # --- Basic Validation ---
-            required_fields = {
-                'Header': header, 'Description': description, 'Tags': tags,
-                'Post Type': post_type, 'Target Donation': target_donation,
-                'Country': country, 'State': state, 'City': city, 'Pincode': pincode,
-                'Start Date': start_date, 'End Date': end_date,
-                'Creative Upload': creative1_file
-            }
-            missing_fields = [name for name, value in required_fields.items() if not value]
-            ajax_header = request.headers.get('x-requested-with')
-            ajax_meta = request.META.get('HTTP_X_REQUESTED_WITH')
-            logger.info(f"AJAX header: {ajax_header}, META: {ajax_meta}")
-            is_ajax = (ajax_header == 'XMLHttpRequest' or ajax_meta == 'XMLHttpRequest')
-
-            # --- File Validation and Saving ---
-            creative1_path, error = validate_and_save_file(creative1_file, 'post_creatives', 'Creative 1', user_type='ngo')
-            if error:
-                if is_ajax:
-                    return JsonResponse({'missing_fields': ['Creative Upload']})
-                messages.error(request, error)
-                return render(request, 'post.html', {'form_data': request.POST})
-
-            creative2_path = None
-            if creative2_file:
-                creative2_path, error = validate_and_save_file(creative2_file, 'post_creatives', 'Creative 2', user_type='ngo')
-                if error:
-                    if is_ajax:
-                        return JsonResponse({'missing_fields': ['Creative Upload']})
-                    messages.error(request, error)
-                    return render(request, 'post.html', {'form_data': request.POST})
-
-            # --- AJAX Handling ---
-            if is_ajax:
-                if missing_fields:
-                    return JsonResponse({'missing_fields': missing_fields})
-                # Save post if no missing fields
-                post = NGOPost(
-                    user=user,
-                    header=header,
-                    description=description,
-                    tags=tags,
-                    post_type=post_type,
-                    donation_frequency=donation_frequency,
-                    target_donation=target_donation.replace('Rs', '').replace(',', '').strip(),
-                    country=country,
-                    state=state,
-                    city=city,
-                    pincode=pincode,
-                    age_group=age_group,
-                    gender=gender,
-                    spending_power=spending_power,
-                    start_date=start_date,
-                    end_date=end_date,
-                    creative1=creative1_path,
-                    creative2=creative2_path
-                )
-                post.save()
-                logger.info(f"Successfully saved new post with ID: {post.id}")
-                return JsonResponse({'success': True})
-
-            # --- Normal POST Handling ---
-            if missing_fields:
-                messages.error(request, f"Please fill all required fields: {', '.join(missing_fields)}")
-                return render(request, 'post.html', {'form_data': request.POST})
-
-            # Save post for normal POST
-            post = NGOPost(
-                user=user,
-                header=header,
-                description=description,
-                tags=tags,
-                post_type=post_type,
-                donation_frequency=donation_frequency,
-                target_donation=target_donation.replace('Rs', '').replace(',', '').strip(),
-                country=country,
-                state=state,
-                city=city,
-                pincode=pincode,
-                age_group=age_group,
-                gender=gender,
-                spending_power=spending_power,
-                start_date=start_date,
-                end_date=end_date,
-                creative1=creative1_path,
-                creative2=creative2_path
-            )
-            post.save()
-            logger.info(f"Successfully saved new post with ID: {post.id}")
-            messages.success(request, "Your post has been successfully created!")
-            return redirect('posts')
-
-        except (ValueError, TypeError) as e:
-            logger.error(f"Error processing form data: {e}", exc_info=True)
-            messages.error(request, f"Invalid data submitted. Please check your inputs. Error: {e}")
-        except Exception as e:
-            logger.error(f"An unexpected error occurred in post_view: {e}", exc_info=True)
-            messages.error(request, f"An unexpected error occurred: {e}")
-
-    # Search query (optional)
+    # GET request handling - load form data
     history_query = request.GET.get('history_query', '').strip().lower()
     saved_query = request.GET.get('saved_query', '').strip().lower()
 
-    # Get the limit parameters from the request, default to 10
-    history_limit = request.GET.get('history_limit', '10')
+    # Get limits with proper validation
     try:
-        history_limit_int = int(history_limit)
+        history_limit_int = int(request.GET.get('history_limit', '10'))
     except ValueError:
         history_limit_int = 10
-    saved_limit = request.GET.get('saved_limit', '10')
+    
     try:
-        saved_limit_int = int(saved_limit)
+        saved_limit_int = int(request.GET.get('saved_limit', '10'))
     except ValueError:
         saved_limit_int = 10
 
     # Base queries
     post_history = NGOPost.objects.filter(user=user).order_by('-created_at')
-    saved_posts = NGOPost.objects.filter(user=request.user_obj, saved=True)
+    saved_posts = NGOPost.objects.filter(user=user, saved=True)
 
-    # Filter by query (if provided)
+    # Apply search filters
     if history_query:
         post_history = post_history.filter(
             Q(post_type__icontains=history_query) |
@@ -184,11 +70,12 @@ def post_view(request):
     post_history = post_history[:history_limit_int]
     saved_posts = saved_posts[:saved_limit_int]
 
-    # Attach donations for this post (if needed)
+    # Update post status and attach donations
     for post in post_history:
         if post.status == post.Status.ONGOING and post.end_date < datetime.now().date():
             post.update_status_if_needed()
         post.donation_list = Donation.objects.filter(ngopost=post).select_related('user').order_by('-payment_date')
+    
     for post in saved_posts:
         if post.status == post.Status.ONGOING and post.end_date < datetime.now().date():
             post.update_status_if_needed()
@@ -199,8 +86,8 @@ def post_view(request):
         'saved_posts': saved_posts,
         'history_query': history_query,
         'saved_query': saved_query,
-        'history_limit': str(history_limit),
-        'saved_limit': str(saved_limit),
+        'history_limit': str(history_limit_int),
+        'saved_limit': str(saved_limit_int),
         'post_type_options': PostTypeOption.objects.filter(is_active=True),
         'donation_frequency_options': DonationFrequencyOption.objects.filter(is_active=True),
         'country_options': CountryOption.objects.filter(is_active=True),
@@ -211,6 +98,96 @@ def post_view(request):
         'spending_power_options': SpendingPowerOption.objects.filter(is_active=True),
     }
     return render(request, 'post.html', context)
+
+
+
+@dashboard_login_required
+def post_history_ajax(request):
+    user = request.user_obj
+    query = request.GET.get('query', '').strip()
+    page = int(request.GET.get('page', 1))
+    limit = int(request.GET.get('limit', 10))
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    filters = Q(user=user)
+    if query:
+        filters &= Q(post_type__icontains=query) | Q(status__icontains=query)
+    if start_date:
+        try:
+            filters &= Q(created_at__date__gte=datetime.strptime(start_date, '%Y-%m-%d').date())
+        except: pass
+    if end_date:
+        try:
+            filters &= Q(created_at__date__lte=datetime.strptime(end_date, '%Y-%m-%d').date())
+        except: pass
+
+    posts = NGOPost.objects.filter(filters).order_by('-created_at')
+    paginator = Paginator(posts, limit)
+    page_obj = paginator.get_page(page)
+
+    html = render_to_string("partials/post_history_rows.html", {
+        "post_history": page_obj.object_list,
+    })
+
+    return JsonResponse({
+        "html": html,
+        "current_page": page_obj.number,
+        "total_pages": paginator.num_pages,
+    })
+
+@dashboard_login_required
+@csrf_exempt
+def save_ngo_post(request):
+    if request.method != "POST":
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+    user = request.user_obj  # You said this is set in middleware
+
+    data = request.POST
+    files = request.FILES.getlist('creatives[]')
+
+    required_fields = [
+        'header', 'description', 'tags', 'post_type', 'donation_frequency',
+        'target_donation', 'country', 'state', 'city', 'pincode',
+        'age', 'gender', 'spending_power', 'start-date', 'end-date'
+    ]
+    missing_fields = [f for f in required_fields if not data.get(f)]
+    if len(files) == 0:
+        missing_fields.append('creatives[]')
+
+    if missing_fields:
+        return JsonResponse({'error': 'Missing required fields', 'missing_fields': missing_fields}, status=400)
+
+    try:
+        post = NGOPost.objects.create(
+            user=user,
+            header=data['header'].strip()[:80],
+            description=data['description'].strip()[:500],
+            tags=data['tags'].strip()[:255],
+            post_type=data['post_type'],
+            donation_frequency=data['donation_frequency'],
+            target_donation=data['target_donation'].replace('Rs', '').replace(',', ''),
+            country=data['country'],
+            state=data['state'],
+            city=data['city'],
+            pincode=data['pincode'],
+            age_group=data['age'],
+            gender=data['gender'],
+            spending_power=data['spending_power'],
+            start_date=datetime.strptime(data['start-date'], '%Y-%m-%d'),
+            end_date=datetime.strptime(data['end-date'], '%Y-%m-%d'),
+            creative1=files[0] if len(files) > 0 else None,
+            creative2=files[1] if len(files) > 1 else None
+        )
+
+        return JsonResponse({'success': True, 'post_id': post.id, 'message':'NGO Post Saved.'})
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({'error': 'Something went wrong.', 'message':'NGO Post not Saved.', 'details': str(e)}, status=500)
+    
 
 @dashboard_login_required
 @require_GET

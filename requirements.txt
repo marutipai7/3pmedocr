@@ -7,3 +7,4 @@ polyline>=1.4.0
 pymongo>=3.3
 requests>=2.31
 whitenoise
+pillow

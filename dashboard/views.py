@@ -1,54 +1,99 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.db.models import Sum
 from django.utils import timezone
 from .utils import dashboard_login_required
-from .models import SettingMenu
-from registration.models import NGOProfile
+from .models import SettingMenu, CouponPerformance
+from registration.models import NGOProfile, ClientProfile, AdvertiserProfile
 from ngopost.models import NGOPost
 from django.db.models import Q
+from .models import TrendingCoupon
+from django.shortcuts import render
+from django.http import JsonResponse
 
 @dashboard_login_required
 def dashboard_home(request):
     user = request.user_obj
-    # Show menu only for this user's type
-    menu_items = SettingMenu.objects.filter(
-        is_active=True, user_types__contains=[user.user_type]
-    ).order_by('order')
-    
-    try:
-        ngo_profile = NGOProfile.objects.get(user=user)
-        user_profile = user
-    except NGOProfile.DoesNotExist:
-        # Handle error, redirect or show 404
-        return render(request, "dashboard/not_found.html")
-    
-    posts_qs = NGOPost.objects.filter(user=user)
-    total_posts = posts_qs.count()
-    total_views = posts_qs.aggregate(total_views=Sum('views'))['total_views'] or 0
-    total_target = posts_qs.aggregate(total_target=Sum('target_donation'))['total_target'] or 0
-    total_received = posts_qs.aggregate(total_received=Sum('donation_received'))['total_received'] or 0
+    user_type = user.user_type
 
-    # Trending posts = top 4 by views in last 30 days
-    trending_posts = posts_qs.filter(
-        created_at__gte=timezone.now() - timezone.timedelta(days=30)
-    ).order_by('-views')[:4]
+    # Get sidebar menu
+    menu_items = SettingMenu.objects.filter(
+        is_active=True, user_types__contains=[user_type]
+        ).order_by('order')
 
     context = {
-        'ngo_profile': ngo_profile,
-        'user_profile': user_profile,
-        'total_posts': total_posts,
-        'total_views': total_views,
-        'total_target': total_target,
-        'total_received': total_received,
-        'trending_posts': trending_posts,
+        'user_profile': user,
         'menu_items': menu_items,
     }
-    return render(request, "dashboard/home.html", context)
+
+    try:
+        if user_type == 'ngo':
+            ngo_profile = NGOProfile.objects.get(user=user)
+            posts_qs = NGOPost.objects.filter(user=user)
+
+            context.update({
+                'ngo_profile': ngo_profile,
+                'total_posts': posts_qs.count(),
+                'total_views': posts_qs.aggregate(Sum('views'))['views__sum'] or 0,
+                'total_target': posts_qs.aggregate(Sum('target_donation'))['target_donation__sum'] or 0,
+                'total_received': posts_qs.aggregate(Sum('donation_received'))['donation_received__sum'] or 0,
+                'trending_posts': posts_qs.filter(
+                    created_at__gte=timezone.now() - timezone.timedelta(days=30)
+                ).order_by('-views')[:4],
+            })
+            return render(request, "dashboard/home_NGO.html", context)
+
+        elif user_type == 'client':
+            client_profile = ClientProfile.objects.get(user=user)
+            context.update({
+                'client_profile': client_profile,
+                # Add relevant client data if any, e.g. campaigns
+            })
+            return render(request, "dashboard/home.html", context)
+
+        elif user_type == 'advertiser':
+            advertiser_profile = AdvertiserProfile.objects.get(user=user)
+            performance = CouponPerformance.objects.order_by('-date').first()
+            trending_coupons = TrendingCoupon.objects.order_by('-created_at')[:5]
+
+            # New chart data logic
+            performances = CouponPerformance.objects.order_by('date')[:8]  # last 8 entries
+            
+            context.update({
+                'advertiser_profile': advertiser_profile,
+                'performance': performance,
+                'trending_coupons': trending_coupons,
+                
+            })
+
+            print("DEBUG PERFORMANCE:", performance)
+            return render(request, "dashboard/home_advertiser.html", context)
+
+
+
+        # else:
+        #     return render(request, "dashboard/not_found.html")
+
+    except Exception as e:
+        # Log e if needed
+        return render(request, "dashboard/not_found.html")
+    
+    
+def get_coupon_chart_data(request):
+    performances = CouponPerformance.objects.order_by('-date')[:8][::-1]  # last 8 entries, ascending
+
+    data = {
+        'labels': [perf.date.strftime('%d %b') for perf in performances],  # e.g., "17 Jul"
+        'total_coupons': [perf.total_coupons for perf in performances],
+        'total_redemptions': [perf.total_redemptions for perf in performances],
+        'active_coupons': [perf.active_coupons for perf in performances],
+    }
+    return JsonResponse(data)
+
 
 def logout_view(request):
     request.session.flush()  # clears all session data
-    return reverse('/')
+    return redirect('/') 
 
 
 @dashboard_login_required

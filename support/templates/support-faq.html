@@ -1,0 +1,22 @@
+<div id="faq-list-container">
+  <!-- dynamic faq lists  -->
+  {% for faq in faqs %}
+  <div
+    class="mt-4 rounded-md w-full account-subscription border border-violet-sky bg-very-light-transparent-violet-sky"
+  >
+    <div
+      class="flex items-center justify-between p-4 cursor-pointer toggle-subscription"
+    >
+      <h2 class="text-xl font-bold whitespace-nowrap">{{ faq.question }}</h2>
+      <span class="material-symbols-outlined chevron-icon transition-transform"
+        >expand_more</span
+      >
+    </div>
+    <div class="subscription-content p-4 hidden">
+      <p class="text-base">A: {{ faq.answer }}</p>
+    </div>
+  </div>
+  {% empty %}
+  <p class="text-sm text-gray-500">No FAQs found.</p>
+  {% endfor %}
+</div>

@@ -1,0 +1,116 @@
+{% load static %}
+
+<div class="coupon-history tab-content hidden py-6 space-y-6">
+            <!-- Header -->
+            <div class="px-2 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
+              <p class="text-sm font-semibold whitespace-nowrap">Coupon history</p>
+              <div class="flex items-center justify-end gap-5 w-full sm:w-5/6">
+                <div class="w-full max-w-[280px] rounded-[6px] bg-light-white flex items-center gap-2 px-2">
+                  <span class="material-symbols-outlined text-dark-gray">
+                    search
+                  </span>
+                  <input id="coupon_history_query" name="coupon_history_query" type="text" placeholder="Search by name or categories"
+                    class="w-full py-2.5 border-none bg-transparent focus:outline-none focus:ring-0 placeholder:text-medium-gray" />
+                </div>
+                <div class="dropdown relative flex justify-end">
+                  <button
+                  class="filterToggle w-full max-w-[90px] h-[40px] border border-living-coral rounded-[10px] text-living-coral flex items-center justify-center gap-1 cursor-pointer group hover:bg-living-coral hover:text-white px-3"
+                >
+                  <span class="material-symbols-outlined text-living-coral group-hover:text-white">
+                    keyboard_arrow_down
+                  </span>
+                  Filter
+                </button>
+                  <div
+                    class="filterDropdowns absolute right-0 top-10 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] rounded-md w-44 z-10"
+                  >
+                    <div
+                      class="p-2 pl-4 flex justify-between items-center hover:bg-living-coral hover:text-white rounded"
+                    >
+                      Custom date<span class="material-symbols-outlined"
+                        >calendar_today
+                      </span>
+                    </div>
+                    <div 
+                      class="coupondaterange p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
+                      data-range="1 Week"
+                    >
+                      1 Week
+                    </div>
+                    <div 
+                      class="coupondaterange p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
+                      data-range="1 Month"
+                    >
+                      1 Month
+                    </div>
+                    <div 
+                      class="coupondaterange p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
+                      data-range="1 Year"
+                    >
+                      1 Year
+                    </div>
+                  </div>
+                </div>
+                <button
+                  class="export-btn w-full max-w-[100px] h-[40px] border border-living-coral rounded-[10px] text-living-coral flex items-center justify-center gap-1 cursor-pointer group hover:bg-living-coral hover:text-white">
+                  <span class="material-symbols-outlined text-living-coral group-hover:text-white">
+                    file_export
+                  </span>
+                  <span class="hidden sm:block">View</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto no-scrollbar">
+              <table class="couponHistoryTable min-w-full table-auto whitespace-nowrap docTable">
+                <thead class="bg-living-coral text-white text-sm sm:text-18-b">
+                  <tr>
+                    <th class="text-center p-4 text-sm border-r border-white">
+                      <div class="flex items-center justify-center gap-2">
+                        <div class="flex flex-col items-center justify-center">
+                          <p>Date & Time</p>
+                        </div>
+                        <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
+                      </div>
+                    </th>
+                    <th class="text-center p-4 text-sm border-r border-white">
+                      Category
+                    </th>
+                    <th class="text-center p-4 text-sm border-r border-white">
+                      Brand Name
+                    </th>
+                    <th class="text-center p-4 text-sm border-r border-white">
+                      <div class="flex flex-col items-center justify-center">
+                        <p>Coupon</p>
+                        <p>Issued</p>
+                      </div>
+                    </th>
+                    <th class="text-center p-4 text-sm border-r border-white">
+                      <div class="flex flex-col items-center justify-center">
+                        <p>Coupon</p>
+                        <p>Redeemed</p>
+                      </div>
+                    </th>
+                    <th class="text-center p-4 text-sm border-r border-white">
+                      <div class="flex flex-col items-center justify-center">
+                        <p>Coupon</p>
+                        <p>Balance</p>
+                      </div>
+                    </th>
+                    <th class="text-center p-4 text-sm border-r border-white">
+                      <div class="flex flex-col items-center justify-center">
+                        <p>Period</p>
+                        <p>End</p>
+                      </div>
+                    </th>
+                    <th class="text-center p-4 text-sm border-r border-white">Status</th>
+                    <th class="text-center p-4 text-sm">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-snow-gray text-dark-gray text-16-fs">
+                </tbody>
+              </table>
+              <div id="coupon-pagination-container" class="flex justify-center gap-2 mt-4"></div>
+            </div>
+          </div>

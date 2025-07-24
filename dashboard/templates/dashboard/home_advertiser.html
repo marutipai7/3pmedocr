@@ -1,0 +1,350 @@
+{% extends "dashboard/layout.html" %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+      <!-- Main Content -->
+      <div class=" flex-1 flex flex-col bg-slate-white gap-8 p-6 overflow-y-auto scroll relative transition-all duration-300 main-content">
+        <div class="show-sidebar-toggle hidden fixed top-24 left-0 z-50 h-10 w-10 bg-transparent-living-coral items-center justify-center rounded-r-md cursor-pointer">
+          <span class="material-symbols-outlined bold-weight text-living-coral">
+              arrow_forward_ios
+          </span>
+        </div>
+        <div class="bg-white shadow-(--box-shadow-5) rounded-[10px] px-2 sm:px-4 py-4" >
+           <div class="flex lg:items-center justify-between flex-col lg:flex-row">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined font-bold">home</span>
+                  <h1 class="text-xl font-medium">Home</h1>
+                </div>
+                <div class="flex flex-col  gap-2 lg:pt-0 sm:pt-4" id="infoSection">
+                  <div id="date" class="font-normal text-base sm:text-xs text-right"></div>
+                  <div id="location" class="font-normal text-base flex items-centeer gap-2 sm:text-xs">
+                      <span class="material-symbols-outlined !text-base"> location_on </span>
+                      <span id="location-text">Fetching location...</span>
+                      
+                  </div>
+                </div>
+              </div>
+
+          <div class="mt-4">
+            <h2 class="text-lg font-semibold">XTZ Advertising Pvt Ltd</h2>
+
+          </div>
+          <div class="mt-6">
+            <img src="/static/images/register-foundation.svg" alt="Register Foundation"
+              class="w-full rounded-md shadow-md" loading="lazy" />
+          </div>
+          <div class="mt-4">
+            <span class="text-base font-normal">
+              XTZ Advertising Pvt Ltd is a leading advertising agency specializing in promoting medicine coupons and
+              healthcare discounts. We bridge the gap between pharmaceutical brands and consumers by delivering
+              attractive, easy-to-access offers. Our goal is to make healthcare more affordable while boosting brand
+              visibility for our partners. With innovative strategies and a customer-first approach, we help millions
+              save on essential medicines every day.
+            </span>
+          </div>
+          <div class="mt-6 flex items-center justify-center">
+            <span class="text-lg font-bold text-dark-gray underline text-center ">
+              Connect with thousands instantly and make a lasting impact with your ads on a trusted platform.
+            </span>
+          </div>
+          <div class="flex items-center gap-5 mt-4">
+            <h1 class="font-semibold text-lg ">Coupon Performance Overview</h1>
+            <div
+              class="search-filter-section flex items-center justify-end gap-5 w-full sm:w-auto mt-2 sm:mt-0 sm:ml-auto">
+
+              <div class="relative dropdown">
+                     <button
+                      class="filterToggle  flex items-center border border-slate-gray rounded-md p-1 w-8 h-8 cursor-pointer">
+                      <span class="material-symbols-outlined flex justify-center items-center">tune</span>
+                    </button>
+                      <div
+                        class="filterDropdown absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10"
+                      >
+                      
+                        <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-living-coral hover:text-white rounded">
+                          Custom date<span class="material-symbols-outlined calendar-icon"
+                            >calendar_today</span
+                          >
+                          
+                        </div>
+                        <div class="p-2 pl-4 hover:bg-living-coral hover:text-white rounded cursor-pointer" >1 Week</div>
+                        <div class="p-2 pl-4 hover:bg-living-coral hover:text-white rounded cursor-pointer">1 Month</div>
+                        <div class="p-2 pl-4 hover:bg-living-coral hover:text-white rounded cursor-pointer">1 Year</div>
+                        
+                      </div>
+                      <div class="datepicker-container hidden px-4 pb-3 absolute  right-43 z-100">
+                        <div class="datepicker-inline border border-black rounded-md" inline-datepicker data-date="06/23/2025"></div>
+                      </div>
+                  </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col lg:flex-row pt-6 gap-6">
+            <div class="border border-light-gray2 rounded-lg px-4 py-2 h-24 w-full shadow-md">
+              <div class="flex justify-between items-center">
+                <p class="font-semibold text-lg">Total Coupons</p>
+                <span
+                  class="material-symbols-outlined cursor-pointer rounded-full bg-transparent-living-coral p-1 text-living-coral">
+                  content_copy
+                </span>
+              </div>
+              <div class="flex justify-between items-center pt-2">
+                <h2> {{ performance.total_coupons }}</h2>
+                <p class="text-sm font-normal">Last 30 days</p>
+              </div>
+            </div>
+
+            <div class="border border-light-gray2 rounded-lg px-4 py-2 w-full h-24 shadow-md">
+              <div class="flex justify-between items-center">
+                <p class="font-semibold text-lg">Total Redemptions</p>
+                <span
+                  class="material-symbols-outlined cursor-pointer rounded-full bg-transparent-living-coral p-1 text-living-coral">
+                  visibility
+                </span>
+              </div>
+              <div class="flex justify-between items-center pt-2">
+                <h2> {{ performance.total_redemptions }}</h2>
+                <p class="text-sm font-normal">Last 30 days</p>
+              </div>
+            </div>
+            <div class="border border-light-gray2 rounded-lg px-4 py-2 w-full h-24 shadow-md">
+              <div class="flex justify-between items-center">
+                <p class="font-semibold text-lg">Active Coupons</p>
+                <span
+                  class="material-symbols-outlined cursor-pointer rounded-full bg-transparent-living-coral p-1 text-living-coral">
+                  currency_rupee
+                </span>
+              </div>
+              <div class="flex justify-between items-center pt-2">
+                <h2> {{ performance.active_coupons }}</h2>
+                <p>{{ performance.days_remaining }} days remaining</p>
+              </div>
+            </div>
+          </div>
+
+                     
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 my-8">
+              <!-- Custom Legend -->
+              <div class="flex flex-wrap items-center gap-10" id="advertiserCustomLegend">
+                <label class="flex items-center gap-4 ">
+                  <input type="checkbox" class="legend-checkbox focus:outline-none focus:ring-0 focus:ring-offset-0 rounded-xs text-living-coral text-2xl w-5 h-5 cursor-pointer" data-index="0" checked />
+                  <span class="flex items-center gap-1">
+                    <div class="bg-slate-blue w-2 h-2 rounded-full"></div>
+                    Total Coupons
+                  </span>
+                </label>
+
+                <label class="flex items-center gap-4 ">
+                  <input type="checkbox" class="legend-checkbox focus:outline-none focus:ring-0 focus:ring-offset-0 rounded-xs text-living-coral text-2xl w-5 h-5 cursor-pointer" data-index="1" checked />
+                  <span class="flex items-center gap-1">
+                    <div class="bg-living-coral w-2 h-2 rounded-full"></div>
+                    Total Redemptions
+                  </span>
+                </label>
+
+                <label class="flex items-center gap-4 ">
+                  <input type="checkbox" class="legend-checkbox focus:outline-none focus:ring-0 focus:ring-offset-0 rounded-xs text-living-coral text-2xl w-5 h-5 cursor-pointer" data-index="2" checked>
+
+                  <span class="flex items-center gap-1">
+                    <div class="bg-living-coral w-2 h-2 rounded-full"></div>
+                    Active Coupons
+                  </span>
+                </label>
+              </div>
+              <!-- Filter Dropdown -->
+              <div class="relative dropdown">
+                <button class="filterToggle  flex items-center border border-slate-gray rounded-md p-1 w-8 h-8  cursor-pointer">
+                  <span class="material-symbols-outlined flex justify-center items-center">tune</span>
+                </button>
+                <div class="filterDropdown mt-2 absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10">
+                  <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-living-coral hover:text-white rounded">
+                     Custom date<span class="material-symbols-outlined calendar-icon">calendar_today</span>
+                  </div>
+                  <div class="p-2 pl-4 hover:bg-living-coral hover:text-white rounded cursor-pointer" >1 Week</div>
+                  <div class="p-2 pl-4 hover:bg-living-coral hover:text-white rounded cursor-pointer">1 Month</div>
+                  <div class="p-2 pl-4 hover:bg-living-coral hover:text-white rounded cursor-pointer">1 Year</div>
+                </div>
+                <div class="datepicker-container hidden px-4 pb-3 absolute  right-43 z-100">
+                  <div class="datepicker-inline border border-black rounded-md" inline-datepicker data-date="06/23/2025"></div>
+                </div>
+              </div>
+              
+            </div>
+
+            <!-- Chart -->
+            <canvas id="advertiserChart" class="max-h-70 mb-4"></canvas>
+            
+            <!-- timetable -->
+            <div class="flex flex-wrap items-center gap-3 justify-center text-light-gray1 mb-6" id="advertisertimeRangeTabs" data-active-class="active-tab-advertiser">
+              <p class="cursor-pointer active-tab-advertiser px-2 py-1 rounded">1D</p>
+              |
+              <p class="cursor-pointer px-2 py-1 rounded">5D</p>
+              |
+              <p class="cursor-pointer px-2 py-1 rounded">1M</p>
+              |
+              <p class="cursor-pointer px-2 py-1 rounded">6M</p>
+              |
+              <p class="cursor-pointer px-2 py-1 rounded">YTD</p>
+              |
+              <p class="cursor-pointer px-2 py-1 rounded">1Y</p>
+              |
+              <p class="cursor-pointer px-2 py-1 rounded">5Y</p>
+            </div>
+         
+          <div class="flex flex-col lg:flex-row gap-10">
+              <div
+                class="calendar-container rounded-xl lg:w-1/2 h-[26rem] border border-living-coral relative"
+                data-color="living-coral">
+                <div class="flex justify-between items-center p-1 rounded-t-xl bg-living-coral">
+                  <div id="monthYearDropdown" class="relative cursor-pointer">
+                    <div class="px-2 py-1 flex items-center gap-2 text-white text-lg">
+                      <span id="monthYearLabel">Loading...</span>
+                      <span class="material-symbols-outlined">
+                        keyboard_arrow_down
+                      </span>
+                    </div>
+                    <div id="dropdownContent"
+                      class="absolute left-0 mt-1 bg-white border border-living-coral rounded shadow-lg hidden max-h-60 overflow-y-auto scroll w-44">
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button id="prevMonth" class="text-white h-8 w-8 flex items-center justify-center cursor-pointer">
+                      <span class="material-symbols-outlined">chevron_left</span>
+                    </button>
+                    <button id="nextMonth" class="text-white h-8 w-8 flex items-center justify-center cursor-pointer">
+                      <span class="material-symbols-outlined">chevron_right</span>
+                    </button>
+                    <button class="bg-white rounded-full w-8 h-8 flex items-center justify-center cursor-pointer add-event-btn"><span
+                        class="material-symbols-outlined  text-dark-gray">add</span></button>
+                  </div>
+                </div>
+
+                <div id="calendarDays" class="grid grid-cols-7  gap-2 text-center text-jet-black mx-4"></div>
+               
+                <div class="m-1 flex flex-col gap-3"></div>
+                <div class=" flex flex-wrap gap-6 text-sm px-4">
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 bg-slate-blue rounded-full"></span> PF
+                    Deposit
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 bg-strong-red rounded-full"></span> GST
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 bg-green rounded-full"></span> ESI
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 bg-vivid-orange rounded-full"></span>
+                    INCOME TAX
+                  </div>
+                </div>
+                 <!--Add Event Popup-->
+                <div class="event-calendar  flex justify-center items-center  hidden z-50 absolute inset-0" id="eventCal">
+                 <div
+                class="event-calendar-container rounded-xl w-[37rem]  h-[26rem] border border-living-coral  bg-white"
+                data-color="living-coral">
+               
+                <div class="flex flex-col  p-1 rounded-t-xl">
+                   <div class="ml-2 mt-2 mr-2" >
+                    <input type="text" class="w-full bg-slate-white border-none focus:ring-0 rounded-md placeholder:font-semibold placeholder:text-base placeholder:text-jet-black-opacity p-2" placeholder="Event name">
+                  </div>
+                  <div class="flex justify-between items-center px-6 pt-2">
+                    <div class="px-2 py-1 flex items-center gap-2  font-semibold text-base text-jet-black">
+                      <span id="monthYearLabel">Loading...</span>
+                    
+                    </div>
+                    
+                    <div class="flex items-center ">
+                      <button id="prevMonth" class="text-living-coral   flex items-center justify-center cursor-pointer">
+                        <span class="material-symbols-outlined !text-4xl ">chevron_left</span>
+                      </button>
+                      <button id="nextMonth" class="text-living-coral flex items-center justify-center cursor-pointer">
+                        <span class="material-symbols-outlined !text-4xl ">chevron_right</span>
+                      </button>
+                    
+                    </div>
+                  </div>
+                    
+                </div>
+
+                <div id="calendarDays" class="grid grid-cols-7 gap-0.5 text-center text-jet-black mx-4"></div>
+               
+                <div class="m-1 flex flex-col gap-3"></div>
+                <div class="flex items-center justify-between px-6">
+                  <p class="font-normal text-[17px] text-jet-black">Time</p>
+                  <div class="relative w-1/4">
+                     
+                      <input
+                        type="time"
+                        id="start-time"
+                        class="border rounded px-2.5 py-2 w-full pr-10 text-gray-700 focus:outline-none focus:ring-2 focus:ring-dark-blue"
+                        min="09:00"
+                        max="18:00"
+                        value="09:00"
+                        required
+                      />
+                      <span
+                        class="material-symbols-outlined absolute right-2 top-5 transform -translate-y-1/2 text-gray-500 pointer-events-none"
+                      >
+                        timer
+                      </span>
+                    </div>
+                
+               </div>
+               <div class="flex items-center gap-2 pt-1 px-6">
+                  <button class="bg-living-coral text-white rounded-md py-2 px-6 cursor-pointer">Add</button>
+                  <button class="border border-living-coral text-living-coral cursor-pointer cancelEvent-btn py-2 px-4 rounded-md">Cancel</button>
+                </div>
+              </div>
+              </div> 
+              </div>
+            
+            <div class="rounded-xl lg:w-1/2 h-[26rem] overflow-y-auto no-scrollbar bg-lightest-gray p-4">
+            <h2 class="text-xl font-bold mb-2">Trending Coupons</h2>
+            <div class="flex flex-col items-center gap-2">
+              {% for coupon in trending_coupons %}
+                <div class="w-full pl-4 py-2 bg-white border border-living-coral rounded-md">
+                  <p class="font-semibold text-sm text-living-coral tracking-[0.25em]">{{ coupon.tag }}</p>
+                  <p class="font-bold">{{ coupon.title }}</p>
+                  <p class="font-normal text-light-gray1">{{ coupon.description }}</p>
+                </div>
+              {% empty %}
+                <p class="text-center text-gray-500">No trending coupons available.</p>
+              {% endfor %}
+            </div>
+          </div>
+
+           
+
+
+          </div>
+          
+        </div>
+         <div class="fixed bottom-6 right-8 z-50">
+          <button class="chatTrigger cursor-pointer w-16 h-16 bg-living-coral text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
+            <img src="/static/images/avatar.svg" alt="avatar" class="w-full h-full object-contain" />
+          </button>
+
+        </div>
+        <div class="relative ">
+          <div class="avatar fixed bottom-6 right-8 hidden  z-100">
+            <img src="/static/images/avatar.svg" alt="avatar">
+            <img src="/static/images/avatar-chatbox.svg" alt="chatbox" class="absolute bottom-0 right-50">
+              <button class="absolute cursor-pointer bottom-65 right-0 close-avatar-btn rounded-full bg-white shadow-[3.93px_5.24px_5.24px_0px_#00000040]
+">
+              <span class="material-symbols-outlined flex items-center justify-center p-[0.35rem] text-dark-gray">close</span>
+            </button>
+            <button class="absolute cursor-pointer bottom-6 right-18 bg-living-coral text-white p-2 rounded-md">
+              Talk
+            </button>
+          </div>
+        </div>
+      </div> 
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="{% static 'js/home.js' %}"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script src="{% static 'js/home.js' %}"></script>
+
+      {% endblock %}

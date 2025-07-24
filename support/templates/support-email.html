@@ -1,0 +1,102 @@
+<!-- Email Support -->
+<div class="flex items-center gap-2 justify-between w-full">
+  <div class="w-1/2 flex flex-col gap-1">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-violet-sky"> mail </span>
+      <p class="text-sm font-semibold">Email Support</p>
+    </div>
+    <p class="font-normal text-sm text-medium-gray">
+      Send us a detailed email, and we’ll get back to you within 24 hours.
+    </p>
+  </div>
+  <!-- Button to Open Email Support Popup -->
+  <div class="w-1/2 flex items-center justify-end">
+    <button
+      onclick="document.querySelector('.emailPopup').classList.remove('hidden')"
+      class="support-btn-help2"
+    >
+      Contact by Email
+    </button>
+  </div>
+
+  <!-- Email Support Popup -->
+  <div
+    class="emailPopup fixed inset-0 bg-opacity-70 bg-black/30 flex items-center justify-center z-50 hidden"
+  >
+    <div class="bg-white w-[90%] max-w-md rounded-lg shadow-lg">
+      <!-- Header -->
+      <div class="bg-violet-sky text-white p-4 rounded-t-lg relative">
+        <h2 class="text-lg font-semibold text-center">Email Support</h2>
+
+        <!-- Close Button (Top Right) -->
+        <button
+          onclick="document.querySelector('.emailPopup').classList.add('hidden')"
+          class="absolute top-3 right-3 text-white text-2xl font-semibold"
+        >
+          &times;
+        </button>
+      </div>
+
+      <!-- Form Fields -->
+      <div class="p-4 space-y-6">
+        <!-- Email Address Field -->
+        <div>
+          <label
+            for="email"
+            class="block text-base font-semibold text-dark-gray"
+            >Email Address</label
+          >
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Contactsupport@gmail.com"
+            class="w-full border border-dark-gray p-2 rounded mt-1 placeholder:text-sm placeholder:font-normal placeholder:text-light-gray1"
+          />
+        </div>
+
+        <!-- Description Field -->
+        <div>
+          <label
+            for="description"
+            class="block text-base font-semibold text-dark-gray"
+            >Description</label
+          >
+          <textarea
+            id="description"
+            name="description"
+            rows="4"
+            class="w-full border border-dark-gray p-2 rounded mt-1"
+          ></textarea>
+        </div>
+
+        <!-- Send Button -->
+        <div class="flex justify-end cursor-pointer">
+          <button
+            class="bg-violet-sky text-white font-semibold px-8 py-2 rounded-md"
+            onclick="sendEmailSupport()"
+          >
+            Send
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Chat Support   -->
+<div class="flex items-center gap-2 justify-between w-full">
+  <div class="w-1/2 flex flex-col gap-1">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-violet-sky"> forum </span>
+      <p class="text-sm font-semibold">Chat Support</p>
+    </div>
+    <p class="font-normal text-sm text-medium-gray">
+      Connect with our support team in real-time.
+    </p>
+  </div>
+  <div class="w-1/2 flex items-center justify-end">
+    <button class="support-btn-help2">Start Chat</button>
+  </div>
+</div>
+<!-- Call Support   -->

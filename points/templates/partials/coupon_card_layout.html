@@ -1,0 +1,31 @@
+{% for c in coupons %}
+<div class="bg-white mt-4 p-4 rounded-md shadow-lg coupon-card">
+  <div class="flex lg:justify-between lg:items-center flex-col lg:flex-row">
+    <div class="flex flex-col">
+      <p class="font-semibold text-sm text-violet-sky tracking-[0.25em] uppercase">
+        {{ c.category }} : {{ c.brand_name }}
+      </p>
+      <p class="font-bold text-lg">{{ c.title }}</p>
+      <p class="font-normal text-base text-light-gray1">
+        {{ c.description }}
+      </p>
+    </div>
+    <div class="flex flex-col pt-4">
+      <div class="flex lg:justify-between lg:items-center gap-6">
+        <p class="font-normal text-base">Redeemed</p>
+        <p class="text-xs font-medium">{{ c.redeemed_count }}/{{ c.max_redemptions }}</p>
+      </div>
+       <div class="bg-gray-300 h-2 rounded-full w-full">
+        <div class="bg-green-500 h-2 rounded-full" style="width: {{ c.percent_used }}%;"></div>
+    </div>
+    </div>
+    <div class="hidden lg:block h-20 w-px bg-violet-sky mx-4"></div>
+    <div class="pt-4">
+      <button  data-coupon-id="{{ c.id }}" data-code="{{ c.code }}"class="bg-violet-sky font-bold text-lg text-white w-full rounded-md p-2 flex items-center gap-2 justify-center cursor-pointer claim-btn">
+        {{ c.code }}
+        <span class="material-symbols-outlined">content_copy</span>
+      </button>
+    </div>
+  </div>
+</div>
+{% endfor %}

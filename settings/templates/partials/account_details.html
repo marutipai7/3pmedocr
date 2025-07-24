@@ -1,0 +1,479 @@
+{% if user_type == 'ngo' %}
+    <div class="grid sm:grid-cols-2 gap-x-6 sm:gap-x-10 lg:gap-x-20 gap-y-6">
+        <!-- Email -->
+        <div class="flex flex-col">
+            <p class="font-semibold text-base md:text-lg">
+            Email Address
+            </p>
+            <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{email}}
+            </p>
+        </div>
+
+        <!-- Country Code + Phone -->
+        <div class="flex flex-col sm:flex-row sm:items-start gap-20">
+            <div class="flex flex-col">
+            <p class="font-semibold text-base text-jet-black md:text-lg">
+                Country Code
+            </p>
+            <p class="font-normal text-sm md:text-md text-medium-gray">
+                {{country_code}}
+            </p>
+            </div>
+            <div class="flex flex-col">
+            <p class="font-semibold text-base text-jet-black md:text-lg">
+                Phone No.
+            </p>
+            <p class="font-normal text-sm md:text-md text-medium-gray">
+                {{phone_no}}
+            </p>
+            </div>
+        </div>
+        <!-- NGO Name -->
+        <div class="flex flex-col">
+            <p class="font-semibold text-base text-jet-black md:text-lg">
+            NGO Name
+            </p>
+            <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{ngo_name}}
+            </p>
+        </div>
+        <div></div>
+
+        <!--Website URL-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-base text-jet-black md:text-lg">
+            Website URL
+            </p>
+            <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{website_url}}
+            </p>
+        </div>
+
+        <!--NGO Service-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-base text-jet-black md:text-lg">
+            NGO Services
+            </p>
+            <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{ngo_services}}
+            </p>
+        </div>
+
+        <!--Address-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-base md:text-lg">Address</p>
+            <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{address}}
+            </p>
+        </div>
+        <div></div>
+
+        <!--City, Towm, District-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-base md:text-lg">
+            City, Town, District
+            </p>
+            <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{city}}
+            </p>
+        </div>
+        <!--State-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-base md:text-lg">State</p>
+            <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{state}}
+            </p>
+        </div>
+        <!--Country-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-base md:text-lg">Country</p>
+            <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{country}}
+            </p>
+        </div>
+        <!--Pincode-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-base md:text-lg">Pincode</p>
+            <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{pincode}}
+            </p>
+        </div>
+        <!--Brand Description-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-base md:text-lg">Brand Description</p>
+            <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{brand_description}}
+            </p>
+        </div>
+        <div></div>
+        <!--Contact persons name-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-base md:text-lg">
+            Contact Person's Name
+            </p>
+            <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{contact_name}}
+            </p>
+        </div>
+        <!--Role-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-base md:text-lg">Role</p>
+            <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{contact_role}}
+            </p>
+        </div>
+        <!-- Country Code + Phone -->
+        <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+            <div class="flex flex-col">
+            <p class="font-semibold text-base text-jet-black md:text-lg">
+                Country Code
+            </p>
+            <p class="font-normal text-sm md:text-md text-medium-gray">
+                +91
+            </p>
+            </div>
+            <div class="flex flex-col">
+            <p class="font-semibold text-base text-jet-black md:text-lg">
+                Phone Number
+            </p>
+            <p class="font-normal text-sm md:text-md text-medium-gray">
+                {{contact_phone_number}}
+            </p>
+            </div>
+        </div>
+        <!--Referral Code-->
+        <div class="flex items-center gap-4">
+            <p class="font-semibold text-base md:text-lg">
+            Referral Code
+            </p>
+            <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{referral_code}}
+            </p>
+        </div>
+    </div>
+{% elif user_type == 'advertiser' %}
+    <div class="grid sm:grid-cols-2 gap-x-6 sm:gap-x-10 lg:gap-x-20 gap-y-6">
+        <!-- Email -->
+        <div class="flex flex-col">
+        <p class="font-semibold text-base md:text-lg">
+            Email Address
+        </p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{email}}
+        </p>
+        </div>
+
+        <!-- Country Code + Phone -->
+        <div class="flex flex-col sm:flex-row sm:items-start gap-20">
+        <div class="flex flex-col">
+            <p class="font-semibold text-base text-jet-black md:text-lg">
+            Country Code
+            </p>
+            <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{country_code}}
+            </p>
+        </div>
+        <div class="flex flex-col">
+            <p class="font-semibold text-base text-jet-black md:text-lg">
+            Phone No.
+            </p>
+            <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{phone_no}}
+            </p>
+        </div>
+        </div>
+        <!-- Company Name -->
+        <div class="flex flex-col">
+        <p class="font-semibold text-base text-jet-black md:text-lg">
+            Advertiser Company Name
+        </p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{company_name}}
+        </p>
+        </div>
+        <div></div>
+
+        <!-- Advertiser Type -->
+        <div class="flex flex-col">
+        <p class="font-semibold text-base text-jet-black md:text-lg">
+            Advertiser Type
+        </p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{advertiser_type}}
+        </p>
+        </div>
+
+        <!--Ad Service-->
+        <div class="flex flex-col">
+        <p class="font-semibold text-base text-jet-black md:text-lg">
+            Ad Service Required
+        </p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{services_interested}}
+        </p>
+        </div>
+        <!--Website URL -->
+        <div class="flex flex-col">
+        <p class="font-semibold text-base text-jet-black md:text-lg">
+            Website URL
+        </p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{website_url}}
+        </p>
+        </div>
+        <div></div>
+        <!--Address-->
+        <div class="flex flex-col">
+        <p class="font-semibold text-base md:text-lg">Address</p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{address}}
+        </p>
+        </div>
+        <div></div>
+        <!--City, Town, District-->
+        <div class="flex flex-col">
+        <p class="font-semibold text-base md:text-lg">
+            City, Town, District
+        </p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{city}}
+        </p>
+        </div>
+        <!--State-->
+        <div class="flex flex-col">
+        <p class="font-semibold text-base md:text-lg">State</p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{state}}
+        </p>
+        </div>
+        <!--Country-->
+        <div class="flex flex-col">
+        <p class="font-semibold text-base md:text-lg">Country</p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{country}}
+        </p>
+        </div>
+        <!--Pincode-->
+        <div class="flex flex-col">
+        <p class="font-semibold text-base md:text-lg">Pincode</p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{pincode}}
+        </p>
+        </div>
+        <!--Brand Description-->
+        <div class="flex flex-col">
+        <p class="font-semibold text-base md:text-lg">Brand Description</p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{description}}
+        </p>
+        </div>
+        <div></div>
+        <!--Contact persons name-->
+        <div class="flex flex-col">
+        <p class="font-semibold text-base md:text-lg">
+            Contact Person's Name
+        </p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{contact_name}}
+        </p>
+        </div>
+        <!--Role-->
+        <div class="flex flex-col">
+        <p class="font-semibold text-base md:text-lg">Role</p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{contact_role}}
+        </p>
+        </div>
+        <!-- Country Code + Phone -->
+        <div class="flex flex-col sm:flex-row sm:items-start gap-20">
+        <div class="flex flex-col">
+            <p class="font-semibold text-base text-jet-black md:text-lg">
+            Country Code
+            </p>
+            <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{country_code}}
+            </p>
+        </div>
+        <div class="flex flex-col">
+            <p class="font-semibold text-base text-jet-black md:text-lg">
+            Phone Number
+            </p>
+            <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{contact_phone_number}}
+            </p>
+        </div>
+        </div>
+        <!--Referral Code-->
+        <div class="flex items-center gap-4">
+        <p class="font-semibold text-base md:text-lg">
+            Referral Code
+        </p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{referral_code}}
+        </p>
+        </div>
+    </div>
+{% elif user_type == 'client' %}
+<div class="grid sm:grid-cols-2 gap-x-6 sm:gap-x-10 lg:gap-x-20 gap-y-6">
+    <!-- Email -->
+    <div class="flex flex-col">
+        <p class="font-semibold text-base md:text-lg">
+        Email Address
+        </p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+        {{email}}
+        </p>
+    </div>
+
+    <!-- Country Code + Phone -->
+    <div class="flex flex-col sm:flex-row sm:items-start gap-20">
+        <div class="flex flex-col">
+        <p
+            class="font-semibold text-base text-jet-black md:text-lg"
+        >
+            Country Code
+        </p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{country_code}}
+        </p>
+        </div>
+        <div class="flex flex-col">
+        <p
+            class="font-semibold text-base text-jet-black md:text-lg"
+        >
+            Phone No.
+        </p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{phone_no}}
+        </p>
+        </div>
+    </div>
+    <!-- Company Name -->
+    <div class="flex flex-col">
+        <p class="font-semibold text-base text-jet-black md:text-lg">
+        Company Name
+        </p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+        {{company_name}}
+        </p>
+    </div>
+    <div></div>
+
+    <!-- Company Type -->
+    <div class="flex flex-col">
+        <p class="font-semibold text-base text-jet-black md:text-lg">
+        Company Type
+        </p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+        {{company_type}}
+        </p>
+    </div>
+
+    <!--Services You Are Interested in-->
+    <div class="flex flex-col">
+        <p class="font-semibold text-base text-jet-black md:text-lg">
+        Services You Are Interested In
+        </p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+        {{services_interested}}
+        </p>
+    </div>
+    <!--Website URL -->
+    <div class="flex flex-col">
+        <p class="font-semibold text-base text-jet-black md:text-lg">
+        Website URL 
+        </p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+        {{website_url}}
+        </p>
+    </div>
+    <div></div>
+    <!--Address-->
+    <div class="flex flex-col">
+        <p class="font-semibold text-base md:text-lg">Address</p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+        {{address}}
+        </p>
+    </div>
+    <div></div>
+    <!--City, Town, District-->
+    <div class="flex flex-col">
+        <p class="font-semibold text-base md:text-lg">
+        City, Town, District
+        </p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+        {{city}}
+        </p>
+    </div>
+    <!--State-->
+    <div class="flex flex-col">
+        <p class="font-semibold text-base md:text-lg">State</p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+        {{state}}
+        </p>
+    </div>
+    <!--Country-->
+    <div class="flex flex-col">
+        <p class="font-semibold text-base md:text-lg">Country</p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+        {{country}}
+        </p>
+    </div>
+    <!--Pincode-->
+    <div class="flex flex-col">
+        <p class="font-semibold text-base md:text-lg">Pincode</p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+        {{pincode}}
+        </p>
+    </div>
+    <!--Contact persons name-->
+    <div class="flex flex-col">
+        <p class="font-semibold text-base md:text-lg">
+        Contact Person's Name
+        </p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+        {{contact_name}}
+        </p>
+    </div>
+    <!--Role-->
+    <div class="flex flex-col">
+        <p class="font-semibold text-base md:text-lg">Role</p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+        {{contact_role}}
+        </p>
+    </div>
+    <!-- Country Code + Phone -->
+    <div class="flex flex-col sm:flex-row sm:items-start gap-20">
+        <div class="flex flex-col">
+        <p
+            class="font-semibold text-base text-jet-black md:text-lg"
+        >
+            Country Code
+        </p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{country_code}}
+        </p>
+        </div>
+        <div class="flex flex-col">
+        <p
+            class="font-semibold text-base text-jet-black md:text-lg"
+        >
+            Phone Number
+        </p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+            {{contact_phone_number}}
+        </p>
+        </div>
+    </div>
+    <!--Referral Code-->
+    <div class="flex items-center gap-4">
+        <p class="font-semibold text-base md:text-lg">
+        Referral Code
+        </p>
+        <p class="font-normal text-sm md:text-md text-medium-gray">
+        {{referral_code}}
+        </p>
+    </div>
+</div>
+{% endif %}

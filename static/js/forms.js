@@ -20,77 +20,79 @@ $(document).ready(function () {
   });
 
   // Form submit for edit details
-  $("#editForm").on("submit", function (e) {
+  // $("#editForm").off("submit").on("submit", function (e) {
+  $(document).off("submit").on("submit", "#editForm", function (e) {
     e.preventDefault();
+
+    const $form = $(this);
+    const actionUrl = $form.attr("action");
+    const method = $form.attr("method").toUpperCase();
+    const formData = $form.serialize();
 
     // Clear previous errors
     $(".error").text("").addClass("hidden");
 
+    // Basic client-side validation
     let hasError = false;
+    const requiredFields = {
+      email: "Email is required.",
+      phone: "Phone is required.",
+      address: "Address is required.",
+      city: "City is required.",
+      state: "State is required.",
+      country: "Country is required.",
+      pincode: "Pincode is required."
+    };
 
-    // Get field values
-    const pharmacyName = $("#pharmacyName").val().trim();
-    const adminName = $("#adminName").val().trim();
-    const email = $("#email").val().trim();
-    const phone = $("#phone").val().trim();
-    const address = $("#address").val().trim();
-    const license = $("#license").val().trim();
-    const countryCode = $("#countryCodes option:selected").text().trim();
-
-    // Validation
-    if (pharmacyName === "") {
-      $(".pharmacyNameError")
-        .text("Please enter Pharmacy Name")
-        .removeClass("hidden");
-      hasError = true;
+    for (let field in requiredFields) {
+      const value = $form.find(`[name="${field}"]`).val() || '';
+      if (!value) {
+        console.log(`.${field}Error`);
+        $(`.${field}Error`).text(requiredFields[field] || `${field} is required`).removeClass("hidden");
+        hasError = true;
+      }
     }
+      console.log(hasError);
+    if (hasError) return;
 
-    if (adminName === "") {
-      $(".adminNameError")
-        .text("Please enter Admin/Owner Name")
-        .removeClass("hidden");
-      hasError = true;
-    }
-
-    if (email === "") {
-      $(".emailError").text("Please enter Email Address").removeClass("hidden");
-      hasError = true;
-    }
-
-    if (phone === "") {
-      $(".phoneError").text("Please enter Phone Number").removeClass("hidden");
-      hasError = true;
-    }
-
-    if (address === "") {
-      $(".addressError").text("Please enter Address").removeClass("hidden");
-      hasError = true;
-    }
-
-    if (license === "") {
-      $(".licenseError")
-        .text("Please enter License Number")
-        .removeClass("hidden");
-      hasError = true;
-    }
-
-    if (hasError) return; // Stop form if validation fails
-
-    // Update display
-    const grayTexts = $("#account-details").find("p.text-medium-gray");
-    grayTexts.eq(0).text(pharmacyName);
-    grayTexts.eq(1).text(adminName);
-    grayTexts.eq(2).text(email);
-    grayTexts.eq(3).text(countryCode);
-    grayTexts.eq(4).text(phone);
-    grayTexts.eq(5).text(address);
-    grayTexts.eq(6).text(license);
-
-    // Hide form
-    $(".edit-details").addClass("hidden");
-    $(".account-detail").show();
-    $(".tabs").show();
+    // AJAX submit
+    $.ajax({
+      url: actionUrl,
+      type: method,
+      data: formData,
+      beforesend:function(){
+        $('.save-btn').text('Saving....').attr('disabled', true);
+      },
+      headers: {
+        "X-CSRFToken": $("input[name=csrfmiddlewaretoken]").val()
+      },
+      success: function (response) {
+        if(response.success == true){
+          toastr.success(response.message || "Updated successfully.");
+          location.reload();
+        } else {
+          toastr.success(response.message || "Error Occurs, Please Try Again.");
+        }
+        $('.save-btn').text('Saved').attr('disabled', false);
+      },
+      error: function (xhr) {
+        if (xhr.status === 422 || xhr.status === 400) {
+          const errors = xhr.responseJSON.errors;
+          console.log("errors", errors);
+          $.each(errors, function (field, messages) {
+            $(`.${field}Error`).text(messages).removeClass("hidden");
+          });
+        } else {
+          toastr.error("An unexpected error occurred.");
+        }
+        $('.save-btn').text('Save Changes').attr('disabled', false);
+      }
+    });
   });
+
+ 
+
+
 
   // Input validation clearing for edit form
   $("#pharmacyName").on("input", function () {
@@ -343,9 +345,9 @@ $(".tab-btn").on("click", function () {
   const $bellIcon = $("#bell-icon");
   const $popup = $("#popup");
   const $closePopup = $("#close-popup");
-  // const $viewDetailsDropdown = $("#viewDetailsDropdown");
-  // const $openViewDetails = $(".openViewDetails");
-  // const $closeViewDetailsDropdown = $(".closeViewDetailsDropdown");
+  const $viewDetailsDropdown = $("#viewDetailsDropdown");
+  const $openViewDetails = $(".openViewDetails");
+  const $closeViewDetailsDropdown = $(".closeViewDetailsDropdown");
   $bellIcon.on("click", function (e) {
     e.stopPropagation();
     $popup.toggleClass("hidden");

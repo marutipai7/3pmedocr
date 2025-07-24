@@ -40,6 +40,15 @@ class LocationPoint(EmbeddedDocument):
             {'fields': ['lat', 'lng'], 'unique': True}
         ]
 
+class PincodeLocation(models.Model):
+    pincode = models.CharField(max_length=6)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+
+    class Meta:
+        unique_together = ('pincode', 'latitude', 'longitude')
+        ordering = ['pincode']
+
 # class NavigationHistory(Document):
 #     user_id = StringField(required=True)
 #     session_id = StringField(required=True, unique=True)

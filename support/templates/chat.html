@@ -29,14 +29,24 @@
         </div>
       <div id="sub-options-area" class="flex flex-wrap gap-2 justify-center hidden">
         </div>
+      
+      <div id="custom-query-input-area" class="p-3 bg-gray-50 border-t flex flex-col gap-2 hidden">
+          <textarea id="custom-query-textarea"
+                    class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows="3" placeholder="Type your query here..."></textarea>
+          <button id="submit-custom-query-btn"
+                  class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-200">
+              Submit Query
+          </button>
       </div>
 
+    </div>
   </div>
 </div>
 
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
-<!-- <script></script> -->
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
 {% block js %}
     <script src="{% static 'js/chatbot.js' %}"></script>

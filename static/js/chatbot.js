@@ -5,11 +5,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const messageContainer = document.getElementById('message-container');
     const initialOptionsArea = document.getElementById('initial-options-area');
     const subOptionsArea = document.getElementById('sub-options-area');
+    const startChatButton = document.getElementById('startChatButton');
+    const customQueryInputArea = document.getElementById('custom-query-input-area');
+    const customQueryTextarea = document.getElementById('custom-query-textarea');
+    const ticketChatArea = document.getElementById('ticket-chat-area');
+    const ticketChatMessages = document.getElementById('ticket-chat-messages');
+    const ticketChatInput = document.getElementById('ticket-chat-input');
+    const sendTicketMessageBtn = document.getElementById('send-ticket-message-btn');
+    const backToTicketsBtn = document.getElementById('back-to-tickets-btn');
+
 
     // --- Global State ---
     let currentBotContent = {}; 
     let currentOptions = []; 
     let isSubOptionsDisplayed = false; 
+    let currentOpenTicket = null;
+ 
 
     // --- Main Functions ---
     // Toggles the visibility of the chatbot popup
@@ -27,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
             initialBotMessageElem.textContent = '';
             clearOptions(initialOptionsArea);
             clearOptions(subOptionsArea);
+            customQueryInputArea.classList.add('hidden');
             subOptionsArea.classList.add('hidden');
             initialOptionsArea.classList.remove('hidden');
             isSubOptionsDisplayed = false;
@@ -142,6 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
         clearOptions(subOptionsArea);    
 
         subOptionsArea.classList.add('hidden');
+        customQueryInputArea.classList.add('hidden');
         isSubOptionsDisplayed = false;
 
         switch (option.action) {
@@ -180,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 displayMessage(option.question || "Please describe your issue.", 'bot');
                 setTimeout(() => {
                     alert("Redirecting to support ticket page.");
-                    window.location.href = option.url || "support\templates\support.html";
+                    window.location.href = option.url || "support.html";
                 }, 1000);
                 break;
 
@@ -190,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 subOptionsArea.classList.add('hidden');
                 initialOptionsArea.classList.remove('hidden');
                 isSubOptionsDisplayed = false;
-                displayOptions(currentOptions, initialOptionsArea); // Redisplay main options
+                displayOptions(currentOptions, initialOptionsArea); 
                 break;
 
             case 'reload':
@@ -198,9 +211,39 @@ document.addEventListener('DOMContentLoaded', function() {
                 fetchBotContent();
                 break;
 
+            case 'display_user_tickets':
+                displayMessage(option.question || "Please wait while we fetch your tickets.", 'bot');
+                clearOptions(initialOptionsArea);
+                clearOptions(subOptionsArea);
+                customQueryInputArea.classList.add('hidden');
+                initialOptionsArea.classList.add('hidden');
+                subOptionsArea.classList.add('hidden');
+
+                fetchUserTickets(option.api_endpoint);
+                break;
+
+            case 'open_ticket_chat':
+                currentOpenTicket = option.ticket_details;
+
+                // Clear current display and messages
+                clearOptions(initialOptionsArea);
+                clearOptions(subOptionsArea);
+                customQueryInputArea.classList.add('hidden');
+                initialOptionsArea.classList.add('hidden');
+                subOptionsArea.classList.add('hidden');
+                ticketChatMessages.innerHTML = ''; 
+
+                displayMessage(`**Ticket #${currentOpenTicket.ticket_id}** (Status: ${currentOpenTicket.status})`, 'bot');
+                displayMessage(`*Description:* ${currentOpenTicket.description}`, 'bot');
+                displayMessage("Chat history would load here if live chat were active.", 'bot'); 
+
+                ticketChatArea.classList.remove('hidden');
+                ticketChatInput.value = ''; 
+                ticketChatInput.focus();
+                break;
+
             default:
                 displayMessage("I'm sorry, I don't understand that option.", 'bot');
-                // Fallback: Re-display current set of options or initial options
                 if (isSubOptionsDisplayed) {
                     displayOptions(currentOptions.find(o => o.sub_options && o.label === option.parentLabel)?.sub_options || [], subOptionsArea);
                 } else {
@@ -211,7 +254,56 @@ document.addEventListener('DOMContentLoaded', function() {
         messageContainer.scrollTop = messageContainer.scrollHeight; // Ensure scroll to bottom after action
     }
 
-    // --- Initial Fetch on Page Load (Optional, but good for immediate display if chat is open by default) ---
-    // If you want the chat to start with content immediately on page load (if open), uncomment:
-    // fetchBotContent();
+
+     async function fetchUserTickets(apiEndpoint) {
+        try {
+            messageContainer.innerHTML = '<div class="bot-message text-gray-500">Loading your tickets...</div>';
+            
+            const response = await fetch(apiEndpoint, {
+                method: 'GET',
+                headers: {'Content-Type': 'application/json'},
+            });
+
+            messageContainer.innerHTML = '';
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const tickets = data.tickets || [];
+
+            if (tickets.length === 0) {
+                displayMessage("You haven't raised any tickets yet.", 'bot');
+                displayOptions([
+                    { label: "Go Back", icon: "⬅️", action: "reset_bot" }
+                ], initialOptionsArea);
+                initialOptionsArea.classList.remove('hidden'); 
+                return;
+            }
+
+            displayMessage("Here are your recent tickets:", 'bot');
+            
+            const ticketOptions = tickets.map(ticket => ({
+                label: `Ticket #${ticket.ticket_id}: ${ticket.description.substring(0, 50)}${ticket.description.length > 50 ? '...' : ''} - Status: ${ticket.status}`,
+                icon: '🎫', 
+                action: 'open_ticket_chat', 
+                ticket_details: ticket 
+            }));
+
+            displayOptions(ticketOptions, initialOptionsArea);
+            initialOptionsArea.classList.remove('hidden'); 
+
+        } catch (error) {
+            messageContainer.innerHTML = ''; 
+            console.error('Error fetching user tickets:', error);
+            displayMessage("Sorry, I couldn't retrieve your tickets right now. Please try again later.", 'bot');
+            displayOptions([
+                { label: "Reload", icon: "🔄", action: "display_user_tickets", api_endpoint: apiEndpoint },
+                { label: "Go Back", icon: "⬅️", action: "reset_bot" }
+            ], initialOptionsArea);
+            initialOptionsArea.classList.remove('hidden');
+        }
+        messageContainer.scrollTop = messageContainer.scrollHeight; 
+    }
 });

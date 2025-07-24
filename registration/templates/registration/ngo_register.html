@@ -269,7 +269,7 @@
             <!-- Enter email OTP -->
             <div class="relative w-full mt-4">
               <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Enter email OTP</label>
-              <input type="text" name="otp1" placeholder="123456"
+              <input type="text" name="otp1" placeholder="123456" maxlength="16"
                 class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
               <p class="text-xs mt-1 flex justify-end mt-1 otp-message "></p>
             </div>
@@ -296,7 +296,7 @@
               </div>
               <div class="relative w-full">
                 <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Phone Number</label>
-                <input type="text" name="contact_person_phone" placeholder="9876543210"
+                <input type="text" name="contact_person_phone" placeholder="9876543210" maxlength="20"
                   class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
               </div>
             </div>
@@ -326,7 +326,7 @@
             <!-- OTP Verifications -->
             <div class="relative w-full">
               <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">OTP Verifications</label>
-              <input type="text" name="otp2"
+              <input type="text" name="otp2" maxlength="6"
                 class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
               <p class="text-xs mt-1 otp-message">Enter the 6 digit code send to registered Email/WhatsApp</p>
             </div>

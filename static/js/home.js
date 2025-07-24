@@ -196,57 +196,57 @@ $(document).ready(function () {
   });
 
   // Register as Advertiser Home Page Chart 
-  const advertiserChart = initChart("advertiserChart", {
-    type: "line",
-    data: {
-      labels: ["0", "1", "2", "3", "4", "5", "6", "7"],
-      datasets: [
-        {
-          label: "Total Coupons",
-          data: [600, 400, 590, 650, 800, 400, 160, 570],
-          borderColor: "#5182E3",
-          borderWidth: 2,
-          tension: 0,
-          yAxisID: "yLeft",
-          pointRadius: 3,
-          pointBackgroundColor: "#FFFFFF",
-          pointBorderColor: "#5182E3",
-          pointHoverRadius: 5,
-          pointHoverBackgroundColor: "#FFFFFF",
-          pointHoverBorderColor: "#5182E3",
-        },
-        {
-          label: "Total Redemptions",
-          data: [600, 700, 300, 250, 200, 600, 180, 700],
-          borderColor: "#FF6F61",
-          borderWidth: 2,
-          tension: 0,
-          yAxisID: "yRight",
-          pointRadius: 3,
-          pointBackgroundColor: "#FFFFFF",
-          pointBorderColor: "#FF6F61",
-          pointHoverRadius: 5,
-          pointHoverBackgroundColor: "#FFFFFF",
-          pointHoverBorderColor: "#FF6F61",
-        },
-        {
-          label: "Active Coupons",
-          data: [0, 580, 170, 560, 410, 401, 70, 160],
-          borderColor: "#3AAFA9",
-          borderWidth: 2,
-          tension: 0,
-          yAxisID: "yRight",
-          pointRadius: 3,
-          pointBackgroundColor: "#FFFFFF",
-          pointBorderColor: "#3AAFA9",
-          pointHoverRadius: 5,
-          pointHoverBackgroundColor: "#FFFFFF",
-          pointHoverBorderColor: "#3AAFA9",
-        },
-      ],
-    },
-    options: getChartOptions(),
-  });
+  // const advertiserChart = initChart("advertiserChart", {
+  //   type: "line",
+  //   data: {
+  //     labels: ["0", "1", "2", "3", "4", "5", "6", "7"],
+  //     datasets: [
+  //       {
+  //         label: "Total Coupons",
+  //         data: [600, 400, 590, 650, 800, 400, 160, 570],
+  //         borderColor: "#5182E3",
+  //         borderWidth: 2,
+  //         tension: 0,
+  //         yAxisID: "yLeft",
+  //         pointRadius: 3,
+  //         pointBackgroundColor: "#FFFFFF",
+  //         pointBorderColor: "#5182E3",
+  //         pointHoverRadius: 5,
+  //         pointHoverBackgroundColor: "#FFFFFF",
+  //         pointHoverBorderColor: "#5182E3",
+  //       },
+  //       {
+  //         label: "Total Redemptions",
+  //         data: [600, 700, 300, 250, 200, 600, 180, 700],
+  //         borderColor: "#FF6F61",
+  //         borderWidth: 2,
+  //         tension: 0,
+  //         yAxisID: "yRight",
+  //         pointRadius: 3,
+  //         pointBackgroundColor: "#FFFFFF",
+  //         pointBorderColor: "#FF6F61",
+  //         pointHoverRadius: 5,
+  //         pointHoverBackgroundColor: "#FFFFFF",
+  //         pointHoverBorderColor: "#FF6F61",
+  //       },
+  //       {
+  //         label: "Active Coupons",
+  //         data: [0, 580, 170, 560, 410, 401, 70, 160],
+  //         borderColor: "#3AAFA9",
+  //         borderWidth: 2,
+  //         tension: 0,
+  //         yAxisID: "yRight",
+  //         pointRadius: 3,
+  //         pointBackgroundColor: "#FFFFFF",
+  //         pointBorderColor: "#3AAFA9",
+  //         pointHoverRadius: 5,
+  //         pointHoverBackgroundColor: "#FFFFFF",
+  //         pointHoverBorderColor: "#3AAFA9",
+  //       },
+  //     ],
+  //   },
+  //   options: getChartOptions(),
+  // });
 
   //Register as NGO Owner Home Page Chart
   const ngoChart = initChart("ngoChart", {
@@ -1085,4 +1085,159 @@ if (document.getElementById('dataTrendsChart')) {
      $('.material-symbols-outlined:contains("bookmark")').on('click', function () {
         $(this).toggleClass('material-filled text-dark-blue');
     });
+});
+
+
+// Register as Advertiser Home Page Chart  
+  // document.addEventListener("DOMContentLoaded", function () {
+  //   fetch(getChartData)  // Use the URL pattern name
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       const ctx = document.getElementById("advertiserChart").getContext("2d");
+
+  //       const chart = new Chart(ctx, {
+  //         type: "line",
+  //         data: {
+  //           labels: data.labels,
+  //           datasets: [
+  //             {
+  //               label: "Total Coupons",
+  //               data: data.total_coupons,
+  //               borderColor: "#5182E3",
+  //               borderWidth: 2,
+  //               tension: 0,
+  //               pointRadius: 3,
+  //               pointBackgroundColor: "#FFFFFF",
+  //               pointBorderColor: "#5182E3",
+  //               pointHoverRadius: 5,
+  //               pointHoverBackgroundColor: "#FFFFFF",
+  //               pointHoverBorderColor: "#5182E3",
+  //             },
+  //             {
+  //               label: "Total Redemptions",
+  //               data: data.total_redemptions,
+  //               borderColor: "#FF6F61",
+  //               borderWidth: 2,
+  //               tension: 0,
+  //               pointRadius: 3,
+  //               pointBackgroundColor: "#FFFFFF",
+  //               pointBorderColor: "#FF6F61",
+  //               pointHoverRadius: 5,
+  //               pointHoverBackgroundColor: "#FFFFFF",
+  //               pointHoverBorderColor: "#FF6F61",
+  //             },
+  //             {
+  //               label: "Active Coupons",
+  //               data: data.active_coupons,
+  //               borderColor: "#3AAFA9",
+  //               borderWidth: 2,
+  //               tension: 0,
+  //               pointRadius: 3,
+  //               pointBackgroundColor: "#FFFFFF",
+  //               pointBorderColor: "#3AAFA9",
+  //               pointHoverRadius: 5,
+  //               pointHoverBackgroundColor: "#FFFFFF",
+  //               pointHoverBorderColor: "#3AAFA9",
+  //             },
+  //           ],
+  //         },
+  //         options: {
+  //           responsive: true,
+  //           plugins: {
+  //             legend: {
+  //               position: "top",
+  //             },
+  //             title: {
+  //               display: true,
+  //               text: "Coupon Performance",
+  //             },
+  //           },
+  //           scales: {
+  //             y: {
+  //               beginAtZero: true,
+  //             },
+  //           },
+  //         },
+  //       });
+  //     });
+  // });
+document.addEventListener("DOMContentLoaded", function () {
+  const chartElement = document.getElementById("advertiserChart");
+
+  // Only run if the canvas exists
+  if (chartElement) {
+    fetch(getChartData)  // Use the URL pattern name
+      .then((response) => response.json())
+      .then((data) => {
+        const ctx = chartElement.getContext("2d");
+
+        const chart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: data.labels,
+            datasets: [
+              {
+                label: "Total Coupons",
+                data: data.total_coupons,
+                borderColor: "#5182E3",
+                borderWidth: 2,
+                tension: 0,
+                pointRadius: 3,
+                pointBackgroundColor: "#FFFFFF",
+                pointBorderColor: "#5182E3",
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "#FFFFFF",
+                pointHoverBorderColor: "#5182E3",
+              },
+              {
+                label: "Total Redemptions",
+                data: data.total_redemptions,
+                borderColor: "#FF6F61",
+                borderWidth: 2,
+                tension: 0,
+                pointRadius: 3,
+                pointBackgroundColor: "#FFFFFF",
+                pointBorderColor: "#FF6F61",
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "#FFFFFF",
+                pointHoverBorderColor: "#FF6F61",
+              },
+              {
+                label: "Active Coupons",
+                data: data.active_coupons,
+                borderColor: "#3AAFA9",
+                borderWidth: 2,
+                tension: 0,
+                pointRadius: 3,
+                pointBackgroundColor: "#FFFFFF",
+                pointBorderColor: "#3AAFA9",
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "#FFFFFF",
+                pointHoverBorderColor: "#3AAFA9",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: "top",
+              },
+              title: {
+                display: true,
+                text: "Coupon Performance",
+              },
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+      })
+      .catch((error) => {
+        console.error("Chart data fetch error:", error);
+      });
+  }
 });

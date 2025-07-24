@@ -9,6 +9,19 @@ from donate.models import Donation
 from registration.views import validate_and_save_file
 from settings.views import validate_and_save_file
 from decimal import Decimal
+from points.models import PointsActionType, PointsHistory
+import logging
+
+from django.shortcuts import render
+from django.db.models import Q
+from django.core.paginator import Paginator
+from django.template.loader import render_to_string
+import csv
+from django.http import HttpResponse
+from django.utils.encoding import smart_str
+from registration.models import ContactPerson, User
+
+logger = logging.getLogger(__name__)
 
 @dashboard_login_required
 def donate_view(request):
@@ -114,5 +127,133 @@ def donate_pay_view(request, post_id=None):
         # Increment donation_received
         post.donation_received = (post.donation_received or Decimal('0.00')) + Decimal(str(amount))
         post.save(update_fields=['donation_received'])
+        try:
+            action_type_obj = PointsActionType.objects.get(action_type='Donate')
+            PointsHistory.objects.create(
+                user=user,
+                action_type=action_type_obj,
+                points=action_type_obj.default_points
+            )
+        except PointsActionType.DoesNotExist:
+            logger.warning("PointsActionType for 'Donate' does not exist. No points awarded.")
         return JsonResponse({'success': True, 'order_id': order_id, 'transaction_id': transaction_id})
     return render(request, "donate-pay.html", {"post": post, "ngo_profile": ngo_profile})
+
+
+@dashboard_login_required
+def donation_history_ajax(request):
+    donation_query = request.GET.get("donation_query", "").strip()
+    page_number = int(request.GET.get("page", 1))
+
+    donations = Donation.objects.filter(user=request.user_obj).select_related(
+        'ngopost', 'ngopost__user', 'ngopost__user__ngoprofile'
+    )
+
+    if donation_query:
+        donations = donations.filter(
+            Q(ngopost__header__icontains=donation_query) |
+            Q(ngopost__user__ngoprofile__ngo_name__icontains=donation_query)
+        )
+
+    paginator = Paginator(donations, 10)  # change to 10 or whatever you want later
+    page_obj = paginator.get_page(page_number)
+
+    donation_html = render_to_string("donate-history.html", {"donations": page_obj})
+
+    return JsonResponse({
+        "html": donation_html,
+        "current_page": page_obj.number,
+        "total_pages": paginator.num_pages
+    })
+
+# show data on receipt 
+@dashboard_login_required    
+def get_donate_bill(request, donation_id):
+    donation = Donation.objects.select_related('ngopost__user__ngoprofile').get(id=donation_id)
+    ngoprofile = donation.ngopost.user.ngoprofile
+    
+    # Get the related NGO user
+    ngo_user = donation.ngopost.user
+    
+     # Try to get the ContactPerson for the NGO profile
+    contact_person = ContactPerson.objects.filter(
+        profile_type='ngo',
+        profile_id=ngoprofile.id
+    ).first()  # use .first() to avoid MultipleObjectsReturned
+
+
+    response_data = {
+        "receipt_no": donation.id,
+        "payment_date": donation.payment_date.strftime("%d-%b-%Y"),
+        "ngo_name": donation.ngopost.user.ngoprofile.ngo_name,
+        "pan": donation.pan_number,
+        "amount": f"₹{donation.amount}",
+        "pay_mode": f"₹{donation.payment_method}",
+        "address": f"{donation.ngopost.user.ngoprofile.address}, {donation.ngopost.user.ngoprofile.city}, {donation.ngopost.user.ngoprofile.state}, {donation.ngopost.user.ngoprofile.pincode}",
+        "name": contact_person.name,
+        "email": ngo_user.email,
+    }
+
+    return JsonResponse(response_data)
+
+
+# show data on receipt 
+@dashboard_login_required    
+def get_platform_bill(request, donation_id):
+    donation = Donation.objects.select_related('ngopost__user__ngoprofile').get(id=donation_id)
+    ngoprofile = donation.ngopost.user.ngoprofile
+    
+    # Get the related NGO user
+    ngo_user = donation.ngopost.user
+    
+     # Try to get the ContactPerson for the NGO profile
+    contact_person = ContactPerson.objects.filter(
+        profile_type='ngo',
+        profile_id=ngoprofile.id
+    ).first()  # use .first() to avoid MultipleObjectsReturned
+
+
+    response_data = {
+        "receipt_no": donation.id,
+        "payment_date": donation.payment_date.strftime("%d-%b-%Y"),
+        "ngo_name": donation.ngopost.user.ngoprofile.ngo_name,
+        "pan": donation.pan_number,
+        "gst": donation.gst,
+        "amount": f"₹{donation.amount}",
+        "pay_mode": f"₹{donation.payment_method}",
+        "address": f"{donation.ngopost.user.ngoprofile.address}, {donation.ngopost.user.ngoprofile.city}, {donation.ngopost.user.ngoprofile.state}, {donation.ngopost.user.ngoprofile.pincode}",
+        "name": contact_person.name,
+        "email": ngo_user.email,
+        "finalTotal": f"{(donation.amount + donation.gst):.2f}",
+    }
+
+    return JsonResponse(response_data)
+
+  
+# csv 
+@dashboard_login_required
+def export_donations_csv(request):
+    donations = Donation.objects.filter(user=request.user_obj).select_related(
+        'ngopost', 'ngopost__user', 'ngopost__user__ngoprofile'
+    )
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="donation_history.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow([
+        "Date & Time", "Header", "NGO Name", "Post Type", "Amount", "Payment Status"
+    ])
+
+    for donation in donations:
+        writer.writerow([
+            donation.payment_date.strftime('%d/%m/%Y, %H:%M') if donation.payment_date else '',
+            smart_str(donation.ngopost.header if donation.ngopost else ''),
+            smart_str(donation.ngopost.user.ngoprofile.ngo_name if donation.ngopost and donation.ngopost.user and hasattr(donation.ngopost.user, 'ngoprofile') else ''),
+            smart_str(donation.ngopost.post_type if donation.ngopost else ''),
+            f"{donation.amount:.2f}",  # ✅ Amount only, no ₹ symbol
+            donation.payment_status,
+        ])
+
+    return response
+

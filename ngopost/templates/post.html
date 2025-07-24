@@ -1,6 +1,9 @@
 {% extends "dashboard/layout.html" %}
 {% load static %}
 {% block title %}Home{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+{% endblock %}
 
 {% block content %}
     <!-- Page specific content here -->
@@ -175,14 +178,14 @@
             <div class="px-2 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
               <p class="text-sm font-semibold whitespace-nowrap">Post history</p>
               <div class="flex items-center justify-end gap-5 w-full sm:w-5/6">
-                <form method="get" class="w-full max-w-[350px] rounded-[6px] bg-light-white flex items-center gap-2 px-2">
+                <form method="get" class="w-full max-w-[350px] rounded-[6px] bg-light-white flex items-center gap-2 px-2 history_filter">
                   <span class="material-symbols-outlined text-dark-gray">search</span>
                   <input type="text" name="history_query" placeholder="Search by Post Type or Status"
                     value="{{ request.GET.history_query|default:'' }}"
                     class="w-full py-2.5 border-none bg-transparent focus:outline-none focus:ring-0 placeholder:text-medium-gray" />
                   <button type="submit" class="ml-2 px-3 py-2 rounded bg-violet-sky text-white">Search</button>
                 </form>
-                <form method="get" class="ml-2">
+                <form method="get" class="ml-2 history_filter">
                   <input type="hidden" name="history_query" value="{{ request.GET.history_query|default:'' }}">
                   <select name="history_limit" onchange="this.form.submit()" class="rounded-[6px] border border-gray-300 px-3 py-2 text-sm">
                     <option value="1" {% if history_limit == '1' %}selected{% endif %}>Show 1</option>
@@ -206,7 +209,7 @@
 
             <!-- Table -->
             <div class="overflow-x-auto">
-              <table class="min-w-full table-auto whitespace-nowrap docTable">
+              <table class="min-w-full table-auto whitespace-nowrap postHistoryTable">
                 <thead class="bg-violet-sky text-white text-sm sm:text-18-b">
                   <tr>
                     <th class="text-center px-4 py-6 border-r border-white">
@@ -243,54 +246,10 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for post in post_history %}
-                  <tr class="border-b border-light-gray">
-                    <td class="px-4 py-4.5 text-center">{{ post.created_at|date:"d/m/y, H:i" }}</td>
-                    <td class="px-4 py-4.5 text-center">{{ post.post_type }}</td>
-                    <td class="px-4 py-4.5 text-center">{{ post.views }}</td>
-                    <td class="px-4 py-4.5 text-center">₹{{ post.target_donation|floatformat:0 }}</td>
-                    <td class="px-4 py-4.5 text-center">₹{{ post.donation_received|floatformat:0 }}</td>
-                    <td class="px-6 py-4.5 flex items-center justify-center">
-                      <div class="statusDropdown relative inline-block w-[120px]">
-                        <div class="
-                          selectedStatus
-                          py-2 px-3 rounded-md flex items-center justify-between cursor-pointer
-                          {% if post.status == 'Ongoing' %}
-                            bg-mint-cream text-green
-                          {% elif post.status == 'Closed' %}
-                            bg-soft-pink text-strong-red
-                          {% elif post.status == 'Paused' %}
-                            bg-peach text-burnt-orange
-                          {% endif %}
-                        ">
-                          <span class="status-label">{{ post.status }}</span>
-                          <span class="material-symbols-outlined">keyboard_arrow_down</span>
-                        </div>
-                      
-                        <!-- Dropdown options -->
-                        <div class="statusOptions absolute top-full left-0 w-full mt-1 bg-white shadow-md rounded-md hidden z-10" style="display: none;">
-                          <div class="py-2 px-3 cursor-pointer hover:opacity-80 bg-mint-cream text-green {% if post.status == 'Ongoing' %}font-bold{% endif %}">Ongoing</div>
-                          <div class="py-2 px-3 cursor-pointer hover:opacity-80 bg-soft-pink text-strong-red {% if post.status == 'Closed' %}font-bold{% endif %}">Closed</div>
-                          <div class="py-2 px-3 cursor-pointer hover:opacity-80 bg-peach text-burnt-orange {% if post.status == 'Paused' %}font-bold{% endif %}">Paused</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td class="px-4 py-4.5">
-                      <div class="flex items-center justify-center gap-6">
-                        <span class="material-symbols-outlined bookmark-fill cursor-pointer bookmark-toggle{% if post.saved %} material-filled text-violet-sky{% endif %}"
-                              data-post-id="{{ post.id }}"
-                              data-saved="{{ post.saved|yesno:'true,false' }}">
-                          bookmark
-                        </span>
-                        <span class="material-symbols-outlined cursor-pointer preview-btn"
-                              data-post-id="{{ post.id }}">visibility</span>
-                        <span class="material-symbols-outlined cursor-pointer">download</span>
-                      </div>
-                    </td>
-                  </tr>
-                  {% endfor %}
+                 
                 </tbody>
               </table>
+              <div id="pagination-container" class="flex justify-center gap-2 mt-4"></div>
             </div>
           </div>
 
@@ -303,7 +262,7 @@
                 <!-- Header -->
                 <div class="space-y-2">
                   <h1 class="text-dark-gray text-14-fs">Header</h1>
-                  <input name="header" type="text" placeholder="Support Underprivileged Kids in Pune"
+                  <input name="header" type="text" placeholder="Support Underprivileged Kids in Pune" required
                     class="w-full h-10 p-3 rounded-[6px] border border-dark-gray focus:outline-none focus:ring-0 placeholder:text-dark-gray placeholder:text-14-nr">
                   <p class="text-xs font-normal text-dark-gray text-end">*Title exists limit of 80 character's</p>
                 </div>
@@ -311,7 +270,7 @@
                 <!-- Description -->
                 <div class="space-y-2">
                   <h1 class="text-dark-gray text-14-fs">Description</h1>
-                  <textarea name="description" rows="4"
+                  <textarea name="description" rows="4" required
                     class="w-full py-3 px-3 rounded-[6px] border border-dark-gray focus:outline-none focus:ring-0 placeholder:text-dark-gray placeholder:text-14-nr resize-none"
                     placeholder="We are helping 50+ kids with basic education and meals. Support us to make a change"></textarea>
                   <p class="text-xs font-normal text-dark-gray text-end">*Description exists limit of 80 character's</p>
@@ -323,7 +282,7 @@
                   <div class="space-y-2 w-full">
                     <h1 class="text-dark-gray text-14-fs">Tags</h1>
                     <div class="w-full h-10 border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
-                      <input name="tags" type="text" class="w-full h-full border-none p-2 focus:outline-none focus:ring-0" />
+                      <input name="tags" type="text" class="w-full h-full border-none p-2 focus:outline-none focus:ring-0" required/>
                     </div>
                     <!-- Description line aligned properly -->
                     <div class="flex justify-end">
@@ -334,10 +293,10 @@
                   <!-- Post Type Section -->
                   <div class="space-y-2 w-full">
                     <h1 class="text-dark-gray text-14-fs">Post Type</h1>
-                    <select name="post_type" class="w-full h-10 border border-dark-gray rounded-[6px] p-2 focus:outline-none focus:ring-0 text-dark-gray text-14-nr">
+                    <select name="post_type" class="w-full h-10 border border-dark-gray rounded-[6px] p-2 focus:outline-none focus:ring-0 text-dark-gray text-14-nr" required>
                       <option value="">Select</option>
                       {% for option in post_type_options %}
-                        <option value="{{ option.name }}">{{ option.name }}</option>
+                        <option value="{{ option.id }}">{{ option.name }}</option>
                       {% endfor %}
                     </select>
                   </div>
@@ -346,10 +305,10 @@
 
                   <div class="space-y-2 w-full">
                     <h1 class="text-dark-gray text-14-fs">Donation Frequency</h1>
-                    <select name="donation_frequency" class="w-full h-10 border border-dark-gray rounded-[6px] p-2 focus:outline-none focus:ring-0 text-dark-gray text-14-nr">
+                    <select name="donation_frequency" required class="w-full h-10 border border-dark-gray rounded-[6px] p-2 focus:outline-none focus:ring-0 text-dark-gray text-14-nr">
                       <option value="">Select</option>
                       {% for option in donation_frequency_options %}
-                        <option value="{{ option.name }}">{{ option.name }}</option>
+                        <option value="{{ option.id }}">{{ option.name }}</option>
                       {% endfor %}
                     </select>
                   </div>
@@ -357,7 +316,7 @@
                   <div class="space-y-2 w-full">
                     <h1 class="text-dark-gray text-14-fs">Target Donation</h1>
                     <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
-                      <input name="target_donation" type="text" placeholder="Rs 50000"
+                      <input name="target_donation" required type="text" placeholder="Rs 50000"
                         class="w-full h-8 border-none p-2 focus:outline-none focus:ring-0 placeholder:text-dark-gray placeholder:text-14-nr" />
                     </div>
                   </div>
@@ -367,10 +326,10 @@
                   <h1 class="text-18-fs text-black">Target Audience</h1>
                   <div class="space-y-2">
                     <h1 class="text-dark-gray text-14-fs">Country</h1>
-                    <select name="country" class="w-full h-10 border border-dark-gray rounded-[6px] p-2 focus:outline-none focus:ring-0 text-dark-gray text-14-nr">
+                    <select name="country" required class="w-full h-10 border border-dark-gray rounded-[6px] p-2 focus:outline-none focus:ring-0 text-dark-gray text-14-nr">
                       <option value="">Select</option>
                       {% for option in country_options %}
-                        <option value="{{ option.name }}">{{ option.name }}</option>
+                        <option value="{{ option.id }}">{{ option.name }}</option>
                       {% endfor %}
                     </select>
                   </div>
@@ -378,19 +337,19 @@
                   <div class="flex items-center justify-between gap-5">
                     <div class="space-y-2 w-full">
                       <h1 class="text-dark-gray text-14-fs">State</h1>
-                      <select name="state" class="w-full h-10 border border-dark-gray rounded-[6px] p-2 focus:outline-none focus:ring-0 text-dark-gray text-14-nr">
+                      <select name="state" required class="w-full h-10 border border-dark-gray rounded-[6px] p-2 focus:outline-none focus:ring-0 text-dark-gray text-14-nr">
                         <option value="">Select</option>
                         {% for option in state_options %}
-                          <option value="{{ option.name }}">{{ option.name }}</option>
+                          <option value="{{ option.id }}">{{ option.name }}</option>
                         {% endfor %}
                       </select>
                     </div>
                     <div class="space-y-2 w-full">
                       <h1 class="text-dark-gray text-14-fs">City</h1>
-                      <select name="city" class="w-full h-10 border border-dark-gray rounded-[6px] p-2 focus:outline-none focus:ring-0 text-dark-gray text-14-nr">
+                      <select name="city" required class="w-full h-10 border border-dark-gray rounded-[6px] p-2 focus:outline-none focus:ring-0 text-dark-gray text-14-nr">
                         <option value="">Select</option>
                         {% for option in city_options %}
-                          <option value="{{ option.name }}">{{ option.name }}</option>
+                          <option value="{{ option.id }}">{{ option.name }}</option>
                         {% endfor %}
                       </select>
                     </div>
@@ -398,16 +357,17 @@
                       <h1 class="text-dark-gray text-14-fs">Pincode</h1>
                       <div class="relative dropdown-wrapper">
                         <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
-                          <input name="pincode" type="text" readonly value="Select"
+                          <input type="text" readonly value="Select" required
                             class="dropdown-input w-full h-8 border-none p-2 focus:outline-none focus:ring-0 text-left text-dark-gray text-14-nr" />
                           <span class="material-symbols-outlined dropdown-button">
                             keyboard_arrow_down
                           </span>
+                          <input type="hidden" name="pincode" class="dropdown-hidden-input">
                         </div>
                         <div
                           class="dropdown-list absolute z-10 w-full border border-dark-gray rounded mt-1 hidden shadow-md bg-white">
-                          <div class="px-4 py-2 hover:bg-translucent-sky-blue cursor-pointer" data-value="483501">483501</div>
-                          <div class="px-4 py-2 hover:bg-translucent-sky-blue cursor-pointer" data-value="486201">486201</div>
+                          <div class="px-4 py-2 hover:bg-translucent-sky-blue cursor-pointer" data-id="2" data-value="483501">483501</div>
+                          <div class="px-4 py-2 hover:bg-translucent-sky-blue cursor-pointer" data-id="1" data-value="486201">486201</div>
                         </div>
                       </div>
                     </div>
@@ -415,19 +375,19 @@
                   <div class="flex items-center justify-between gap-5">
                     <div class="space-y-2 w-full">
                       <h1 class="text-dark-gray text-14-fs">Age</h1>
-                      <select name="age" class="w-full h-10 border border-dark-gray rounded-[6px] p-2 focus:outline-none focus:ring-0 text-dark-gray text-14-nr">
+                      <select name="age" required class="w-full h-10 border border-dark-gray rounded-[6px] p-2 focus:outline-none focus:ring-0 text-dark-gray text-14-nr">
                         <option value="">Select</option>
                         {% for option in age_options %}
-                          <option value="{{ option.name }}">{{ option.name }}</option>
+                          <option value="{{ option.id }}">{{ option.name }}</option>
                         {% endfor %}
                       </select>
                     </div>
                     <div class="space-y-2 w-full">
                       <h1 class="text-dark-gray text-14-fs">Gender</h1>
-                      <select name="gender" class="w-full h-10 border border-dark-gray rounded-[6px] p-2 focus:outline-none focus:ring-0 text-dark-gray text-14-nr">
+                      <select name="gender" required class="w-full h-10 border border-dark-gray rounded-[6px] p-2 focus:outline-none focus:ring-0 text-dark-gray text-14-nr">
                         <option value="">Select</option>
                         {% for option in gender_options %}
-                          <option value="{{ option.name }}">{{ option.name }}</option>
+                          <option value="{{ option.id }}">{{ option.name }}</option>
                         {% endfor %}
                       </select>
                     </div>
@@ -435,10 +395,10 @@
                   <div class="flex items-center justify-between gap-5">
                     <div class="space-y-2 w-full">
                       <h1 class="text-dark-gray text-14-fs">Spending power</h1>
-                      <select name="spending_power" class="w-full h-10 border border-dark-gray rounded-[6px] p-2 focus:outline-none focus:ring-0 text-dark-gray text-14-nr">
+                      <select name="spending_power" required class="w-full h-10 border border-dark-gray rounded-[6px] p-2 focus:outline-none focus:ring-0 text-dark-gray text-14-nr">
                         <option value="">Select</option>
                         {% for option in spending_power_options %}
-                          <option value="{{ option.name }}">{{ option.name }}</option>
+                          <option value="{{ option.id }}">{{ option.name }}</option>
                         {% endfor %}
                       </select>
                     </div>
@@ -453,7 +413,7 @@
                             <span class="selected-date text-16-nr text-dark-gray">YYYY-MM-DD</span>
                             <span class="material-symbols-outlined text-dark-gray">calendar_month</span>
                           </div>
-                          <input type="text" name="start-date" class="start-date-range custom-date-range"
+                          <input type="text" name="start-date" class="start-date-range custom-date-range" required
                             style="position: absolute; left: 0; top: 0; opacity: 0; pointer-events: none;" />
                         </div>
 
@@ -464,31 +424,35 @@
                             <span class="selected-date text-16-nr text-dark-gray">YYYY-MM-DD</span>
                             <span class="material-symbols-outlined text-dark-gray">calendar_month</span>
                           </div>
-                          <input type="text" name="end-date" class="end-date-range custom-date-range"
+                          <input type="text" name="end-date" class="end-date-range custom-date-range" required
                             style="position: absolute; left: 0; top: 0; opacity: 0; pointer-events: none;" />
                         </div>
                     </div>
                   </div>
                 </div>
               </div>
+              <input type="file" id="file1" name="file1">
+              <input type="file" id="file2" name="file2">
+
               <!-- Upload Section -->
               <div class="mt-4 space-y-3">
                 <p class="text-16-nr">Upload creative (Only 2 creatives)<span class="text-dark-red">*</span></p>
                 <div
                   class="upload-area relative border-2 border-dashed border-violet-sky rounded-md h-[312px] flex items-center justify-center px-6">
-                  <input name="creatives" type="file" class="hidden upload-input" />
+                  <input name="creatives[]" type="file" class="hidden upload-input" multiple required/>
                   <div class="upload-placeholder flex flex-col items-center space-y-2 cursor-pointer">
                     <img src="/static/images/cloud-upload-ngo.svg" alt="Cloud" loading="lazy" />
                     <p class="text-xs sm:text-base text-center">Click or Upload</p>
                   </div>
-                  <div class="upload-preview hidden relative w-full h-60">
+                  <!-- <div class="upload-preview hidden relative w-full h-60">
                     <button type="button" class="cancel-upload absolute -top-8 sm:-top-2 right-2">
                       <span class="material-symbols-outlined cursor-pointer">
                         close
                       </span>
                     </button>
                     <img src="" alt="Preview" class="uploaded-img mx-auto max-h-60 object-contain" />
-                  </div>
+                  </div> -->
+                  <div class="upload-preview hidden relative w-full h-full flex gap-4 overflow-x-auto"></div>
                 </div>
                 <div class="flex items-center justify-between">
                   <p class="text-[9px] sm:text-xs py-2 text-dark-gray">
@@ -964,10 +928,73 @@
 {% block extra_js %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script src="{% static 'js/NGO/ngo-new-post.js' %}"></script>
 <script src="{% static 'js/NGO/ngo-tabs.js' %}"></script>
 <script src="{% static 'js/NGO/table-pagination.js' %}"></script>
 <script src="{% static 'js/toaster.js' %}"></script>
+<script src="{% static 'js/tabs.js' %}"></script>
+<script>
+function loadPostHistory(page = 1) {
+  const query = $('input[name=history_query]').val();
+  const limit = $('#filter-limit').val();
+  const startDate = $('#filter-start-date').val();
+  const endDate = $('#filter-end-date').val();
+
+  $.ajax({
+    url: "{% url 'post_history_ajax' %}",
+    type: "GET",
+    data: {
+      query: query,
+      limit: limit,
+      page: page,
+      start_date: startDate,
+      end_date: endDate
+    },
+    success: function (response) {
+      $('.postHistoryTable tbody').html(response.html);
+      renderPagination(response.current_page, response.total_pages);
+    },
+    error: function () {
+      alert("Failed to load post history.");
+    }
+  });
+}
+
+function renderPagination(current, total) {
+  let html = '';
+  for (let i = 1; i <= total; i++) {
+    html += `<button class="pagination-btn px-2 py-1 border ${i === current ? 'bg-violet-sky text-white' : ''}" data-page="${i}">${i}</button>`;
+  }
+  $('#pagination-container').html(html);
+}
+
+// Trigger on tab click
+let historyLoaded = false;
+$('[data-tab="post-history"]').on('click', function () {
+  if (!historyLoaded) {
+    loadPostHistory();
+    historyLoaded = true;
+  }
+});
+
+// Real-time filter events
+$(document).on('input change', '#filter-query, #filter-limit, #filter-start-date, #filter-end-date', function () {
+  loadPostHistory(1);
+});
+
+// Pagination click
+$(document).on('click', '.pagination-btn', function () {
+  const page = $(this).data('page');
+  loadPostHistory(page);
+});
+
+$('.history_filter').on('submit', function (e) {
+  e.preventDefault(); // prevent default form submission
+  loadPostHistory(1);
+});
+
+</script>
+
+
 {% endblock %}

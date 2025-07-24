@@ -18,7 +18,9 @@ from .models import (
     UserProfile,
     AdvertiserProfile,
     ClientType,
-    AdService
+    AdService,
+    AdvertiserType,
+    AdServiceReq
     )
 from registration.utils import send_custom_email  
 from django.utils import timezone
@@ -46,8 +48,15 @@ def register_by_role(request, role):
     if role == "client":
         context["client_types"] = ClientType.objects.filter(is_active=True)
         context["ad_services"] = AdService.objects.filter(is_active=True)
+    
+    elif role == "advertiser":
+        context["advertiser_types"] = AdvertiserType.objects.filter(is_active=True)
+        context["ad_service_reqs"] = AdServiceReq.objects.filter(is_active=True)
+
 
     return render(request, tpl, context)
+
+
 
 ALLOWED_EXTENSIONS = {'.pdf', '.jpg', '.jpeg', '.png'}
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
@@ -438,8 +447,8 @@ def save_advertiser(request):
     if not company_name:
         errors["company_name"] = "Company name is required."
 
-    advertiser_type = data.getlist("advertiser_type[]") or []
-    ad_services = data.getlist("ad_services[]") or []
+    advertiser_type = data.getlist("advertiser_type") or []
+    ad_services = data.getlist("ad_service_req") or []
     website = data.get("website", "")
 
     address = data.get("address")
@@ -452,7 +461,7 @@ def save_advertiser(request):
 
     # Incorporation Doc
     incorporation_number = data.get("incorporation_number")
-    incorporation_doc_path, err = validate_and_save_file(files.get("incorporation_doc"), "incorporation", "Incorporation Document","advertiser_docs")
+    incorporation_doc_path, err = validate_and_save_file(files.get("incorporation_doc"), "incorporation", "Incorporation Document",user_type="advertiser")
     if incorporation_number and not incorporation_doc_path:
         errors["incorporation_doc"] = "Upload incorporation document."
     if err:
@@ -460,7 +469,7 @@ def save_advertiser(request):
 
     # GST
     gst_number = data.get("gst_number")
-    gst_doc_path, err = validate_and_save_file(files.get("gst_doc"), "gst", "GST Document","advertiser_docs")
+    gst_doc_path, err = validate_and_save_file(files.get("gst_doc"), "gst", "GST Document",user_type="advertiser")
     if gst_number and not gst_doc_path:
         errors["gst_doc"] = "Upload GST document."
     if err:
@@ -468,7 +477,7 @@ def save_advertiser(request):
 
     # PAN
     pan_number = data.get("pan_number")
-    pan_doc_path, err = validate_and_save_file(files.get("pan_doc"), "pan", "PAN Document","advertiser_docs")
+    pan_doc_path, err = validate_and_save_file(files.get("pan_doc"), "pan", "PAN Document",user_type="advertiser")
     if pan_number and not pan_doc_path:
         errors["pan_doc"] = "Upload PAN document."
     if err:
@@ -476,14 +485,14 @@ def save_advertiser(request):
 
     # TAN
     tan_number = data.get("tan_number")
-    tan_doc_path, err = validate_and_save_file(files.get("tan_doc"), "tan", "TAN Document","advertiser_docs")
+    tan_doc_path, err = validate_and_save_file(files.get("tan_doc"), "tan", "TAN Document",user_type="advertiser")
     if tan_number and not tan_doc_path:
         errors["tan_doc"] = "Upload TAN document."
     if err:
         errors["tan_doc"] = err
 
     # Brand Image
-    brand_image_path, err = validate_and_save_file(files.get("brand_image"), "brand", "Brand Image","advertiser_docs")
+    brand_image_path, err = validate_and_save_file(files.get("brand_image"), "brand", "Brand Image",user_type="advertiser")
     if err:
         errors["brand_image"] = err
 
@@ -547,7 +556,7 @@ def save_advertiser(request):
     if contact_name and contact_phone:
         ContactPerson.objects.create(
             profile_type='advertiser',
-            profile_id=advertiser.id,
+            profile_id=user.id,
             name=contact_name,
             phone_country_code=phone_country_code,
             phone_number=contact_phone,
@@ -557,6 +566,7 @@ def save_advertiser(request):
             referral_code=referral_code,
             email_otp=email_otp
         )
+        
 
     return JsonResponse({"success": True, "message": "Advertiser registered successfully."})
 
@@ -622,35 +632,35 @@ def save_client(request):
 
     # === DOCUMENTS VALIDATION ===
     incorporation_number = data.get("incorporation", "")
-    incorporation_doc_path, err = validate_and_save_file(files.get("incorporation_doc"), "incorporation", "Incorporation Document", "client_docs")
+    incorporation_doc_path, err = validate_and_save_file(files.get("incorporation_doc"), "incorporation", "Incorporation Document", user_type="client")
     if incorporation_number and not incorporation_doc_path:
         errors["incorporation_doc"] = "Upload incorporation document."
     if err:
         errors["incorporation_doc"] = err
 
     gst_number = data.get("gst", "")
-    gst_doc_path, err = validate_and_save_file(files.get("gst_doc"), "gst", "GST Document", "client_docs")
+    gst_doc_path, err = validate_and_save_file(files.get("gst_doc"), "gst", "GST Document", user_type="client")
     if gst_number and not gst_doc_path:
         errors["gst_doc"] = "Upload GST document."
     if err:
         errors["gst_doc"] = err
 
     pan_number = data.get("pan", "")
-    pan_doc_path, err = validate_and_save_file(files.get("pan_doc"), "pan", "PAN Document", "client_docs")
+    pan_doc_path, err = validate_and_save_file(files.get("pan_doc"), "pan", "PAN Document", user_type="client")
     if pan_number and not pan_doc_path:
         errors["pan_doc"] = "Upload PAN document."
     if err:
         errors["pan_doc"] = err
 
     tan_number = data.get("tan", "")
-    tan_doc_path, err = validate_and_save_file(files.get("tan_doc"), "tan", "TAN Document", "client_docs")
+    tan_doc_path, err = validate_and_save_file(files.get("tan_doc"), "tan", "TAN Document", user_type="client")
     if tan_number and not tan_doc_path:
         errors["tan_doc"] = "Upload TAN document."
     if err:
         errors["tan_doc"] = err
 
     # Selfie Upload
-    selfie_path, err = validate_and_save_file(files.get("selfie"), "selfie", "Selfie Upload", "client_docs")
+    selfie_path, err = validate_and_save_file(files.get("selfie"), "selfie", "Selfie Upload", user_type="client")
     if err:
         errors["selfie"] = err
 
@@ -707,7 +717,7 @@ def save_client(request):
     if contact_name and contact_phone:
         ContactPerson.objects.create(
             profile_type='client',
-            profile_id=client.id,
+            profile_id=user.id,
             name=contact_name,
             phone_country_code=phone_country_code,
             phone_number=contact_phone,

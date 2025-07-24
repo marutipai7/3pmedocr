@@ -1,39 +1,39 @@
 // Function to check if the form is valid
-function checkFormValidity() {
-  const issueType = $(".issue-type").val().trim();
-  const issueDesc = $(".issue-description").val().trim();
-  const issueImage = $(".issue-image")[0].files.length > 0;
+// function checkFormValidity() {
+//   const issueType = $(".issue-type").val().trim();
+//   const issueDesc = $(".issue-description").val().trim();
+//   const issueImage = $(".issue-image")[0].files.length > 0;
 
-  if (issueType && issueDesc && issueImage) {
-    $(".issue-submit-btn")
-      .prop("disabled", false)
-      .removeClass("text-medium-gray bg-light-gray cursor-not-allowed")
-      .addClass("bg-light-sea-green text-white cursor-pointer");
-  } else {
-    $(".issue-submit-btn")
-      .prop("disabled", true)
-      .removeClass("bg-light-sea-green text-white cursor-pointer")
-      .addClass("text-medium-gray bg-light-gray cursor-not-allowed");
-  }
-}
+//   if (issueType && issueDesc && issueImage) {
+//     $(".issue-submit-btn")
+//       .prop("disabled", false)
+//       .removeClass("text-medium-gray bg-light-gray cursor-not-allowed")
+//       .addClass("bg-light-sea-green text-white cursor-pointer");
+//   } else {
+//     $(".issue-submit-btn")
+//       .prop("disabled", true)
+//       .removeClass("bg-light-sea-green text-white cursor-pointer")
+//       .addClass("text-medium-gray bg-light-gray cursor-not-allowed");
+//   }
+// }
 
 // Event listeners for input changes to validate the form
-$(function () {
-  $(".issue-type, .issue-description").on("input", checkFormValidity);
-  $("#issue-image").on("change", checkFormValidity);
-});
+// $(function () {
+//   $(".issue-type, .issue-description").on("input", checkFormValidity);
+//   $("#issue-image").on("change", checkFormValidity);
+// });
 
 // Toggle functionality for various sections with accordion-style behavior
 
-$(".toggle-subscription").click(function () {
-  var content = $(this)
-    .closest(".account-subscription")
-    .find(".subscription-content");
-  var icon = $(this).find(".chevron-icon");
+// $(".toggle-subscription").click(function () {
+//   var content = $(this)
+//     .closest(".account-subscription")
+//     .find(".subscription-content");
+//   var icon = $(this).find(".chevron-icon");
 
-  content.toggleClass("hidden");
-  icon.toggleClass("rotate-180");
-});
+//   content.toggleClass("hidden");
+//   icon.toggleClass("rotate-180");
+// });
 
 $(".toggle-avatar").click(function () {
   var content = $(this).closest(".avatar-creation").find(".avatar-content");
@@ -97,31 +97,31 @@ function sendEmailSupport() {
   document.querySelector(".emailPopup").classList.add("hidden");
 }
 
-const issueMap = {
-  type1: [
-    "Unable to log in or reset password",
-    "Profile update not saving",
-    "Mobile number or email verification failed",
-    "App crashing or freezing on startup",
-  ],
-  type2: [
-    "Bid request not showing in history",
-    "No response from pharmacies on my bid",
-    "My accepted bid disappeared",
-    "Can't upload or attach prescription",
-  ],
-  type3: [
-    "Not receiving order or bid notifications",
-    "Chat with pharmacy not working",
-    "In-app notifications are delayed",
-  ],
-  type4: [
-    "App interface glitches (e.g., buttons not working)",
-    "Location detection issue",
-    "Images or attachments not uploading",
-    "Reporting fake or spam pharmacy listing",
-  ],
-};
+// const issueMap = {
+//   type1: [
+//     "Unable to log in or reset password",
+//     "Profile update not saving",
+//     "Mobile number or email verification failed",
+//     "App crashing or freezing on startup",
+//   ],
+//   type2: [
+//     "Bid request not showing in history",
+//     "No response from pharmacies on my bid",
+//     "My accepted bid disappeared",
+//     "Can't upload or attach prescription",
+//   ],
+//   type3: [
+//     "Not receiving order or bid notifications",
+//     "Chat with pharmacy not working",
+//     "In-app notifications are delayed",
+//   ],
+//   type4: [
+//     "App interface glitches (e.g., buttons not working)",
+//     "Location detection issue",
+//     "Images or attachments not uploading",
+//     "Reporting fake or spam pharmacy listing",
+//   ],
+// };
 
 // Toggle dropdowns
 /*$(
@@ -136,86 +136,85 @@ $(
 });*/
 
 // Handle issue type checkbox selection
-$(".issue-checkbox").on("click", function (e) {
-  e.stopPropagation();
-  $(".issue-checkbox").not(this).prop("checked", false);
+// $(".issue-checkbox").on("click", function (e) {
+//   e.stopPropagation();
+//   $(".issue-checkbox").not(this).prop("checked", false);
 
-  const isChecked = $(this).is(":checked");
-  const selectedType = $(this).data("type");
-  const selectedText = $(this).closest("li").find("span").text().trim();
-  const options = issueMap[selectedType] || [];
+//   const isChecked = $(this).is(":checked");
+//   const selectedType = $(this).data("type");
+//   const selectedText = $(this).closest("li").find("span").text().trim();
+//   const options = issueMap[selectedType] || [];
 
-  const $typeWrapper = $(this).closest(".issue-type-wrapper");
-  const $selectWrapper = $(".select-issue-wrapper");
-  const $issueInput = $typeWrapper.find(".issue-type-input");
-  const $selectInput = $selectWrapper.find(".select-issue-input");
-  const $selectDropdown = $selectWrapper.find(".select-issue-dropdown");
+//   const $typeWrapper = $(this).closest(".issue-type-wrapper");
+//   const $selectWrapper = $(".select-issue-wrapper");
+//   const $issueInput = $typeWrapper.find(".issue-type-input");
+//   const $selectInput = $selectWrapper.find(".select-issue-input");
+//   const $selectDropdown = $selectWrapper.find(".select-issue-dropdown");
 
-  // Get custom color classes from the wrapper's data-* attributes
-  const hoverClass = $selectWrapper.data("hover-class") || "";
-  const checkboxColor = $selectWrapper.data("checkbox-color") || "";
-  const ringColor = $selectWrapper.data("ring-color") || "";
+//   // Get custom color classes from the wrapper's data-* attributes
+//   const hoverClass = $selectWrapper.data("hover-class") || "";
+//   const checkboxColor = $selectWrapper.data("checkbox-color") || "";
+//   const ringColor = $selectWrapper.data("ring-color") || "";
 
-  if (isChecked) {
-    $issueInput.val(selectedText);
-    $(".issue-type-dropdown").addClass("hidden");
+//   if (isChecked) {
+//     $issueInput.val(selectedText);
+//     $(".issue-type-dropdown").addClass("hidden");
 
-    $selectInput.val("");
-    $selectDropdown.empty();
+//     $selectInput.val("");
+//     $selectDropdown.empty();
 
-    options.forEach((option) => {
-      const hoverClass = $selectWrapper.data("hover-class") || "";
-const $li = $("<li>").addClass(
-  `px-2 py-2 mb-2 flex justify-between items-center ${hoverClass}`
-);
+//     options.forEach((option) => {
+//       const hoverClass = $selectWrapper.data("hover-class") || "";
+// const $li = $("<li>").addClass(
+//   `px-2 py-2 mb-2 flex justify-between items-center ${hoverClass}`
+// );
 
+//       const textColor = $selectWrapper.data("text-color") || "";
 
-      const textColor = $selectWrapper.data("text-color") || "";
+//       const $span = $("<span>").addClass(`text-base ${textColor}`).text(option);
 
-      const $span = $("<span>").addClass(`text-base ${textColor}`).text(option);
+//       const $checkbox = $("<input>")
+//         .attr({
+//           type: "checkbox",
+//           name: "selectIssueOption",
+//           "data-option": option,
+//         })
+//         .addClass(
+//           `select-issue-checkbox form-checkbox  w-5 h-5 cursor-pointer rounded-sm mr-2 ${checkboxColor} ${ringColor}`
+//         );
 
-      const $checkbox = $("<input>")
-        .attr({
-          type: "checkbox",
-          name: "selectIssueOption",
-          "data-option": option,
-        })
-        .addClass(
-          `select-issue-checkbox form-checkbox  w-5 h-5 cursor-pointer rounded-sm mr-2 ${checkboxColor} ${ringColor}`
-        );
+//       $li.append($span, $checkbox);
+//       $selectDropdown.append($li);
+//     });
+//   } else {
+//     $issueInput.val("");
+//     $selectInput.val("");
+//     $selectDropdown.empty();
+//   }
 
-      $li.append($span, $checkbox);
-      $selectDropdown.append($li);
-    });
-  } else {
-    $issueInput.val("");
-    $selectInput.val("");
-    $selectDropdown.empty();
-  }
-
-  checkFormValidity();
-});
+//   checkFormValidity();
+// });
 
 // Handle select issue checkbox click
-$(".select-issue-dropdown")
-  .off("click", ".select-issue-checkbox")
-  .on("click", ".select-issue-checkbox", function (e) {
-    e.stopPropagation();
-    $(".select-issue-checkbox").not(this).prop("checked", false);
+// $(".select-issue-dropdown")
+//   .off("click", ".select-issue-checkbox")
+//   .on("click", ".select-issue-checkbox", function (e) {
+//     e.stopPropagation();
+//     $(".select-issue-checkbox").not(this).prop("checked", false);
 
-    const isChecked = $(this).is(":checked");
-    const selectedOption = $(this).data("option");
-    const $selectInput = $(".select-issue-input");
+//     const isChecked = $(this).is(":checked");
+//     const selectedOption = $(this).data("option");
+//     const $selectInput = $(".select-issue-input");
 
-    if (isChecked) {
-      $selectInput.val(selectedOption);
-      $(".select-issue-dropdown").addClass("hidden");
-    } else {
-      $selectInput.val("");
-    }
+//     if (isChecked) {
+//       $selectInput.val(selectedOption);
+//       $(".select-issue-dropdown").addClass("hidden");
+//     } else {
+//       $selectInput.val("");
+//     }
 
-    checkFormValidity();
-  });
+//     checkFormValidity();
+//   });
 
 // Close dropdowns when clicking outside
 $(document).on("click", function (e) {
@@ -248,31 +247,36 @@ $(document).ready(function () {
     }
   });
 });
+
 // new code by Sidhanta
-$(function () {
-  $('#issue_type').on('change', function () {
-    var issueTypeId = $(this).val();
-    if (issueTypeId) {
-      $.ajax({
-        url: '/help/api/issue-options/',
-        data: {
-          'issue_type_id': issueTypeId
-        },
-        success: function (data) {
-          var $selectIssue = $('#select_issue');
-          $selectIssue.empty();
-          $selectIssue.append('<option value="">Select an option</option>');
-          $.each(data.options, function (i, option) {
-            $selectIssue.append('<option value="' + option.id + '">' + option.name + '</option>');
-          });
-        }
-      });
-    } else {
-      // Reset if no issue type is selected
-      $('#select_issue').empty().append('<option value="">Select an option</option>');
-    }
-  });
-});
+// $(function () {
+//   $("#issue_type").on("change", function () {
+//     var issueTypeId = $(this).val();
+//     if (issueTypeId) {
+//       $.ajax({
+//         url: "/help/api/issue-options/",
+//         data: {
+//           issue_type_id: issueTypeId,
+//         },
+//         success: function (data) {
+//           var $selectIssue = $("#select_issue");
+//           $selectIssue.empty();
+//           $selectIssue.append('<option value="">Select an option</option>');
+//           $.each(data.options, function (i, option) {
+//             $selectIssue.append(
+//               '<option value="' + option.id + '">' + option.name + "</option>"
+//             );
+//           });
+//         },
+//       });
+//     } else {
+//       // Reset if no issue type is selected
+//       $("#select_issue")
+//         .empty()
+//         .append('<option value="">Select an option</option>');
+//     }
+//   });
+// });
 
 // You can still use openModal() and closeModal() as before
 function openModal() {
@@ -291,18 +295,18 @@ function closeModalProgress() {
   document.querySelector(".view-modal-progress").classList.add("hidden");
 }
 
-$(".custom-dropdown-btn").on("click", function (e) {
-  e.stopPropagation();
-  const $dropdown = $(this).closest(".custom-dropdown");
-  $(".custom-dropdown-option")
-    .not($dropdown.find(".custom-dropdown-option"))
-    .hide();
-  $dropdown.find(".custom-dropdown-option").toggle();
-});
+// $(".custom-dropdown-btn").on("click", function (e) {
+//   e.stopPropagation();
+//   const $dropdown = $(this).closest(".custom-dropdown");
+//   $(".custom-dropdown-option")
+//     .not($dropdown.find(".custom-dropdown-option"))
+//     .hide();
+//   $dropdown.find(".custom-dropdown-option").toggle();
+// });
 
-$(document).on("click", function () {
-  $(".custom-dropdown-option").hide();
-});
+// $(document).on("click", function () {
+//   $(".custom-dropdown-option").hide();
+// });
 
 // File input change event of
 document.addEventListener("DOMContentLoaded", function () {
@@ -690,111 +694,111 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // NGO Upload section
 
-  const ngoIssueImage = document.getElementById("ngo-issue-image");
-  const ngoSelectedFiles = [];
+  // const ngoIssueImage = document.getElementById("ngo-issue-image");
+  // const ngoSelectedFiles = [];
 
-  if (ngoIssueImage) {
-    ngoIssueImage.addEventListener("change", function (e) {
-      const fileInput = e.target;
-      const fileContainer = document.querySelector(".ngo-file-container");
-      const submitBtn = document.getElementById("ngo-issue-submit-btn");
+  // if (ngoIssueImage) {
+  //   ngoIssueImage.addEventListener("change", function (e) {
+  //     const fileInput = e.target;
+  //     const fileContainer = document.querySelector(".ngo-file-container");
+  //     const submitBtn = document.getElementById("ngo-issue-submit-btn");
 
-      if (
-        fileInput.files &&
-        fileInput.files.length > 0 &&
-        fileContainer &&
-        submitBtn
-      ) {
-        for (let i = 0; i < fileInput.files.length; i++) {
-          const file = fileInput.files[i];
-          if (
-            !ngoSelectedFiles.some(
-              (f) => f.name === file.name && f.size === file.size
-            )
-          ) {
-            ngoSelectedFiles.push(file);
-          }
-        }
+  //     if (
+  //       fileInput.files &&
+  //       fileInput.files.length > 0 &&
+  //       fileContainer &&
+  //       submitBtn
+  //     ) {
+  //       for (let i = 0; i < fileInput.files.length; i++) {
+  //         const file = fileInput.files[i];
+  //         if (
+  //           !ngoSelectedFiles.some(
+  //             (f) => f.name === file.name && f.size === file.size
+  //           )
+  //         ) {
+  //           ngoSelectedFiles.push(file);
+  //         }
+  //       }
 
-        updateNgoFileDisplay(fileContainer, submitBtn);
-        fileInput.value = "";
-      } else if (fileContainer && submitBtn && ngoSelectedFiles.length === 0) {
-        resetNgoFileDisplay(fileContainer, submitBtn);
-      }
-    });
-  }
+  //       updateNgoFileDisplay(fileContainer, submitBtn);
+  //       fileInput.value = "";
+  //     } else if (fileContainer && submitBtn && ngoSelectedFiles.length === 0) {
+  //       resetNgoFileDisplay(fileContainer, submitBtn);
+  //     }
+  //   });
+  // }
 
-  function updateNgoFileDisplay(container, submitBtn) {
-    container.innerHTML = "";
+  // function updateNgoFileDisplay(container, submitBtn) {
+  //   container.innerHTML = "";
 
-    if (ngoSelectedFiles.length === 0) {
-      container.innerHTML =
-        '<span class="ngo-file-name font-normal text-sm">Upload image of the issue</span>';
-      resetNgoSubmitButton(submitBtn);
-      return;
-    }
+  //   if (ngoSelectedFiles.length === 0) {
+  //     container.innerHTML =
+  //       '<span class="ngo-file-name font-normal text-sm">Upload image of the issue</span>';
+  //     resetNgoSubmitButton(submitBtn);
+  //     return;
+  //   }
 
-    const filesWrapper = document.createElement("div");
-    filesWrapper.className =
-      "flex items-center gap-2 overflow-x-auto max-w-full py-1";
+  //   const filesWrapper = document.createElement("div");
+  //   filesWrapper.className =
+  //     "flex items-center gap-2 overflow-x-auto max-w-full py-1";
 
-    ngoSelectedFiles.forEach((file, index) => {
-      const fileElement = document.createElement("div");
-      fileElement.className =
-        "flex items-center gap-1 bg-gray-100 px-2 py-1 rounded mr-1";
+  //   ngoSelectedFiles.forEach((file, index) => {
+  //     const fileElement = document.createElement("div");
+  //     fileElement.className =
+  //       "flex items-center gap-1 bg-gray-100 px-2 py-1 rounded mr-1";
 
-      const fileName = document.createElement("span");
-      fileName.className =
-        "text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]";
-      fileName.textContent = file.name;
+  //     const fileName = document.createElement("span");
+  //     fileName.className =
+  //       "text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]";
+  //     fileName.textContent = file.name;
 
-      const removeBtn = document.createElement("button");
-      removeBtn.type = "button";
-      removeBtn.className =
-        "material-symbols-outlined text-red-500 cursor-pointer text-sm";
-      removeBtn.textContent = "close";
-      removeBtn.onclick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        removeNgoFile(index, container, submitBtn);
-      };
+  //     const removeBtn = document.createElement("button");
+  //     removeBtn.type = "button";
+  //     removeBtn.className =
+  //       "material-symbols-outlined text-red-500 cursor-pointer text-sm";
+  //     removeBtn.textContent = "close";
+  //     removeBtn.onclick = (e) => {
+  //       e.preventDefault();
+  //       e.stopPropagation();
+  //       removeNgoFile(index, container, submitBtn);
+  //     };
 
-      fileElement.appendChild(fileName);
-      fileElement.appendChild(removeBtn);
-      filesWrapper.appendChild(fileElement);
-    });
+  //     fileElement.appendChild(fileName);
+  //     fileElement.appendChild(removeBtn);
+  //     filesWrapper.appendChild(fileElement);
+  //   });
 
-    container.appendChild(filesWrapper);
+  //   container.appendChild(filesWrapper);
 
-    submitBtn.classList.remove(
-      "bg-light-gray",
-      "text-medium-gray",
-      "cursor-not-allowed"
-    );
-    submitBtn.classList.add("bg-violet-sky", "text-white", "cursor-pointer");
-    submitBtn.disabled = false;
-  }
+  //   submitBtn.classList.remove(
+  //     "bg-light-gray",
+  //     "text-medium-gray",
+  //     "cursor-not-allowed"
+  //   );
+  //   submitBtn.classList.add("bg-violet-sky", "text-white", "cursor-pointer");
+  //   submitBtn.disabled = false;
+  // }
 
-  function removeNgoFile(index, container, submitBtn) {
-    ngoSelectedFiles.splice(index, 1);
-    updateNgoFileDisplay(container, submitBtn);
-  }
+  // function removeNgoFile(index, container, submitBtn) {
+  //   ngoSelectedFiles.splice(index, 1);
+  //   updateNgoFileDisplay(container, submitBtn);
+  // }
 
-  function resetNgoFileDisplay(container, submitBtn) {
-    container.innerHTML =
-      '<span class="ngo-file-name font-normal text-sm">Upload image of the issue</span>';
-    resetNgoSubmitButton(submitBtn);
-  }
+  // function resetNgoFileDisplay(container, submitBtn) {
+  //   container.innerHTML =
+  //     '<span class="ngo-file-name font-normal text-sm">Upload image of the issue</span>';
+  //   resetNgoSubmitButton(submitBtn);
+  // }
 
-  function resetNgoSubmitButton(submitBtn) {
-    submitBtn.classList.remove("bg-violet-sky", "text-white", "cursor-pointer");
-    submitBtn.classList.add(
-      "bg-light-gray",
-      "text-medium-gray",
-      "cursor-not-allowed"
-    );
-    submitBtn.disabled = true;
-  }
+  // function resetNgoSubmitButton(submitBtn) {
+  //   submitBtn.classList.remove("bg-violet-sky", "text-white", "cursor-pointer");
+  //   submitBtn.classList.add(
+  //     "bg-light-gray",
+  //     "text-medium-gray",
+  //     "cursor-not-allowed"
+  //   );
+  //   submitBtn.disabled = true;
+  // }
 });
 
 const addedStatuses = new Set();
@@ -828,4 +832,590 @@ function addStatus(container, statusText, timestamp) {
   $times.append(`
     <p class="font-semibold text-base">${timestamp}</p>
   `);
+}
+
+//----------------------- new code via laxmi -------------------------------------------
+//get issue option in the dropdown
+document.getElementById("issue_type").addEventListener("change", function () {
+  const issueTypeId = this.value;
+
+  if (issueTypeId) {
+    fetch(`${getIssueOptionLists}?issue_type_id=${issueTypeId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        const issueSelect = document.getElementById("select_issue");
+        issueSelect.innerHTML = '<option value="">Select Issue Option</option>';
+
+        data.options.forEach((option) => {
+          const opt = document.createElement("option");
+          opt.value = option.id;
+          opt.textContent = option.name;
+          issueSelect.appendChild(opt);
+        });
+      })
+      .catch((error) => {
+        console.error("Error fetching issue options:", error);
+      });
+  }
+});
+
+//store data in db
+const form = document.querySelector(".support-form");
+const submitBtn = document.querySelector(".ngo-issue-submit-btn");
+const fileInput = document.getElementById("ngo-issue-image");
+
+const itemsPerPage = 5;
+let allTickets = [];
+let currentPage = 1;
+
+fileInput.addEventListener("change", function () {
+  if (fileInput.files.length > 0) {
+    submitBtn.disabled = false;
+    submitBtn.classList.remove(
+      "cursor-not-allowed",
+      "bg-light-gray",
+      "text-medium-gray"
+    );
+    submitBtn.classList.add("cursor-pointer", "bg-violet-sky", "text-white");
+  } else {
+    submitBtn.disabled = true;
+    submitBtn.classList.remove("cursor-pointer", "bg-violet-sky", "text-white");
+    submitBtn.classList.add(
+      "cursor-not-allowed",
+      "bg-light-gray",
+      "text-medium-gray"
+    );
+  }
+});
+
+//submit btn
+form.addEventListener("submit", async function (e) {
+  e.preventDefault();
+
+  const issueType = document.getElementById("issue_type").value;
+  const issueOption = document.getElementById("select_issue").value;
+
+  if (!issueType || issueType === "" || !issueOption || issueOption === "") {
+    showToaster("error", "Please select both Issue Type and Issue Option.");
+    return; // stop form submission
+  }
+
+  const formData = new FormData(form);
+
+  // Append all selected images
+  for (const file of fileInput.files) {
+    formData.append("image", file); // append multiple if needed later
+  }
+
+  try {
+    const response = await fetch(saveTickets, {
+      method: "POST",
+      body: formData,
+      headers: {
+        "X-CSRFToken": getCookie("csrftoken"),
+      },
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      // toastr.success(result.message);
+      showToaster(
+        "success",
+        result.message || "Ticket created successfully..."
+      );
+      form.reset();
+
+      // reset file input styles
+      submitBtn.disabled = true;
+      submitBtn.classList.remove(
+        "cursor-pointer",
+        "bg-violet-sky",
+        "text-white"
+      );
+      submitBtn.classList.add(
+        "cursor-not-allowed",
+        "bg-light-gray",
+        "text-medium-gray"
+      );
+
+      // Wait for latest data from server
+      await fetchTickets();
+      currentPage = 1;
+      renderTickets();
+      renderPagination();
+    } else {
+      // toastr.error(result.message || "Something went wrong.");
+      showToaster("error", result.message || "Something went wrong.");
+    }
+  } catch (error) {
+    toastr.error("Something went wrong while submitting your issue.");
+    console.error(error);
+  }
+});
+
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let cookie of cookies) {
+      cookie = cookie.trim();
+      if (cookie.startsWith(name + "=")) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+// Fetch all support tickets
+async function fetchTickets() {
+  try {
+    const res = await fetch(getTicketLists);
+    allTickets = await res.json();
+    currentPage = 1; // reset to first page
+    renderTickets();
+    renderPagination();
+  } catch (err) {
+    console.error("Error loading tickets:", err);
+  }
+}
+
+//list of support data
+function renderTickets(data = allTickets) {
+  const tbody = document.getElementById("ticket-history-body");
+  tbody.innerHTML = "";
+
+  if (data.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4">No tickets found.</td></tr>`;
+    return;
+  }
+
+  const start = (currentPage - 1) * itemsPerPage;
+  const paginatedItems = data.slice(start, start + itemsPerPage);
+
+  paginatedItems.forEach((ticket) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td class="px-4 py-2.5 text-center">${ticket.date_time}</td>
+      <td class="px-4 py-2.5 text-center">${ticket.ticket_id}</td>
+      <td class="px-4 py-2.5 text-center">${ticket.issue_type}</td>
+      <td class="px-6 py-4.5 flex items-center justify-center">
+        <div class="w-full max-w-[120px] ${ticket.status_class} py-2 rounded-md border-none px-3 flex items-center justify-center gap-2">
+          ${ticket.status}
+        </div>
+      </td>
+      <td class="px-4 py-2.5 text-center">
+        <span
+          title="View Ticket Details"
+          class="material-symbols-outlined text-dark-gray cursor-pointer hover:bg-transparent-violet-sky rounded-full p-2 transition-all mr-2"
+          onclick="openModalProgress('${ticket.ticket_id}')"
+        >
+          visibility
+        </span>
+      </td>`;
+    tbody.appendChild(row);
+  });
+}
+
+// Render pagination buttons
+function renderPagination(data = allTickets) {
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+  const paginationBtns = document.querySelector(".paginationBtns");
+  const prevBtn = document.querySelector(".prevPage");
+  const nextBtn = document.querySelector(".nextPage");
+
+  paginationBtns.innerHTML = "";
+
+  const createPageBtn = (page) => {
+    const btn = document.createElement("button");
+    btn.className =
+      "page-btn px-3 py-1.5 rounded-lg text-sm " +
+      (page === currentPage
+        ? "bg-violet-sky text-white"
+        : "bg-pagination text-dark-gray");
+    btn.textContent = page;
+    btn.addEventListener("click", () => {
+      currentPage = page;
+      renderTickets(data);
+      renderPagination(data);
+    });
+    return btn;
+  };
+
+  for (let i = 1; i <= Math.min(3, totalPages); i++) {
+    paginationBtns.appendChild(createPageBtn(i));
+  }
+
+  if (totalPages > 4) {
+    const ellipsis = document.createElement("span");
+    ellipsis.textContent = "...";
+    ellipsis.className = "text-gray-500 px-2";
+    paginationBtns.appendChild(ellipsis);
+    paginationBtns.appendChild(createPageBtn(totalPages));
+  }
+
+  prevBtn.disabled = currentPage === 1;
+  nextBtn.disabled = currentPage === totalPages;
+
+  prevBtn.classList.toggle("opacity-50", currentPage === 1);
+  nextBtn.classList.toggle("opacity-50", currentPage === totalPages);
+
+  // Handle prev/next clicks
+  prevBtn.onclick = () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderTickets(data);
+      renderPagination(data);
+    }
+  };
+
+  nextBtn.onclick = () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderTickets(data);
+      renderPagination(data);
+    }
+  };
+}
+
+document.querySelector(".prevPage").addEventListener("click", () => {
+  if (currentPage > 1) {
+    currentPage--;
+    renderTickets();
+    renderPagination();
+  }
+});
+
+document.querySelector(".nextPage").addEventListener("click", () => {
+  const totalPages = Math.ceil(allTickets.length / itemsPerPage);
+  if (currentPage < totalPages) {
+    currentPage++;
+    renderTickets();
+    renderPagination();
+  }
+});
+
+// Initialize on page load
+document.addEventListener("DOMContentLoaded", fetchTickets);
+
+// Search functionality
+document
+  .getElementById("ticket-search")
+  .addEventListener("input", function (e) {
+    const query = e.target.value.toLowerCase();
+
+    const filtered = allTickets.filter((ticket) => {
+      return (
+        ticket.issue_type.toLowerCase().includes(query) ||
+        ticket.ticket_id.toLowerCase().includes(query)
+      );
+    });
+
+    currentPage = 1;
+    renderTickets(filtered); // Pass filtered results
+    renderPagination(filtered); // Adjust pagination accordingly
+  });
+
+function debounce(func, delay) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), delay);
+  };
+}
+
+// Replace listener:
+document.getElementById("ticket-search").addEventListener(
+  "input",
+  debounce(function (e) {
+    const query = e.target.value.toLowerCase();
+    const filtered = allTickets.filter((ticket) => {
+      return (
+        ticket.issue_type.toLowerCase().includes(query) ||
+        ticket.ticket_id.toLowerCase().includes(query)
+      );
+    });
+    currentPage = 1;
+    renderTickets(filtered);
+    renderPagination(filtered);
+  }, 300)
+);
+
+//show data in modal
+function openModalProgress(ticketId) {
+  fetch(ticketDetailsIdWise, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCookie("csrftoken"),
+    },
+    body: JSON.stringify({ ticket_id: ticketId }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.error) {
+        alert(data.error);
+        return;
+      }
+
+      // Show modal
+      document.querySelector(".view-modal-progress").classList.remove("hidden");
+
+      // Fill modal fields
+      document.querySelector(".help-ticket-id").textContent = data.ticket_id;
+      document.querySelector(".help-email-short").textContent = data.email
+        .charAt(0)
+        .toUpperCase();
+      document.querySelector(".help-email").textContent = data.email;
+      document.querySelector(".help-usertype").textContent =
+        "(" + data.usertype + ")";
+      document.querySelector(".help-created-date").textContent =
+        data.created_at;
+      document.querySelector(".help-updated-date").textContent =
+        data.updated_at;
+      document.querySelector(".help-description").textContent =
+        data.description;
+      // document.querySelector(".help-status").textContent = data.status;
+      document.querySelectorAll(".help-status").forEach((el) => {
+        el.textContent = data.status;
+      });
+      document.querySelector(".help-updated-date-status").textContent =
+        data.updated_at;
+      const imgElement = document.querySelector(".help-img");
+      imgElement.src = data.img ? data.img : "/static/images/no-image.png";
+      if (data.img) {
+        imgElement.src = data.img;
+        imgElement.style.display = "block";
+      } else {
+        imgElement.style.display = "none";
+      }
+      console.log("Highlighting status:", data.status);
+      highlightCurrentStatus(data.status);
+      // highlightCurrentStatus(data.status);
+    })
+    .catch((error) => {
+      console.error("Fetch error:", error);
+      alert("Something went wrong while loading ticket details.");
+    });
+}
+
+//highlight status dots
+function highlightCurrentStatus(currentStatus) {
+  const steps = document.querySelectorAll(".status-step");
+  let statusReached = false;
+
+  steps.forEach((step) => {
+    const status = step.getAttribute("data-status").trim().toLowerCase();
+    const dot = step.querySelector(".dot");
+    const line = step.querySelector(".line");
+
+    // Highlight up to the current status
+    if (!statusReached) {
+      dot.classList.remove("bg-violet-sky");
+      dot.classList.add("bg-light-sea-green");
+
+      if (line) {
+        line.classList.remove("bg-violet-sky");
+        line.classList.add("bg-light-sea-green");
+      }
+    }
+
+    // If this is the current status, stop highlighting further
+    if (status === currentStatus.trim().toLowerCase()) {
+      statusReached = true;
+    }
+  });
+}
+
+//filter date and custome date wise
+document.querySelectorAll(".help-filter-option").forEach((el) => {
+  el.addEventListener("click", function () {
+    const filter = this.getAttribute("data-filter");
+
+    if (filter === "custom") {
+      document
+        .querySelector(".datepicker-container")
+        .classList.remove("hidden");
+      return; // Stop further processing
+    }
+
+    const today = new Date();
+    let fromDate = new Date(today);
+
+    switch (filter) {
+      case "1week":
+        fromDate.setDate(today.getDate() - 7); // 7 days ago
+        break;
+      case "1month":
+        fromDate.setMonth(today.getMonth() - 1); // 1 month ago
+        break;
+      case "1year":
+        fromDate.setFullYear(today.getFullYear() - 1); // 1 year ago
+        break;
+    }
+
+    const formattedFromDate = fromDate.toISOString().split("T")[0]; // "2024-07-14"
+    const formattedToDate = today.toISOString().split("T")[0]; // "2025-07-14"
+
+    filterTickets(formattedFromDate, formattedToDate);
+  });
+});
+
+//date picker
+document.addEventListener("DOMContentLoaded", function () {
+  const datepickerElement = document.querySelector("[inline-datepicker]");
+
+  if (datepickerElement) {
+    datepickerElement.addEventListener("changeDate", function (e) {
+      // If using a timestamp directly:
+      const timestamp = e.detail.date; // e.g. 1749234600000
+      const selectedDate = new Date(timestamp); // Convert to Date object
+
+      // const formattedDate = selectedDate.toISOString().split("T")[0]; // "YYYY-MM-DD"
+      const formattedDate =
+        selectedDate.getFullYear() +
+        "-" +
+        String(selectedDate.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(selectedDate.getDate()).padStart(2, "0");
+
+      // console.log("Selected Date:", formattedDate); // Debug log
+      filterTickets(formattedDate, formattedDate); // Filter by selected date only
+    });
+  }
+});
+
+function filterTickets(fromDate, toDate) {
+  fetch(ticketDetailsDateWise, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCookie("csrftoken"),
+    },
+    body: JSON.stringify({ from_date: fromDate, to_date: toDate }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      allTickets = data.tickets; // ⬅️ Update the global variable
+      currentPage = 1; // ⬅️ Reset to page 1
+      renderTickets(allTickets); // ⬅️ Render from filtered data
+      renderPagination(allTickets.length);
+      // renderTickets(data.tickets); // Use your existing renderTickets()
+    })
+    .catch((err) => {
+      console.error("Filter fetch error:", err);
+    });
+}
+
+function goToPage(pageNum) {
+  currentPage = pageNum;
+  renderTickets(allTickets); // Always render based on current `allTickets`
+}
+
+// faq code start ------------------------------------------
+// tab
+$(document).ready(function () {
+  let faqLoaded = false;
+
+  // Handle tab switching
+  $(".ngo-sprt-tab-btn").click(function () {
+    const target = $(this).data("tab");
+
+    $(".ngo-sprt-tab-btn").removeClass("active-tab-ngo");
+    $(this).addClass("active-tab-ngo");
+
+    $(".tab-content").addClass("hidden");
+    $("." + target).removeClass("hidden");
+
+    if (target === "contact-support" && !faqLoaded) {
+      fetchFaqs(); // Load all on first open
+      faqLoaded = true;
+
+      // Autofocus input after short delay
+      setTimeout(() => {
+        $("#faq-search-input").focus();
+      }, 100);
+    }
+  });
+
+  // Reusable FAQ fetcher
+  function fetchFaqs(query = "") {
+    $.ajax({
+      url: faqLists,
+      type: "GET",
+      data: { search: query },
+      success: function (response) {
+        $("#faq-list-container").html(response);
+      },
+      error: function () {
+        $("#faq-list-container").html(
+          '<p class="text-red-500">Failed to load FAQs.</p>'
+        );
+      },
+    });
+  }
+
+  // Debounce function
+  function debounce(fn, delay) {
+    let timer;
+    return function () {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn.apply(this, arguments), delay);
+    };
+  }
+
+  // Live search handler
+  $(document).on(
+    "input",
+    "#faq-search-input",
+    debounce(function () {
+      const query = $(this).val().trim();
+      fetchFaqs(query); // If empty, all FAQs will load
+    }, 300)
+  );
+});
+
+//accordian open in faq
+$(document).on("click", ".toggle-subscription", function () {
+  var content = $(this)
+    .closest(".account-subscription")
+    .find(".subscription-content");
+  var icon = $(this).find(".chevron-icon");
+
+  content.toggleClass("hidden");
+  icon.toggleClass("rotate-180");
+});
+
+//mail code start--------------------------------------------
+//send email
+function sendEmailSupport() {
+  const email = $("#email").val().trim();
+  const description = $("#description").val().trim();
+
+  if (!email || !description) {
+    alert("Please fill out both fields.");
+    return;
+  }
+
+  $.ajax({
+    url: sendMail,
+    method: "POST",
+    headers: {
+      "X-CSRFToken": "{{ csrf_token }}",
+    },
+    data: {
+      email: email,
+      description: description,
+    },
+    success: function (response) {
+      alert("Message sent successfully!");
+      $("#email").val("");
+      $("#description").val("");
+    },
+    error: function (xhr) {
+      alert("Failed to send message. Please try again.");
+    },
+  });
 }

@@ -15,9 +15,12 @@ urlpatterns = [
     path('map/', include('maps.urls')),
     path('help/', include('support.urls')),
     path('settings/', include('settings.urls')),
+    path('support/', include('support.urls')),
     path('posts/', include('ngopost.urls')),
     path('donate/', include('donate.urls')),
     path('points/', include('points.urls')),    # ... other apps
+    path('coupons/', include('coupon.urls')),
+    path('dashboard/', include('dashboard.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
