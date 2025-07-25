@@ -305,7 +305,7 @@
                         <div data-range="1 Year" class="daterange dateFilter p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Year</div>
                         
                       </div>
-                      <div class="datepicker-container hidden px-4 pb-3 absolute  right-43 z-100">
+                      <div class="datepicker-container hidden px-4 pb-3 absolute right-43 z-100">
                         <div class="datepicker-inline" inline-datepicker data-date="06/23/2025"></div>
                       </div>
                   </div>
@@ -501,18 +501,18 @@
                     </span>
                     <input
                       type="text"
-                      placeholder="Search by  name or categories"
+                      placeholder="Search by  name or categories" id="rewards-claimed-search"
                       class="w-full py-2.5 focus:!outline-none placeholder:text-medium-gray border-none bg-transparent focus:ring-0 only-text"
                     />
                     
                   </div>
-                       <div class="relative dropdown">
-                     <button
-                      class="filterToggle  flex items-center border border-slate-gray rounded-md p-1 mt-2 w-8 h-8 cursor-pointer">
-                      <span class="material-symbols-outlined flex justify-center items-center">tune</span>
-                    </button>
+                    <div class="relative dropdown">
+                      <button
+                        class="filterToggle  flex items-center border border-slate-gray rounded-md p-1 mt-2 w-8 h-8 cursor-pointer">
+                        <span class="material-symbols-outlined flex justify-center items-center">tune</span>
+                      </button>
                       <div
-                        class="filterDropdown absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10"
+                        class="filterDropdown rewardsClaimed absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10"
                       >
                       
                         <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-violet-sky hover:text-white rounded">
@@ -521,9 +521,9 @@
                           >
                           
                         </div>
-                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer" >1 Week</div>
-                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Month</div>
-                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Year</div>
+                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded dateFilter cursor-pointer" data-range="1 Week">1 Week</div>
+                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded dateFilter cursor-pointer" data-range="1 Month">1 Month</div>
+                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded dateFilter cursor-pointer" data-range="1 Year">1 Year</div>
                         
                       </div>
                       <div class="datepicker-container hidden px-4 pb-3 absolute  right-43 z-100">
@@ -534,33 +534,35 @@
                 
               
               </div>
-              <div class="overflow-x-auto pt-4">
-                <table
-                  class="min-w-full table-auto  docTable"
-                >
-                  <thead class="bg-violet-sky text-white text-sm sm:text-18-b">
-                    <tr>
-                      <th class="text-center px-4 py-6 border-r border-white">
-                        <div class="flex items-center justify-center gap-2">
-                          Date Claimed
-                          <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy"/>
-                        </div>
-                      </th>
-                    
-                      <th class="text-center px-4 py-6 border-r border-white">Category</th>
-                      <th class="text-center px-4 py-6 border-r border-white">Brand Name</th>
-                      <th class="text-center px-4 py-6 border-r border-white">
-                        <div class="flex items-center justify-center gap-2">
-                        Expired On
-                          <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy"/>
-                        </div>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody id="claimedCouponsBody" class="bg-snow-gray text-dark-gray text-16-fs">
-                  </tbody>
-                </table>
-            </div>
+                <div class="overflow-x-auto pt-4">
+                  <table
+                    class="min-w-full table-auto  docTable"
+                  >
+                    <thead class="bg-violet-sky text-white text-sm sm:text-18-b">
+                      <tr>
+                        <th class="text-center px-4 py-6 border-r border-white">
+                          <div class="flex items-center justify-center gap-2">
+                            Date Claimed
+                            <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy"/>
+                          </div>
+                        </th>
+                      
+                        <th class="text-center px-4 py-6 border-r border-white">Category</th>
+                        <th class="text-center px-4 py-6 border-r border-white">Brand Name</th>
+                        <th class="text-center px-4 py-6 border-r border-white">Code</th>
+                        <th class="text-center px-4 py-6 border-r border-white">
+                          <div class="flex items-center justify-center gap-2">
+                          Expired On
+                            <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy"/>
+                          </div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody id="claimedCouponsBody" class="bg-snow-gray text-dark-gray text-16-fs">
+                    </tbody>
+                  </table>
+                  <div id="claimed-pagination-container"></div>
+              </div>
             </div>
 
           <!--Points History Tab Section-->

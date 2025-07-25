@@ -16,6 +16,10 @@ from django.utils.timezone import now
 from registration.models import User 
 from django.db.models import Q
 from django.core.paginator import Paginator
+from django.utils import timezone
+from datetime import timedelta, date
+import logging
+from django.db import connection
 
 
 
@@ -93,80 +97,77 @@ def points_dashboard(request):
         'badge': badge,
     })
 
-def get_coupon_cards(request):
-    # Join with category and brand using select_related
-    
-    query = request.GET.get('search', '').strip().lower()
-    if query:
-        coupons = Coupon.objects.filter(
-            Q(title__icontains=query) |
-            Q(code__icontains=query) |
-            Q(category__name__icontains=query) |
-            Q(brand_name__name__icontains=query)
-        ).select_related('category', 'brand_name')[:100]
-    else:
-        coupons = Coupon.objects.all()
+def get_coupon_data(request, is_popular=False):
+    try:
+        query = request.GET.get('search', '').strip().lower()
+        date_range = request.GET.get('daterange', '').strip().lower()
+        start_date_str = request.GET.get('start_date', '').strip()
+        end_date_str = request.GET.get('end_date', '').strip()
+        now = timezone.now()
 
-    # Prepare the list of coupon data
-    coupon_list = [
-        {
-            "title": coupon.title,
-            "description": coupon.description,
-            "code": coupon.code,
-            "id":coupon.id,
-            "category": coupon.category.name,
-            "brand_name": coupon.brand_name.name,
-            "max_redemptions":coupon.max_redemptions,
-            "redeemed_count":coupon.redeemed_count
+        coupons = Coupon.objects.select_related('category', 'brand_name')
 
-        }
-        for coupon in coupons
-    ]
+        if query:
+            coupons = coupons.filter(
+                Q(title__icontains=query) |
+                Q(code__icontains=query) |
+                Q(category__name__icontains=query) |
+                Q(brand_name__name__icontains=query)
+            )
 
-    html = render_to_string("partials/coupon_cards.html", {"products": coupon_list})
-    return JsonResponse({"html": html})
+        if date_range == "1 week":
+            coupons = coupons.filter(created_at__gte=now - timedelta(weeks=1))
+        elif date_range == "1 month":
+            coupons = coupons.filter(created_at__gte=now - timedelta(days=30))
+        elif date_range == "1 year":
+            coupons = coupons.filter(created_at__gte=now - timedelta(days=365))
+        elif start_date_str and end_date_str:
+            try:
+                start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+                end_date = datetime.strptime(end_date_str, "%Y-%m-%d") + timedelta(days=1)
+                coupons = coupons.filter(created_at__range=(start_date, end_date))
+            except ValueError:
+                return JsonResponse({"html": "", "error": "Invalid date format."})
 
+        if is_popular:
+            coupons = coupons.order_by('-redeemed_count')
+        else:
+            coupons = coupons[:100]
 
-
-def get_popular_coupon_cards(request):
-    # Fetch top 10 popular coupons based on redeemed_count
-    query = request.GET.get('search', '').strip().lower()
-    if query:
-        coupons = Coupon.objects.filter(
-            Q(title__icontains=query) |
-            Q(code__icontains=query) |
-            Q(category__name__icontains=query) |
-            Q(brand_name__name__icontains=query)
-        ).select_related('category', 'brand_name').order_by("-redeemed_count")
-    else:
-        coupons = Coupon.objects.all()
-    # coupons = (
-    #     Coupon.objects.select_related("category", "brand_name")
-    #     .all()
-    #     .order_by("-redeemed_count")[:10]
-    # )
-
-    coupon_data = []
-    for c in coupons:
+        data_list = []
+        for c in coupons:
             redeemed = c.redeemed_count or 0
-            max_redemptions = c.max_redemptions or 100  # fallback to avoid division by 0
-
-            percent_used = int((redeemed / max_redemptions) * 100)
-
-            coupon_data.append({
-                "title": c.title[:20],
-                "id":c.id,
-                "description": c.description[:120],
+            max_redemptions = c.max_redemptions or 100
+            item = {
+                "title": c.title[:20] if is_popular else c.title,
+                "id": c.id,
+                "description": c.description[:120] if is_popular else c.description,
                 "category": c.category.name if c.category else "N/A",
                 "brand_name": c.brand_name.name if c.brand_name else "N/A",
                 "code": c.code,
                 "redeemed_count": redeemed,
                 "max_redemptions": max_redemptions,
-                "percent_used": percent_used,
-            })
-    html = render_to_string("partials/coupon_card_layout.html", {"coupons": coupon_data})
-    return JsonResponse({"html": html})
+            }
+            if is_popular:
+                item["percent_used"] = int((redeemed / max_redemptions) * 100)
+            data_list.append(item)
 
+        html = render_to_string(
+            "partials/coupon_card_layout.html" if is_popular else "partials/coupon_cards.html",
+            {"coupons" if is_popular else "products": data_list}
+        )
+
+        return JsonResponse({"html": html})
+
+    except Exception as e:
+        return JsonResponse({"html": "", "error": str(e)})
+
+
+def get_coupon_cards(request):
+    return get_coupon_data(request, is_popular=False)
+
+def get_popular_coupon_cards(request):
+    return get_coupon_data(request, is_popular=True)
 
 def points_history_view(request):
     context = filter_points(request)
@@ -260,13 +261,88 @@ def claim_coupon(request):
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
+
+
 @dashboard_login_required
 def get_claimed_coupons(request):
-    user = request.user_obj
-    claimed_coupons = CouponClaimed.objects.filter(user=user).select_related('coupon')
+    try:
+        user = request.user_obj
+        search = request.GET.get('search', '').strip()
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+        date_range = request.GET.get('date_range', '').lower()
+        page = request.GET.get('page', 1)
 
-    html = render_to_string("partials/coupon_claimed_table.html", {
-        "claimed_coupons": claimed_coupons
-    })
+        claimed_qs = CouponClaimed.objects.filter(user=user).select_related(
+            'coupon__category', 'coupon__brand_name'
+        )
 
-    return JsonResponse({"html": html})
+        # Search
+        if search:
+            claimed_qs = claimed_qs.filter(
+                Q(coupon__title__icontains=search) |
+                Q(coupon__code__icontains=search) |
+                Q(coupon__category__name__icontains=search) |
+                Q(coupon__brand_name__name__icontains=search)
+            )
+
+        # today = timezone.now().date()
+
+        # # Date range filter (applied only if manual dates are not present)
+        # if not (start_date or end_date) and date_range:
+        #     if date_range == "1 week":
+        #         claimed_qs = claimed_qs.filter(date_claimed__date__gte=today - timedelta(weeks=1))
+        #     elif date_range == "1 month":
+        #         claimed_qs = claimed_qs.filter(date_claimed__date__gte=today - timedelta(days=30))
+        #     elif date_range == "1 year":
+        #         claimed_qs = claimed_qs.filter(date_claimed__date__gte=today - timedelta(days=365))
+        
+        # Normalize date_range
+        if date_range:
+            date_range = date_range.strip().lower()
+            today = timezone.now().date()
+
+            if date_range == "1 week":
+                claimed_qs = claimed_qs.filter(date_claimed__date__gte=today - timedelta(weeks=1))
+            elif date_range == "1 month":
+                claimed_qs = claimed_qs.filter(date_claimed__date__gte=today - timedelta(days=30))
+            elif date_range == "1 year":
+                claimed_qs = claimed_qs.filter(date_claimed__date__gte=today - timedelta(days=365))
+
+
+        # Start Date Filter
+        if start_date:
+            try:
+                start = parse_date(start_date)
+                if start:
+                    claimed_qs = claimed_qs.filter(date_claimed__date__gte=start)
+            except Exception as e:
+                print("Invalid start date:", e)
+
+        # End Date Filter
+        if end_date:
+            try:
+                end = parse_date(end_date)
+                if end:
+                    claimed_qs = claimed_qs.filter(date_claimed__date__lte=end)
+            except Exception as e:
+                print("Invalid end date:", e)
+
+        paginator = Paginator(claimed_qs.order_by('-date_claimed'), 5)
+        try:
+            page_obj = paginator.get_page(page)
+        except Exception:
+            page_obj = paginator.page(1)
+
+        html = render_to_string("partials/coupon_claimed_table.html", {
+            "claimed_coupons": page_obj
+        })
+
+        pagination_html = render_to_string("partials/coupon_claimed_pagination.html", {
+            "page_obj": page_obj
+        })
+
+        return JsonResponse({"html": html, "pagination": pagination_html})
+    
+    except Exception as e:
+        return JsonResponse({"error": f"Error occurred: {str(e)}"}, status=500)
