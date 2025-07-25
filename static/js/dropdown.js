@@ -1,17 +1,17 @@
 $(document).ready(function () {
-  // // Toggle the related filter dropdown
-  // $('.filterToggle').click(function (e) {
-  //   e.stopPropagation();
-  //   const $container = $(this).closest('.dropdown');
-  //   const $dropdown = $container.find('.filterDropdown');
+  // Toggle the related filter dropdown
+  $('.filterToggle').click(function (e) {
+    e.stopPropagation();
+    const $container = $(this).closest('.dropdown');
+    const $dropdown = $container.find('.filterDropdown');
 
-  //   // Hide other dropdowns
-  //   $('.filterDropdown').not($dropdown).hide();
-  //   $('.filterDropdown .absolute').hide();
+    // Hide other dropdowns
+    $('.filterDropdown').not($dropdown).hide();
+    $('.filterDropdown .absolute').hide();
 
-  //   // Toggle only the current one
-  //   $dropdown.toggle();
-  // });
+    // Toggle only the current one
+    $dropdown.toggle();
+  });
 
   // Show specific sub-filter inside dropdown
   $('.filterItem').click(function (e) {

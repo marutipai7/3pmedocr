@@ -159,7 +159,7 @@ $(document).ready(function () {
             title: "Coupons",
             description: "Boost Your Sales—Post New Coupons for Users!"
         },
-        "saved-coupon": {
+        "saved-coupon-history": {
             icon: "upload",
             title: "Coupons",
             description: "Boost Your Sales—Post New Coupons for Users!"
@@ -284,10 +284,10 @@ $(document).ready(function () {
         document.body.appendChild(clone);
     
         const opt = {
-            margin:       0.3,
+            margin:       0,
             filename:     'coupon-details.pdf',
             image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+            html2canvas: { scale: 2, useCORS: true, scrollY: 0, scrollX: 0 },
             jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
         };
     
@@ -455,6 +455,41 @@ $(document).ready(function () {
         $('.platform-bill-modal').removeClass('flex').addClass('hidden');
     });
 
+    // for exporting coupon history
+    $('.view-history-btn').on('click', function () {
+        $('.view-history-popup').addClass('flex').removeClass('hidden');
+        $.ajax({
+            url: "/coupons/export-coupon-history/",
+            type: "GET",
+            success: function (response) {
+                $('#couponHistoryTableExport').html(response.html);
+            },
+            error: function () {
+                alert("Failed to load coupon history.");
+            }
+        });
+    });
+    $('.close-history-popup').on('click', function () {
+        $('.view-history-popup').removeClass('flex').addClass('hidden');
+    });
+
+    // for exporting saved coupon
+    $('.view-saved-history-btn').on('click', function () {
+        $('.view-saved-history-popup').addClass('flex').removeClass('hidden');
+        $.ajax({
+            url: "/coupons/export-saved-coupon-history/",
+            type: "GET",
+            success: function (response) {
+                $('#savedcouponHistoryTableExport').html(response.html);
+            },
+            error: function () {
+                alert("Failed to load coupon history.");
+            }
+        });
+    });
+    $('.close-saved-history-popup').on('click', function () {
+        $('.view-saved-history-popup').removeClass('flex').addClass('hidden');
+    });
     /**** Add new coupon funcationality with step form*****/
 
     // Validates form, previews image, sets redemptions, and updates summary.
@@ -714,121 +749,109 @@ $(document).ready(function () {
             url: "/coupons/coupon-history/",
             type: "GET",
             data: {
-            query: query,
-            limit: limit,
-            page: page,
-            daterange: daterange,
+                query: query,
+                limit: limit,
+                page: page,
+                daterange: daterange,
             },
             success: function (response) {
-            $('.couponHistoryTable tbody').html(response.html);
-            renderCouponPagination(response.current_page, response.total_pages);
+                $('.couponHistoryTable tbody').html(response.html);
+                renderCouponPagination(response.current_page, response.total_pages);
             },
             error: function () {
-            alert("Failed to load coupon history.");
+                alert("Failed to load coupon history.");
             }
         });
-        }
+    }
 
-        function renderCouponPagination(current, total) {
+    function renderCouponPagination(current, total) {
         let html = '';
         for (let i = 1; i <= total; i++) {
             html += `<button class="coupon-pagination-btn px-2 py-1 border ${i === current ? 'bg-violet-sky text-white' : ''}" data-page="${i}">${i}</button>`;
         }
         $('#coupon-pagination-container').html(html);
-        }
+    }
 
-        // Trigger on tab click
-        // let historyLoaded = false;
-        $('[data-tab="coupon-history"]').on('click', function () {
-            loadCouponHistory();
-        });
-
-        $(document).on('click', '.coupondaterange', function () {
-        $('.coupondaterange').removeClass('font-bold');
-        $(this).addClass('font-bold');
-        loadCouponHistory(1, $(this).data('range'));
-        });
-        function applyDateFilter(filterType) {
-        alert(filterType);
-        }
-
-        // Real-time filter events
-        $(document).on('input change', '#coupon_history_query, #filter-limit, #filter-start-date, #filter-end-date', function () {
-        loadCouponHistory(1);
-        });
-
-        // Pagination click
-        $(document).on('click', '.coupon-pagination-btn', function () {
-        const page = $(this).data('page');
-        loadCouponHistory(page);
-        });
-
-        $('.history_filter').on('submit', function (e) {
-        e.preventDefault(); // prevent default form submission
-        loadCouponHistory(1);
-    });
-    function loadSavedCouponHistory(page = 1,range = '') {
+    function loadSavedCouponHistory(page = 1, range = '') {
         const query = $('input[name=saved_coupon_history_query]').val();
         const limit = $('#filter-limit').val() || 5;
         const startDate = $('#filter-start-date').val();
         const endDate = $('#filter-end-date').val();
         const daterange = range || "";
 
-
         $.ajax({
             url: "/coupons/saved-coupons/",
             type: "GET",
             data: {
-            query: query,
-            limit: limit,
-            page: page,
-            start_date: startDate,
-            end_date: endDate
+                query: query,
+                limit: limit,
+                page: page,
+                daterange: daterange,
             },
             success: function (response) {
-            $('.couponSavedHistoryTable tbody').html(response.html);
-            renderSavedCouponPagination(response.current_page, response.total_pages);
+                $('.couponSavedHistoryTable tbody').html(response.html);
+                renderSavedCouponPagination(response.current_page, response.total_pages);
             },
             error: function () {
-            alert("Failed to load coupon history.");
+                alert("Failed to load saved coupon history.");
             }
         });
-        }
+    }
 
-        function renderSavedCouponPagination(current, total) {
+    function renderSavedCouponPagination(current, total) {
         let html = '';
         for (let i = 1; i <= total; i++) {
             html += `<button class="saved-coupon-pagination-btn px-2 py-1 border ${i === current ? 'bg-violet-sky text-white' : ''}" data-page="${i}">${i}</button>`;
         }
         $('#saved-coupon-pagination-container').html(html);
-        }
+    }
 
-        // Trigger on tab click
-        // let historyLoaded = false;
-        $('[data-tab="coupon-history"]').on('click', function () {
-            loadSavedCouponHistory();
-        });
-        $(document).on('click', '.coupondaterange', function () {
+    $('[data-tab="coupon-history"]').on('click', function () {
+        loadCouponHistory();
+    });
+
+    $('[data-tab="saved-coupon-history"]').on('click', function () {
+        loadSavedCouponHistory();
+    });
+
+    $(document).on('click', '.coupondaterange', function () {
         $('.coupondaterange').removeClass('font-bold');
         $(this).addClass('font-bold');
+        loadCouponHistory(1, $(this).data('range'));
+    });
+
+    $(document).on('click', '.savedcoupondaterange', function () {
+        $('.savedcoupondaterange').removeClass('font-bold');
+        $(this).addClass('font-bold');
         loadSavedCouponHistory(1, $(this).data('range'));
-        });
-        function applyDateFilter(filterType) {
-        alert(filterType);
-        }
-        // Real-time filter events
-        $(document).on('input change', '#saved_coupon_history_query, #filter-limit, #filter-start-date, #filter-end-date', function () {
-        loadSavedCouponHistory(1);
-        });
+    });
 
-        // Pagination click
-        $(document).on('click', '.saved-coupon-pagination-btn', function () {
-        const page = $(this).data('page');
-        loadSavedCouponHistory(page);
-        });
+    $(document).on('input change', '#coupon_history_query, #filter-limit, #filter-start-date, #filter-end-date', function () {
+        loadCouponHistory(1);
+    });
 
-        $('.history_filter').on('submit', function (e) {
-        e.preventDefault(); // prevent default form submission
+    $(document).on('input change', '#saved_coupon_history_query, #filter-limit, #filter-start-date, #filter-end-date', function () {
         loadSavedCouponHistory(1);
     });
+
+    $(document).on('click', '.coupon-pagination-btn', function () {
+        const page = $(this).data('page');
+        loadCouponHistory(page);
+    });
+
+    $(document).on('click', '.saved-coupon-pagination-btn', function () {
+        const page = $(this).data('page');
+        loadSavedCouponHistory(page);
+    });
+
+    $('.history_filter').on('submit', function (e) {
+        e.preventDefault();
+        loadCouponHistory(1);
+    });
+
+    $('.saved-history_filter').on('submit', function (e) {
+        e.preventDefault();
+        loadSavedCouponHistory(1);
+    });
+    loadSavedCouponHistory(1, '');
 });
