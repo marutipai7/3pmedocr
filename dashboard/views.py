@@ -3,13 +3,17 @@ from django.urls import reverse
 from django.db.models import Sum
 from django.utils import timezone
 from .utils import dashboard_login_required
-from .models import SettingMenu, CouponPerformance
+from .models import SettingMenu, CouponPerformance,  CalendarEvent
 from registration.models import NGOProfile, ClientProfile, AdvertiserProfile
 from ngopost.models import NGOPost
 from django.db.models import Q
 from .models import TrendingCoupon
 from django.shortcuts import render
 from django.http import JsonResponse
+import json
+from datetime import datetime
+from django.views.decorators.csrf import csrf_exempt
+
 
 @dashboard_login_required
 def dashboard_home(request):
@@ -55,14 +59,14 @@ def dashboard_home(request):
             advertiser_profile = AdvertiserProfile.objects.get(user=user)
             performance = CouponPerformance.objects.order_by('-date').first()
             trending_coupons = TrendingCoupon.objects.order_by('-created_at')[:5]
-
-            # New chart data logic
-            performances = CouponPerformance.objects.order_by('date')[:8]  # last 8 entries
+            performances = CouponPerformance.objects.order_by('date')[:8]
+            events = CalendarEvent.objects.all().order_by('date')
             
             context.update({
                 'advertiser_profile': advertiser_profile,
                 'performance': performance,
                 'trending_coupons': trending_coupons,
+                'events': events,
                 
             })
 
@@ -71,8 +75,6 @@ def dashboard_home(request):
 
 
 
-        # else:
-        #     return render(request, "dashboard/not_found.html")
 
     except Exception as e:
         # Log e if needed
@@ -90,9 +92,48 @@ def get_coupon_chart_data(request):
     }
     return JsonResponse(data)
 
+# @csrf_exempt
+def save_event(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            name = data.get('name')
+            date = data.get('date')
+            time = data.get('time')
+
+            if name and date and time:
+                CalendarEvent.objects.create(
+                    name=name,
+                    date=datetime.strptime(date, '%Y-%m-%d').date(),
+                    time=datetime.strptime(time, '%H:%M').time()
+                )
+                return JsonResponse({'success': True})
+            else:
+                return JsonResponse({'success': False, 'error': 'Missing fields'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+
+def get_events(request):
+    if request.method == 'GET':
+        events = CalendarEvent.objects.all()
+        event_data = {}
+        for event in events:
+            date_str = event.date.strftime('%Y-%m-%d')
+            if date_str not in event_data:
+                event_data[date_str] = []
+            event_data[date_str].append({
+                'name': event.name,
+                'time': event.time.strftime('%H:%M')
+            })
+
+        return JsonResponse({'events': event_data})
+
 
 def logout_view(request):
-    request.session.flush()  # clears all session data
+    request.session.flush() 
     return redirect('/') 
 
 

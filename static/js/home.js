@@ -649,7 +649,7 @@ $(".calendar-container").each(function () {
             const dateStr = `${year}-${month + 1}-${day}`;
             const isToday = (day === today.getDate() && month === today.getMonth() && year === today.getFullYear());
 
-          let classNames = `cursor-pointer p-2 rounded-full font-semibold h-10 w-10 bg-lightest-gray 
+          let classNames = `calendar-date cursor-pointer p-2 rounded-full font-semibold h-10 w-10 bg-lightest-gray 
           ${isToday ? 'bg-vivid-orange text-white today' : 'hover:bg-vivid-orange hover:text-white'}`;
 
 
