@@ -321,3 +321,133 @@ $(document).on("click", ".claimed-pagination-btn", function () {
       $(this).siblings('.dropdown-option').toggle();
       $(this).siblings('.dropdown-option').toggle('hidden');
   });
+$(document).ready(function () {
+  observeCards('featured-rewards', 'reward-card', function () {
+      setupPagination({
+        containerId: 'featured-rewards',
+        cardClass: 'reward-card',
+        prevBtnId: 'prevPage1',
+        nextBtnId: 'nextPage1',
+        paginationContainerId: 'pagination-numbers1',
+        cardsPerPage: 3
+      });
+    });
+
+    observeCards('popular-coupons', 'coupon-card', function () {
+      setupPagination({
+        containerId: 'popular-coupons',
+        cardClass: 'coupon-card',
+        prevBtnId: 'prevPage2',
+        nextBtnId: 'nextPage2',
+        paginationContainerId: 'pagination-numbers2',
+        cardsPerPage: 3
+      });
+    });
+});
+
+
+
+  function setupPagination({
+  containerId,
+  cardClass,
+  prevBtnId,
+  nextBtnId,
+  paginationContainerId,
+  cardsPerPage = 3
+}) {
+  let currentPage = 1;
+
+  function showPage(page) {
+    const $cards = $(`#${containerId} .${cardClass}`);
+    const totalPages = Math.ceil($cards.length / cardsPerPage);
+
+    $cards.hide();
+    const start = (page - 1) * cardsPerPage;
+    const end = start + cardsPerPage;
+    $cards.slice(start, end).show();
+
+    $(`#${prevBtnId}`).prop("disabled", page === 1);
+    $(`#${nextBtnId}`).prop("disabled", page === totalPages);
+
+    updatePaginationNumbers(totalPages, page);
+  }
+
+  function updatePaginationNumbers(totalPages, activePage) {
+    const $container = $(`#${paginationContainerId}`);
+    $container.empty();
+
+    for (let i = 1; i <= totalPages; i++) {
+      $("<button></button>")
+        .text(i)
+        .addClass("px-3 py-2 rounded-lg cursor-pointer font-normal text-xs")
+        .addClass(
+          i === activePage
+            ? `bg-${selectedColor} text-white`
+            : "bg-pagination text-jet-black"
+        )
+        .on("click", function () {
+          currentPage = i;
+          showPage(currentPage);
+        })
+        .appendTo($container);
+    }
+  }
+
+  $(`#${prevBtnId}`).on("click", function () {
+    if (currentPage > 1) {
+      currentPage--;
+      showPage(currentPage);
+    }
+  });
+
+  $(`#${nextBtnId}`).on("click", function () {
+    const totalPages = Math.ceil(
+      $(`#${containerId} .${cardClass}`).length / cardsPerPage
+    );
+    if (currentPage < totalPages) {
+      currentPage++;
+      showPage(currentPage);
+    }
+  });
+
+  showPage(currentPage);
+}
+// Theme color mapping
+    const themeColors = {
+        customers: 'vivid-orange',
+        Advertiser: 'living-coral',
+        points: 'violet-sky'
+    };
+
+    const path = window.location.pathname;
+
+    // Default values
+    let selectedColor = 'vivid-orange';
+    let bgColor = '#F79E1B'; 
+
+    // Assign based on path
+    $.each(themeColors, function (keyword, color) {
+        if (path.includes(keyword)) {
+            selectedColor = color;
+            bgColor = selectedColor === "vivid-orange"
+                ? "#F79E1B"
+                : selectedColor === "living-coral"
+                    ? "#FF6F61"
+                    : "#6B79F5";
+            return false;
+        }
+    });
+
+function observeCards(containerId, cardClass, callback) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  const observer = new MutationObserver(() => {
+    if ($(`#${containerId} .${cardClass}`).length > 0) {
+      observer.disconnect(); // stop observing once found
+      callback();
+    }
+  });
+
+  observer.observe(container, { childList: true, subtree: true });
+}
