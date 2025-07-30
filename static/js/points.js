@@ -76,360 +76,360 @@ $(document).ready(function () {
     }
     return null;
   }
-    // Chart rendering
-    
-    const purchaseChart = initChart("purchaseChart" ,{
-        type: 'line',
-        data: {
-            labels: ['0', '1', '2', '3', '4', '5', '6', '7'],
-            datasets: [
-                {
-                    label: 'Referral',
-                    data: [600, 400, 590, 650, 800, 400, 160, 570],
-                    borderColor: '#5182E3',
-                    borderWidth: 2,
-                    tension: 0,
-                    yAxisID: 'yLeft',
-                    pointRadius: 3,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: '#5182E3',
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderColor: '#5182E3',
-                },
-                {
-                    label: 'Map',
-                    data: [600, 700, 300, 250, 200, 600, 180, 700],
-                    borderColor: '#28A745',
-                    borderWidth: 2,
-                    tension: 0,
-                    yAxisID: 'yRight',
-                    pointRadius: 3,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: '#28A745',
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderColor: '#28A745',
-                },
-                {
-                    label: 'Coupon',
-                    data: [0, 580, 170, 560, 410, 401, 70, 160],
-                    borderColor: '#3AAFA9',
-                    borderWidth: 2,
-                    tension: 0,
-                    yAxisID: 'yRight',
-                    pointRadius: 3,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: '#3AAFA9',
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderColor: '#3AAFA9',
-                },
-                {
-                    label: 'Donation',
-                    data: [10, 480, 270, 460, 310, 501, 170, 260],
-                    borderColor: bgColor, // <-- Dynamic theme color
-                    borderWidth: 2,
-                    tension: 0,
-                    yAxisID: 'yRight',
-                    pointRadius: 3,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: bgColor, // <-- Dynamic theme color
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderColor: bgColor, // <-- Dynamic theme color
-                }
-            ]
-        },
-        options: getChartOptions(),
-    });
+  // Chart rendering
+  
+  const purchaseChart = initChart("purchaseChart" ,{
+      type: 'line',
+      data: {
+          labels: ['0', '1', '2', '3', '4', '5', '6', '7'],
+          datasets: [
+              {
+                  label: 'Referral',
+                  data: [600, 400, 590, 650, 800, 400, 160, 570],
+                  borderColor: '#5182E3',
+                  borderWidth: 2,
+                  tension: 0,
+                  yAxisID: 'yLeft',
+                  pointRadius: 3,
+                  pointBackgroundColor: '#FFFFFF',
+                  pointBorderColor: '#5182E3',
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#FFFFFF',
+                  pointHoverBorderColor: '#5182E3',
+              },
+              {
+                  label: 'Map',
+                  data: [600, 700, 300, 250, 200, 600, 180, 700],
+                  borderColor: '#28A745',
+                  borderWidth: 2,
+                  tension: 0,
+                  yAxisID: 'yRight',
+                  pointRadius: 3,
+                  pointBackgroundColor: '#FFFFFF',
+                  pointBorderColor: '#28A745',
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#FFFFFF',
+                  pointHoverBorderColor: '#28A745',
+              },
+              {
+                  label: 'Coupon',
+                  data: [0, 580, 170, 560, 410, 401, 70, 160],
+                  borderColor: '#3AAFA9',
+                  borderWidth: 2,
+                  tension: 0,
+                  yAxisID: 'yRight',
+                  pointRadius: 3,
+                  pointBackgroundColor: '#FFFFFF',
+                  pointBorderColor: '#3AAFA9',
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#FFFFFF',
+                  pointHoverBorderColor: '#3AAFA9',
+              },
+              {
+                  label: 'Donation',
+                  data: [10, 480, 270, 460, 310, 501, 170, 260],
+                  borderColor: bgColor, // <-- Dynamic theme color
+                  borderWidth: 2,
+                  tension: 0,
+                  yAxisID: 'yRight',
+                  pointRadius: 3,
+                  pointBackgroundColor: '#FFFFFF',
+                  pointBorderColor: bgColor, // <-- Dynamic theme color
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#FFFFFF',
+                  pointHoverBorderColor: bgColor, // <-- Dynamic theme color
+              }
+          ]
+      },
+      options: getChartOptions(),
+  });
 
-    
-    const referralChart =initChart("referralChart", {
-        type: 'line',
-        data: {
-            labels: ['0', '1', '2', '3', '4', '5', '6', '7'],
-            datasets: [
+  
+  const referralChart =initChart("referralChart", {
+      type: 'line',
+      data: {
+          labels: ['0', '1', '2', '3', '4', '5', '6', '7'],
+          datasets: [
+              {
+                  label: 'Referral',
+                  data: [600, 400, 590, 650, 800, 400, 160, 570],
+                  borderColor: '#5182E3',
+                  borderWidth: 2,
+                  tension: 0,
+                  yAxisID: 'yLeft',
+                  pointRadius: 3,
+                  pointBackgroundColor: '#FFFFFF',
+                  pointBorderColor: '#5182E3',
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#FFFFFF',
+                  pointHoverBorderColor: '#5182E3',
+              },
+              {
+                  label: 'Map',
+                  data: [600, 700, 300, 250, 200, 600, 180, 700],
+                  borderColor: '#28A745',
+                  borderWidth: 2,
+                  tension: 0,
+                  yAxisID: 'yRight',
+                  pointRadius: 3,
+                  pointBackgroundColor: '#FFFFFF',
+                  pointBorderColor: '#28A745',
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#FFFFFF',
+                  pointHoverBorderColor: '#28A745',
+              },
+              {
+                  label: 'Post',
+                  data: [0, 580, 170, 560, 410, 401, 70, 160],
+                  borderColor: '#3AAFA9',
+                  borderWidth: 2,
+                  tension: 0,
+                  yAxisID: 'yRight',
+                  pointRadius: 3,
+                  pointBackgroundColor: '#FFFFFF',
+                  pointBorderColor: '#3AAFA9',
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#FFFFFF',
+                  pointHoverBorderColor: '#3AAFA9',
+              }
+              
+          ]
+      },
+      options: getChartOptions(),
+  });
+
+  const endcustomersChart =initChart("endCustomersChart", {
+      type: 'line',
+      data: {
+          labels: ['0', '1', '2', '3', '4', '5', '6', '7'],
+          datasets: [
+              {
+                  label: 'Referral',
+                  data: [600, 400, 590, 650, 800, 400, 160, 570],
+                  borderColor: '#5182E3',
+                  borderWidth: 2,
+                  tension: 0,
+                  yAxisID: 'yLeft',
+                  pointRadius: 3,
+                  pointBackgroundColor: '#FFFFFF',
+                  pointBorderColor: '#5182E3',
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#FFFFFF',
+                  pointHoverBorderColor: '#5182E3',
+              },
+              {
+                  label: 'Map',
+                  data: [600, 700, 300, 250, 200, 600, 180, 700],
+                  borderColor: '#28A745',
+                  borderWidth: 2,
+                  tension: 0,
+                  yAxisID: 'yRight',
+                  pointRadius: 3,
+                  pointBackgroundColor: '#FFFFFF',
+                  pointBorderColor: '#28A745',
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#FFFFFF',
+                  pointHoverBorderColor: '#28A745',
+              },
+              {
+                  label: 'Purchase',
+                  data: [0, 580, 170, 560, 410, 401, 70, 160],
+                  borderColor: '#3AAFA9',
+                  borderWidth: 2,
+                  tension: 0,
+                  yAxisID: 'yRight',
+                  pointRadius: 3,
+                  pointBackgroundColor: '#FFFFFF',
+                  pointBorderColor: '#3AAFA9',
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#FFFFFF',
+                  pointHoverBorderColor: '#3AAFA9',
+              },
                 {
-                    label: 'Referral',
-                    data: [600, 400, 590, 650, 800, 400, 160, 570],
-                    borderColor: '#5182E3',
-                    borderWidth: 2,
-                    tension: 0,
-                    yAxisID: 'yLeft',
-                    pointRadius: 3,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: '#5182E3',
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderColor: '#5182E3',
-                },
+                  label: 'share',
+                  data: [100, 45, 170, 400, 510, 801, 470, 360],
+                  borderColor: "#1E4D92", 
+                  borderWidth: 2,
+                  tension: 0,
+                  yAxisID: 'yRight',
+                  pointRadius: 3,
+                  pointBackgroundColor: '#FFFFFF',
+                  pointBorderColor: "#1E4D92",
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#FFFFFF',
+                  pointHoverBorderColor:"#1E4D92",
+              },
                 {
-                    label: 'Map',
-                    data: [600, 700, 300, 250, 200, 600, 180, 700],
-                    borderColor: '#28A745',
-                    borderWidth: 2,
-                    tension: 0,
-                    yAxisID: 'yRight',
-                    pointRadius: 3,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: '#28A745',
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderColor: '#28A745',
-                },
+                  label: 'Donation',
+                  data: [10, 480, 270, 460, 310, 501, 170, 260],
+                  borderColor: bgColor, // <-- Dynamic theme color
+                  borderWidth: 2,
+                  tension: 0,
+                  yAxisID: 'yRight',
+                  pointRadius: 3,
+                  pointBackgroundColor: '#FFFFFF',
+                  pointBorderColor: bgColor, // <-- Dynamic theme color
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#FFFFFF',
+                  pointHoverBorderColor: bgColor, // <-- Dynamic theme color
+              }
+              
+          ]
+      },
+      options: getChartOptions(),
+  });
+
+  const pharmacyChart =initChart("pharmacyChart", {
+      type: 'line',
+      data: {
+          labels: ['0', '1', '2', '3', '4', '5', '6', '7'],
+          datasets: [
+              {
+                  label: 'Referral',
+                  data: [600, 400, 590, 650, 800, 400, 160, 570],
+                  borderColor: '#5182E3',
+                  borderWidth: 2,
+                  tension: 0,
+                  yAxisID: 'yLeft',
+                  pointRadius: 3,
+                  pointBackgroundColor: '#FFFFFF',
+                  pointBorderColor: '#5182E3',
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#FFFFFF',
+                  pointHoverBorderColor: '#5182E3',
+              },
+              {
+                  label: 'Map',
+                  data: [600, 700, 300, 250, 200, 600, 180, 700],
+                  borderColor: '#28A745',
+                  borderWidth: 2,
+                  tension: 0,
+                  yAxisID: 'yRight',
+                  pointRadius: 3,
+                  pointBackgroundColor: '#FFFFFF',
+                  pointBorderColor: '#28A745',
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#FFFFFF',
+                  pointHoverBorderColor: '#28A745',
+              },
+              {
+                  label: 'Orders',
+                  data: [0, 580, 170, 560, 410, 401, 70, 160],
+                  borderColor: '#3AAFA9',
+                  borderWidth: 2,
+                  tension: 0,
+                  yAxisID: 'yRight',
+                  pointRadius: 3,
+                  pointBackgroundColor: '#FFFFFF',
+                  pointBorderColor: '#3AAFA9',
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#FFFFFF',
+                  pointHoverBorderColor: '#3AAFA9',
+              },
                 {
-                    label: 'Post',
-                    data: [0, 580, 170, 560, 410, 401, 70, 160],
-                    borderColor: '#3AAFA9',
-                    borderWidth: 2,
-                    tension: 0,
-                    yAxisID: 'yRight',
-                    pointRadius: 3,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: '#3AAFA9',
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderColor: '#3AAFA9',
-                }
+                  label: 'share',
+                  data: [100, 45, 170, 400, 510, 801, 470, 360],
+                  borderColor: "#1E4D92", 
+                  borderWidth: 2,
+                  tension: 0,
+                  yAxisID: 'yRight',
+                  pointRadius: 3,
+                  pointBackgroundColor: '#FFFFFF',
+                  pointBorderColor: "#1E4D92",
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#FFFFFF',
+                  pointHoverBorderColor:"#1E4D92",
+              },
+                {
+                  label: 'Donation',
+                  data: [10, 480, 270, 460, 310, 501, 170, 260],
+                  borderColor: bgColor, // <-- Dynamic theme color
+                  borderWidth: 2,
+                  tension: 0,
+                  yAxisID: 'yRight',
+                  pointRadius: 3,
+                  pointBackgroundColor: '#FFFFFF',
+                  pointBorderColor: bgColor, // <-- Dynamic theme color
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#FFFFFF',
+                  pointHoverBorderColor: bgColor, // <-- Dynamic theme color
+              }
+              
+          ]
+      },
+      options: getChartOptions(),
+  });
+
+    const clientChart =initChart("clientChart", {
+      type: 'line',
+      data: {
+          labels: ['0', '1', '2', '3', '4', '5', '6', '7'],
+          datasets: [
+              {
+                  label: 'Referral',
+                  data: [600, 400, 590, 650, 800, 400, 160, 570],
+                  borderColor: '#5182E3',
+                  borderWidth: 2,
+                  tension: 0,
+                  yAxisID: 'yLeft',
+                  pointRadius: 3,
+                  pointBackgroundColor: '#FFFFFF',
+                  pointBorderColor: '#5182E3',
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#FFFFFF',
+                  pointHoverBorderColor: '#5182E3',
+              },
+              {
+                  label: 'Map',
+                  data: [600, 700, 300, 250, 200, 600, 180, 700],
+                  borderColor: '#28A745',
+                  borderWidth: 2,
+                  tension: 0,
+                  yAxisID: 'yRight',
+                  pointRadius: 3,
+                  pointBackgroundColor: '#FFFFFF',
+                  pointBorderColor: '#28A745',
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#FFFFFF',
+                  pointHoverBorderColor: '#28A745',
+              },
+              {
+                  label: 'Subscription',
+                  data: [0, 580, 170, 560, 410, 401, 70, 160],
+                  borderColor: '#3AAFA9',
+                  borderWidth: 2,
+                  tension: 0,
+                  yAxisID: 'yRight',
+                  pointRadius: 3,
+                  pointBackgroundColor: '#FFFFFF',
+                  pointBorderColor: '#3AAFA9',
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#FFFFFF',
+                  pointHoverBorderColor: '#3AAFA9',
+              },
+                {
+                  label: 'Donation',
+                  data: [100, 45, 170, 400, 510, 801, 470, 360],
+                  borderColor: "#1E4D92", 
+                  borderWidth: 2,
+                  tension: 0,
+                  yAxisID: 'yRight',
+                  pointRadius: 3,
+                  pointBackgroundColor: '#FFFFFF',
+                  pointBorderColor: "#1E4D92",
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#FFFFFF',
+                  pointHoverBorderColor:"#1E4D92",
+              }
                 
-            ]
-        },
-        options: getChartOptions(),
-    });
+              
+          ]
+      },
+      options: getChartOptions(),
+  });
 
-     const endcustomersChart =initChart("endCustomersChart", {
-        type: 'line',
-        data: {
-            labels: ['0', '1', '2', '3', '4', '5', '6', '7'],
-            datasets: [
-                {
-                    label: 'Referral',
-                    data: [600, 400, 590, 650, 800, 400, 160, 570],
-                    borderColor: '#5182E3',
-                    borderWidth: 2,
-                    tension: 0,
-                    yAxisID: 'yLeft',
-                    pointRadius: 3,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: '#5182E3',
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderColor: '#5182E3',
-                },
-                {
-                    label: 'Map',
-                    data: [600, 700, 300, 250, 200, 600, 180, 700],
-                    borderColor: '#28A745',
-                    borderWidth: 2,
-                    tension: 0,
-                    yAxisID: 'yRight',
-                    pointRadius: 3,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: '#28A745',
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderColor: '#28A745',
-                },
-                {
-                    label: 'Purchase',
-                    data: [0, 580, 170, 560, 410, 401, 70, 160],
-                    borderColor: '#3AAFA9',
-                    borderWidth: 2,
-                    tension: 0,
-                    yAxisID: 'yRight',
-                    pointRadius: 3,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: '#3AAFA9',
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderColor: '#3AAFA9',
-                },
-                 {
-                    label: 'share',
-                    data: [100, 45, 170, 400, 510, 801, 470, 360],
-                    borderColor: "#1E4D92", 
-                    borderWidth: 2,
-                    tension: 0,
-                    yAxisID: 'yRight',
-                    pointRadius: 3,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: "#1E4D92",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderColor:"#1E4D92",
-                },
-                 {
-                    label: 'Donation',
-                    data: [10, 480, 270, 460, 310, 501, 170, 260],
-                    borderColor: bgColor, // <-- Dynamic theme color
-                    borderWidth: 2,
-                    tension: 0,
-                    yAxisID: 'yRight',
-                    pointRadius: 3,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: bgColor, // <-- Dynamic theme color
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderColor: bgColor, // <-- Dynamic theme color
-                }
-                
-            ]
-        },
-        options: getChartOptions(),
-    });
-
-       const pharmacyChart =initChart("pharmacyChart", {
-        type: 'line',
-        data: {
-            labels: ['0', '1', '2', '3', '4', '5', '6', '7'],
-            datasets: [
-                {
-                    label: 'Referral',
-                    data: [600, 400, 590, 650, 800, 400, 160, 570],
-                    borderColor: '#5182E3',
-                    borderWidth: 2,
-                    tension: 0,
-                    yAxisID: 'yLeft',
-                    pointRadius: 3,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: '#5182E3',
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderColor: '#5182E3',
-                },
-                {
-                    label: 'Map',
-                    data: [600, 700, 300, 250, 200, 600, 180, 700],
-                    borderColor: '#28A745',
-                    borderWidth: 2,
-                    tension: 0,
-                    yAxisID: 'yRight',
-                    pointRadius: 3,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: '#28A745',
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderColor: '#28A745',
-                },
-                {
-                    label: 'Orders',
-                    data: [0, 580, 170, 560, 410, 401, 70, 160],
-                    borderColor: '#3AAFA9',
-                    borderWidth: 2,
-                    tension: 0,
-                    yAxisID: 'yRight',
-                    pointRadius: 3,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: '#3AAFA9',
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderColor: '#3AAFA9',
-                },
-                 {
-                    label: 'share',
-                    data: [100, 45, 170, 400, 510, 801, 470, 360],
-                    borderColor: "#1E4D92", 
-                    borderWidth: 2,
-                    tension: 0,
-                    yAxisID: 'yRight',
-                    pointRadius: 3,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: "#1E4D92",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderColor:"#1E4D92",
-                },
-                 {
-                    label: 'Donation',
-                    data: [10, 480, 270, 460, 310, 501, 170, 260],
-                    borderColor: bgColor, // <-- Dynamic theme color
-                    borderWidth: 2,
-                    tension: 0,
-                    yAxisID: 'yRight',
-                    pointRadius: 3,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: bgColor, // <-- Dynamic theme color
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderColor: bgColor, // <-- Dynamic theme color
-                }
-                
-            ]
-        },
-        options: getChartOptions(),
-    });
-
-     const clientChart =initChart("clientChart", {
-        type: 'line',
-        data: {
-            labels: ['0', '1', '2', '3', '4', '5', '6', '7'],
-            datasets: [
-                {
-                    label: 'Referral',
-                    data: [600, 400, 590, 650, 800, 400, 160, 570],
-                    borderColor: '#5182E3',
-                    borderWidth: 2,
-                    tension: 0,
-                    yAxisID: 'yLeft',
-                    pointRadius: 3,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: '#5182E3',
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderColor: '#5182E3',
-                },
-                {
-                    label: 'Map',
-                    data: [600, 700, 300, 250, 200, 600, 180, 700],
-                    borderColor: '#28A745',
-                    borderWidth: 2,
-                    tension: 0,
-                    yAxisID: 'yRight',
-                    pointRadius: 3,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: '#28A745',
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderColor: '#28A745',
-                },
-                {
-                    label: 'Subscription',
-                    data: [0, 580, 170, 560, 410, 401, 70, 160],
-                    borderColor: '#3AAFA9',
-                    borderWidth: 2,
-                    tension: 0,
-                    yAxisID: 'yRight',
-                    pointRadius: 3,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: '#3AAFA9',
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderColor: '#3AAFA9',
-                },
-                 {
-                    label: 'Donation',
-                    data: [100, 45, 170, 400, 510, 801, 470, 360],
-                    borderColor: "#1E4D92", 
-                    borderWidth: 2,
-                    tension: 0,
-                    yAxisID: 'yRight',
-                    pointRadius: 3,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: "#1E4D92",
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#FFFFFF',
-                    pointHoverBorderColor:"#1E4D92",
-                }
-                 
-                
-            ]
-        },
-        options: getChartOptions(),
-    });
-
-    // Legend toggle
-    const charts = [
+  // Legend toggle
+  const charts = [
     { chart: purchaseChart, legendId: "#purchaseCustomLegend"},
     { chart: referralChart, legendId: "#referralCustomLegend"},
     { chart: endcustomersChart, legendId: "#endcustomersCustomLegend"},
@@ -444,7 +444,7 @@ $(document).ready(function () {
       chart.setDatasetVisibility(datasetIndex, visible);
       chart.update();
     });
-});
+  });
     // Dropdown handling
     $('.dropdown-btn').on('click', function (e) {
         e.stopPropagation();
@@ -473,29 +473,30 @@ $(document).ready(function () {
     }
   });
 
-   $(document).on('keypress', 'input.only-text', function (e) {
-  const char = String.fromCharCode(e.which);
-  if (!/^[a-zA-Z\s]$/.test(char)) {
-    e.preventDefault();
-  }
-  });
-setupPagination({
-    containerId: 'featured-rewards',
-    cardClass: 'reward-card',
-    prevBtnId: 'prevPage1',
-    nextBtnId: 'nextPage1',
-    paginationContainerId: 'pagination-numbers1',
-    cardsPerPage: 3
+  $(document).on('keypress', 'input.only-text', function (e) {
+    const char = String.fromCharCode(e.which);
+    if (!/^[a-zA-Z\s]$/.test(char)) {
+      e.preventDefault();
+    }
   });
 
-  setupPagination({
-    containerId: 'popular-coupons',
-    cardClass: 'coupon-card',
-    prevBtnId: 'prevPage2',
-    nextBtnId: 'nextPage2',
-    paginationContainerId: 'pagination-numbers2',
-    cardsPerPage: 3
-  });
+  // setupPagination({
+  //   containerId: 'featured-rewards',
+  //   cardClass: 'reward-card',
+  //   prevBtnId: 'prevPage1',
+  //   nextBtnId: 'nextPage1',
+  //   paginationContainerId: 'pagination-numbers1',
+  //   cardsPerPage: 3
+  // });
+
+  // setupPagination({
+  //   containerId: 'popular-coupons',
+  //   cardClass: 'coupon-card',
+  //   prevBtnId: 'prevPage2',
+  //   nextBtnId: 'nextPage2',
+  //   paginationContainerId: 'pagination-numbers2',
+  //   cardsPerPage: 3
+  // });
 });
 function setupPagination({ containerId, cardClass, prevBtnId, nextBtnId, paginationContainerId, cardsPerPage = 3 }) {
   let currentPage = 1;

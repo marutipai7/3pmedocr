@@ -185,6 +185,7 @@
         <input type="text" class="mt-2 rounded-sm p-2 focus:ring-0 w-full focus:!outline-none focus:ring-offset-0" placeholder="Specify Your Reason (10 Words)">
         <div class="flex justify-end pt-2">
             <button class="bg-living-coral text-white rounded-md p-2 cursor-pointer submitBtn">Submit</button>
+            <button type="button" onclick="closePopup('deleteAccountPopup')" class="bg-violet-sky text-white rounded-md p-2 cursor-pointer">Cancel</button>
         </div>
         </div>
     </div>
@@ -574,7 +575,7 @@
     </p>
     <p class="text-violet-sky pl-4 sm:pl-6">Change Password</p>
 
-    <form id="editChangePassword" method="POST" action="{% url 'change_password' %}" class="submit-form px-4 sm:px-6 pt-6 text-sm">
+    <form id="editChangePassword" method="POST" action="{% url 'change_password' %}" class="px-4 sm:px-6 pt-6 text-sm">
         {% csrf_token %}
         <!-- Pharmacy Name -->
         <div class="flex flex-col">

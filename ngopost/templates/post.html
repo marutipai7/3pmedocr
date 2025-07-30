@@ -3,6 +3,14 @@
 {% block title %}Home{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<style>
+  .error-text {
+    font-size: 0.85rem;
+    margin-top: 2px;
+    display: block;
+  }
+</style>
+
 {% endblock %}
 
 {% block content %}
@@ -47,160 +55,42 @@
           </div>
 
           <!-- Saved Post Content -->
-          <div class="saved-post tab-content hidden py-6 space-y-6">
+          <div class="saved-post tab-content hidden py-6 space-y-6 postDiv" data-div="postSaved" id="postSaved">
             <!-- Header -->
             <div class="px-2 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
-              <p class="text-sm font-semibold whitespace-nowrap">Saved Post</p>
+              <p class="text-sm font-semibold whitespace-nowrap">Saved Post history</p>
               <div class="flex items-center justify-end gap-5 w-full sm:w-5/6">
-                <form method="get" class="w-full max-w-[350px] rounded-[6px] bg-light-white flex items-center gap-2 px-2">
+                <form class="w-full max-w-[350px] rounded-[6px] bg-light-white flex items-center gap-2 px-2">
                   <span class="material-symbols-outlined text-dark-gray">search</span>
-                  <input type="text" name="saved_query" placeholder="Search by Post Type or Status"
-                    value="{{ request.GET.saved_query|default:'' }}"
-                    class="w-full py-2.5 border-none bg-transparent focus:outline-none focus:ring-0 placeholder:text-medium-gray" />
-                  <button type="submit" class="ml-2 px-3 py-2 rounded bg-violet-sky text-white">Search</button>
+                  <input type="text" name="history_query" placeholder="Search by Post Type or Status" class="w-full py-2.5 border-none bg-transparent focus:outline-none focus:ring-0 placeholder:text-medium-gray" />
+                  <button type="button" id="history_query" class="ml-2 px-3 py-2 rounded bg-violet-sky text-white">Search</button>
                 </form>
-                <form method="get" class="ml-2">
-                  <input type="hidden" name="saved_query" value="{{ request.GET.saved_query|default:'' }}">
-                  <select name="saved_limit" onchange="this.form.submit()" class="rounded-[6px] border border-gray-300 px-3 py-2 text-sm">
-                    <option value="1" {% if saved_limit == '1' %}selected{% endif %}>Show 1</option>
-                    <option value="5" {% if saved_limit == '5' %}selected{% endif %}>Show 5</option>
-                    <option value="10" {% if saved_limit == '10' %}selected{% endif %}>Show 10</option>
-                    <option value="20" {% if saved_limit == '20' %}selected{% endif %}>Show 20</option>
-                  </select>
-                </form>
-                <button
-                  class="w-full max-w-[90px] h-[40px] border border-violet-sky rounded-[10px] text-violet-sky flex items-center justify-center gap-1">
-                  <span class="material-symbols-outlined text-violet-sky">keyboard_arrow_down</span>
-                  Filter
-                </button>
-                <button
-                  class="w-full max-w-[100px] h-[40px] border border-violet-sky rounded-[10px] text-violet-sky flex items-center justify-center gap-1">
-                  <span class="material-symbols-outlined text-violet-sky">file_export</span>
-                  <span class="hidden sm:block">View</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Table -->
-            <div class="overflow-x-auto">
-              <table class="min-w-full table-auto whitespace-nowrap docTable">
-                <thead class="bg-violet-sky text-white text-sm sm:text-18-b">
-                  <tr>
-                    <th class="text-center px-4 py-6 border-r border-white">
-                      <div class="flex items-center justify-center gap-2">
-                        Date & Time
-                        <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
-                      </div>
-                    </th>
-                    <th class="text-center px-4 py-6 border-r border-white">
-                      Post Type
-                    </th>
-                    <th class="text-center px-4 py-6 border-r border-white">
-                      Views
-                    </th>
-                    <th class="text-center px-4 py-6 border-r border-white">
-                      <div class="flex flex-col items-center justify-center">
-                        <p>Target</p>
-                        <p>Donation</p>
-                      </div>
-                    </th>
-                    <th class="text-center px-4 py-6 border-r border-white">
-                      <div class="flex flex-col items-center justify-center">
-                        <p>Donation</p>
-                        <p>Received</p>
-                      </div>
-                    </th>
-                    <th class="text-center px-4 py-6 border-r border-white">
-                      <div class="flex flex-col items-center justify-center">
-                        <p>Status</p>
-                        <p>(Edit if required)</p>
-                      </div>
-                    </th>
-                    <th class="text-center px-4 py-6">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for post in saved_posts %}
-                  <tr class="border-b border-light-gray">
-                    <td class="px-4 py-4.5 text-center">{{ post.created_at|date:"d/m/y, H:i" }}</td>
-                    <td class="px-4 py-4.5 text-center">{{ post.post_type }}</td>
-                    <td class="px-4 py-4.5 text-center">{{ post.views }}</td>
-                    <td class="px-4 py-4.5 text-center">₹{{ post.target_donation|floatformat:0 }}</td>
-                    <td class="px-4 py-4.5 text-center">₹{{ post.donation_received|floatformat:0 }}</td>
-                  <td class="px-6 py-4.5 flex items-center justify-center">
-                    <div class="statusDropdown relative inline-block w-[120px]">
-                        <div class="
-                          selectedStatus
-                          py-2 px-3 rounded-md flex items-center justify-between cursor-pointer
-                          {% if post.status == 'Ongoing' %}
-                            bg-mint-cream text-green
-                          {% elif post.status == 'Closed' %}
-                            bg-soft-pink text-strong-red
-                          {% elif post.status == 'Paused' %}
-                            bg-peach text-burnt-orange
-                          {% endif %}
-                        ">
-                          <span class="status-label">{{ post.status }}</span>
-                          <span class="material-symbols-outlined">keyboard_arrow_down</span>
-                        </div>
-                      
-                        <!-- Dropdown options -->
-                        <div class="statusOptions absolute top-full left-0 w-full mt-1 bg-white shadow-md rounded-md hidden z-10" style="display: none;">
-                          <div class="py-2 px-3 cursor-pointer hover:opacity-80 bg-mint-cream text-green {% if post.status == 'Ongoing' %}font-bold{% endif %}">Ongoing</div>
-                          <div class="py-2 px-3 cursor-pointer hover:opacity-80 bg-soft-pink text-strong-red {% if post.status == 'Closed' %}font-bold{% endif %}">Closed</div>
-                          <div class="py-2 px-3 cursor-pointer hover:opacity-80 bg-peach text-burnt-orange {% if post.status == 'Paused' %}font-bold{% endif %}">Paused</div>
-                        </div>
-                      </div>
-                  </td>
-                    <td class="px-4 py-4.5">
-                      <div class="flex items-center justify-center gap-6">
-                        <span
-                          class="material-symbols-outlined bookmark-fill cursor-pointer bookmark-toggle material-filled text-violet-sky"
-                          data-post-id="{{ post.id }}"
-                          data-saved="true">
-                        bookmark
-                      </span>
-                        <span class="material-symbols-outlined cursor-pointer preview-btn"
-                              data-post-id="{{ post.id }}">visibility</span>
-                        <span class="material-symbols-outlined cursor-pointer">download</span>
-                    </div>
-                  </td>
-                </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- Post History Content -->
-          <div class="post-history tab-content hidden py-6 space-y-6">
-            <!-- Header -->
-            <div class="px-2 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
-              <p class="text-sm font-semibold whitespace-nowrap">Post history</p>
-              <div class="flex items-center justify-end gap-5 w-full sm:w-5/6">
-                <form method="get" class="w-full max-w-[350px] rounded-[6px] bg-light-white flex items-center gap-2 px-2 history_filter">
-                  <span class="material-symbols-outlined text-dark-gray">search</span>
-                  <input type="text" name="history_query" placeholder="Search by Post Type or Status"
-                    value="{{ request.GET.history_query|default:'' }}"
-                    class="w-full py-2.5 border-none bg-transparent focus:outline-none focus:ring-0 placeholder:text-medium-gray" />
-                  <button type="submit" class="ml-2 px-3 py-2 rounded bg-violet-sky text-white">Search</button>
-                </form>
-                <form method="get" class="ml-2 history_filter">
-                  <input type="hidden" name="history_query" value="{{ request.GET.history_query|default:'' }}">
-                  <select name="history_limit" onchange="this.form.submit()" class="rounded-[6px] border border-gray-300 px-3 py-2 text-sm">
+                  <select name="history_limit" class="rounded-[6px] border border-gray-300 px-3 py-2 text-sm">
                     <option value="1" {% if history_limit == '1' %}selected{% endif %}>Show 1</option>
                     <option value="5" {% if history_limit == '5' %}selected{% endif %}>Show 5</option>
                     <option value="10" {% if history_limit == '10' %}selected{% endif %}>Show 10</option>
                     <option value="20" {% if history_limit == '20' %}selected{% endif %}>Show 20</option>
                   </select>
-                </form>
-                <button
-                  class="w-full max-w-[90px] h-[40px] border border-violet-sky rounded-[10px] text-violet-sky flex items-center justify-center gap-1">
-                  <span class="material-symbols-outlined text-violet-sky">keyboard_arrow_down</span>
+                <div class="dropdown relative flex justify-end">
+                  <button class="filterToggle w-full max-w-[90px] h-[40px] border border-violet-sky rounded-[10px] text-violet-sky flex items-center justify-center gap-1 cursor-pointer group hover:bg-violet-sky hover:text-white px-3">
+                  <span class="material-symbols-outlined text-violet-sky group-hover:text-white">keyboard_arrow_down</span>
                   Filter
                 </button>
+                  <div class="filterDropdown hidden absolute right-0 top-10 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] rounded-md w-44 z-10">
+                    <div class="p-2 pl-4 flex justify-between items-center hover:bg-violet-sky hover:text-white rounded">
+                      Custom date<span class="material-symbols-outlined calendar-icon">calendar_today</span>
+                    </div>
+                    <div class="p-2 pl-4 filterDateRange cursor-pointer hover:bg-violet-sky hover:text-white rounded" data-range="1 Week">1 Week</div>
+                    <div class="p-2 pl-4 filterDateRange cursor-pointer hover:bg-violet-sky hover:text-white rounded" data-range="1 Month">1 Month</div>
+                    <div class="p-2 pl-4 filterDateRange cursor-pointer hover:bg-violet-sky hover:text-white rounded" data-range="1 Year">1 Year</div>
+                  </div>
+                  <div
+                      class="datepicker-container hidden px-4 pb-3 absolute top-full right-0 lg:right-[180px] z-50 bg-white shadow-md rounded">
+                      <div class="datepicker-inline"></div>
+                    </div>
+                </div>
                 <button
-                  class="w-full max-w-[100px] h-[40px] border border-violet-sky rounded-[10px] text-violet-sky flex items-center justify-center gap-1">
+                  class="w-full max-w-[100px] h-[40px] border border-violet-sky rounded-[10px] text-violet-sky flex items-center justify-center gap-1 hidden">
                   <span class="material-symbols-outlined text-violet-sky">file_export</span>
                   <span class="hidden sm:block">View</span>
                 </button>
@@ -213,34 +103,93 @@
                 <thead class="bg-violet-sky text-white text-sm sm:text-18-b">
                   <tr>
                     <th class="text-center px-4 py-6 border-r border-white">
-                      <div class="flex items-center justify-center gap-2">
-                        Date & Time
-                        <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
-                      </div>
+                      <div class="flex items-center justify-center gap-2">Date & Time<img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" /></div>
+                    </th>
+                    <th class="text-center px-4 py-6 border-r border-white">Post</th>
+                    <th class="text-center px-4 py-6 border-r border-white">Post Type</th>
+                    <th class="text-center px-4 py-6 border-r border-white">Views</th>
+                    <th class="text-center px-4 py-6 border-r border-white">
+                      <div class="flex flex-col items-center justify-center"><p>Target</p><p>Donation</p></div>
                     </th>
                     <th class="text-center px-4 py-6 border-r border-white">
-                      Post Type
+                      <div class="flex flex-col items-center justify-center"><p>Donation</p><p>Received</p></div>
                     </th>
                     <th class="text-center px-4 py-6 border-r border-white">
-                      Views
+                      <div class="flex flex-col items-center justify-center"><p>Status</p><p>(Edit if required)</p></div>
+                    </th>
+                    <th class="text-center px-4 py-6">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                 
+                </tbody>
+              </table>
+              <div id="pagination-container" class="flex justify-center gap-2 mt-4"></div>
+            </div>
+          </div>
+
+          <!-- Post History Content -->
+          <div class="post-history tab-content hidden py-6 space-y-6 postDiv" data-div="postHistory" id="postHistory">
+            <!-- Header -->
+            <div class="px-2 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
+              <p class="text-sm font-semibold whitespace-nowrap">Post history</p>
+              <div class="flex items-center justify-end gap-5 w-full sm:w-5/6">
+                <form class="w-full max-w-[350px] rounded-[6px] bg-light-white flex items-center gap-2 px-2">
+                  <span class="material-symbols-outlined text-dark-gray">search</span>
+                  <input type="text" name="history_query" placeholder="Search by Post Type or Status" class="w-full py-2.5 border-none bg-transparent focus:outline-none focus:ring-0 placeholder:text-medium-gray" />
+                  <button type="button" id="history_query" class="ml-2 px-3 py-2 rounded bg-violet-sky text-white">Search</button>
+                </form>
+                  <select name="history_limit" class="rounded-[6px] border border-gray-300 px-3 py-2 text-sm">
+                    <option value="1" {% if history_limit == '1' %}selected{% endif %}>Show 1</option>
+                    <option value="5" {% if history_limit == '5' %}selected{% endif %}>Show 5</option>
+                    <option value="10" {% if history_limit == '10' %}selected{% endif %}>Show 10</option>
+                    <option value="20" {% if history_limit == '20' %}selected{% endif %}>Show 20</option>
+                  </select>
+                <div class="dropdown relative flex justify-end">
+                  <button class="filterToggle w-full max-w-[90px] h-[40px] border border-violet-sky rounded-[10px] text-violet-sky flex items-center justify-center gap-1 cursor-pointer group hover:bg-violet-sky hover:text-white px-3">
+                  <span class="material-symbols-outlined text-violet-sky group-hover:text-white">keyboard_arrow_down</span>
+                  Filter
+                </button>
+                  <div class="filterDropdown  absolute right-0 top-10 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] rounded-md w-44 z-10">
+                    <div class="p-2 pl-4 flex justify-between items-center hover:bg-violet-sky hover:text-white rounded">
+                      Custom date<span class="material-symbols-outlined calendar-icon">calendar_today</span>
+                    </div>
+                    <div class="p-2 pl-4 filterDateRange cursor-pointer hover:bg-violet-sky hover:text-white rounded" data-range="1 Week">1 Week</div>
+                    <div class="p-2 pl-4 filterDateRange cursor-pointer hover:bg-violet-sky hover:text-white rounded" data-range="1 Month">1 Month</div>
+                    <div class="p-2 pl-4 filterDateRange cursor-pointer hover:bg-violet-sky hover:text-white rounded" data-range="1 Year">1 Year</div>
+                  </div>
+                  <div
+                      class="datepicker-container hidden px-4 pb-3 absolute top-full right-0 lg:right-[180px] z-50 bg-white shadow-md rounded">
+                      <div class="datepicker-inline"></div>
+                    </div>
+                </div>
+                <button
+                  class="w-full max-w-[100px] h-[40px] border border-violet-sky rounded-[10px] text-violet-sky flex items-center justify-center gap-1 hidden">
+                  <span class="material-symbols-outlined text-violet-sky">file_export</span>
+                  <span class="hidden sm:block">View</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto">
+              <table class="min-w-full table-auto whitespace-nowrap postHistoryTable">
+                <thead class="bg-violet-sky text-white text-sm sm:text-18-b">
+                  <tr>
+                    <th class="text-center px-4 py-6 border-r border-white">
+                      <div class="flex items-center justify-center gap-2">Date & Time<img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" /></div>
+                    </th>
+                    <th class="text-center px-4 py-6 border-r border-white">Post</th>
+                    <th class="text-center px-4 py-6 border-r border-white">Post Type</th>
+                    <th class="text-center px-4 py-6 border-r border-white">Views</th>
+                    <th class="text-center px-4 py-6 border-r border-white">
+                      <div class="flex flex-col items-center justify-center"><p>Target</p><p>Donation</p></div>
                     </th>
                     <th class="text-center px-4 py-6 border-r border-white">
-                      <div class="flex flex-col items-center justify-center">
-                        <p>Target</p>
-                        <p>Donation</p>
-                      </div>
+                      <div class="flex flex-col items-center justify-center"><p>Donation</p><p>Received</p></div>
                     </th>
                     <th class="text-center px-4 py-6 border-r border-white">
-                      <div class="flex flex-col items-center justify-center">
-                        <p>Donation</p>
-                        <p>Received</p>
-                      </div>
-                    </th>
-                    <th class="text-center px-4 py-6 border-r border-white">
-                      <div class="flex flex-col items-center justify-center">
-                        <p>Status</p>
-                        <p>(Edit if required)</p>
-                      </div>
+                      <div class="flex flex-col items-center justify-center"><p>Status</p><p>(Edit if required)</p></div>
                     </th>
                     <th class="text-center px-4 py-6">Actions</th>
                   </tr>
@@ -316,8 +265,8 @@
                   <div class="space-y-2 w-full">
                     <h1 class="text-dark-gray text-14-fs">Target Donation</h1>
                     <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
-                      <input name="target_donation" required type="text" placeholder="Rs 50000"
-                        class="w-full h-8 border-none p-2 focus:outline-none focus:ring-0 placeholder:text-dark-gray placeholder:text-14-nr" />
+                      <input name="target_donation" required type="text" placeholder="Rs 50000" 
+                        class="w-full h-8 border-none p-2 focus:outline-none focus:ring-0 placeholder:text-dark-gray placeholder:text-14-nr only-numbers" />
                     </div>
                   </div>
 
@@ -431,15 +380,13 @@
                   </div>
                 </div>
               </div>
-              <input type="file" id="file1" name="file1">
-              <input type="file" id="file2" name="file2">
 
               <!-- Upload Section -->
               <div class="mt-4 space-y-3">
                 <p class="text-16-nr">Upload creative (Only 2 creatives)<span class="text-dark-red">*</span></p>
                 <div
                   class="upload-area relative border-2 border-dashed border-violet-sky rounded-md h-[312px] flex items-center justify-center px-6">
-                  <input name="creatives[]" type="file" class="hidden upload-input" multiple required/>
+                  <input name="creatives[]" type="file" class="hidden upload-input" multiple/>
                   <div class="upload-placeholder flex flex-col items-center space-y-2 cursor-pointer">
                     <img src="/static/images/cloud-upload-ngo.svg" alt="Cloud" loading="lazy" />
                     <p class="text-xs sm:text-base text-center">Click or Upload</p>
@@ -465,7 +412,7 @@
                 </div>
                 <div class="flex justify-end  sm:gap-8">
 
-                  <button class="w-full max-w-[140px] py-3 rounded-[10px] border border-violet-sky text-violet-sky">
+                  <button type="button" class="w-full max-w-[140px] py-3 rounded-[10px] border border-violet-sky text-violet-sky" id="clear-new-form">
                     Cancel
                   </button>
 
@@ -934,67 +881,5 @@
 <script src="{% static 'js/NGO/table-pagination.js' %}"></script>
 <script src="{% static 'js/toaster.js' %}"></script>
 <script src="{% static 'js/tabs.js' %}"></script>
-<script>
-function loadPostHistory(page = 1) {
-  const query = $('input[name=history_query]').val();
-  const limit = $('#filter-limit').val();
-  const startDate = $('#filter-start-date').val();
-  const endDate = $('#filter-end-date').val();
-
-  $.ajax({
-    url: "{% url 'post_history_ajax' %}",
-    type: "GET",
-    data: {
-      query: query,
-      limit: limit,
-      page: page,
-      start_date: startDate,
-      end_date: endDate
-    },
-    success: function (response) {
-      $('.postHistoryTable tbody').html(response.html);
-      renderPagination(response.current_page, response.total_pages);
-    },
-    error: function () {
-      alert("Failed to load post history.");
-    }
-  });
-}
-
-function renderPagination(current, total) {
-  let html = '';
-  for (let i = 1; i <= total; i++) {
-    html += `<button class="pagination-btn px-2 py-1 border ${i === current ? 'bg-violet-sky text-white' : ''}" data-page="${i}">${i}</button>`;
-  }
-  $('#pagination-container').html(html);
-}
-
-// Trigger on tab click
-let historyLoaded = false;
-$('[data-tab="post-history"]').on('click', function () {
-  if (!historyLoaded) {
-    loadPostHistory();
-    historyLoaded = true;
-  }
-});
-
-// Real-time filter events
-$(document).on('input change', '#filter-query, #filter-limit, #filter-start-date, #filter-end-date', function () {
-  loadPostHistory(1);
-});
-
-// Pagination click
-$(document).on('click', '.pagination-btn', function () {
-  const page = $(this).data('page');
-  loadPostHistory(page);
-});
-
-$('.history_filter').on('submit', function (e) {
-  e.preventDefault(); // prevent default form submission
-  loadPostHistory(1);
-});
-
-</script>
-
 
 {% endblock %}

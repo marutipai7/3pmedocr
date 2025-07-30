@@ -97,14 +97,18 @@ def points_dashboard(request):
         'badge': badge,
     })
 
+from django.core.paginator import Paginator
+
 def get_coupon_data(request, is_popular=False):
     try:
         query = request.GET.get('search', '').strip().lower()
         date_range = request.GET.get('daterange', '').strip().lower()
         start_date_str = request.GET.get('start_date', '').strip()
         end_date_str = request.GET.get('end_date', '').strip()
-        now = timezone.now()
+        page = int(request.GET.get('page', 1))
+        limit = int(request.GET.get('limit', 4))  # default 4 per page
 
+        now = timezone.now()
         coupons = Coupon.objects.select_related('category', 'brand_name')
 
         if query:
@@ -132,10 +136,13 @@ def get_coupon_data(request, is_popular=False):
         if is_popular:
             coupons = coupons.order_by('-redeemed_count')
         else:
-            coupons = coupons[:100]
+            coupons = coupons.order_by('-created_at')
+
+        paginator = Paginator(coupons, limit)
+        page_obj = paginator.get_page(page)
 
         data_list = []
-        for c in coupons:
+        for c in page_obj:
             redeemed = c.redeemed_count or 0
             max_redemptions = c.max_redemptions or 100
             item = {
@@ -157,10 +164,17 @@ def get_coupon_data(request, is_popular=False):
             {"coupons" if is_popular else "products": data_list}
         )
 
-        return JsonResponse({"html": html})
+        return JsonResponse({
+            "html": html,
+            "pagination": {
+                "page": page_obj.number,
+                "num_pages": paginator.num_pages
+            }
+        })
 
     except Exception as e:
         return JsonResponse({"html": "", "error": str(e)})
+
 
 
 def get_coupon_cards(request):

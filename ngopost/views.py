@@ -109,20 +109,28 @@ def post_history_ajax(request):
     limit = int(request.GET.get('limit', 10))
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
+    saved_only = request.GET.get('saved_only', '').lower() == 'true'
 
     filters = Q(user=user)
+
     if query:
-        filters &= Q(post_type__icontains=query) | Q(status__icontains=query)
+        filters &= Q(status__icontains=query) | Q(header__icontains=query)
+
     if start_date:
         try:
             filters &= Q(created_at__date__gte=datetime.strptime(start_date, '%Y-%m-%d').date())
         except: pass
+
     if end_date:
         try:
             filters &= Q(created_at__date__lte=datetime.strptime(end_date, '%Y-%m-%d').date())
         except: pass
 
+    if saved_only:
+        filters &= Q(saved=True)
+
     posts = NGOPost.objects.filter(filters).order_by('-created_at')
+
     paginator = Paginator(posts, limit)
     page_obj = paginator.get_page(page)
 
@@ -135,6 +143,7 @@ def post_history_ajax(request):
         "current_page": page_obj.number,
         "total_pages": paginator.num_pages,
     })
+
 
 @dashboard_login_required
 @csrf_exempt
@@ -241,18 +250,21 @@ def post_detail(request, post_id):
 @require_POST
 def toggle_saved_post(request):
     post_id = request.POST.get('post_id')
-    action = request.POST.get('action')  # 'save' or 'unsave'
+    action = request.POST.get('action')
+
+    if not post_id or action not in ['save', 'unsave']:
+        return JsonResponse({'success': False, 'error': 'Invalid data'}, status=400)
+
     try:
         post = NGOPost.objects.get(id=post_id, user=request.user_obj)
-        if action == 'save':
-            post.saved = True
-        else:
-            post.saved = False
+        post.saved = (action == 'save')
         post.save()
+
         logger.info(f"User {request.user_obj} set saved={post.saved} for post {post_id} (action={action})")
         return JsonResponse({'success': True, 'saved': post.saved})
+
     except NGOPost.DoesNotExist:
-        logger.warning(f"User {request.user_obj} tried to {action} post {post_id} but it does not exist or does not belong to them.")
+        logger.warning(f"Post {post_id} not found or does not belong to user {request.user_obj}")
         return JsonResponse({'success': False, 'error': 'Post not found'}, status=404)
 
 @dashboard_login_required
