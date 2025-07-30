@@ -109,7 +109,7 @@ $(document).ready(function () {
     }
   });
 
-  //Share Popup on  Home Page of All Sections
+  //Share Popup on  Home Page of All Sections 
   $(".open-share-modal").on("click", function () {
     $("#shareModal").removeClass("hidden").addClass("flex");
   });
@@ -144,26 +144,26 @@ checkbox.on('change', function () {
 
 
 
- $('.calendar-icon').on('click', function (e) {
-    e.stopPropagation();
-    const $filterDropdown = $(this).closest('.filterDropdown');
-    const $container = $filterDropdown.closest('.dropdown');
-    $filterDropdown.addClass('hidden');
-    $container.find('.datepicker-container').removeClass('hidden');
-  });
+//  $('.calendar-icon').on('click', function (e) {
+//     e.stopPropagation();
+//     const $filterDropdown = $(this).closest('.filterDropdown');
+//     const $container = $filterDropdown.closest('.dropdown');
+//     $filterDropdown.addClass('hidden');
+//     $container.find('.datepicker-container').removeClass('hidden');
+//   });
 
   
-  $(document).on('click', '.datepicker-container [data-date]', function () {    
-    const selectedDate = $(this).attr('data-date');
-    console.log("Selected Date:", selectedDate);   
-    $('.datepicker-container').addClass('hidden');
-  }); 
-  $(document).on('click', function (e) {
-    if (!$(e.target).closest('.datepicker-container, .calendar-icon').length) {
-      $('.datepicker-container').addClass('hidden');
-      $('.filterDropdown').addClass('hidden');
-    }
-  });
+//   $(document).on('click', '.datepicker-container [data-date]', function () {    
+//     const selectedDate = $(this).attr('data-date');
+//     console.log("Selected Date:", selectedDate);   
+//     $('.datepicker-container').addClass('hidden');
+//   }); 
+//   $(document).on('click', function (e) {
+//     if (!$(e.target).closest('.datepicker-container, .calendar-icon').length) {
+//       $('.datepicker-container').addClass('hidden');
+//       $('.filterDropdown').addClass('hidden');
+//     }
+//   });
   function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -375,3 +375,16 @@ $('.submit-form').on('submit', function(e) {
     });
 });
 })
+
+
+//closeShareModal
+function closeShareModal() {
+  const modal = document.querySelector(".shareModal");
+  modal.classList.add("hidden");
+}
+
+//closeShareModal
+function closeNotificationModal() {
+  const modal = document.querySelector(".notificationDropdown");
+  modal.classList.add("hidden");
+}
