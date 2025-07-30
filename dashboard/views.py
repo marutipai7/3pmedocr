@@ -196,7 +196,7 @@ def saved(request):
 @dashboard_login_required
 def get_ngo_graph_data(request):
     user = request.user_obj
-    print("Request User ID:", user)
+    # print("Request User ID:", user)
     today = timezone.now().date()
 
     # Parse date input
@@ -215,7 +215,7 @@ def get_ngo_graph_data(request):
         .annotate(date=TruncDate('created_at'))  # Only date, no time
         # .filter(date__range=(start_date, end_date))
         .filter(
-            # user_id=user,
+            user_id=user,
             date__range=(start_date, end_date)
         )
         .values('date')
