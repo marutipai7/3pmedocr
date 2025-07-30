@@ -53,8 +53,8 @@ def get_routes(request):
     if not all([start_lat, start_lng, end_lat, end_lng]):
         return JsonResponse({'error': 'Missing coordinates'}, status=400)
     urls = [
-        "http://192.168.1.107:3095/route",  # Local
-        "https://valhalla.openstreetmap.de/route"  # Public fallback
+        "http://192.168.1.110:3095/route",  # Local
+        "https://valhalla1.openstreetmap.de/route"  # Public fallback
     ]
     payload = {
         "locations": [
