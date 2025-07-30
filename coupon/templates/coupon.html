@@ -28,7 +28,7 @@
               Coupon History
             </button>
             <button class="tab-btn-adv text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
-              data-tab="saved-coupon">
+              data-tab="saved-coupon-history">
               Saved Coupon
             </button>
           </div>
@@ -413,6 +413,12 @@
 
         <!-- Platform bill Popup -->
         {% include "platform-bill.html" %}
+
+        <!-- View All coupon history Popup -->
+        {% include "view-coupon-history.html" %}
+
+        <!-- View All saved coupon history Popup -->
+        {% include "view-saved-history.html" %}
 
         <div class="fixed bottom-6 right-8 z-50">
           <button class="chatTrigger cursor-pointer w-16 h-16 bg-living-coral text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform">

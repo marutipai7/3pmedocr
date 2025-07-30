@@ -12,7 +12,7 @@
     </div>
   </div>
   <!-- Already Account link -->
-  <div class="absolute right-0 top-3">
+  <div class="absolute right-0 top-3 z-20">
     <a href="{% url 'login' %}" class="text-primary-color text-xs pr-10">Already have an account?</a>
   </div>
   <!-- Main content -->
@@ -72,19 +72,15 @@
               <div class="dropdown-option absolute left-0 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-full mt-0.5 z-20 max-h-44 overflow-y-auto scroll">
                 <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
                   <label for="bingo" class="flex-1">BINGO</label>
-                  <input type="checkbox" id="bingo" name="ngo_services[]" value="BINGO" class="mr-2">
                 </div>
                 <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
                   <label for="ingo" class="flex-1">INGO</label>
-                  <input type="checkbox" id="ingo" name="ngo_services[]" value="INGO" class="mr-2">
                 </div>
                 <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
                   <label for="engo" class="flex-1">ENGO</label>
-                  <input type="checkbox" id="engo" name="ngo_services[]" value="ENGO" class="mr-2">
                 </div>
                 <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
                   <label for="etc" class="flex-1">Etc.</label>
-                  <input type="checkbox" id="etc" name="ngo_services[]" value="Etc." class="mr-2">
                 </div>
               </div>
             </div>
@@ -114,12 +110,16 @@
             <div class="upload-section relative w-full">
               <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
                 NGO Registration Number & Document
-              </label>
-              <div class="flex items-center w-full mt-2">
+              </label>  
+              <div class="flex items-center w-full gap-2 mt-2">
                 <input type="text" name="ngo_registration_number" placeholder="U85110MH2022PTC123456"
                   class="flex-1 border border-primary-color rounded-md outline-none text-sm px-4 py-4" />
-                <div class="uploadTrigger flex items-center justify-center cursor-pointer ml-2 border-dashed border-2 border-primary-color rounded-md p-4">
-                  <span class="material-symbols-outlined text-primary-color text-2xl">upload</span>
+                <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
+                  <span class="material-symbols-outlined  text-dark-blue ">close</span>
+                </div> 
+                <div class="uploadTrigger h-14 w-18 flex flex-col items-center justify-center cursor-pointer border-dashed border-2 border-primary-color rounded-md">
+                  <span class="material-symbols-outlined text-primary-color !text-2xl upload-icon">upload</span>
+                  <span class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
                 </div>
                 <input type="file" name="ngo_registration_doc" accept=".pdf,.jpg,.jpeg,.png" class="uploadInput hidden" />
               </div>
@@ -129,11 +129,15 @@
               <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
                 PAN Number & Document
               </label>
-              <div class="flex items-center w-full mt-2">
+              <div class="flex items-center w-full gap-2 mt-2">
                 <input type="text" name="pan_number" placeholder="AABCM1234F"
                   class="flex-1 border border-primary-color rounded-md outline-none text-sm px-4 py-4" />
-                <div class="uploadTrigger flex items-center justify-center cursor-pointer ml-2 border-dashed border-2 border-primary-color rounded-md p-4">
-                  <span class="material-symbols-outlined text-primary-color text-2xl">upload</span>
+                <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
+                  <span class="material-symbols-outlined  text-dark-blue ">close</span>
+                </div> 
+                <div class="uploadTrigger h-14 w-18 flex flex-col items-center justify-center cursor-pointer border-dashed border-2 border-primary-color rounded-md">
+                  <span class="material-symbols-outlined text-primary-color !text-2xl upload-icon">upload</span>
+                  <span class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
                 </div>
                 <input type="file" name="pan_doc" accept=".pdf,.jpg,.jpeg,.png" class="uploadInput hidden" />
               </div>
@@ -143,11 +147,15 @@
               <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
                 12A Document Number & Document
               </label>
-              <div class="flex items-center w-full mt-2">
+              <div class="flex items-center w-full gap-2 mt-2">
                 <input type="text" name="doc_12a_number" placeholder="MH/C/2022/123456"
                   class="flex-1 border border-primary-color rounded-md outline-none text-sm px-4 py-4" />
-                <div class="uploadTrigger flex items-center justify-center cursor-pointer ml-2 border-dashed border-2 border-primary-color rounded-md p-4">
-                  <span class="material-symbols-outlined text-primary-color text-2xl">upload</span>
+                <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
+                  <span class="material-symbols-outlined  text-dark-blue ">close</span>
+                </div> 
+                <div class="uploadTrigger h-14 w-18 flex flex-col items-center justify-center cursor-pointer border-dashed border-2 border-primary-color rounded-md">
+                  <span class="material-symbols-outlined text-primary-color !text-2xl upload-icon">upload</span>
+                  <span class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
                 </div>
                 <input type="file" name="doc_12a" accept=".pdf,.jpg,.jpeg,.png" class="uploadInput hidden" />
               </div>
@@ -157,11 +165,15 @@
               <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
                 Brand Name & Image
               </label>
-              <div class="flex items-center w-full mt-2">
+              <div class="flex items-center w-full gap-2 mt-2">
                 <input type="text" placeholder="brand.png"
                   class="flex-1 border border-primary-color rounded-md outline-none text-sm px-4 py-4" readonly />
-                <div class="uploadTrigger flex items-center justify-center cursor-pointer ml-2 border-dashed border-2 border-primary-color rounded-md p-4">
-                  <span class="material-symbols-outlined text-primary-color text-2xl">upload</span>
+                <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
+                  <span class="material-symbols-outlined  text-dark-blue ">close</span>
+                </div> 
+                <div class="uploadTrigger h-14 w-18 flex flex-col items-center justify-center cursor-pointer border-dashed border-2 border-primary-color rounded-md">
+                  <span class="material-symbols-outlined text-primary-color !text-2xl upload-icon">upload</span>
+                  <span class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
                 </div>
                 <input type="file" name="brand_image" accept=".jpg,.jpeg,.png" class="uploadInput hidden" />
               </div>
@@ -208,11 +220,15 @@
               <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
                 GST Number & Document
               </label>
-              <div class="flex items-center w-full mt-2">
+              <div class="flex items-center w-full gap-2 mt-2">
                 <input type="text" name="gst_number" placeholder="27AABCM1234F1Z5"
                   class="flex-1 border border-primary-color rounded-md outline-none text-sm px-4 py-4" />
-                <div class="uploadTrigger flex items-center justify-center cursor-pointer ml-2 border-dashed border-2 border-primary-color rounded-md p-4">
-                  <span class="material-symbols-outlined text-primary-color text-2xl">upload</span>
+                <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
+                  <span class="material-symbols-outlined  text-dark-blue ">close</span>
+                </div> 
+                <div class="uploadTrigger h-14 w-18 flex flex-col items-center justify-center cursor-pointer border-dashed border-2 border-primary-color rounded-md">
+                  <span class="material-symbols-outlined text-primary-color !text-2xl upload-icon">upload</span>
+                  <span class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
                 </div>
                 <input type="file" name="gst_doc" accept=".pdf,.jpg,.jpeg,.png" class="uploadInput hidden" />
               </div>
@@ -222,11 +238,15 @@
               <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
                 TAN Number & Document
               </label>
-              <div class="flex items-center w-full mt-2">
+              <div class="flex items-center w-full gap-2 mt-2">
                 <input type="text" name="tan_number" placeholder="MUMA12345B"
                   class="flex-1 border border-primary-color rounded-md outline-none text-sm px-4 py-4" />
-                <div class="uploadTrigger flex items-center justify-center cursor-pointer ml-2 border-dashed border-2 border-primary-color rounded-md p-4">
-                  <span class="material-symbols-outlined text-primary-color text-2xl">upload</span>
+                <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
+                  <span class="material-symbols-outlined  text-dark-blue ">close</span>
+                </div> 
+                <div class="uploadTrigger h-14 w-18 flex flex-col items-center justify-center cursor-pointer border-dashed border-2 border-primary-color rounded-md">
+                  <span class="material-symbols-outlined text-primary-color !text-2xl upload-icon">upload</span>
+                  <span class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
                 </div>
                 <input type="file" name="tan_doc" accept=".pdf,.jpg,.jpeg,.png" class="uploadInput hidden" />
               </div>
@@ -236,11 +256,15 @@
               <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
                 Section 8 Number & Document
               </label>
-              <div class="flex items-center w-full mt-2">
+              <div class="flex items-center w-full gap-2 mt-2">
                 <input type="text" name="section8_number" placeholder="Section 8 Number"
                   class="flex-1 border border-primary-color rounded-md outline-none text-sm px-4 py-4" />
-                <div class="uploadTrigger flex items-center justify-center cursor-pointer ml-2 border-dashed border-2 border-primary-color rounded-md p-4">
-                  <span class="material-symbols-outlined text-primary-color text-2xl">upload</span>
+                <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
+                  <span class="material-symbols-outlined  text-dark-blue ">close</span>
+                </div> 
+                <div class="uploadTrigger h-14 w-18 flex flex-col items-center justify-center cursor-pointer border-dashed border-2 border-primary-color rounded-md">
+                  <span class="material-symbols-outlined text-primary-color !text-2xl upload-icon">upload</span>
+                  <span class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
                 </div>
                 <input type="file" name="section8_doc" accept=".pdf,.jpg,.jpeg,.png" class="uploadInput hidden" />
               </div>

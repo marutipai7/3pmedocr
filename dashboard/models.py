@@ -44,3 +44,11 @@ class TrendingCoupon(models.Model):
 
     def __str__(self):
         return self.title
+
+class CalendarEvent(models.Model):
+    name = models.CharField(max_length=255)
+    date = models.DateField()
+    time = models.TimeField()
+
+    def __str__(self):
+        return f"{self.name} on {self.date} at {self.time}"

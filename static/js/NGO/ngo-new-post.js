@@ -310,33 +310,31 @@ $(document).ready(function () {
                         var $input = $('[name="' + inputName + '"]');
                         var $errorTarget = $input;
 
-                        // Debug logging
-                        console.log('Missing field:', field, 'Mapped input name:', inputName, 'Input found:', $input.length);
+                        if (inputName === 'creatives') {
+                            $errorTarget = $('.upload-area');
+                            // Extra validation: show error if no file selected
+                            if (!$('[name="creatives[]"]')[0].files.length) {
+                                $errorTarget.after('<div class="field-error text-red-600 text-sm mt-1">Creative Upload is required.</div>');
+                            }
+                            return; // Skip rest for this field
+                        }
 
                         if ($input.length) {
                             if ($input.closest('.dropdown-wrapper').length) {
-                                // For dropdowns, always append after the closest .space-y-2 container
                                 var $container = $input.closest('.space-y-2');
-                                if ($container.length) {
-                                    $errorTarget = $container;
-                                } else {
-                                    $errorTarget = $input.closest('.dropdown-wrapper');
-                                }
+                                $errorTarget = $container.length ? $container : $input.closest('.dropdown-wrapper');
                             } else if ($input.closest('.calendar-wrapper').length) {
                                 $errorTarget = $input.closest('.calendar-wrapper');
-                            } else if (inputName === 'creatives') {
-                                $errorTarget = $('.upload-area');
+                            } else if (inputName === 'creatives[]') {
+                                $errorTarget = $('input[name="creatives[]"]').closest('.upload-area');
                             }
                         } else {
-                            // Fallback: try to find the .space-y-2 by label text
                             var $label = $("h1:contains('" + field + "')");
                             if ($label.length) {
                                 $errorTarget = $label.closest('.space-y-2');
                             }
                         }
-                        if ($errorTarget && $errorTarget.length) {
-                            $errorTarget.after('<div class="field-error text-red-600 text-sm mt-1">' + field + ' is required.</div>');
-                        }
+
                     });
                     // Optionally scroll to first error
                     var $firstError = $('.field-error').first();
@@ -372,43 +370,49 @@ $(document).ready(function () {
     });
 
     $('#new-post-form').on('submit', function (e) {
-      e.preventDefault(); // prevent default form submission
+        e.preventDefault();
 
-      let form = $(this);
-      let isValid = true;
-      let missingFields = [];
+        let form = $(this);
+        let isValid = true;
 
-      // 1. Check required input, textarea, select
-      form.find('input[required], select[required], textarea[required]').each(function () {
-          let input = $(this);
-          let value = input.val().trim();
-          
-          // If input is hidden (like hidden file input or custom dropdowns), skip
-          if (input.is(':hidden') && !input.hasClass('upload-input')) return;
+        // Clear previous error messages
+        form.find('.error-text').remove();
 
-          if (!value || value === 'Select') {
-              isValid = false;
-              missingFields.push(input.attr('name'));
-          }
-      });
+        // Check required inputs, textareas, and selects
+        form.find('input[required], select[required], textarea[required]').each(function () {
+            let input = $(this);
+            let value = input.val().trim();
 
-      // 2. Check creative file uploads (only if upload-input is visible)
-      let creativeInput = form.find('input.upload-input')[0];
-      if (creativeInput && creativeInput.files.length === 0) {
-          isValid = false;
-          missingFields.push('creatives[]');
-      }
+            // Skip hidden inputs except .upload-input
+            if (input.is(':hidden') && !input.hasClass('upload-input')) return;
 
-      // 3. Handle validation result
-      if (!isValid) {
-          console.warn("Missing required fields:", missingFields);
-          return;
-      }
+            if (!value || value === 'Select') {
+                isValid = false;
 
-      console.log("All validations passed.");
+                // Append error message
+                if (input.next('.error-text').length === 0) {
+                    input.after(`<small class="error-text text-danger">This field is required.</small>`);
+                }
+            }
+        });
 
-      // You can now proceed to send the data via AJAX here...
-      let formData = new FormData(this);
+        // Check if creatives[] files are uploaded
+        let creativeInput = form.find('input.upload-input')[0];
+        if (creativeInput && creativeInput.files.length === 0) {
+            isValid = false;
+
+            // Append error message
+            if ($(creativeInput).next('.error-text').length === 0) {
+                $(creativeInput).after(`<small class="error-text text-danger">Please upload at least one file.</small>`);
+            }
+        }
+
+        if (!isValid) {
+            return;
+        }
+
+        // Submit via AJAX
+        let formData = new FormData(this);
 
         $.ajax({
             url: 'post_save/',
@@ -419,7 +423,7 @@ $(document).ready(function () {
             success: function (res) {
                 if (res.success) {
                     toastr.success("Post created successfully!" + res.message);
-                    window.location.href = "/posts/";  // Change to your actual posts page
+                    window.location.href = "/posts/";
                 } else {
                     toastr.error("Unexpected error." + res.message || '');
                 }
@@ -429,7 +433,30 @@ $(document).ready(function () {
                 toastr.error("Error: " + (xhr.responseJSON?.error || "Unknown error"));
             }
         });
-  });
+    });
+
+    $(document).on("click", '#clear-new-form', function(){
+        const form = $('#new-post-form');
+
+        // Reset standard inputs, textareas, selects
+        form.find('input:not([type=button],[type=submit],[type=reset]), textarea, select').val('');
+
+        // Uncheck checkboxes & radio buttons
+        form.find('input[type=checkbox], input[type=radio]').prop('checked', false);
+
+        // Reset file inputs manually (and clear preview if present)
+        form.find('input[type=file]').each(function () {
+            $(this).val('');
+            $(this).siblings('.upload-preview').empty(); // if you use preview containers
+        });
+
+        // Reset select to default (if applicable)
+        form.find('select').prop('selectedIndex', 0);
+
+        // Remove any error text
+        form.find('.error-text').remove();
+    });
+
 
 
 
@@ -607,4 +634,143 @@ $(document).ready(function () {
             }
         });
     });
+
+    function loadPostHistory(page = 1,  $container = $('#postHistory')) {
+        const query = $container.find('input[name=history_query]').val();
+        const limit = $container.find('select[name=history_limit]').val();
+        const startDate = $container.data("start-date") || "";
+        const endDate = $container.data("end-date") || "";
+        // console.log('$container', $container); return;
+        const saved = $container.attr('data-div') == 'postHistory' ? 'false' : 'true';
+        
+
+        $.ajax({
+            url: "/posts/ajax/post-history/",
+            type: "GET",
+            data: {
+                query: query,
+                limit: limit,
+                page: page,
+                start_date: startDate,
+                end_date: endDate,
+                saved_only: saved,
+            },
+            success: function (response) {
+                // $('.postHistoryTable tbody').html(response.html);
+                $container.find('tbody').html(response.html);
+                renderPagination(response.current_page, response.total_pages, $container);
+            },
+            error: function () {
+                toastr.error("Failed to load post history.");
+            }
+        });
+    }
+
+    function renderPagination(current, total, $container = $('.postDiv')) {
+        let html = '';
+
+        // Previous button
+        if (current >= 1) {
+            html += `<button class="pagination-btn rounded-[8px] px-3 py-1 border" data-page="${current - 1}">Previous</button>`;
+        }
+
+        // Number buttons
+        for (let i = 1; i <= total; i++) {
+            html += `<button class="pagination-btn rounded-[8px] px-3 py-1 border ${i === current ? 'bg-violet-sky text-white' : ''}" data-page="${i}">${i}</button>`;
+        }
+
+        // Next button
+        if (current <= total) {
+            html += `<button class="pagination-btn rounded-[8px] px-3 py-1 border" data-page="${current + 1}">Next</button>`;
+        }
+        $container.find('#pagination-container').html(html);
+        // $('#pagination-container').html(html);
+    }
+
+    
+    $('[data-tab="post-history"], [data-tab="saved-post"]').on('click', function () {
+        const $clickedTab = $(this);
+
+        // Determine corresponding postDiv by tab name
+        const tab = $clickedTab.data('tab'); // "post-history"
+        let $container = null;
+
+        if (tab === 'post-history') {
+            $container = $('#postHistory');
+            loadPostHistory(1, $container);
+        } else if (tab === 'saved-post') {
+            $container = $('#postSaved');
+            loadPostHistory(1, $container);
+        }
+    });
+
+
+    // Real-time filter events
+   $(document).on('change', 'select[name="history_limit"]', function () {
+        const $container = $(this).closest('.postDiv');
+        loadPostHistory(1, $container);
+    });
+
+    $(document).on('click', '#history_query', function () {
+        const $container = $(this).closest('.postDiv');
+        loadPostHistory(1, $container);
+    });
+
+
+    // Pagination click
+    $(document).on('click', '.pagination-btn', function () {
+        const page = $(this).data('page');
+        const $container = $(this).closest('.postDiv');
+        loadPostHistory(page, $container);
+    });
+
+
+    $('.history_filter').on('submit', function (e) {
+        e.preventDefault(); // prevent default form submission
+        loadPostHistory(1);
+    });
+
+    function calculateDateRange(rangeLabel) {
+        const endDate = new Date();
+        let startDate = new Date();
+
+        switch (rangeLabel) {
+            case "1 Week":
+                startDate.setDate(endDate.getDate() - 7);
+                break;
+            case "1 Month":
+                startDate.setMonth(endDate.getMonth() - 1);
+                break;
+            case "1 Year":
+                startDate.setFullYear(endDate.getFullYear() - 1);
+                break;
+            default:
+                return { start: "", end: "" };
+        }
+
+        const formatDate = (d) => d.toISOString().split("T")[0];
+
+        return {
+            start: formatDate(startDate),
+            end: formatDate(endDate),
+        };
+    }
+
+    // Apply range filter when a predefined range is clicked
+    $(document).on("click", ".filterDateRange", function () {
+        const rangeLabel = $(this).data("range");
+        const { start, end } = calculateDateRange(rangeLabel);
+
+        const $tabDiv = $(this).closest(".postDiv");
+
+        $tabDiv.data("start-date", start);
+        $tabDiv.data("end-date", end);
+
+        loadPostHistory(1, $tabDiv);
+    });
+
+
+
+
+
 });

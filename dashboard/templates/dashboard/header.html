@@ -17,8 +17,17 @@
         </span>
       </button>
       <!-- Share Popup -->
-      <div id="shareModal" class="fixed inset-0 bg-semi-transparent-black hidden items-center justify-center z-50">
-        <!-- ... popup code stays unchanged ... -->
+       
+      <div id="shareModal" class="shareModal fixed inset-0 bg-semi-transparent-black hidden items-center justify-center z-50">
+         <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl relative">
+          <button onclick="closeShareModal()" class="absolute top-2 right-2 text-gray-500 hover:text-black">&times;</button>
+          <div id="postDetailContent">
+            <h2 id="modalNgoName" class="text-2xl font-bold mb-2"></h2>
+            <h3 id="modalHeader" class="text-xl font-semibold mb-2"></h3>
+            <p id="modalDescription" class="mb-4">Share Modal</p>
+            <a id="modalWebsite" href="#" target="_blank" class="text-blue-600 underline mb-4 block"></a>            
+          </div>
+        </div>
       </div>
       <!-- Icons -->
       <a href="{% url 'map_view' %}">
@@ -27,13 +36,21 @@
       <a href="{% url 'saved' %}">
         <img src="{% static 'images/star.svg' %}" alt="star" title="Saved" class="cursor-pointer" />
       </a>
-      <a href="">
+      <!-- <a href="">
         <img src="{% static 'images/cart.svg' %}" alt="cart" title="Cart" class="cursor-pointer" />
-      </a>
+      </a> -->
       <img src="{% static 'images/bell.svg' %}" alt="bell" title="Notifications" class="cursor-pointer" id="bell-icon" />
       <!-- Notification Dropdown -->
-      <div id="notificationDropdown" class="hidden absolute right-20 top-15 mt-2 bg-white shadow-lg rounded-md z-50 w-130 border border-violet-sky">
-        <!-- ... notification items unchanged ... -->
+      <div id="notificationDropdown" class="notificationDropdown hidden absolute right-20 top-15 mt-2 bg-white shadow-lg rounded-md z-50 w-130 border border-violet-sky">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl relative">
+          <button onclick="closeNotificationModal()" class="absolute top-2 right-2 text-gray-500 hover:text-black">&times;</button>
+          <div id="postDetailContent">
+            <h2 id="modalNgoName" class="text-2xl font-bold mb-2"></h2>
+            <h3 id="modalHeader" class="text-xl font-semibold mb-2"></h3>
+            <p id="modalDescription" class="mb-4">Notification </p>
+            <a id="modalWebsite" href="#" target="_blank" class="text-blue-600 underline mb-4 block"></a>            
+          </div>
+        </div>
       </div>
       <!-- User Dropdown -->
       <div class="relative inline-block">
@@ -42,15 +59,17 @@
         </button>
         <!-- Dropdown -->
         <div class="profile-dropdown">
+          <a href="/settings/">
           <div class="px-4 py-3 flex items-center space-x-3 cursor-pointer">
             <img src="{% static 'images/user.svg' %}" alt="User" loading="lazy" class="w-8 h-8 rounded-full" />
             <div>
               <p class="text-sm font-normal">
-                {{ user.name|default:"User Name" }}
+                {{ user_display_name|default:"User Name" }}
               </p>
             </div>
           </div>
           <div>
+          </a>
             <a href="{% url 'logout' %}" class="px-4 py-3 text-sm hover:bg-violet-sky-opacity flex items-center space-x-2">
               <span class="material-symbols-outlined"> logout </span>
               <span>Sign out</span>
@@ -83,7 +102,7 @@
             <img src="{% static 'images/user.svg' %}" alt="User" loading="lazy" class="w-8 h-8 rounded-full" />
             <div>
               <p class="text-sm font-normal">
-                {{ user.name|default:"User Name" }}
+                {{ user_display_name|default:"User Name" }}
 
               </p>
             </div>

@@ -114,7 +114,41 @@ $(document).ready(function () {
     //Permission Access
     $('.uploadTrigger').on('click', function () {
         if (confirm("This site wants to access your files to upload an image. Do you allow?")) {
-          $(this).closest('.upload-section').find('.uploadInput').trigger('click');
+            $(this).closest('.upload-section').find('.uploadInput').trigger('click');
         }
-      });
+    });
+
+    $('.uploadInput').on('change', function () {
+        const file = this.files[0];
+        if (!file) return;
+
+        const $section = $(this).closest('.upload-section');
+        const $trigger = $section.find('.uploadTrigger');
+        const $label = $trigger.find('.upload-label');
+        const $icon = $trigger.find('.upload-icon');
+            
+        $label.text(file.name);
+
+        $icon.text('imagesmode').removeClass('text-primary-color').addClass('text-bright-green');
+        
+        $section.find('.remove-file-btn').removeClass('hidden');
+        $('.remove-file-btn').on('click', function () {
+            const $wrapper = $(this).closest('.upload-section');
+            const $fileInput = $wrapper.find('.uploadInput');
+
+            
+            $fileInput.val('');
+
+            
+            $wrapper.find('.upload-label').text('');
+            $wrapper.find('.upload-icon')
+                .text('upload')
+                .removeClass('text-green-600')
+                .addClass('text-primary-color');
+
+            
+            $(this).addClass('hidden');
+        });
+    });
+
 });

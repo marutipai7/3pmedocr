@@ -1,7 +1,8 @@
 {% for post in post_history %}
 <tr class="border-b border-light-gray">
   <td class="px-4 py-4.5 text-center">{{ post.created_at|date:"d/m/y, H:i" }}</td>
-  <td class="px-4 py-4.5 text-center">{{ post.post_type }}</td>
+  <td class="px-4 py-4.5 text-center">{{ post.header }}</td>
+  <!-- <td class="px-4 py-4.5 text-center">{{ post.post_type }}</td> -->
   <td class="px-4 py-4.5 text-center">{{ post.views }}</td>
   <td class="px-4 py-4.5 text-center">₹{{ post.target_donation|floatformat:0 }}</td>
   <td class="px-4 py-4.5 text-center">₹{{ post.donation_received|floatformat:0 }}</td>
@@ -19,9 +20,9 @@
   </td>
   <td class="px-4 py-4.5">
     <div class="flex items-center justify-center gap-6">
-      <span class="material-symbols-outlined bookmark-fill cursor-pointer bookmark-toggle{% if post.saved %} material-filled text-violet-sky{% endif %}"
+      <span class="material-symbols-outlined bookmark-fill cursor-pointer save-post-btn bookmark-toggle{% if post.saved %} material-filled text-violet-sky{% endif %}"
             data-post-id="{{ post.id }}"
-            data-saved="{{ post.saved|yesno:'true,false' }}">
+            data-saved="{{ post.saved|yesno:'true,false' }}"> 
         bookmark
       </span>
       <span class="material-symbols-outlined cursor-pointer preview-btn"

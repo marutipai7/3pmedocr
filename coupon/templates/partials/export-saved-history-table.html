@@ -1,0 +1,34 @@
+{% for coupon in saved_coupon_history %}
+                    <tr>
+                      <td class="px-4 py-4.5 text-center">
+                        {{ coupon.created_at|date:"d/m/y,H:i" }}
+                      </td>
+                      <td class="px-4 py-4.5 text-center">
+                        {{ coupon.category }}
+                      </td>
+                      <td class="px-4 py-4.5 text-center">
+                        {{ coupon.brand_name }}
+                      </td>
+                      <td class="px-4 py-4.5 text-center">
+                        {{ coupon.max_redemptions }}
+                      </td>
+                      <td class="px-4 py-4.5 text-center">
+                        {{ coupon.redeemed_count|default:"0" }}
+                      </td>
+                      <td class="px-4 py-4.5 text-center">
+                        {{ coupon.max_redemptions|add:"-"|add:coupon.redeemed_count|default:coupon.max_redemptions }}
+                      </td>
+                      <td class="px-4 py-4.5 text-center">
+                        {{ coupon.validity|date:"dM Y" }}
+                      </td>
+                      <td class="px-6 py-4.5 text-center">
+                        <div class="{% if coupon.validity > today %}bg-mint-cream text-green{% else %}bg-soft-pink text-strong-red{% endif %} py-2 rounded-md border-none px-8">
+                          {% if coupon.validity > today %}Active{% else %}Expired{% endif %}
+                        </div>
+                      </td>
+                    </tr>
+                  {% empty %}
+                    <tr>
+                      <td colspan="9" class="text-center py-4">No saved coupons found.</td>
+                    </tr>
+                  {% endfor %}

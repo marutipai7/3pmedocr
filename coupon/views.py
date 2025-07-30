@@ -331,6 +331,7 @@ def get_coupon_history(request):
         "html": html,
         "current_page": page_obj.number,
         "total_pages": paginator.num_pages,
+        "total_items": paginator.count,  # Add this
     })
 
 @dashboard_login_required
@@ -366,9 +367,6 @@ def get_saved_coupon_history(request):
             filters &= Q(created_at__range=(start_date, end_date))
         except Exception:
             pass  # Invalid format, ignore or handle as needed
-    print(f"Now: {now}")
-    print(f"Date range: {date_range}")
-    print(f"filters: {filters}")
     saved_coupons = Coupon.objects.filter(filters, saved=True).order_by('-created_at')
     paginator = Paginator(saved_coupons, limit)
     page_obj = paginator.get_page(page)
@@ -406,3 +404,37 @@ def get_context_data(user, form_data=None, missing_fields=None):
         context['missing_fields'] = missing_fields
         
     return context
+
+@dashboard_login_required
+@require_GET
+def export_coupon_history(request):
+    user = request.user_obj
+    # date_range = request.GET.get('daterange', '').strip().lower()
+    filters = Q(advertiser=user)
+    coupons = Coupon.objects.filter(filters).order_by('-created_at')
+    html = render_to_string("partials/export-history-table.html", {
+        "coupon_history": coupons,
+        'today': date.today(),
+    })
+
+    return JsonResponse({
+        "html": html,
+        "total_items": coupons.count(),  # Add this
+    })
+
+@dashboard_login_required
+@require_GET
+def export_saved_coupon_history(request):
+    user = request.user_obj
+    # date_range = request.GET.get('daterange', '').strip().lower()
+    filters = Q(advertiser=user)
+    saved_coupons = Coupon.objects.filter(filters, saved=True).order_by('-created_at')
+    html = render_to_string("partials/export-saved-history-table.html", {
+        "saved_coupon_history": saved_coupons,
+        'today': date.today(),
+    })
+
+    return JsonResponse({
+        "html": html,
+        "total_items": saved_coupons.count(),  # Add this
+    })

@@ -79,21 +79,21 @@ def settings_page(request):
         "quite_mode_start_time": user.quite_mode_start_time,
         "quite_mode_end_time": user.quite_mode_end_time,
     }
-    try:
-        user_profile = UserProfile.objects.get(user=user)
-        context.update({
-            'name': user_profile.name,
-            'date_of_birth': user_profile.dob,
-            'gender': user_profile.gender,
-            'address': user_profile.address,
-            'city': user_profile.city,
-            'state': user_profile.state,
-            'country': user_profile.country,
-            'pincode': user_profile.pincode,
-            'referral_code': user_profile.referral_code if user_profile.referral_code else "",
-        })
-    except UserProfile.DoesNotExist:
-        pass
+    # try:
+    #     user_profile = UserProfile.objects.get(user=user)
+    #     context.update({
+    #         'name': user_profile.name,
+    #         'date_of_birth': user_profile.dob,
+    #         'gender': user_profile.gender,
+    #         'address': user_profile.address,
+    #         'city': user_profile.city,
+    #         'state': user_profile.state,
+    #         'country': user_profile.country,
+    #         'pincode': user_profile.pincode,
+    #         'referral_code': user_profile.referral_code if user_profile.referral_code else "",
+    #     })
+    # except UserProfile.DoesNotExist:
+    #     pass
 
     # Load profile-type-specific data (optional)
     if user.user_type == 'advertiser':
@@ -180,7 +180,7 @@ def settings_page(request):
             'contact_phone_number': contact_persons.phone_number,
             'contact_role': contact_persons.role,
         })
-        return render(request, 'settings/settings_page_client.html', context)
+        return render(request, 'settings/setting_page_client.html', context)
     elif user.user_type == 'ngo':
         profile = NGOProfile.objects.filter(user=user).first()
         profile_id = profile.id
@@ -257,19 +257,19 @@ def get_base_context(user):
         'quite_mode_end_time': user.quite_mode_end_time,
     }
 
-    user_profile = UserProfile.objects.filter(user=user).first()
-    if user_profile:
-        context.update({
-            'name': user_profile.name,
-            'date_of_birth': user_profile.dob,
-            'gender': user_profile.gender,
-            'address': user_profile.address,
-            'city': user_profile.city,
-            'state': user_profile.state,
-            'country': user_profile.country,
-            'pincode': user_profile.pincode,
-            'referral_code': user_profile.referral_code or '',
-        })
+    # user_profile = UserProfile.objects.filter(user=user).first()
+    # if user_profile:
+    #     context.update({
+    #         'name': user_profile.name,
+    #         'date_of_birth': user_profile.dob,
+    #         'gender': user_profile.gender,
+    #         'address': user_profile.address,
+    #         'city': user_profile.city,
+    #         'state': user_profile.state,
+    #         'country': user_profile.country,
+    #         'pincode': user_profile.pincode,
+    #         'referral_code': user_profile.referral_code or '',
+    #     })
 
     return context
 
@@ -689,27 +689,33 @@ def clear_saved_data(request):
 @dashboard_login_required
 @require_POST
 def change_password(request):
-    user = request.user_obj
-    current_password = request.POST.get('current_password')
-    new_password = request.POST.get('new_password')
-    confirm_password = request.POST.get('confirm_password')
-    errors={}
-    print(f"Current Password: {current_password}, New Password: {new_password}, Confirm Password: {confirm_password}")
-
-    if not check_password(current_password, user.password):
-        errors["current_password"] = "Current password is incorrect."
-    if not current_password or len(current_password) < 8:
-        errors["new_password"] = "Password is required (min 8 chars)."
-    elif new_password != confirm_password:
-        errors["confirm_password"] = "Passwords do not match."
+    try:
+        user = request.user_obj
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        errors={}
+        error=''
+        print(f"Current Password: {current_password}, New Password: {new_password}, Confirm Password: {confirm_password}")
+        if not current_password or len(current_password) <= 8:
+            errors["new_password"] = "Password is required (min 8 chars)."
+            error = "Password is required (min 8 chars)."
+        if not check_password(current_password, user.password):
+            errors["current_password"] = "Current password is incorrect."
+            error = "Current password is incorrect."
+        elif new_password != confirm_password:
+            errors["confirm_password"] = "Passwords do not match."
+            error = "Passwords do not match."
+            
+        if errors:
+            # print("Validation errors:", errors)
+            return JsonResponse({"success": False, "errors": errors, "message": error})
         
-    if errors:
-        print("Validation errors:", errors)
-        return JsonResponse({"success": False, "errors": errors}, status=400)
-    
-    user.password = make_password(new_password)
-    user.save()
-    return JsonResponse({'success': 'Password changed successfully'})
+        user.password = make_password(new_password)
+        user.save()
+        return JsonResponse({'success': True, 'message': 'Password changed successfully', "errors" : ''})
+    except Exception as e:
+        return JsonResponse({'success': False, 'errors': f'Error updating password: {str(e)}', "message" : ''})
 
 @require_POST
 @dashboard_login_required

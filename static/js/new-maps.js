@@ -80,7 +80,7 @@ function showLocation(position) {
     let accuracy = position.coords.accuracy || 5000;
 
     map = L.map("map").setView([currentLat, currentLon], 15);
-    L.tileLayer("http://122.170.111.109:3090/tile/{z}/{x}/{y}.png", {
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         crossOrigin: true,
         maxZoom: 19,
         minZoom: 7,

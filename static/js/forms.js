@@ -189,7 +189,8 @@ $(".tab-btn").on("click", function () {
   });
 
   // Form submit for password change
-  $("#editChangePassword").on("submit", function (e) {
+  // $("#editChangePassword").on("submit", function (e) {
+  $(document).off("submit").on("submit", "#editChangePassword", function (e) {
     e.preventDefault();
 
     // Clear previous errors
@@ -201,7 +202,8 @@ $(".tab-btn").on("click", function () {
     const currentPassword = $(this).find("input:eq(1)").val().trim();
     const newPassword = $(this).find("input:eq(2)").val().trim();
     const confirmPassword = $(this).find("input:eq(3)").val().trim();
-    console.log(`Current Password: ${currentPassword}, New Password: ${newPassword}, Confirm Password: ${confirmPassword}`);
+    
+
     // Validation
     if (currentPassword === "") {
       $(this)
@@ -243,37 +245,36 @@ $(".tab-btn").on("click", function () {
 
     // Here you would typically make an AJAX call to update the password
     // Example:
-    /*
+   
+    const csrftoken = getCookie('csrftoken');  // make sure getCookie is defined
     $.ajax({
-      url: '/change-password',
+      url: '/settings/change-password/',
       method: 'POST',
+      headers: {
+            'X-CSRFToken': csrftoken
+        },
       data: {
-        currentPassword: currentPassword,
-        newPassword: newPassword
+        current_password: currentPassword,
+        new_password: newPassword,
+        confirm_password:confirmPassword,
       },
       success: function(response) {
-        // Hide form after successful submission
-        $(".toggle-section").addClass("hidden");
-        $(".account-detail").show();
-        $(".tabs").show();
-        
-        // Show success message
-        alert("Password changed successfully");
+        if(response.success == true){
+          // Hide form after successful submission
+          $(".toggle-section").addClass("hidden");
+          $(".account-detail").show();
+          $(".tabs").show();
+          toastr.success(response.message);
+        } else {
+          toastr.error(response.message);
+        }
       },
       error: function(xhr) {
+        console.log(xhr.responseText);
         // Show error message
-        alert("Error changing password: " + xhr.responseText);
+        toastr.error("Error changing password: " + xhr.responseText);
       }
     });
-    */
-
-    // For demo purposes, we'll just hide the form
-    $(".toggle-section").addClass("hidden");
-    $(".account-detail").show();
-    $(".tabs").show();
-
-    // Show success message
-    window.showToaster('success', 'Password changed successfully!');
   });
 
   // Input validation clearing for password fields
@@ -337,8 +338,10 @@ $(".tab-btn").on("click", function () {
   });
 
   $('.submitBtn').on("click",function(){
-    $('#deleteAccountPopup').addClass('hidden');
-    $('#successPopup').removeClass('hidden');
+    // $('#deleteAccountPopup').addClass('hidden');
+    // $('#successPopup').removeClass('hidden');
+    $('.reasonDiv').addClass('hidden');
+    $('.confirmationDeleteAccountPopup').removeClass('hidden');
   })
 
 
@@ -386,9 +389,10 @@ function openPopup(id) {
 }
 
 function closePopup(id) {
-  document.getElementById(id).classList.add("hidden");
-  document.body.style.overflow = "auto";
+  $("#" + id).addClass("hidden");
+  $("body").css("overflow", "auto");
 }
+
 
 function getCookie(name) {
         let cookieValue = null;
@@ -429,12 +433,14 @@ function deleteAccount() {
     })
     .then(res => {
         if (res.ok) {
+          toastr.success('Account deleted!');
+          setTimeout(() => {
             window.location.href = '/';
+          }, 1000);
         } else {
-            alert("Failed to delete account");
+          toastr.error("Failed to delete account");
         }
     });
-    window.showToaster('success', 'Account deleted!');
     closePopup("deleteAccountPopup");
 }
 
@@ -448,16 +454,15 @@ function clearSearchHistory() {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrftoken
         },
-        body: JSON.stringify({ reason })
+        // body: JSON.stringify({ reason })
     })
     .then(res => {
         if (res.ok) {
-            console.log("Search history cleared successfully");
+            toastr.success("Search history cleared successfully");
         } else {
-            alert("Failed to delete history.");
+            toastr.error("Failed to delete history.");
         }
     });
-  window.showToaster('success', 'Search history cleared!');
   closePopup("searchHistoryPopup");
 }
 
@@ -471,15 +476,15 @@ function clearSavedData() {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrftoken
         },
-        body: JSON.stringify({ reason })
+        // body: JSON.stringify({ reason })
     })
     .then(res => {
         if (res.ok) {
-            console.log("Saved data cleared successfully");
+            toastr.success("Saved data cleared successfully");
         } else {
-            alert("Failed to delete saved data.");
+            toastr.error("Failed to delete saved data.");
         }
     });
-  window.showToaster('success', 'Saved data cleared!');
+  // toastr.success('Saved data cleared!');
   closePopup("savedDataPopup");
 }

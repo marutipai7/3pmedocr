@@ -834,11 +834,10 @@ function addStatus(container, statusText, timestamp) {
   `);
 }
 
-//----------------------- new code via laxmi -------------------------------------------
+//----------------------- new code by laxmi -------------------------------------------
 //get issue option in the dropdown
 document.getElementById("issue_type").addEventListener("change", function () {
   const issueTypeId = this.value;
-
   if (issueTypeId) {
     fetch(`${getIssueOptionLists}?issue_type_id=${issueTypeId}`)
       .then((response) => response.json())
@@ -1080,6 +1079,7 @@ function renderPagination(data = allTickets) {
   };
 }
 
+//previous pagination
 document.querySelector(".prevPage").addEventListener("click", () => {
   if (currentPage > 1) {
     currentPage--;
@@ -1088,6 +1088,7 @@ document.querySelector(".prevPage").addEventListener("click", () => {
   }
 });
 
+//next pagination
 document.querySelector(".nextPage").addEventListener("click", () => {
   const totalPages = Math.ceil(allTickets.length / itemsPerPage);
   if (currentPage < totalPages) {
@@ -1298,9 +1299,9 @@ function filterTickets(fromDate, toDate) {
   })
     .then((res) => res.json())
     .then((data) => {
-      allTickets = data.tickets; // ⬅️ Update the global variable
-      currentPage = 1; // ⬅️ Reset to page 1
-      renderTickets(allTickets); // ⬅️ Render from filtered data
+      allTickets = data.tickets; // Update the global variable
+      currentPage = 1; // Reset to page 1
+      renderTickets(allTickets); // Render from filtered data
       renderPagination(allTickets.length);
       // renderTickets(data.tickets); // Use your existing renderTickets()
     })

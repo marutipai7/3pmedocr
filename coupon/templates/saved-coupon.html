@@ -1,6 +1,6 @@
 {% load static %}
 
-<div class="saved-coupon tab-content hidden py-6 space-y-6">
+<div class="saved-coupon-history tab-content hidden py-6 space-y-6">
             <!-- Header -->
             <div class="px-2 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
               <p class="text-sm font-semibold whitespace-nowrap">Saved Coupon</p>
@@ -22,41 +22,45 @@
                   Filter
                 </button>
                   <div
-                    class="filterDropdowns absolute right-0 top-10 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] rounded-md w-44 z-10"
+                    class="filterDropdown hidden absolute right-0 top-10 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] rounded-md w-44 z-10"
                   >
                     <div
                       class="p-2 pl-4 flex justify-between items-center hover:bg-living-coral hover:text-white rounded"
                     >
-                      Custom date<span class="material-symbols-outlined"
+                      Custom date<span class="material-symbols-outlined calendar-icon"
                         >calendar_today
                       </span>
                     </div>
-                    <div
-                      class="coupondaterange p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
+                    <div 
+                      class="savedcoupondaterange p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
                       data-range="1 Week"
                     >
                       1 Week
                     </div>
-                    <div
-                      class="coupondaterange p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
+                    <div 
+                      class="savedcoupondaterange p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
                       data-range="1 Month"
                     >
                       1 Month
                     </div>
-                    <div
-                      class="coupondaterange p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
+                    <div 
+                      class="savedcoupondaterange p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
                       data-range="1 Year"
                     >
                       1 Year
                     </div>
                   </div>
+                  <div
+                      class="datepicker-container hidden px-4 pb-3 absolute top-full right-0 lg:right-[180px] z-50 bg-white shadow-md rounded">
+                      <div class="datepicker-inline"></div>
+                    </div>
                 </div>
                 <button
-                  class="export-btn w-full max-w-[100px] h-[40px] border border-living-coral rounded-[10px] text-living-coral flex items-center justify-center gap-1 cursor-pointer group hover:bg-living-coral hover:text-white">
+                  class="view-saved-history-btn w-full max-w-[100px] h-[40px] border border-living-coral rounded-[10px] text-living-coral flex items-center justify-center gap-1 cursor-pointer group hover:bg-living-coral hover:text-white">
                   <span class="material-symbols-outlined text-living-coral group-hover:text-white">
                     file_export
                   </span>
-                  <span class="hidden sm:block">View</span>
+                  <span class="hidden sm:block">Export</span>
                 </button>
               </div>
             </div>
