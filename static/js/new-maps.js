@@ -73,6 +73,8 @@ if (navigator.geolocation) {
     window.showToaster('error', 'Geolocation not supported by your browser.');
 }
 
+tile_url = "http://192.168.1.110:4090/styles/test-style/256/{z}/{x}/{y}.png"
+
 // Initialize map with user's location
 function showLocation(position) {
     currentLat = position.coords.latitude;
@@ -80,7 +82,7 @@ function showLocation(position) {
     let accuracy = position.coords.accuracy || 5000;
 
     map = L.map("map").setView([currentLat, currentLon], 15);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    L.tileLayer(tile_url, {
         crossOrigin: true,
         maxZoom: 19,
         minZoom: 7,

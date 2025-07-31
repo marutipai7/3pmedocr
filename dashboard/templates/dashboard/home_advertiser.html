@@ -4,6 +4,7 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+{% csrf_token %}
       <!-- Main Content -->
       <div class=" flex-1 flex flex-col bg-slate-white gap-8 p-6 overflow-y-auto scroll relative transition-all duration-300 main-content">
         <div class="show-sidebar-toggle hidden fixed top-24 left-0 z-50 h-10 w-10 bg-transparent-living-coral items-center justify-center rounded-r-md cursor-pointer">
@@ -28,7 +29,7 @@
               </div>
 
           <div class="mt-4">
-            <h2 class="text-lg font-semibold">XTZ Advertising Pvt Ltd</h2>
+            <h2 class="text-lg font-semibold">{{ user_display_name }}</h2>
 
           </div>
           <div class="mt-6">
@@ -37,7 +38,7 @@
           </div>
           <div class="mt-4">
             <span class="text-base font-normal">
-              XTZ Advertising Pvt Ltd is a leading advertising agency specializing in promoting medicine coupons and
+              {{ advertiser_profile.brand_description }} XTZ Advertising Pvt Ltd is a leading advertising agency specializing in promoting medicine coupons and
               healthcare discounts. We bridge the gap between pharmaceutical brands and consumers by delivering
               attractive, easy-to-access offers. Our goal is to make healthcare more affordable while boosting brand
               visibility for our partners. With innovative strategies and a customer-first approach, we help millions
@@ -224,21 +225,22 @@
                 <div id="calendarDays" class="grid grid-cols-7  gap-2 text-center text-jet-black mx-4"></div>
                
                 <div class="m-1 flex flex-col gap-3"></div>
-                <div class=" flex flex-wrap gap-6 text-sm px-4">
-                  <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 bg-slate-blue rounded-full"></span> PF
-                    Deposit
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 bg-strong-red rounded-full"></span> GST
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 bg-green rounded-full"></span> ESI
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 bg-vivid-orange rounded-full"></span>
-                    INCOME TAX
-                  </div>
+                <div class="flex flex-wrap gap-4 text-sm px-4">
+                  {% if upcoming_events %}
+                    <div class="w-full">
+                      <h4 class="font-semibold text-gray-700 mb-2">Upcoming Events</h4>
+                    </div>
+                    {% for event in upcoming_events %}
+                      <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full" style="background-color: {{ event.get_color_hex }};"></span>
+                        <span class="text-gray-700">{{ event.name }}</span>
+                      </div>
+                    {% endfor %}
+                  {% else %}
+                    <div class="flex items-center gap-2">
+                      <span class="text-gray-500">No upcoming events</span>
+                    </div>
+                  {% endif %}
                 </div>
                  <!--Add Event Popup-->
                 <div class="event-calendar  flex justify-center items-center  hidden z-50 absolute inset-0" id="eventCal">
