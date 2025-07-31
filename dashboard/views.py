@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET
 from django.db.models.functions import TruncDate
-
+import random
 @dashboard_login_required
 def dashboard_home(request):
     user = request.user_obj
@@ -65,13 +65,21 @@ def dashboard_home(request):
             performances = CouponPerformance.objects.order_by('date')[:8]
             events = CalendarEvent.objects.all().order_by('date')
             
+            # Get upcoming events for the user (next 5 events)
+            from datetime import date
+            upcoming_events = CalendarEvent.objects.filter(
+                user=user,
+                date__gte=date.today(),
+                is_active=True
+            ).order_by('date', 'time')[:5]
+            
             context.update({
                 'advertiser_profile': advertiser_profile,
                 'user_display_name': advertiser_profile.company_name,
                 'performance': performance,
                 'trending_coupons': trending_coupons,
                 'events': events,
-                
+                'upcoming_events': upcoming_events,
             })
 
             print("DEBUG PERFORMANCE:", performance)
@@ -96,8 +104,10 @@ def get_coupon_chart_data(request):
     }
     return JsonResponse(data)
 
-# @csrf_exempt
+@csrf_exempt
+@dashboard_login_required
 def save_event(request):
+    user = request.user_obj
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -105,11 +115,39 @@ def save_event(request):
             date = data.get('date')
             time = data.get('time')
 
+            # Get all future events for this user to avoid color conflicts
+            event_date = datetime.strptime(date, '%Y-%m-%d').date()
+            future_events = CalendarEvent.objects.filter(
+                user=user,
+                date__gte=event_date,
+                is_active=True
+            ).exclude(id=None)  # Exclude current event if it exists
+            
+            # Get colors already used for future events
+            used_colors = set(future_events.values_list('color', flat=True))
+            
+            # Available colors (only dark, visible colors)
+            all_colors = [
+                'bg-slate-blue', 'bg-strong-red', 'bg-green', 'bg-vivid-orange',
+                'bg-purple', 'bg-pink', 'bg-teal', 'bg-dark-blue', 'bg-dark-green', 'bg-dark-purple'
+            ]
+            
+            # Filter out used colors
+            available_colors = [color for color in all_colors if color not in used_colors]
+            
+            # If no colors available, use any color (fallback)
+            if not available_colors:
+                available_colors = all_colors
+            
+            random_color = random.choice(available_colors)
+
             if name and date and time:
                 CalendarEvent.objects.create(
+                    user=user,
                     name=name,
                     date=datetime.strptime(date, '%Y-%m-%d').date(),
-                    time=datetime.strptime(time, '%H:%M').time()
+                    time=datetime.strptime(time, '%H:%M').time(),
+                    color=random_color
                 )
                 return JsonResponse({'success': True})
             else:
@@ -119,10 +157,12 @@ def save_event(request):
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
-
+@require_GET
+@dashboard_login_required
 def get_events(request):
+    user = request.user_obj
     if request.method == 'GET':
-        events = CalendarEvent.objects.all()
+        events = CalendarEvent.objects.filter(user=user)
         event_data = {}
         for event in events:
             date_str = event.date.strftime('%Y-%m-%d')
@@ -130,7 +170,8 @@ def get_events(request):
                 event_data[date_str] = []
             event_data[date_str].append({
                 'name': event.name,
-                'time': event.time.strftime('%H:%M')
+                'time': event.time.strftime('%H:%M'),
+                'color': event.color
             })
 
         return JsonResponse({'events': event_data})

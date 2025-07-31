@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
+from registration.models import User
 
 USER_TYPE_CHOICES = [
     ('advertiser', 'Advertiser'),
@@ -46,9 +47,41 @@ class TrendingCoupon(models.Model):
         return self.title
 
 class CalendarEvent(models.Model):
+    COLOR_CHOICES = [
+        ('bg-slate-blue', 'Blue'),
+        ('bg-strong-red', 'Red'),
+        ('bg-green', 'Green'),
+        ('bg-vivid-orange', 'Orange'),
+        ('bg-purple', 'Purple'),
+        ('bg-pink', 'Pink'),
+        ('bg-teal', 'Teal'),
+        ('bg-dark-blue', 'Dark Blue'),
+        ('bg-dark-green', 'Dark Green'),
+        ('bg-dark-purple', 'Dark Purple'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     date = models.DateField()
     time = models.TimeField()
+    color = models.CharField(max_length=20, choices=COLOR_CHOICES, default='bg-slate-blue')
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.name} on {self.date} at {self.time}"
+    
+    def get_color_hex(self):
+        """Return the hex color value for the event's color class"""
+        color_map = {
+            'bg-slate-blue': '#64748b',
+            'bg-strong-red': '#dc2626',
+            'bg-green': '#16a34a',
+            'bg-vivid-orange': '#ea580c',
+            'bg-purple': '#9333ea',
+            'bg-pink': '#ec4899',
+            'bg-teal': '#0d9488',
+            'bg-dark-blue': '#1e40af',
+            'bg-dark-green': '#15803d',
+            'bg-dark-purple': '#7c3aed',
+        }
+        return color_map.get(self.color, '#64748b')  # Default to slate-blue if not found

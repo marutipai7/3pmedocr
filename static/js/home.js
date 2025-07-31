@@ -389,22 +389,6 @@ $(document).ready(function () {
     ];
     const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-    // Example event data
-    const calendarEvents = [
-      { date: "2025-06-01", text: "PF Deposit", color: "bg-slate-blue" },
-      { date: "2025-06-15", text: "ESI", color: "bg-green" },
-      { date: "2025-06-21", text: "GST", color: "bg-strong-red" },
-      { date: "2025-06-29", text: "INCOME TAX", color: "bg-vivid-orange" },
-      { date: "2025-06-06", text: "PF Deposit", color: "bg-slate-blue" },
-      { date: "2025-06-12", text: "ESI", color: "bg-green" },
-      { date: "2025-06-27", text: "GST", color: "bg-strong-red" },
-      { date: "2025-06-31", text: "INCOME TAX", color: "bg-vivid-orange" },
-      { date: "2025-06-03", text: "PF Deposit", color: "bg-slate-blue" },
-      { date: "2025-06-05", text: "ESI", color: "bg-green" },
-      { date: "2025-06-09", text: "GST", color: "bg-strong-red" },
-      { date: "2025-06-23", text: "INCOME TAX", color: "bg-vivid-orange" },
-    ];
-
     function updateMonthYearLabel() {
       $label.text(`${monthNames[currentMonth]} ${currentYear}`);
     }
@@ -422,7 +406,11 @@ $(document).ready(function () {
     }
 
     function getEventsForDate(dateStr) {
-      return calendarEvents.filter((event) => event.date === dateStr);
+      // Use the global calendar events from backend instead of hardcoded data
+      if (window.calendarEvents && window.calendarEvents[dateStr]) {
+        return window.calendarEvents[dateStr];
+      }
+      return [];
     }
 
     function renderCalendar() {
@@ -463,9 +451,12 @@ $(document).ready(function () {
         const events = getEventsForDate(dateStr);
         let eventsHtml = "";
 
+        // Show event indicators for each event with their individual colors
         events.forEach((event) => {
+          const eventColor = event.color || `bg-${highlightColor}`;
+          console.log('Event:', event.name, 'Color:', eventColor); // Debug log
           eventsHtml += `
-          <div class="h-2 w-2 rounded-full ${event.color}"></div>          
+          <div class="h-2 w-2 rounded-full ${eventColor}" style="background-color: ${getColorValue(eventColor)};"></div>          
         `;
         });
 
@@ -484,6 +475,29 @@ $(document).ready(function () {
       .find(".bg-light-sea-green")
       .removeClass("bg-light-sea-green")
       .addClass(`bg-${highlightColor}`);
+
+    $calendarDays.on("click", "div[data-date]", function (e) {
+      e.stopPropagation(); // Prevent document click from firing immediately
+
+      // Remove any existing event display first
+      $('.event-display').remove();
+
+      const dateStr = $(this).data("date");
+      const events = getEventsForDate(dateStr);
+
+      if (events.length > 0) {
+        // Position the popup relative to the clicked date cell
+        let eventsHtml = '<div class="event-display absolute z-10 mt-2 p-2 bg-white border border-gray-300 rounded shadow-lg">';
+        
+        events.forEach(event => {
+          eventsHtml += `<div class="text-sm text-gray-700 whitespace-nowrap">• ${event.name} at ${event.time}</div>`;
+        });
+        
+        eventsHtml += '</div>';
+
+        $(this).append(eventsHtml);
+      }
+    });
 
     $dropdownToggle.on("click", function (e) {
       e.stopPropagation();
@@ -521,6 +535,11 @@ $(document).ready(function () {
         $dropdownToggle.has(e.target).length === 0
       ) {
         $dropdown.hide();
+      }
+
+      // Close event display on outside click
+      if (!$(e.target).closest('.event-display').length && !$(e.target).closest('div[data-date]').length) {
+        $('.event-display').remove();
       }
     });
 
@@ -1037,10 +1056,24 @@ $(document).ready(function () {
             "0"
           )}-${String(day).padStart(2, "0")}`;
 
+          // Check if there are events for this date
+          const eventsForDate = getEventsForDate(dateStr);
+          const hasEvents = eventsForDate.length > 0;
+          
+          // Add event indicators for each event with their individual colors
+          let eventIndicators = '';
+          if (hasEvents) {
+            eventsForDate.forEach((event) => {
+              const eventColor = event.color || `bg-${highlightColor}`;
+              console.log('Popup Event:', event.name, 'Color:', eventColor); // Debug log
+              eventIndicators += `<div class="w-2 h-2 ${eventColor} rounded-full mx-auto mt-1" style="background-color: ${getColorValue(eventColor)};"></div>`;
+            });
+          }
+
           $calendarDays.append(`
         <div class="${baseClasses} ${dateClass}" data-date="${dateStr}">
           ${day}
-          
+          ${eventIndicators}
         </div>
       `);
         }
@@ -1060,6 +1093,21 @@ $(document).ready(function () {
 
         // Store selected date
         selectedDate = $(this).data("date");
+        
+        // Show events for this date if any
+        const eventsForDate = getEventsForDate(selectedDate);
+        if (eventsForDate.length > 0) {
+          let eventsHtml = '<div class="event-display mt-2 p-2 bg-gray-100 rounded">';
+          eventsForDate.forEach(event => {
+            eventsHtml += `<div class="text-sm text-gray-700">• ${event.name} at ${event.time}</div>`;
+          });
+          eventsHtml += '</div>';
+          
+          // Remove any existing event display
+          $calendarDays.find('.event-display').remove();
+          // Add new event display
+          $(this).append(eventsHtml);
+        }
       });
 
       $root
@@ -1103,6 +1151,11 @@ $(document).ready(function () {
           $dropdownToggle.has(e.target).length === 0
         ) {
           $dropdown.hide();
+        }
+        
+        // Clear event display when clicking outside calendar days
+        if (!$(e.target).closest('div[data-date]').length) {
+          $calendarDays.find('.event-display').remove();
         }
       });
 
@@ -1203,6 +1256,152 @@ $(document).ready(function () {
   $(".cancelEvent-btn").on("click", function () {
     $(".event-calendar").addClass("hidden");
   });
+
+  // Global variable to store selected date
+  let selectedDate = null;
+
+  // Function to save event
+  function saveEvent() {
+    const eventName = document.getElementById('event-name').value.trim();
+    const eventTime = document.getElementById('start-time').value;
+    
+    if (!eventName) {
+      alert('Please enter an event name');
+      return;
+    }
+    
+    if (!selectedDate) {
+      alert('Please select a date');
+      return;
+    }
+    
+    if (!eventTime) {
+      alert('Please select a time');
+      return;
+    }
+
+    // Prepare data for AJAX request
+    const eventData = {
+      name: eventName,
+      date: selectedDate,
+      time: eventTime
+    };
+
+    // Send AJAX request to save event
+    $.ajax({
+      url: '/dashboard/save-event/',
+      method: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(eventData),
+      headers: {
+        'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val() || $('meta[name=csrf-token]').attr('content')
+      },
+      success: function(response) {
+        if (response.success) {
+          alert('Event saved successfully!');
+          // Clear form
+          document.getElementById('event-name').value = '';
+          document.getElementById('start-time').value = '09:00';
+          selectedDate = null;
+          // Hide popup
+          $(".event-calendar").addClass("hidden");
+          // Refresh calendar to show new event
+          loadEvents();
+        } else {
+          alert('Error saving event: ' + (response.error || 'Unknown error'));
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error('Error:', error);
+        alert('Error saving event. Please try again.');
+      }
+    });
+  }
+
+  // Function to refresh all calendars
+  function refreshAllCalendars() {
+    // Re-render main calendar by re-initializing it
+    $(".calendar-container").each(function() {
+      const $root = $(this);
+      // Force a re-render by temporarily changing the month and changing it back
+      const $prevBtn = $root.find("#prevMonth");
+      const $nextBtn = $root.find("#nextMonth");
+      if ($prevBtn.length > 0 && $nextBtn.length > 0) {
+        // Trigger a month change to force re-render
+        $prevBtn.trigger('click');
+        setTimeout(() => {
+          $nextBtn.trigger('click');
+        }, 100);
+      }
+    });
+    
+    // Re-render event calendar
+    if (document.getElementById("eventCal")) {
+      initEventCalendar();
+    }
+  }
+
+  // Function to load events from backend
+  function loadEvents() {
+    $.ajax({
+      url: '/dashboard/get-events/',
+      method: 'GET',
+      success: function(response) {
+        if (response.events) {
+          // Store events globally for use in calendar rendering
+          window.calendarEvents = response.events;
+          
+          // Refresh all calendars
+          refreshAllCalendars();
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error('Error loading events:', error);
+      }
+    });
+  }
+
+  // Function to get events for a specific date
+  function getEventsForDate(dateStr) {
+    if (window.calendarEvents && window.calendarEvents[dateStr]) {
+      return window.calendarEvents[dateStr];
+    }
+    return [];
+  }
+
+  // Function to convert CSS class names to actual color values
+  function getColorValue(colorClass) {
+    const colorMap = {
+      'bg-slate-blue': '#64748b',
+      'bg-strong-red': '#dc2626',
+      'bg-green': '#16a34a',
+      'bg-vivid-orange': '#ea580c',
+      'bg-purple': '#9333ea',
+      'bg-pink': '#ec4899',
+      'bg-teal': '#0d9488',
+      'bg-dark-blue': '#1e40af',
+      'bg-dark-green': '#15803d',
+      'bg-dark-purple': '#7c3aed',
+      'bg-yellow': '#eab308',
+      'bg-indigo': '#6366f1',
+      'bg-cyan': '#0891b2'
+    };
+    return colorMap[colorClass] || '#64748b'; // Default to slate-blue if not found
+  }
+
+  // Load events when page loads
+  $(document).ready(function() {
+    // Load events first, then initialize calendars
+    loadEvents();
+    
+    // Also refresh calendars after a short delay to ensure events are loaded
+    setTimeout(function() {
+      refreshAllCalendars();
+    }, 500);
+  });
+
+  // Make saveEvent function globally available
+  window.saveEvent = saveEvent;
 
   $('.material-symbols-outlined:contains("bookmark")').on("click", function () {
     $(this).toggleClass("material-filled text-dark-blue");
