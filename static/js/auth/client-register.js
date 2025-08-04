@@ -59,8 +59,23 @@ $(document).ready(function () {
     
     $('.dropdown-option div').on('click', function() {
         const selectedText = $(this).text();
-        $(this).closest('.dropdown').find('.dropdown-btn .selected-value').text(selectedText);
-        $(this).closest('.dropdown').find('.select-dropdown').val(selectedText);
+        const selectedValue = $(this).find('label').attr('value') || selectedText;
+        const $dropdown = $(this).closest('.dropdown');
+        
+        // Update the display text
+        $dropdown.find('.dropdown-btn .selected-value').text(selectedText);
+        
+        // Update the hidden input based on the dropdown type
+        const dropdownLabel = $dropdown.find('label').text();
+        
+        if (dropdownLabel.includes('Type Of Medical Provider')) {
+            $('#provider_type_input').val(selectedValue);
+        } else if (dropdownLabel.includes('Services You Offer')) {
+            $('#services_offered_input').val(selectedValue);
+        } else if (dropdownLabel.includes('Opening Days')) {
+            $('#working_days_input').val(selectedValue);
+        }
+        
         $('.dropdown-option').hide();
         $(".dropdown-arrow").removeClass("rotate-180");
     });
@@ -151,4 +166,88 @@ $(document).ready(function () {
         });
     });
 
+    // Toggle dropdown time trigger visibility
+    document.querySelectorAll(".dropdown-btn").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+        const dropdown = this.closest(".dropdown");
+        const options = dropdown.querySelector(".dropdown-option");
+        options.classList.toggle("hidden");
+
+        // Close other open dropdowns
+        document.querySelectorAll(".dropdown-option").forEach(function (option) {
+            if (option !== options) {
+            option.classList.add("hidden");
+            }
+        });
+        });
+    });
+
+    // Time picker trigger
+    document.querySelectorAll(".trigger-time").forEach(function (trigger) {
+        trigger.addEventListener("click", function (e) {
+        e.stopPropagation();
+        const targetId = this.getAttribute("data-target");
+        const timeInput = document.getElementById(targetId);
+        if (timeInput) {
+            timeInput.showPicker();
+        }
+        });
+    });
+
+    // Update dropdown display when time is selected (using input event for immediate update)
+    document.querySelectorAll('input[type="time"]').forEach(function (timeInput) {
+        console.log('Setting up time input listener for:', timeInput.id, timeInput.value);
+        
+        timeInput.addEventListener("input", function () {
+        updateTimeDisplay(this);
+        console.log('Time input changed:', this.id, this.value);
+        });
+
+        // Also handle change event for browser compatibility
+        timeInput.addEventListener("change", function () {
+        updateTimeDisplay(this);
+        console.log('Time input changed:', this.id, this.value);
+        });
+    });
+
+    function updateTimeDisplay(timeInput) {
+        const dropdown = timeInput.closest(".dropdown");
+        if (dropdown) {
+        const selectedValue = dropdown.querySelector(".selected-value");
+        if (selectedValue && timeInput.value) {
+            // Format the time for display (e.g., "09:00 AM")
+            const timeParts = timeInput.value.split(":");
+            let hours = parseInt(timeParts[0]);
+            const minutes = timeParts[1];
+            const ampm = hours >= 12 ? "PM" : "AM";
+            hours = hours % 12;
+            hours = hours ? hours : 12; // Convert 0 to 12
+            const formattedTime = hours + ":" + minutes + " " + ampm;
+
+            selectedValue.textContent = formattedTime;
+        }
+        }
+  }
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", function (e) {
+        if (!e.target.closest(".dropdown")) {
+        document.querySelectorAll(".dropdown-option").forEach(function (option) {
+            option.classList.add("hidden");
+        });
+        }
+    });
+
+    // Close dropdown when time is selected (optional)
+    document.querySelectorAll('input[type="time"]').forEach(function (timeInput) {
+        timeInput.addEventListener("change", function () {
+        const dropdownOption = this.closest(".dropdown-option");
+        if (dropdownOption) {
+            setTimeout(() => {
+            dropdownOption.classList.add("hidden");
+            }, 200); // Small delay to ensure time is displayed
+        }
+        });
+    });
 });
+

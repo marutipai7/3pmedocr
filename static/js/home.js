@@ -1307,6 +1307,7 @@ $(document).ready(function () {
           $(".event-calendar").addClass("hidden");
           // Refresh calendar to show new event
           loadEvents();
+          loadUpcomingEvents(); // Refresh upcoming events list
         } else {
           alert('Error saving event: ' + (response.error || 'Unknown error'));
         }
@@ -1389,10 +1390,63 @@ $(document).ready(function () {
     return colorMap[colorClass] || '#64748b'; // Default to slate-blue if not found
   }
 
+  // Function to load and display upcoming events
+  function loadUpcomingEvents() {
+    console.log('Loading upcoming events...');
+    $.ajax({
+      url: '/dashboard/get-upcoming-events/',
+      method: 'GET',
+      success: function(response) {
+        const container = $('#upcoming-events-container');
+        if (container.length === 0) {
+          return;
+        }
+        const title = container.find('h4').first(); // Keep the title
+        
+        // Clear existing content except title
+        container.find('*').not('h4').remove();
+        
+        if (response.upcoming_events && response.upcoming_events.length > 0) {
+          // Add events
+          response.upcoming_events.forEach(function(event) {
+            const eventElement = $(`
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full" style="background-color: ${event.color_hex};"></span>
+                <span class="text-gray-700">${event.name}</span>
+              </div>
+            `);
+            container.append(eventElement);
+          });
+        } else {
+          // Show no events message
+          const noEventsElement = $(`
+            <div class="flex items-center gap-2">
+              <span class="text-gray-500">No upcoming events</span>
+            </div>
+          `);
+          container.append(noEventsElement);
+        }
+      },
+      error: function(xhr, status, error) {
+        const container = $('#upcoming-events-container');
+        const title = container.find('h4').first();
+        container.find('*').not('h4').remove();
+        
+        const errorElement = $(`
+          <div class="flex items-center gap-2">
+            <span class="text-red-500">Error loading events</span>
+          </div>
+        `);
+        container.append(errorElement);
+      }
+    });
+  }
+
   // Load events when page loads
   $(document).ready(function() {
     // Load events first, then initialize calendars
     loadEvents();
+    loadUpcomingEvents();
     
     // Also refresh calendars after a short delay to ensure events are loaded
     setTimeout(function() {

@@ -4,7 +4,7 @@ from django.db.models import Sum, Count, DecimalField
 from django.utils import timezone
 from .utils import dashboard_login_required
 from .models import SettingMenu, CouponPerformance,  CalendarEvent
-from registration.models import NGOProfile, ClientProfile, AdvertiserProfile
+from registration.models import MedicalProviderProfile, NGOProfile, ClientProfile, AdvertiserProfile
 from ngopost.models import NGOPost
 from django.db.models import Q
 from .models import TrendingCoupon
@@ -16,6 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET
 from django.db.models.functions import TruncDate
 import random
+from datetime import date
 @dashboard_login_required
 def dashboard_home(request):
     user = request.user_obj
@@ -35,6 +36,7 @@ def dashboard_home(request):
         if user_type == 'ngo':
             ngo_profile = NGOProfile.objects.get(user=user)
             posts_qs = NGOPost.objects.filter(user=user)
+            events = CalendarEvent.objects.filter(user=user,is_active=True)
 
             context.update({
                 'ngo_profile': ngo_profile,
@@ -46,6 +48,7 @@ def dashboard_home(request):
                 'trending_posts': posts_qs.filter(
                     created_at__gte=timezone.now() - timezone.timedelta(days=30)
                 ).order_by('-views')[:4],
+                'events': events,
             })
             return render(request, "dashboard/home_NGO.html", context)
 
@@ -65,27 +68,27 @@ def dashboard_home(request):
             performances = CouponPerformance.objects.order_by('date')[:8]
             events = CalendarEvent.objects.all().order_by('date')
             
-            # Get upcoming events for the user (next 5 events)
-            from datetime import date
-            upcoming_events = CalendarEvent.objects.filter(
-                user=user,
-                date__gte=date.today(),
-                is_active=True
-            ).order_by('date', 'time')[:5]
-            
             context.update({
                 'advertiser_profile': advertiser_profile,
                 'user_display_name': advertiser_profile.company_name,
                 'performance': performance,
                 'trending_coupons': trending_coupons,
                 'events': events,
-                'upcoming_events': upcoming_events,
             })
 
             print("DEBUG PERFORMANCE:", performance)
             return render(request, "dashboard/home_advertiser.html", context)
 
-
+        elif user_type == 'provider':
+            provider_profile = MedicalProviderProfile.objects.get(user=user)
+            events = CalendarEvent.objects.all().order_by('date')
+            context.update({
+                'provider_profile': provider_profile,
+                'user_display_name': provider_profile.company_name,
+                'events': events,
+                # Add relevant client data if any, e.g. campaigns
+            })
+            return render(request, "dashboard/home_provider.html", context)
 
 
     except Exception as e:
@@ -175,6 +178,32 @@ def get_events(request):
             })
 
         return JsonResponse({'events': event_data})
+
+@require_GET
+@dashboard_login_required
+def get_upcoming_events(request):
+    user = request.user_obj
+    if request.method == 'GET':
+        # Get next 5 upcoming events for the user, ordered by date and time
+        upcoming_events = CalendarEvent.objects.filter(
+            user=user,
+            date__gte=datetime.now().date(),
+            is_active=True
+        ).order_by('date', 'time')[:5]
+        
+        events_data = []
+        for event in upcoming_events:
+            event_data = {
+                'name': event.name,
+                'date': event.date.strftime('%Y-%m-%d'),
+                'time': event.time.strftime('%H:%M'),
+                'color': event.color,
+                'color_hex': event.get_color_hex()
+            }
+            events_data.append(event_data)
+
+        response_data = {'upcoming_events': events_data}
+        return JsonResponse(response_data)
 
 
 def logout_view(request):

@@ -11,6 +11,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from .models import (
+    MedicalProviderProfile,
     User,
     NGOProfile,
     ClientProfile,
@@ -20,11 +21,17 @@ from .models import (
     ClientType,
     AdService,
     AdvertiserType,
-    AdServiceReq
+    AdServiceReq,
+    MedicalProviderServices,
+    MedicalProviderType,
+    MedicalProviderWorkingDays,
     )
 from registration.utils import send_custom_email  
 from django.utils import timezone
 from django.http import JsonResponse
+import logging
+
+logger = logging.getLogger(__name__)
 
 ROLE_TO_TEMPLATE = {
     "login": "login/login.html",
@@ -53,6 +60,10 @@ def register_by_role(request, role):
         context["advertiser_types"] = AdvertiserType.objects.filter(is_active=True)
         context["ad_service_reqs"] = AdServiceReq.objects.filter(is_active=True)
 
+    elif role == "medicalProvider":
+        context["medical_provider_types"] = MedicalProviderType.objects.filter(is_active=True)
+        context["medical_provider_services"] = MedicalProviderServices.objects.filter(is_active=True)
+        context["medical_provider_workingdays"] = MedicalProviderWorkingDays.objects.filter(is_active=True)
 
     return render(request, tpl, context)
 
@@ -730,3 +741,212 @@ def save_client(request):
 
 
     return JsonResponse({"success": True, "message": "Client registered successfully."})
+
+@csrf_protect
+@require_POST
+def save_medical_provider(request):
+    data = request.POST
+    files = request.FILES
+    errors = {}
+
+    # Email
+    email = data.get("email")
+    logger.info(f"Email received: {email}")
+    if not email:
+        errors["email"] = "Email is required."
+        logger.warning("Email is missing")
+    else:
+        try:
+            validate_email(email)
+            logger.info("Email validation passed")
+        except ValidationError:
+            errors["email"] = "Enter a valid email address."
+            logger.warning("Email validation failed")
+        if User.objects.filter(email=email).exists():
+            errors["email"] = "This email is already registered."
+            logger.warning("Email already exists in database")
+
+    # Password
+    password = data.get("password")
+    confirm_password = data.get("confirm_password")
+    if not password or len(password) < 8:
+        errors["password"] = "Password must be at least 8 characters."
+        logger.warning(f"Password validation failed - length: {len(password) if password else 0}")
+    elif password != confirm_password:
+        errors["confirm_password"] = "Passwords do not match."
+        logger.warning(f"Password mismatch - Password: '{password}' vs Confirm: '{confirm_password}'")
+    else:
+        logger.info("Password validation passed")
+
+    # Phone
+    phone_country_code = "+91"
+    phone_number = data.get("phone-number")
+    if not phone_number or not re.match(r"^\d{8,15}$", phone_number):
+        errors["phone-number"] = "Enter a valid phone number."
+
+    # Company Info
+    company_name = data.get("company-name")
+    if not company_name:
+        errors["company-name"] = "Company name is required."
+
+    # Get foreign key instances from IDs
+    provider_type_id = data.get("provider_type", "")
+    services_offered_id = data.get("services_offered", "")
+    working_days_id = data.get("working_days", "")
+    
+    # Convert to model instances
+    provider_type = None
+    services_offered = None
+    working_days = None
+    
+    if provider_type_id:
+        try:
+            provider_type = MedicalProviderType.objects.get(id=provider_type_id)
+        except MedicalProviderType.DoesNotExist:
+            errors["provider_type"] = "Invalid provider type selected."
+    
+    if services_offered_id:
+        try:
+            services_offered = MedicalProviderServices.objects.get(id=services_offered_id)
+        except MedicalProviderServices.DoesNotExist:
+            errors["services_offered"] = "Invalid service selected."
+    
+    if working_days_id:
+        try:
+            working_days = MedicalProviderWorkingDays.objects.get(id=working_days_id)
+        except MedicalProviderWorkingDays.DoesNotExist:
+            errors["working_days"] = "Invalid working days selected."
+    
+    website = data.get("website-url", "")
+    opening_hours = data.get("opening_time", "")
+    closing_hours = data.get("closing_time", "")
+    address = data.get("address")
+    city = data.get("city")
+    state = data.get("state")
+    pincode = data.get("pincode")
+    country = data.get("country")
+    if not pincode or not re.match(r"^\d{4,10}$", pincode):
+        errors["pincode"] = "Enter a valid pincode."
+
+    # Incorporation Doc
+    incorporation_number = data.get("incorporation_number")
+    incorporation_doc_path, err = validate_and_save_file(files.get("incorporation_doc"), "incorporation", "Incorporation Document",user_type="provider")
+    if incorporation_number and not incorporation_doc_path:
+        errors["incorporation_doc"] = "Upload incorporation document."
+    if err:
+        errors["incorporation_doc"] = err
+
+    # GST
+    gst_number = data.get("gst_number")
+    gst_doc_path, err = validate_and_save_file(files.get("gst_doc"), "gst", "GST Document",user_type="provider")
+    if gst_number and not gst_doc_path:
+        errors["gst_doc"] = "Upload GST document."
+    if err:
+        errors["gst_doc"] = err
+
+    # PAN
+    pan_number = data.get("pan_number")
+    pan_doc_path, err = validate_and_save_file(files.get("pan_doc"), "pan", "PAN Document",user_type="provider")
+    if pan_number and not pan_doc_path:
+        errors["pan_doc"] = "Upload PAN document."
+    if err:
+        errors["pan_doc"] = err
+
+    # TAN
+    tan_number = data.get("tan_number")
+    tan_doc_path, err = validate_and_save_file(files.get("tan_doc"), "tan", "TAN Document",user_type="provider")
+    if tan_number and not tan_doc_path:
+        errors["tan_doc"] = "Upload TAN document."
+    if err:
+        errors["tan_doc"] = err
+
+    # MEDICAL LICENSE
+    medical_license_number = data.get("medical_license_number")
+    medical_license_doc_path, err = validate_and_save_file(files.get("medical_license_doc"), "medical_license", "Medical License Document",user_type="provider")
+    if medical_license_number and not medical_license_doc_path:
+        errors["medical_license_doc"] = "Upload Medical License document."
+    if err:
+        errors["medical_license_doc"] = err
+
+    # Brand Image
+    storefront_image_path, err = validate_and_save_file(files.get("store_front"), "store_front", "Storefront Image",user_type="provider")
+    if err:
+        errors["store_front"] = err
+
+    # Description and OTP
+    email_otp = data.get("otp1", "")
+    referral_code = data.get("referral_code", "")
+
+    # Contact Person
+    contact_name = data.get("contact_person_name", "")
+    contact_phone = data.get("contact_person_phone", "")
+    contact_role = data.get("contact_person_role", "")
+    contact_designation = data.get("contact_person_designation", "")
+    ref_otp = data.get("otp2", "")
+
+    # Return errors if any
+    if errors:
+        logger.error(f"Registration failed with errors: {errors}")
+        return JsonResponse({"success": False, "errors": errors}, status=400)
+
+    # Create User
+    user = User.objects.create(
+        email=email,
+        phone_country_code=phone_country_code,
+        phone_number=phone_number,
+        password=make_password(password),
+        user_type="provider"
+    )
+
+    # Create AdvertiserProfile
+    provider = MedicalProviderProfile.objects.create(
+        user=user,
+        company_name=company_name,
+        provider_type=provider_type,
+        services_offered=services_offered,
+        website_url=website,
+        working_days = working_days,
+        opening_time = opening_hours,
+        closing_time = closing_hours,
+        address=address,
+        city=city,
+        state=state,
+        country=country,
+        pincode=pincode,
+        incorporation_number=incorporation_number,
+        incorporation_doc_path=incorporation_doc_path,
+        incorporation_doc_virus_scanned=bool(incorporation_doc_path),
+        gst_number=gst_number,
+        gst_doc_path=gst_doc_path,
+        gst_doc_virus_scanned=bool(gst_doc_path),
+        pan_number=pan_number,
+        pan_doc_path=pan_doc_path,
+        pan_doc_virus_scanned=bool(pan_doc_path),
+        tan_number=tan_number,
+        tan_doc_path=tan_doc_path,
+        tan_doc_virus_scanned=bool(tan_doc_path),
+        medical_license_number = medical_license_number,
+        medical_license_doc_path = medical_license_doc_path,
+        medical_license_doc_virus_scanned=bool(medical_license_doc_path),
+        storefront_image_path=storefront_image_path,
+        storefront_image_virus_scanned=bool(storefront_image_path),
+        email_otp=email_otp,
+        referral_code=referral_code,
+    )
+
+    # Create ContactPerson if present
+    if contact_name and contact_phone:
+        ContactPerson.objects.create(
+            profile_type='provider',
+            profile_id=user.id,
+            name=contact_name,
+            phone_country_code=phone_country_code,
+            phone_number=contact_phone,
+            role=contact_role,
+            designation=contact_designation,
+            otp=ref_otp,
+            referral_code=referral_code,
+            email_otp=email_otp
+        )
+    logger.info("Medical provider registration completed successfully")
+    return JsonResponse({"success": True, "message": "Medical provider registered successfully."})
