@@ -19,6 +19,7 @@ from .models import (
 )
 from points.models import PointsActionType, PointsHistory
 from registration.views import validate_and_save_file
+from dashboard.views import get_common_context
 # Load .env file
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(os.path.join(BASE_DIR, '.env'))
@@ -28,7 +29,7 @@ logger = logging.getLogger(__name__)
 @dashboard_login_required
 def coupon_view(request):
     user = request.user_obj
-    
+    context = get_common_context(request, user)
     if request.method == 'POST':
         is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
         try:
@@ -191,7 +192,8 @@ def coupon_view(request):
             messages.error(request, error_msg)
             return render(request, 'coupon.html', get_context_data(user, request.POST, missing_fields))
 
-    return render(request, 'coupon.html', get_context_data(user))
+    context.update(get_context_data(user))
+    return render(request, 'coupon.html', context)
 
 
 @dashboard_login_required

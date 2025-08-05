@@ -1,0 +1,68 @@
+{% load static %}
+
+<div class="view-saved-history-popup popup hidden fixed inset-0 items-center justify-center" style="background: rgba(0, 0, 0, 0.4); padding-left: 0.75rem; padding-right: 0.75rem; z-index: 50;">
+  <div style="background-color: #ffffff; border-radius: 10px; max-width: 1000px; max-height: 640px; width: 100%; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding-bottom: 12px; display: flex; flex-direction: column; gap: 16px;">
+    
+    <!-- Header -->
+    <div style="display: flex; align-items: center; justify-content: space-between; height: 40px; background-color: rgba(255, 111, 97, 1); color: #ffffff; padding: 0 12px;">
+      <div style="display: flex; gap: 16px; align-items: center;">
+        <span class="material-symbols-outlined" style="cursor: pointer;">share</span>
+        <span class="material-symbols-outlined download-btn" style="cursor: pointer;">download</span>
+      </div>
+      <span style="font-weight: 500;">Coupon History</span>
+      <span class="material-symbols-outlined close-saved-history-popup" style="cursor: pointer;">close</span>
+    </div>
+
+    <div class="download-container" style="height: calc(100% - 40px); overflow-y: auto; scroll-behavior: smooth; padding-bottom: 6px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px;">
+            <span style="font-weight: 600; font-size: 1.125rem;">XTZ Advertizing Pvt Ltd</span>
+            <span style="font-size: 1rem; font-weight: 400;">Last 7 days (12/05/25 to 18/05/25)</span>
+        </div>
+        <div style="overflow-x: auto;">
+            <table style="min-width: 100%; table-layout: auto; white-space: nowrap;">
+            <thead style="background-color: rgba(255, 111, 97, 1); color: white; font-size: 0.875rem;">
+                <tr>
+                <th style="text-align: center; padding: 16px 20px; font-size: 0.875rem; border-right: 1px solid white;">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <p>Date & Time</p>
+                    </div>
+                    <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
+                    </div>
+                </th>
+                <th style="text-align: center; padding: 0.25rem; font-size: 0.875rem; border-right: 1px solid white;">Category</th>
+                <th style="text-align: center; padding: 0.25rem; font-size: 0.875rem; border-right: 1px solid white;">Brand Name</th>
+                <th style="text-align: center; padding: 0.25rem; font-size: 0.875rem; border-right: 1px solid white;">
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <p>Coupon</p>
+                    <p>Issued</p>
+                    </div>
+                </th>
+                <th style="text-align: center; padding: 0.25rem; font-size: 0.875rem; border-right: 1px solid white;">
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <p>Coupon</p>
+                    <p>Redeemed</p>
+                    </div>
+                </th>
+                <th style="text-align: center; padding: 0.25rem; font-size: 0.875rem; border-right: 1px solid white;">
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <p>Coupon</p>
+                    <p>Balance</p>
+                    </div>
+                </th>
+                <th style="text-align: center; padding: 0.25rem; font-size: 0.875rem; border-right: 1px solid white;">
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <p>Period</p>
+                    <p>End</p>
+                    </div>
+                </th>
+                <th style="text-align: center; padding: 0.25rem; font-size: 0.875rem; border-right: 1px solid white;">Status</th>
+                </tr>
+            </thead>
+            <tbody style="background-color: #F5F5F5; color: #484848; font-size: 0.875rem;" id="savedcouponHistoryTableExport">
+            </tbody>
+            </table>
+        </div>
+    </div>
+  </div>
+</div>

@@ -1,3 +1,4 @@
+from multiprocessing import context
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
 from django.shortcuts import render, redirect
 from django.db.models import Q
@@ -13,13 +14,14 @@ import logging
 import json
 from .utils import send_custom_email
 from datetime import datetime, time
-
+from dashboard.views import get_common_context
 logger = logging.getLogger(__name__) #for debugging purposes
 
 @dashboard_login_required
 @require_http_methods(["GET", "POST"])
 def support_view(request):
     user = request.user_obj  # ✅ Make sure this is a real user
+    context = get_common_context(request, user)
     issue_types = IssueType.objects.all()
     search_query = request.GET.get('search', '').strip()
 
@@ -38,11 +40,11 @@ def support_view(request):
                 Q(issue_option__name__icontains=search_query) |
                 Q(issue_option__issue_type__name__icontains=search_query)
             )
-
-    return render(request, 'support.html', {
+    context.update({
         'issue_types': issue_types,
         'tickets': tickets,
     })
+    return render(request, 'support.html', context)
 
 # 🔄 AJAX: Load options for a given issue type (used in dropdown)
 @dashboard_login_required

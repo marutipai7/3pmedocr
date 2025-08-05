@@ -14,4 +14,7 @@ urlpatterns = [
     path('get-events/', get_events, name='get_events'),
     path('get-upcoming-events/', get_upcoming_events, name='get_upcoming_events'),
     path('ngo-graph-data/', views.get_ngo_graph_data, name='ngo-graph-data'),
+    path('dashboard/saved/', views.saved, name='saved'),
+    path('dashboard/advance/', views.advertiser_advance, name='advertiser-advance'),
+    path('dashboard/cart/', views.cart, name='cart')
 ]

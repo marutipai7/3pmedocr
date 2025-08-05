@@ -1,0 +1,2326 @@
+{% extends "dashboard/layout.html" %}
+{% load static %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+      <!-- Content -->
+      <div class="h-[calc(100vh-72px)] w-full px-6 pt-6 pb-3 bg-slate-white">
+        <div
+          class="bg-white shadow-(--box-shadow-5) h-full rounded-[10px] px-2 sm:px-4 py-5 overflow-y-auto scroll"
+        >
+          <div class="h-[130px] sm:h-[110px] w-full">
+            <div class="flex items-center justify-between">
+              <div class="space-y-1.5">
+                <div class="flex items-center gap-2">
+                  <span
+                    class="material-symbols-outlined"
+                    style="font-size: 20px"
+                  >
+                    bookmark
+                  </span>
+                  <span class="text-xl font-medium">Saved Items</span>
+                </div>
+                <p class="text-18-nr">
+                  Quickly view and manage all your saved favorites in one place.
+                </p>
+              </div>
+              <span
+                class="material-symbols-outlined cursor-pointer closesaved-btn"
+              >
+                close
+              </span>
+            </div>
+
+            <!-- Tabs -->
+            <div
+              class="flex gap-6 whitespace-nowrap mt-8 overflow-x-auto no-scrollbar"
+            >
+              <button
+                class="tab-btn-advertiser active-tab-advertiser text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+                data-tab="places"
+              >
+                Places
+              </button>
+              <button
+                class="tab-btn-advertiser text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+                data-tab="saved-coupon"
+              >
+                Saved Coupon
+              </button>
+              <button
+                class="tab-btn-advertiser text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+                data-tab="donation-history"
+              >
+                Donation History
+              </button>
+            </div>
+          </div>
+
+          <!-- Places Content -->
+          <div
+            class="places tab-content py-6 space-y-6"
+          >
+            <!-- Header -->
+            <div
+              class="px-2 flex flex-col md:flex-row items-start md:items-center justify-between gap-2"
+            >
+              <p class="text-sm font-semibold">Saved places</p>
+              <div class="flex items-center justify-start md:justify-end gap-5 w-full sm:w-5/6">
+                <div
+                  class="w-full max-w-[280px] rounded-[6px] bg-light-white flex items-center gap-2 px-2"
+                >
+                  <span class="material-symbols-outlined text-dark-gray">
+                    search
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="Search by name or categories"
+                    class="w-full py-2.5 focus:!outline-none placeholder:text-medium-gray"
+                  />
+                </div>
+                <div class="dropdown relative flex justify-end">
+                  <button
+                  class="filterToggle w-full max-w-[90px] h-[40px] border border-living-coral rounded-[10px] text-living-coral flex items-center justify-center gap-1 cursor-pointer group hover:bg-living-coral hover:text-white px-3"
+                >
+                  <span class="material-symbols-outlined text-living-coral group-hover:text-white">
+                    keyboard_arrow_down
+                  </span>
+                  Filter
+                </button>
+                  <div
+                    class="filterDropdown text-sm absolute right-0 top-10 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-[95px] z-10"
+                  >
+                    <div
+                      class="p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
+                    >
+                     Show 5
+                    </div>
+                    <div
+                      class="p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
+                    >
+                     Show 10
+                    </div>
+                    <div
+                      class="p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
+                    >
+                      Show 15
+                    </div>
+                  </div>
+                </div>
+                <button
+                  class="place-view-btn w-full max-w-[100px] h-[40px] border border-living-coral rounded-[10px] text-living-coral flex items-center justify-center gap-1 cursor-pointer group hover:bg-living-coral hover:text-white"
+                >
+                  <span class="material-symbols-outlined text-living-coral group-hover:text-white">
+                    file_export
+                  </span>
+                  <span class="hidden sm:block">View</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Cards -->
+            <div class="pagination-section">
+              <div
+                class="places-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-x-3 lg:gap-y-5 place-items-center"
+              >
+                <div class="places-card">
+                  <!-- Image -->
+                  <div>
+                    <img
+                      class="rounded-t-[10px]"
+                      src="/static/images/Hospital.svg"
+                      alt="Hospital"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div class="px-4 py-5 space-y-3">
+                    <div class="flex items-center justify-between">
+                      <h1 class="text-24-fs">Zenith Hospital</h1>
+                      <span
+                        class="material-symbols-outlined saved-icon cursor-pointer material-filled text-living-coral"
+                      >
+                        bookmark
+                      </span>
+                    </div>
+                    <p
+                      class="flex items-center gap-1 text-dark-gray text-14-nr"
+                    >
+                      4.3
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      (3,723)
+                    </p>
+                    <p class="text-dark-gray text-16-nr">Hospital</p>
+                    <div class="flex flex-col gap-1">
+                      <p class="text-medium-gray text-16-nr">
+                        flat no.7, 11th floor, Chembur, Mumbai.
+                      </p>
+                      <p class="text-medium-gray text-16-nr">+91 9234398042</p>
+                      <p class="text-medium-gray text-16-nr">
+                        monika@ocrpharma.net
+                      </p>
+                    </div>
+                    <div class="flex items-center justify-around gap-5">
+                      <button
+                        class="direction-trigger flex flex-col items-center text-dark-gray text-16-nr"
+                      >
+                        <span class="material-symbols-outlined material-filled">
+                          directions
+                        </span>
+                        Direction
+                      </button>
+                      <button
+                        class="flex flex-col items-center text-dark-gray text-16-nr"
+                      >
+                        <span class="material-symbols-outlined material-filled">
+                          call
+                        </span>
+                        Call
+                      </button>
+                      <button
+                        class="flex flex-col items-center text-dark-gray text-16-nr"
+                      >
+                        <span class="material-symbols-outlined material-filled">
+                          share
+                        </span>
+                        Share
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="places-card">
+                  <!-- Image -->
+                  <div>
+                    <img
+                      class="rounded-t-[10px]"
+                      src="/static/images/Hospital.svg"
+                      alt="Hospital"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div class="px-4 py-5 space-y-3">
+                    <div class="flex items-center justify-between">
+                      <h1 class="text-24-fs">Zenith Hospital</h1>
+                      <span
+                        class="material-symbols-outlined saved-icon cursor-pointer material-filled text-living-coral"
+                      >
+                        bookmark
+                      </span>
+                    </div>
+                    <p
+                      class="flex items-center gap-1 text-dark-gray text-14-nr"
+                    >
+                      4.3
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      (3,723)
+                    </p>
+                    <p class="text-dark-gray text-16-nr">Hospital</p>
+                    <div class="flex flex-col gap-1">
+                      <p class="text-medium-gray text-16-nr">
+                        flat no.7, 11th floor, Chembur, Mumbai.
+                      </p>
+                      <p class="text-medium-gray text-16-nr">+91 9234398042</p>
+                      <p class="text-medium-gray text-16-nr">
+                        monika@ocrpharma.net
+                      </p>
+                    </div>
+                    <div class="flex items-center justify-around gap-5">
+                      <button
+                        class="direction-trigger flex flex-col items-center text-dark-gray text-16-nr"
+                      >
+                        <span class="material-symbols-outlined material-filled">
+                          directions
+                        </span>
+                        Direction
+                      </button>
+                      <button
+                        class="flex flex-col items-center text-dark-gray text-16-nr"
+                      >
+                        <span class="material-symbols-outlined material-filled">
+                          call
+                        </span>
+                        Call
+                      </button>
+                      <button
+                        class="flex flex-col items-center text-dark-gray text-16-nr"
+                      >
+                        <span class="material-symbols-outlined material-filled">
+                          share
+                        </span>
+                        Share
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="places-card">
+                  <!-- Image -->
+                  <div>
+                    <img
+                      class="rounded-t-[10px]"
+                      src="/static/images/Hospital.svg"
+                      alt="Hospital"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div class="px-4 py-5 space-y-3">
+                    <div class="flex items-center justify-between">
+                      <h1 class="text-24-fs">Zenith Hospital</h1>
+                      <span
+                        class="material-symbols-outlined saved-icon cursor-pointer material-filled text-living-coral"
+                      >
+                        bookmark
+                      </span>
+                    </div>
+                    <p
+                      class="flex items-center gap-1 text-dark-gray text-14-nr"
+                    >
+                      4.3
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      (3,723)
+                    </p>
+                    <p class="text-dark-gray text-16-nr">Hospital</p>
+                    <div class="flex flex-col gap-1">
+                      <p class="text-medium-gray text-16-nr">
+                        flat no.7, 11th floor, Chembur, Mumbai.
+                      </p>
+                      <p class="text-medium-gray text-16-nr">+91 9234398042</p>
+                      <p class="text-medium-gray text-16-nr">
+                        monika@ocrpharma.net
+                      </p>
+                    </div>
+                    <div class="flex items-center justify-around gap-5">
+                      <button
+                        class="direction-trigger flex flex-col items-center text-dark-gray text-16-nr"
+                      >
+                        <span class="material-symbols-outlined material-filled">
+                          directions
+                        </span>
+                        Direction
+                      </button>
+                      <button
+                        class="flex flex-col items-center text-dark-gray text-16-nr"
+                      >
+                        <span class="material-symbols-outlined material-filled">
+                          call
+                        </span>
+                        Call
+                      </button>
+                      <button
+                        class="flex flex-col items-center text-dark-gray text-16-nr"
+                      >
+                        <span class="material-symbols-outlined material-filled">
+                          share
+                        </span>
+                        Share
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="places-card">
+                  <!-- Image -->
+                  <div>
+                    <img
+                      class="rounded-t-[10px]"
+                      src="/static/images/Hospital.svg"
+                      alt="Hospital"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div class="px-4 py-5 space-y-3">
+                    <div class="flex items-center justify-between">
+                      <h1 class="text-24-fs">Zenith Hospital</h1>
+                      <span
+                        class="material-symbols-outlined saved-icon cursor-pointer material-filled text-living-coral"
+                      >
+                        bookmark
+                      </span>
+                    </div>
+                    <p
+                      class="flex items-center gap-1 text-dark-gray text-14-nr"
+                    >
+                      4.3
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      (3,723)
+                    </p>
+                    <p class="text-dark-gray text-16-nr">Hospital</p>
+                    <div class="flex flex-col gap-1">
+                      <p class="text-medium-gray text-16-nr">
+                        flat no.7, 11th floor, Chembur, Mumbai.
+                      </p>
+                      <p class="text-medium-gray text-16-nr">+91 9234398042</p>
+                      <p class="text-medium-gray text-16-nr">
+                        monika@ocrpharma.net
+                      </p>
+                    </div>
+                    <div class="flex items-center justify-around gap-5">
+                      <button
+                        class="direction-trigger flex flex-col items-center text-dark-gray text-16-nr"
+                      >
+                        <span class="material-symbols-outlined material-filled">
+                          directions
+                        </span>
+                        Direction
+                      </button>
+                      <button
+                        class="flex flex-col items-center text-dark-gray text-16-nr"
+                      >
+                        <span class="material-symbols-outlined material-filled">
+                          call
+                        </span>
+                        Call
+                      </button>
+                      <button
+                        class="flex flex-col items-center text-dark-gray text-16-nr"
+                      >
+                        <span class="material-symbols-outlined material-filled">
+                          share
+                        </span>
+                        Share
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="places-card">
+                  <!-- Image -->
+                  <div>
+                    <img
+                      class="rounded-t-[10px]"
+                      src="/static/images/Hospital.svg"
+                      alt="Hospital"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div class="px-4 py-5 space-y-3">
+                    <div class="flex items-center justify-between">
+                      <h1 class="text-24-fs">Zenith Hospital</h1>
+                      <span
+                        class="material-symbols-outlined saved-icon cursor-pointer material-filled text-living-coral"
+                      >
+                        bookmark
+                      </span>
+                    </div>
+                    <p
+                      class="flex items-center gap-1 text-dark-gray text-14-nr"
+                    >
+                      4.3
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      (3,723)
+                    </p>
+                    <p class="text-dark-gray text-16-nr">Hospital</p>
+                    <div class="flex flex-col gap-1">
+                      <p class="text-medium-gray text-16-nr">
+                        flat no.7, 11th floor, Chembur, Mumbai.
+                      </p>
+                      <p class="text-medium-gray text-16-nr">+91 9234398042</p>
+                      <p class="text-medium-gray text-16-nr">
+                        monika@ocrpharma.net
+                      </p>
+                    </div>
+                    <div class="flex items-center justify-around gap-5">
+                      <button
+                        class="direction-trigger flex flex-col items-center text-dark-gray text-16-nr"
+                      >
+                        <span class="material-symbols-outlined material-filled">
+                          directions
+                        </span>
+                        Direction
+                      </button>
+                      <button
+                        class="flex flex-col items-center text-dark-gray text-16-nr"
+                      >
+                        <span class="material-symbols-outlined material-filled">
+                          call
+                        </span>
+                        Call
+                      </button>
+                      <button
+                        class="flex flex-col items-center text-dark-gray text-16-nr"
+                      >
+                        <span class="material-symbols-outlined material-filled">
+                          share
+                        </span>
+                        Share
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="places-card">
+                  <!-- Image -->
+                  <div>
+                    <img
+                      class="rounded-t-[10px]"
+                      src="/static/images/Hospital.svg"
+                      alt="Hospital"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div class="px-4 py-5 space-y-3">
+                    <div class="flex items-center justify-between">
+                      <h1 class="text-24-fs">Zenith Hospital</h1>
+                      <span
+                        class="material-symbols-outlined saved-icon cursor-pointer material-filled text-living-coral"
+                      >
+                        bookmark
+                      </span>
+                    </div>
+                    <p
+                      class="flex items-center gap-1 text-dark-gray text-14-nr"
+                    >
+                      4.3
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      (3,723)
+                    </p>
+                    <p class="text-dark-gray text-16-nr">Hospital</p>
+                    <div class="flex flex-col gap-1">
+                      <p class="text-medium-gray text-16-nr">
+                        flat no.7, 11th floor, Chembur, Mumbai.
+                      </p>
+                      <p class="text-medium-gray text-16-nr">+91 9234398042</p>
+                      <p class="text-medium-gray text-16-nr">
+                        monika@ocrpharma.net
+                      </p>
+                    </div>
+                    <div class="flex items-center justify-around gap-5">
+                      <button
+                        class="direction-trigger flex flex-col items-center text-dark-gray text-16-nr"
+                      >
+                        <span class="material-symbols-outlined material-filled">
+                          directions
+                        </span>
+                        Direction
+                      </button>
+                      <button
+                        class="flex flex-col items-center text-dark-gray text-16-nr"
+                      >
+                        <span class="material-symbols-outlined material-filled">
+                          call
+                        </span>
+                        Call
+                      </button>
+                      <button
+                        class="flex flex-col items-center text-dark-gray text-16-nr"
+                      >
+                        <span class="material-symbols-outlined material-filled">
+                          share
+                        </span>
+                        Share
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="places-card">
+                  <!-- Image -->
+                  <div>
+                    <img
+                      class="rounded-t-[10px]"
+                      src="/static/images/Hospital.svg"
+                      alt="Hospital"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div class="px-4 py-5 space-y-3">
+                    <div class="flex items-center justify-between">
+                      <h1 class="text-24-fs">Zenith Hospital</h1>
+                      <span
+                        class="material-symbols-outlined saved-icon cursor-pointer material-filled text-living-coral"
+                      >
+                        bookmark
+                      </span>
+                    </div>
+                    <p
+                      class="flex items-center gap-1 text-dark-gray text-14-nr"
+                    >
+                      4.3
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      <span
+                        class="material-symbols-outlined material-filled text-star-yellow"
+                      >
+                        star
+                      </span>
+                      (3,723)
+                    </p>
+                    <p class="text-dark-gray text-16-nr">Hospital</p>
+                    <div class="flex flex-col gap-1">
+                      <p class="text-medium-gray text-16-nr">
+                        flat no.7, 11th floor, Chembur, Mumbai.
+                      </p>
+                      <p class="text-medium-gray text-16-nr">+91 9234398042</p>
+                      <p class="text-medium-gray text-16-nr">
+                        monika@ocrpharma.net
+                      </p>
+                    </div>
+                    <div class="flex items-center justify-around gap-5">
+                      <button
+                        class="direction-trigger flex flex-col items-center text-dark-gray text-16-nr"
+                      >
+                        <span class="material-symbols-outlined material-filled">
+                          directions
+                        </span>
+                        Direction
+                      </button>
+                      <button
+                        class="flex flex-col items-center text-dark-gray text-16-nr"
+                      >
+                        <span class="material-symbols-outlined material-filled">
+                          call
+                        </span>
+                        Call
+                      </button>
+                      <button
+                        class="flex flex-col items-center text-dark-gray text-16-nr"
+                      >
+                        <span class="material-symbols-outlined material-filled">
+                          share
+                        </span>
+                        Share
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="pagination-controls flex justify-center mt-6 gap-3"
+              ></div>
+            </div>
+
+            <!-- Direction Popup -->
+            <div
+              class="direction-modal fixed inset-0 items-center justify-center bg-black/40 px-3 z-50 hidden h-full"
+            >
+              <div
+                class="bg-direction px-4 py-3 rounded-[6px] shadow-(--box-shadow-1) backdrop-filter-[20] max-w-[400px] w-full space-y-4"
+              >
+                <div
+                  class="flex justify-between border-b-2 border-living-coral py-3"
+                >
+                  <button
+                    class="tab-button cursor-pointer text-sm px-4 py-2 focus:outline-none hover:text-living-coral flex flex-col gap-1"
+                    data-tab="best"
+                  >
+                    <span class="material-symbols-outlined text-living-coral"
+                      >directions</span
+                    >Best
+                  </button>
+                  <button
+                    class="tab-button cursor-pointer text-sm px-4 py-2 focus:outline-none hover:text-living-coral flex flex-col gap-1"
+                    data-tab="car"
+                  >
+                    <span class="material-symbols-outlined text-living-coral"
+                      >directions_car</span
+                    >Car
+                  </button>
+                  <button
+                    class="tab-button cursor-pointer text-sm px-4 py-2 focus:outline-none hover:text-living-coral flex flex-col gap-1"
+                    data-tab="bike"
+                  >
+                    <span class="material-symbols-outlined text-living-coral"
+                      >two_wheeler</span
+                    >Bike
+                  </button>
+                  <button
+                    class="tab-button cursor-pointer text-sm px-4 py-2 focus:outline-none hover:text-living-coral flex flex-col gap-1"
+                    data-tab="walk"
+                  >
+                    <span class="material-symbols-outlined text-living-coral"
+                      >directions_walk</span
+                    >Waliking
+                  </button>
+                </div>
+                <div class="tab-content" id="best">
+                  <div class="flex items-center justify-between gap-4">
+                    <div class="flex flex-col items-center justify-center">
+                      <div
+                        class="w-4 h-4 rounded-full border-4 border-dark-gray"
+                      ></div>
+                      <hr
+                        class="h-6 border border-dashed border-dark-gray w-0"
+                      />
+                      <span class="material-symbols-outlined text-living-coral"
+                        >location_on</span
+                      >
+                    </div>
+                    <div class="flex flex-col items-center gap-3 w-full">
+                      <input
+                        type="text"
+                        placeholder="Your Location"
+                        class="bg-transparent-living-coral-2 text-dark-gray placeholder:text-dark-gray backdrop-blur-[20px] shadow-(--box-shadow-1) text-sm px-3 py-2 rounded-[6px] w-full border-none focus:outline-none focus:ring-0"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Zenith Hospital"
+                        class="bg-transparent-living-coral-2 text-dark-gray placeholder:text-dark-gray backdrop-blur-[20px] shadow-(--box-shadow-1) text-sm px-3 py-2 rounded-[6px] w-full border-none focus:outline-none focus:ring-0"
+                      />
+                    </div>
+                    <span class="material-symbols-outlined text-living-coral"
+                      >swap_vert</span
+                    >
+                  </div>
+
+                  <div
+                    class="flex gap-2 items-center justify-center py-5 text-sm text-dark-gray"
+                  >
+                    <span class="material-symbols-outlined text-living-coral"
+                      >share</span
+                    >Share directions
+                  </div>
+
+                  <div class="flex flex-col gap-8">
+                    <div class="flex items-start justify-between">
+                      <div
+                        class="border-l-2 pl-2 h-12 border-living-coral flex items-center justify-center gap-4"
+                      >
+                        <span
+                          class="material-symbols-outlined text-living-coral"
+                          >two_wheeler</span
+                        >
+                        <div class="flex flex-col gap-1 text-dark-gray">
+                          <span class="font-semibold text-sm"
+                            >Via String Rd</span
+                          >
+                          <div class="text-xs">
+                            Fastest route. the usual traffic
+                          </div>
+                        </div>
+                      </div>
+                      <div class="flex flex-col items-center">
+                        <span class="text-living-coral font-semibold"
+                          >4 min</span
+                        >
+                        <div class="text-xs text-dark-gray">1.3km</div>
+                      </div>
+                    </div>
+                    <div class="flex items-start justify-between">
+                      <div
+                        class="pl-2 h-12 flex items-center justify-center gap-4"
+                      >
+                        <span class="material-symbols-outlined text-dark-gray"
+                          >two_wheeler</span
+                        >
+                        <div class="flex flex-col gap-1 text-dark-gray">
+                          <span class="font-semibold text-sm"
+                            >Via String Rd</span
+                          >
+                          <div class="text-xs">
+                            Fastest route. the usual traffic
+                          </div>
+                        </div>
+                      </div>
+                      <div class="flex flex-col items-center">
+                        <span class="text-living-coral font-semibold"
+                          >4 min</span
+                        >
+                        <div class="text-xs text-dark-gray">1.3km</div>
+                      </div>
+                    </div>
+                    <div class="flex items-start justify-between">
+                      <div
+                        class="pl-2 h-12 flex items-center justify-center gap-4"
+                      >
+                        <span class="material-symbols-outlined text-dark-gray"
+                          >two_wheeler</span
+                        >
+                        <div class="flex flex-col gap-1 text-dark-gray">
+                          <span class="font-semibold text-sm"
+                            >Via String Rd</span
+                          >
+                          <div class="text-xs">
+                            Fastest route. the usual traffic
+                          </div>
+                        </div>
+                      </div>
+                      <div class="flex flex-col items-center">
+                        <span class="text-living-coral font-semibold"
+                          >4 min</span
+                        >
+                        <div class="text-xs text-dark-gray">1.3km</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- View Popup -->
+            <div
+              class="place-view-modal fixed inset-0 items-center justify-center bg-black/40 px-3 z-50 hidden"
+            >
+              <div
+                class="bg-white rounded-[6px] shadow-(--box-shadow-1) backdrop-filter-[20] max-w-[1000px] h-[550px] sm:h-[650px] w-full space-y-4 overflow-hidden"
+              >
+                <div
+                  class="flex items-center justify-between text-white h-10 bg-living-coral px-3"
+                >
+                  <div class="flex items-center gap-4">
+                    <span class="material-symbols-outlined cursor-pointer">
+                      share
+                    </span>
+                    <span class="material-symbols-outlined cursor-pointer">
+                      download
+                    </span>
+                  </div>
+                  <span class="font-medium">Places History</span>
+                  <span
+                    class="material-symbols-outlined cursor-pointer place-view-close"
+                  >
+                    close
+                  </span>
+                </div>
+                <div
+                  class="px-3 h-[calc(100%-40px)] overflow-y-auto scroll space-y-2 pb-6"
+                >
+                  <div
+                    class="flex flex-col sm:flex-row items-center justify-between"
+                  >
+                    <h3 class="font-semibold text-black text-sm sm:text-base">
+                      XTZ Advertizing Pvt Ltd
+                    </h3>
+                    <p class="font-normal text-black text-xs sm:text-sm">
+                      Last 7 days (14/05/2025 to 21/05/2025)
+                    </p>
+                  </div>
+                  <div
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-4 place-items-center"
+                  >
+                    <div class="places-card">
+                      <!-- Image -->
+                      <div>
+                        <img
+                          class="rounded-t-[10px]"
+                          src="/static/images/Hospital.svg"
+                          alt="Hospital"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div class="px-4 py-5 space-y-2">
+                        <div class="flex items-center justify-between">
+                          <h1 class="text-18-fs">Zenith Hospital</h1>
+                          <span
+                            class="material-symbols-outlined material-filled text-living-coral"
+                          >
+                            bookmark
+                          </span>
+                        </div>
+                        <p
+                          class="flex items-center gap-1 text-dark-gray text-14-nr"
+                        >
+                          4.3
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          (3,723)
+                        </p>
+                        <p class="text-dark-gray text-14-nr">Hospital</p>
+                        <div class="flex flex-col gap-1">
+                          <p class="text-medium-gray text-14-nr">
+                            flat no.7, 11th floor, Chembur, Mumbai.
+                          </p>
+                          <p class="text-medium-gray text-14-nr">
+                            +91 9234398042
+                          </p>
+                          <p class="text-medium-gray text-14-nr">
+                            monika@ocrpharma.net
+                          </p>
+                        </div>
+                        <div class="flex items-center justify-around gap-5">
+                          <button
+                            class="flex flex-col items-center text-dark-gray text-14-nr"
+                          >
+                            <span
+                              class="material-symbols-outlined material-filled"
+                            >
+                              directions
+                            </span>
+                            Direction
+                          </button>
+                          <button
+                            class="flex flex-col items-center text-dark-gray text-14-nr"
+                          >
+                            <span
+                              class="material-symbols-outlined material-filled"
+                            >
+                              call
+                            </span>
+                            Call
+                          </button>
+                          <button
+                            class="flex flex-col items-center text-dark-gray text-14-nr"
+                          >
+                            <span
+                              class="material-symbols-outlined material-filled"
+                            >
+                              share
+                            </span>
+                            Share
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="places-card">
+                      <!-- Image -->
+                      <div>
+                        <img
+                          class="rounded-t-[10px]"
+                          src="/static/images/Hospital.svg"
+                          alt="Hospital"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div class="px-4 py-5 space-y-2">
+                        <div class="flex items-center justify-between">
+                          <h1 class="text-18-fs">Zenith Hospital</h1>
+                          <span
+                            class="material-symbols-outlined material-filled text-living-coral"
+                          >
+                            bookmark
+                          </span>
+                        </div>
+                        <p
+                          class="flex items-center gap-1 text-dark-gray text-14-nr"
+                        >
+                          4.3
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          (3,723)
+                        </p>
+                        <p class="text-dark-gray text-14-nr">Hospital</p>
+                        <div class="flex flex-col gap-1">
+                          <p class="text-medium-gray text-14-nr">
+                            flat no.7, 11th floor, Chembur, Mumbai.
+                          </p>
+                          <p class="text-medium-gray text-14-nr">
+                            +91 9234398042
+                          </p>
+                          <p class="text-medium-gray text-14-nr">
+                            monika@ocrpharma.net
+                          </p>
+                        </div>
+                        <div class="flex items-center justify-around gap-5">
+                          <button
+                            class="flex flex-col items-center text-dark-gray text-14-nr"
+                          >
+                            <span
+                              class="material-symbols-outlined material-filled"
+                            >
+                              directions
+                            </span>
+                            Direction
+                          </button>
+                          <button
+                            class="flex flex-col items-center text-dark-gray text-14-nr"
+                          >
+                            <span
+                              class="material-symbols-outlined material-filled"
+                            >
+                              call
+                            </span>
+                            Call
+                          </button>
+                          <button
+                            class="flex flex-col items-center text-dark-gray text-14-nr"
+                          >
+                            <span
+                              class="material-symbols-outlined material-filled"
+                            >
+                              share
+                            </span>
+                            Share
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="places-card">
+                      <!-- Image -->
+                      <div>
+                        <img
+                          class="rounded-t-[10px]"
+                          src="/static/images/Hospital.svg"
+                          alt="Hospital"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div class="px-4 py-5 space-y-2">
+                        <div class="flex items-center justify-between">
+                          <h1 class="text-18-fs">Zenith Hospital</h1>
+                          <span
+                            class="material-symbols-outlined material-filled text-living-coral"
+                          >
+                            bookmark
+                          </span>
+                        </div>
+                        <p
+                          class="flex items-center gap-1 text-dark-gray text-14-nr"
+                        >
+                          4.3
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          (3,723)
+                        </p>
+                        <p class="text-dark-gray text-14-nr">Hospital</p>
+                        <div class="flex flex-col gap-1">
+                          <p class="text-medium-gray text-14-nr">
+                            flat no.7, 11th floor, Chembur, Mumbai.
+                          </p>
+                          <p class="text-medium-gray text-14-nr">
+                            +91 9234398042
+                          </p>
+                          <p class="text-medium-gray text-14-nr">
+                            monika@ocrpharma.net
+                          </p>
+                        </div>
+                        <div class="flex items-center justify-around gap-5">
+                          <button
+                            class="flex flex-col items-center text-dark-gray text-14-nr"
+                          >
+                            <span
+                              class="material-symbols-outlined material-filled"
+                            >
+                              directions
+                            </span>
+                            Direction
+                          </button>
+                          <button
+                            class="flex flex-col items-center text-dark-gray text-14-nr"
+                          >
+                            <span
+                              class="material-symbols-outlined material-filled"
+                            >
+                              call
+                            </span>
+                            Call
+                          </button>
+                          <button
+                            class="flex flex-col items-center text-dark-gray text-14-nr"
+                          >
+                            <span
+                              class="material-symbols-outlined material-filled"
+                            >
+                              share
+                            </span>
+                            Share
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="places-card">
+                      <!-- Image -->
+                      <div>
+                        <img
+                          class="rounded-t-[10px]"
+                          src="/static/images/Hospital.svg"
+                          alt="Hospital"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div class="px-4 py-5 space-y-2">
+                        <div class="flex items-center justify-between">
+                          <h1 class="text-18-fs">Zenith Hospital</h1>
+                          <span
+                            class="material-symbols-outlined material-filled text-living-coral"
+                          >
+                            bookmark
+                          </span>
+                        </div>
+                        <p
+                          class="flex items-center gap-1 text-dark-gray text-14-nr"
+                        >
+                          4.3
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          (3,723)
+                        </p>
+                        <p class="text-dark-gray text-14-nr">Hospital</p>
+                        <div class="flex flex-col gap-1">
+                          <p class="text-medium-gray text-14-nr">
+                            flat no.7, 11th floor, Chembur, Mumbai.
+                          </p>
+                          <p class="text-medium-gray text-14-nr">
+                            +91 9234398042
+                          </p>
+                          <p class="text-medium-gray text-14-nr">
+                            monika@ocrpharma.net
+                          </p>
+                        </div>
+                        <div class="flex items-center justify-around gap-5">
+                          <button
+                            class="flex flex-col items-center text-dark-gray text-14-nr"
+                          >
+                            <span
+                              class="material-symbols-outlined material-filled"
+                            >
+                              directions
+                            </span>
+                            Direction
+                          </button>
+                          <button
+                            class="flex flex-col items-center text-dark-gray text-14-nr"
+                          >
+                            <span
+                              class="material-symbols-outlined material-filled"
+                            >
+                              call
+                            </span>
+                            Call
+                          </button>
+                          <button
+                            class="flex flex-col items-center text-dark-gray text-14-nr"
+                          >
+                            <span
+                              class="material-symbols-outlined material-filled"
+                            >
+                              share
+                            </span>
+                            Share
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="places-card">
+                      <!-- Image -->
+                      <div>
+                        <img
+                          class="rounded-t-[10px]"
+                          src="/static/images/Hospital.svg"
+                          alt="Hospital"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div class="px-4 py-5 space-y-2">
+                        <div class="flex items-center justify-between">
+                          <h1 class="text-18-fs">Zenith Hospital</h1>
+                          <span
+                            class="material-symbols-outlined material-filled text-living-coral"
+                          >
+                            bookmark
+                          </span>
+                        </div>
+                        <p
+                          class="flex items-center gap-1 text-dark-gray text-14-nr"
+                        >
+                          4.3
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          (3,723)
+                        </p>
+                        <p class="text-dark-gray text-14-nr">Hospital</p>
+                        <div class="flex flex-col gap-1">
+                          <p class="text-medium-gray text-14-nr">
+                            flat no.7, 11th floor, Chembur, Mumbai.
+                          </p>
+                          <p class="text-medium-gray text-14-nr">
+                            +91 9234398042
+                          </p>
+                          <p class="text-medium-gray text-14-nr">
+                            monika@ocrpharma.net
+                          </p>
+                        </div>
+                        <div class="flex items-center justify-around gap-5">
+                          <button
+                            class="flex flex-col items-center text-dark-gray text-14-nr"
+                          >
+                            <span
+                              class="material-symbols-outlined material-filled"
+                            >
+                              directions
+                            </span>
+                            Direction
+                          </button>
+                          <button
+                            class="flex flex-col items-center text-dark-gray text-14-nr"
+                          >
+                            <span
+                              class="material-symbols-outlined material-filled"
+                            >
+                              call
+                            </span>
+                            Call
+                          </button>
+                          <button
+                            class="flex flex-col items-center text-dark-gray text-14-nr"
+                          >
+                            <span
+                              class="material-symbols-outlined material-filled"
+                            >
+                              share
+                            </span>
+                            Share
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="places-card">
+                      <!-- Image -->
+                      <div>
+                        <img
+                          class="rounded-t-[10px]"
+                          src="/static/images/Hospital.svg"
+                          alt="Hospital"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div class="px-4 py-5 space-y-2">
+                        <div class="flex items-center justify-between">
+                          <h1 class="text-18-fs">Zenith Hospital</h1>
+                          <span
+                            class="material-symbols-outlined material-filled text-living-coral"
+                          >
+                            bookmark
+                          </span>
+                        </div>
+                        <p
+                          class="flex items-center gap-1 text-dark-gray text-14-nr"
+                        >
+                          4.3
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          <span
+                            class="material-symbols-outlined material-filled text-star-yellow"
+                          >
+                            star
+                          </span>
+                          (3,723)
+                        </p>
+                        <p class="text-dark-gray text-14-nr">Hospital</p>
+                        <div class="flex flex-col gap-1">
+                          <p class="text-medium-gray text-14-nr">
+                            flat no.7, 11th floor, Chembur, Mumbai.
+                          </p>
+                          <p class="text-medium-gray text-14-nr">
+                            +91 9234398042
+                          </p>
+                          <p class="text-medium-gray text-14-nr">
+                            monika@ocrpharma.net
+                          </p>
+                        </div>
+                        <div class="flex items-center justify-around gap-5">
+                          <button
+                            class="flex flex-col items-center text-dark-gray text-14-nr"
+                          >
+                            <span
+                              class="material-symbols-outlined material-filled"
+                            >
+                              directions
+                            </span>
+                            Direction
+                          </button>
+                          <button
+                            class="flex flex-col items-center text-dark-gray text-14-nr"
+                          >
+                            <span
+                              class="material-symbols-outlined material-filled"
+                            >
+                              call
+                            </span>
+                            Call
+                          </button>
+                          <button
+                            class="flex flex-col items-center text-dark-gray text-14-nr"
+                          >
+                            <span
+                              class="material-symbols-outlined material-filled"
+                            >
+                              share
+                            </span>
+                            Share
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-center py-4">
+                    <p class="text-medium-gray text-xs">
+                      Generated on (25-Apr-202) by user ID (John Doe)
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+          <!-- Saved Coupon Content -->
+          <div class="saved-coupon tab-content pt-6 space-y-6 hidden">
+            <!-- Header -->
+            <div class="px-2 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
+              <p class="text-sm font-semibold whitespace-nowrap">Saved Coupon History</p>
+              <div class="flex items-center justify-start md:justify-end gap-5 w-full sm:w-5/6">
+                <div class="w-full max-w-[280px] rounded-[6px] bg-light-white flex items-center gap-2 px-2">
+                  <span class="material-symbols-outlined text-dark-gray">
+                    search
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="Search by name or categories"
+                    class="w-full py-2.5 focus:!outline-none placeholder:text-medium-gray"
+                    value="{{ query }}"
+                  />
+                </div>
+                <div class="dropdown relative flex justify-end">
+                  <button class="filterToggle w-full max-w-[90px] h-[40px] border border-living-coral rounded-[10px] text-living-coral flex items-center justify-center gap-1 cursor-pointer group hover:bg-living-coral hover:text-white px-3">
+                    <span class="material-symbols-outlined text-living-coral group-hover:text-white">
+                      keyboard_arrow_down
+                    </span>
+                    Filter
+                  </button>
+                  <div class="filterDropdown text-sm absolute right-0 top-10 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-[95px] z-10">
+                    <div class="p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded active" data-limit="5">
+                     Show 5
+                    </div>
+                    <div class="p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded active" data-limit="10">
+                     Show 10
+                    </div>
+                    <div class="p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded active" data-limit="15">
+                      Show 15
+                    </div>
+                  </div>
+                </div>
+                <button class="coupon-view-btn w-full max-w-[100px] h-[40px] border border-living-coral rounded-[10px] text-living-coral flex items-center justify-center gap-1 cursor-pointer group hover:bg-living-coral hover:text-white">
+                  <span class="material-symbols-outlined text-living-coral group-hover:text-white">
+                    file_export
+                  </span>
+                  <span class="hidden sm:block">View</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Table -->
+             {% include "advertiser/preview-popup.html" %}
+            <div class="overflow-x-auto">
+              <table class="couponSavedHistoryTable min-w-full table-auto whitespace-nowrap docTable">
+                <thead class="bg-living-coral text-white text-sm sm:text-18-b">
+                  <tr>
+                    <th class="text-center px-4 py-4 border-r border-white">
+                      <div class="flex items-center justify-center gap-2">
+                        Date & Time
+                        <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
+                      </div>
+                    </th>
+                    <th class="text-center px-4 py-4 border-r border-white">
+                      <div class="flex items-center justify-center gap-2">
+                        Category
+                        <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
+                      </div>
+                    </th>
+                    <th class="text-center px-4 py-4 border-r border-white">
+                      <div class="flex items-center justify-center gap-2">
+                        Brand Name
+                        <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
+                      </div>
+                    </th>
+                    <th class="text-center px-4 py-4 border-r border-white">
+                      <div class="flex items-center justify-center gap-2">
+                        Max Redemptions
+                        <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
+                      </div>
+                    </th>
+                    <th class="text-center px-4 py-4 border-r border-white">
+                      <div class="flex items-center justify-center gap-2">
+                        Redeemed
+                        <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
+                      </div>
+                    </th>
+                    <th class="text-center px-4 py-4 border-r border-white">
+                      <div class="flex items-center justify-center gap-2">
+                        Remaining
+                        <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
+                      </div>
+                    </th>
+                    <th class="text-center px-4 py-4 border-r border-white">
+                      <div class="flex items-center justify-center gap-2">
+                        Validity
+                        <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
+                      </div>
+                    </th>
+                    <th class="text-center px-4 py-4 border-r border-white">
+                      <div class="flex items-center justify-center gap-2">
+                        Status
+                        <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
+                      </div>
+                    </th>
+                    <th class="text-center px-4 py-4">
+                      <div class="flex items-center justify-center gap-2">
+                        Actions
+                        <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="text-sm sm:text-16-nr">
+                  {% include 'advertiser/partials/saved-coupon-history-table.html' %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- View All saved coupon history Popup -->
+          {% include "advertiser/preview-popup.html" %}
+
+          <!-- View Popup -->
+          {% include "advertiser/view-saved-history.html" %}
+
+          <!-- Donation History -->
+          <div
+            class="donation-history tab-content pt-6 space-y-6 hidden"
+          >
+            <!-- Header -->
+            <div
+              class="px-2 flex flex-col md:flex-row items-start md:items-center justify-between gap-2"
+            >
+              <p class="text-sm font-semibold whitespace-nowrap">Donation History</p>
+              <div class="flex items-center justify-start md:justify-end gap-5 w-full sm:w-5/6">
+                <div
+                  class="w-full max-w-[280px] rounded-[6px] bg-light-white flex items-center gap-2 px-2"
+                >
+                  <span class="material-symbols-outlined text-dark-gray">
+                    search
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="Search by name or categories"
+                    class="w-full py-2.5 focus:!outline-none placeholder:text-medium-gray"
+                  />
+                </div>
+                <div class="dropdown relative flex justify-end">
+                  <button
+                  class="filterToggle w-full max-w-[90px] h-[40px] border border-living-coral rounded-[10px] text-living-coral flex items-center justify-center gap-1 cursor-pointer group hover:bg-living-coral hover:text-white px-3"
+                >
+                  <span class="material-symbols-outlined text-living-coral group-hover:text-white">
+                    keyboard_arrow_down
+                  </span>
+                  Filter
+                </button>
+                <div
+                    class="filterDropdown text-sm absolute right-0 top-10 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-[95px] z-10"
+                  >
+                    <div
+                      class="p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
+                    >
+                     Show 5
+                    </div>
+                    <div
+                      class="p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
+                    >
+                     Show 10
+                    </div>
+                    <div
+                      class="p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
+                    >
+                      Show 15
+                    </div>
+                  </div>
+                </div>
+                <button
+                  class="donation-view-btn w-full max-w-[100px] h-[40px] border border-living-coral rounded-[10px] text-living-coral flex items-center justify-center gap-1 cursor-pointer group hover:bg-living-coral hover:text-white"
+                >
+                  <span class="material-symbols-outlined text-living-coral group-hover:text-white">
+                    file_export
+                  </span>
+                  <span class="hidden sm:block">View</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto">
+              <table class="min-w-full table-auto whitespace-nowrap docTable">
+                <thead class="bg-living-coral text-white text-sm sm:text-18-b">
+                  <tr>
+                    <th class="text-center px-4 py-4 border-r border-white">
+                      <div class="flex items-center justify-center gap-2">
+                        Date & Time
+                        <img
+                          src="/static/images/sort-alt.svg"
+                          alt="sort"
+                          loading="lazy"
+                        />
+                      </div>
+                    </th>
+                    <th class="text-center px-4 py-4 border-r border-white">
+                      Post Name
+                    </th>
+                    <th class="text-center px-4 py-4 border-r border-white">
+                      NGO Name
+                    </th>
+                    <th class="text-center px-4 py-4 border-r border-white">
+                      Post Type
+                    </th>
+                    <th class="text-center px-4 py-4 border-r border-white">
+                      Paid Donation
+                    </th>
+                    <th class="text-center px-4 py-4 border-r border-white">
+                      Status
+                    </th>
+                    <th class="text-center px-4 py-4 w-40">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-snow-gray text-dark-gray text-16-fs">
+                  <tr>
+                    <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
+                    <td class="px-4 py-4.5 text-center">Bills</td>
+                    <td class="px-4 py-4.5 text-center">Bharat Seva Mandal</td>
+                    <td class="px-4 py-4.5 text-center">Poverty Relief</td>
+                    <td class="px-4 py-4.5 text-center">₹500000</td>
+                    <td class="px-6 py-4.5 text-center">
+                      <div
+                        class="bg-mint-cream text-green py-2 rounded-md border-none px-3"
+                      >
+                        Successful
+                      </div>
+                    </td>
+                    <td
+                      class="w-40 px-4 py-4.5 text-center flex items-center justify-center"
+                    >
+                      <span
+                        class="material-symbols-outlined saved-icon material-filled text-living-coral cursor-pointer hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
+                      >
+                        bookmark
+                      </span>
+                      <span
+                        class="cursor-pointer platform-bill-view hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
+                      >
+                        <img src="/static/images/assignment.svg" alt="Icon" />
+                      </span>
+                      <span
+                        class="cursor-pointer donation-receipt-view hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
+                      >
+                        <img
+                          src="/static/images/calendar_today.svg"
+                          alt="Icon"
+                        />
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
+                    <td class="px-4 py-4.5 text-center">Bills</td>
+                    <td class="px-4 py-4.5 text-center">Bharat Seva Mandal</td>
+                    <td class="px-4 py-4.5 text-center">Education</td>
+                    <td class="px-4 py-4.5 text-center">₹500000</td>
+                    <td class="px-6 py-4.5 text-center">
+                      <div
+                        class="bg-soft-pink text-strong-red py-2 rounded-md border-none px-3"
+                      >
+                        Failed
+                      </div>
+                    </td>
+                    <td
+                      class="w-40 px-4 py-4.5 text-center flex items-center justify-center"
+                    >
+                      <span
+                        class="material-symbols-outlined saved-icon material-filled text-living-coral cursor-pointer hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
+                      >
+                        bookmark
+                      </span>
+                      <span
+                        class="cursor-pointer platform-bill-view hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
+                      >
+                        <img src="/static/images/assignment.svg" alt="Icon" />
+                      </span>
+                      <span
+                        class="cursor-pointer donation-receipt-view hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
+                      >
+                        <img
+                          src="/static/images/calendar_today.svg"
+                          alt="Icon"
+                        />
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
+                    <td class="px-4 py-4.5 text-center">Bills</td>
+                    <td class="px-4 py-4.5 text-center">Bharat Seva Mandal</td>
+                    <td class="px-4 py-4.5 text-center">Health Care</td>
+                    <td class="px-4 py-4.5 text-center">₹10000</td>
+                    <td class="px-6 py-4.5 text-center">
+                      <div
+                        class="bg-soft-pink text-strong-red py-2 rounded-md border-none px-3"
+                      >
+                        Failed
+                      </div>
+                    </td>
+                    <td
+                      class="w-40 px-4 py-4.5 text-center flex items-center justify-center"
+                    >
+                      <span
+                        class="material-symbols-outlined saved-icon material-filled text-living-coral cursor-pointer hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
+                      >
+                        bookmark
+                      </span>
+                      <span
+                        class="cursor-pointer platform-bill-view hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
+                      >
+                        <img src="/static/images/assignment.svg" alt="Icon" />
+                      </span>
+                      <span
+                        class="cursor-pointer donation-receipt-view hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
+                      >
+                        <img
+                          src="/static/images/calendar_today.svg"
+                          alt="Icon"
+                        />
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
+                    <td class="px-4 py-4.5 text-center">Bills</td>
+                    <td class="px-4 py-4.5 text-center">Bharat Seva Mandal</td>
+                    <td class="px-4 py-4.5 text-center">Poverty Relief</td>
+                    <td class="px-4 py-4.5 text-center">₹500000</td>
+                    <td class="px-6 py-4.5 text-center">
+                      <div
+                        class="bg-mint-cream text-green py-2 rounded-md border-none px-3"
+                      >
+                        Successful
+                      </div>
+                    </td>
+                    <td
+                      class="w-40 px-4 py-4.5 text-center flex items-center justify-center"
+                    >
+                      <span
+                        class="material-symbols-outlined saved-icon material-filled text-living-coral cursor-pointer hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
+                      >
+                        bookmark
+                      </span>
+                      <span
+                        class="cursor-pointer platform-bill-view hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
+                      >
+                        <img src="/static/images/assignment.svg" alt="Icon" />
+                      </span>
+                      <span
+                        class="cursor-pointer donation-receipt-view hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
+                      >
+                        <img
+                          src="/static/images/calendar_today.svg"
+                          alt="Icon"
+                        />
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- View Popup -->
+             <div
+              class="donation-view-modal fixed inset-0 items-center justify-center bg-black/40 px-3 z-50 hidden h-full"
+            >
+              <div
+                class="bg-white rounded-[6px] shadow-(--box-shadow-1) backdrop-filter-[20] max-w-[1000px] h-[450px] sm:h-[500px] w-full space-y-4 overflow-hidden"
+              >
+                <div
+                  class="flex items-center justify-between text-white h-10 bg-living-coral px-3"
+                >
+                  <div class="flex items-center gap-4">
+                    <span class="material-symbols-outlined cursor-pointer">
+                      share
+                    </span>
+                    <span class="material-symbols-outlined cursor-pointer">
+                      download
+                    </span>
+                  </div>
+                  <span class="font-medium">Donation History</span>
+                  <span
+                    class="material-symbols-outlined cursor-pointer donation-view-close"
+                  >
+                    close
+                  </span>
+                </div>
+                <div
+                  class="px-3 h-[calc(100%-40px)] overflow-y-auto scroll space-y-2 pb-6"
+                >
+                  <div
+                    class="flex flex-col sm:flex-row items-center justify-between"
+                  >
+                    <h3 class="font-semibold text-black text-sm sm:text-base">
+                      Mr. Ravi Gupta
+                    </h3>
+                    <p class="font-normal text-black text-xs sm:text-sm">
+                      Last 7 days (14/05/2025 to 21/05/2025)
+                    </p>
+                  </div>
+                  <div class="overflow-x-auto">
+                    <table class="min-w-full table-auto whitespace-nowrap">
+                      <thead
+                        class="bg-living-coral text-white text-sm sm:text-16-b"
+                      >
+                        <tr>
+                          <th
+                            class="text-center px-4 py-4 border-r border-white"
+                          >
+                            <div class="flex items-center justify-center gap-2">
+                              Date & Time
+                              <img
+                                src="/static/images/sort-alt.svg"
+                                alt="sort"
+                                loading="lazy"
+                              />
+                            </div>
+                          </th>
+                          <th
+                            class="text-center px-4 py-4 border-r border-white"
+                          >
+                            Post Name
+                          </th>
+                          <th
+                            class="text-center px-4 py-4 border-r border-white"
+                          >
+                            NGO Name
+                          </th>
+                          <th
+                            class="text-center px-4 py-4 border-r border-white"
+                          >
+                            Post Type
+                          </th>
+                          <th
+                            class="text-center px-4 py-4 border-r border-white"
+                          >
+                            Paid Donation
+                          </th>
+                          <th
+                            class="text-center px-4 py-4 border-r border-white"
+                          >
+                            Status
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody class="bg-snow-gray text-dark-gray text-14-fs">
+                        <tr>
+                          <td class="px-4 py-4.5 text-center">
+                            20/03/25,14:30
+                          </td>
+                          <td class="px-4 py-4.5 text-center">Bills</td>
+                          <td class="px-4 py-4.5 text-center">
+                            Bharat Seva Mandal
+                          </td>
+                          <td class="px-4 py-4.5 text-center">
+                            Poverty Relief
+                          </td>
+                          <td class="px-4 py-4.5 text-center">₹500000</td>
+                          <td class="px-6 py-4.5 text-center">
+                            <div
+                              class="bg-mint-cream text-green py-2 rounded-md border-none px-3"
+                            >
+                              Successful
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="px-4 py-4.5 text-center">
+                            20/03/25,14:30
+                          </td>
+                          <td class="px-4 py-4.5 text-center">Bills</td>
+                          <td class="px-4 py-4.5 text-center">
+                            Bharat Seva Mandal
+                          </td>
+                          <td class="px-4 py-4.5 text-center">Education</td>
+                          <td class="px-4 py-4.5 text-center">₹500000</td>
+                          <td class="px-6 py-4.5 text-center">
+                            <div
+                              class="bg-soft-pink text-strong-red py-2 rounded-md border-none px-3"
+                            >
+                              Failed
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="px-4 py-4.5 text-center">
+                            20/03/25,14:30
+                          </td>
+                          <td class="px-4 py-4.5 text-center">Bills</td>
+                          <td class="px-4 py-4.5 text-center">
+                            Bharat Seva Mandal
+                          </td>
+                          <td class="px-4 py-4.5 text-center">Health Care</td>
+                          <td class="px-4 py-4.5 text-center">₹10000</td>
+                          <td class="px-6 py-4.5 text-center">
+                            <div
+                              class="bg-soft-pink text-strong-red py-2 rounded-md border-none px-3"
+                            >
+                              Failed
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="px-4 py-4.5 text-center">
+                            20/03/25,14:30
+                          </td>
+                          <td class="px-4 py-4.5 text-center">Bills</td>
+                          <td class="px-4 py-4.5 text-center">
+                            Bharat Seva Mandal
+                          </td>
+                          <td class="px-4 py-4.5 text-center">
+                            Poverty Relief
+                          </td>
+                          <td class="px-4 py-4.5 text-center">₹500000</td>
+                          <td class="px-6 py-4.5 text-center">
+                            <div
+                              class="bg-mint-cream text-green py-2 rounded-md border-none px-3"
+                            >
+                              Successful
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="flex items-center justify-center py-4">
+                    <p class="text-medium-gray text-xs">
+                      Generated on (25-Apr-202) by user ID (John Doe)
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Platform bill Popup -->
+            <div class="platform-bill-modal fixed inset-0 bg-semi-transparent-black items-center justify-center z-50 hidden h-full">
+              <div class="bg-snow-gray rounded-lg p-3 max-w-md w-full h-[80vh]">
+                <div class="flex items-center justify-between h-10">
+                  <div class="flex items-center gap-3">
+                    <span
+                      class="material-symbols-outlined cursor-pointer bg-living-coral text-white rounded-md p-1"
+                      >share</span
+                    >
+                    <span
+                      class="material-symbols-outlined cursor-pointer bg-living-coral text-white rounded-md p-1"
+                      >download</span
+                    >
+                  </div>
+                  <p class="font-semibold text-lg text-living-coral">
+                    Platform Bill
+                  </p>
+                  <button class="close-platform-bill">
+                    <span class="material-symbols-outlined cursor-pointer"
+                      >close</span
+                    >
+                  </button>
+                </div>
+                <div class="h-[calc(100%-40px)] overflow-y-auto scroll">
+                  <img
+                  src="/static/images/platformbill-receipt.svg"
+                  alt="Incorporation Certificate"
+                  class="w-full rounded"
+                />
+                </div>
+              </div>
+            </div>
+
+            <!-- Donation Receipt Popup -->
+            <div class="donation-receipt-modal fixed inset-0 bg-semi-transparent-black items-center justify-center z-50 hidden h-full">
+              <div class="bg-snow-gray rounded-lg p-3 max-w-md w-full h-[80vh]">
+                <div class="flex items-center justify-between h-10">
+                  <div class="flex items-center gap-3">
+                    <span
+                      class="material-symbols-outlined cursor-pointer bg-living-coral text-white rounded-md p-1"
+                      >share</span
+                    >
+                    <span
+                      class="material-symbols-outlined cursor-pointer bg-living-coral text-white rounded-md p-1"
+                      >download</span
+                    >
+                  </div>
+                  <p class="font-semibold text-lg text-living-coral">
+                    Donation Receipt
+                  </p>
+                  <button class="close-donation-receipt">
+                    <span class="material-symbols-outlined cursor-pointer"
+                      >close</span
+                    >
+                  </button>
+                </div>
+                <div class="h-[calc(100%-40px)] overflow-y-auto scroll">
+                  <img
+                  src="/static/images/Donate Bill.svg"
+                  alt="Incorporation Certificate"
+                  class="w-full rounded"
+                />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fixed bottom-6 right-8 z-50">
+          <button class="chatTrigger cursor-pointer w-16 h-16 bg-living-coral text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
+            <img src="/static/images/avatar.svg" alt="avatar" class="w-full h-full object-contain" />
+          </button>
+
+        </div>
+        <div class="relative ">
+          <div class="avatar fixed bottom-6 right-8 hidden  z-100">
+            <img src="/static/images/avatar.svg" alt="avatar">
+            <img src="/static/images/avatar-chatbox.svg" alt="chatbox" class="absolute bottom-0 right-50">
+              <button class="absolute cursor-pointer bottom-65 right-0 close-avatar-btn rounded-full bg-white shadow-[3.93px_5.24px_5.24px_0px_#00000040]
+">
+              <span class="material-symbols-outlined flex items-center justify-center p-[0.35rem] text-dark-gray">close</span>
+            </button>
+            <button class="absolute cursor-pointer bottom-6 right-18 bg-living-coral text-white p-2 rounded-md">
+              Talk
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- preview popup -->
+        <div class="preview-popup popup hidden fixed inset-0 items-center justify-center bg-black/40 px-3 z-50 h-full">
+          <div
+            class="bg-white pb-3 rounded-[10px] shadow-lg max-w-[560px] h-[640px] w-full space-y-4 overflow-hidden">
+            <div class="flex items-center justify-between text-white h-10 bg-violet-sky px-3">
+              <div class="flex items-center gap-4">
+                <span class="material-symbols-outlined cursor-pointer">share</span>
+                <span class="material-symbols-outlined cursor-pointer">download</span>
+              </div>
+              <span class="font-medium">Post History</span>
+              <span class="material-symbols-outlined cursor-pointer close-popup">close</span>
+            </div>
+            <div class="px-4 h-[calc(100%-40px)] overflow-y-auto scroll space-y-2 pb-6">
+              <div class="w-full rounded-[4px] overflow-hidden">
+                <img id="preview-creative1" src="/static/images/post.svg" alt="post" loading="lazy" class="w-full h-40 object-cover">
+              </div>
+              <!-- Audience Profile -->
+              <div class="my-4 pt-4 border-t-2 border-dashed border-semi-transparent-black">
+                <div class="text-18-fs text-violet-sky mb-3">Audience Profile</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8 text-jet-black">
+                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
+                    <div class="flex items-center justify-between w-2/5">
+                      <span class="text-14-fs">Age</span>
+                      <span>:</span>
+                    </div>
+                    <span id="preview-age-group"></span>
+                  </div>
+                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
+                    <div class="flex items-center justify-between w-2/5 sm:w-1/2">
+                      <span class="text-14-fs">Gender</span>
+                      <span>:</span>
+                    </div>
+                    <span id="preview-gender"></span>
+                  </div>
+                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
+                    <div class="flex items-center justify-between w-2/5">
+                      <span class="text-14-fs">City</span>
+                      <span>:</span>
+                    </div>
+                    <span id="preview-city"></span>
+                  </div>
+                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
+                    <div class="flex items-center justify-between w-2/5 sm:w-1/2">
+                      <span class="text-14-fs">Spending Power</span>
+                      <span>:</span>
+                    </div>
+                    <span id="preview-spending-power"></span>
+                  </div>
+                </div>
+              </div>
+              <!-- Post Details -->
+              <div class="py-3">
+                <div class="text-18-fs text-violet-sky mb-3">Post Details</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8 text-jet-black">
+                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
+                    <div class="flex items-center justify-between w-2/5">
+                      <span class="text-14-fs">Header</span>
+                      <span>:</span>
+                    </div>
+                    <span id="preview-header"></span>
+                  </div>
+                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
+                    <div class="flex items-center justify-between w-2/5 sm:w-1/2">
+                      <span class="text-14-fs">Date & Time</span>
+                      <span>:</span>
+                    </div>
+                    <span id="preview-date-time"></span>
+                  </div>
+                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
+                    <div class="flex items-center justify-between w-2/5">
+                      <span class="text-14-fs">Views</span>
+                      <span>:</span>
+                    </div>
+                    <span id="preview-views"></span>
+                  </div>
+                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
+                    <div class="flex items-center justify-between w-2/5 sm:w-1/2">
+                      <span class="text-14-fs">Post Type</span>
+                      <span>:</span>
+                    </div>
+                    <span id="preview-post-type"></span>
+                  </div>
+                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
+                    <div class="flex items-center justify-between w-2/5">
+                      <span class="text-14-fs">Target Donation</span>
+                      <span>:</span>
+                    </div>
+                    <span id="preview-target-donation"></span>
+                  </div>
+                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
+                    <div class="flex items-center justify-between w-2/5 sm:w-1/2">
+                      <span class="text-14-fs">Donation Received</span>
+                      <span>:</span>
+                    </div>
+                    <span id="preview-donation-received"></span>
+                  </div>
+                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
+                    <div class="flex items-center justify-between w-2/5">
+                      <span class="text-14-fs">Status</span>
+                      <span>:</span>
+                    </div>
+                    <span id="preview-status"></span>
+                  </div>
+                </div>
+                
+                <div class="border-t-2 border-dashed py-3 border-semi-transparent-black overflow-x-auto w-full no-scrollbar mt-4">
+                  <table id="preview-donation-table" class="table-auto min-w-full text-sm text-dark-gray whitespace-nowrap">
+                    <thead class="bg-violet-sky  text-white">
+                      <tr>
+                        <th class="text-center px-4 py-2 border-r border-white">Date & Time
+                          <img src="/static/images/sort-alt.svg" alt="sort" class="inline ml-2" />
+                        </th>
+                        <th class="px-4 py-2 text-center border-r border-white">Name</th>
+                        <th class="text-center px-4 py-2 border-r border-white">City</th>
+                        <th class="text-center px-4 py-2 border-r border-white">
+                          <div class="flex items-center justify-center">
+                            <p>Donation</p>
+                            <p>Received</p>
+                          </div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody class="bg-snow-gray text-dark-gray text-[14px]">
+                      <!-- JS will fill this -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="border-t-2 border-dashed py-3 border-semi-transparent-black grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8 text-jet-black">
+                <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
+                  <div class="flex items-center justify-between w-1/2">
+                    <span class="text-14-fs">Post Reference ID</span>
+                    <span>:</span>
+                  </div>
+                  <span id="preview-post-reference-id"></span>
+                </div>
+                <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
+                  <div class="flex items-center justify-between w-1/2">
+                    <span class="text-14-fs">Uploaded By</span>
+                    <span>:</span>
+                  </div>
+                  <span id="preview-uploaded-by"></span>
+                </div>
+                <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
+                  <div class="flex items-center justify-between w-1/2">
+                    <span class="text-14-fs">Downloaded On</span>
+                    <span>:</span>
+                  </div>
+                  <p>20/03/25,14:30</p>
+                </div>
+            </div>
+            </div>
+          </div>
+        </div>
+{% endblock%}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script src="{% static 'js/toaster.js' %}"></script>
+<script src="{% static 'js/Register-Advertiser/ad-coupon.js' %}"></script>
+<script src="{% static 'js/Register-Advertiser/saved.js' %}"></script>
+<script src="{% static 'js/tabs.js' %}"></script>
+<script src="{% static 'js/table-pagination.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% comment %} <script src="{% static 'js/Register-Advertiser/adv-tabs.js' %}"></script> {% endcomment %}
+<script src="{% static 'js/Register-Advertiser/cards-pagination.js' %}"></script>
+{% endblock %}

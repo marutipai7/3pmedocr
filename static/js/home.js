@@ -1392,7 +1392,6 @@ $(document).ready(function () {
 
   // Function to load and display upcoming events
   function loadUpcomingEvents() {
-    console.log('Loading upcoming events...');
     $.ajax({
       url: '/dashboard/get-upcoming-events/',
       method: 'GET',

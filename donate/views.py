@@ -20,7 +20,7 @@ import csv
 from django.http import HttpResponse
 from django.utils.encoding import smart_str
 from registration.models import ContactPerson, User
-
+from dashboard.views import get_common_context
 logger = logging.getLogger(__name__)
 
 @dashboard_login_required
@@ -62,14 +62,14 @@ def donate_view(request):
         donations = [d for d in donations if
                      donation_query in (d.ngopost.post_type.lower() if d.ngopost and d.ngopost.post_type else '') or
                      donation_query in (d.ngopost.user.ngoprofile.ngo_name.lower() if d.ngopost and d.ngopost.user and hasattr(d.ngopost.user, 'ngoprofile') and d.ngopost.user.ngoprofile.ngo_name else '')]
-
-    context = {
+    context = get_common_context(request, request.user_obj)
+    context.update({
         "ngo_posts": ngo_posts,
         "donations": donations,
         "org_query": org_query,
         "donation_query": donation_query,
         "limit": str(limit),
-    }
+    })
     return render(request, "donate.html", context)
 
 @dashboard_login_required

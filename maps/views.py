@@ -5,6 +5,7 @@ import requests
 from bson import ObjectId
 from django.conf import settings
 from django.http import JsonResponse
+from django.db.models import Sum, Count, DecimalField, Q
 from .models import SavedLocation, SearchHistory, PincodeLocation
 from registration.models import UserProfile, NGOProfile, AdvertiserProfile, ClientProfile
 from django.views.decorators.csrf import csrf_exempt
@@ -12,6 +13,8 @@ from django.shortcuts import render
 from math import radians, cos, sin, sqrt, atan2
 from dashboard.utils import dashboard_login_required
 from django.views.decorators.http import require_POST
+from points.models import PointsActionType, PointsHistory, PointsBadge
+from dashboard.views import get_common_context
 
 @dashboard_login_required
 def map_view(request):
@@ -22,16 +25,20 @@ def map_view(request):
         profile = AdvertiserProfile.objects.filter(user=user).first()
     elif user.user_type == 'client':
         profile = ClientProfile.objects.filter(user=user).first()
+        ['Map', 'Referral', 'Coupon']
     else:
         pass
+
     if profile:
-        return render(request, 'maps/maps.html', {
+        context = get_common_context(request, user)
+        context.update({
             'user': user,
             'address': profile.address,
             'city': profile.city,
             'state': profile.state,
             'pincode': profile.pincode,
         })
+        return render(request, 'maps/maps.html', context)
     else:
         return JsonResponse({"error": "Invalid input"}, status=400)
 

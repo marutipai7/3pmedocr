@@ -27,6 +27,7 @@ from django.template.loader import render_to_string
 from django.db import transaction
 import logging
 from .models import UserColorScheme
+from dashboard.views import get_common_context
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +64,8 @@ def validate_and_save_file(file_obj, subdir, field_label, user_type='common'):
 @dashboard_login_required
 def settings_page(request):
     user = request.user_obj
-    context = {
+    context = get_common_context(request, user)
+    context.update({
         'email': user.email,
         'country_code': '+91',
         'phone_no': user.phone_number or '',
@@ -78,7 +80,7 @@ def settings_page(request):
         "quite_mode": user.quite_mode,
         "quite_mode_start_time": user.quite_mode_start_time,
         "quite_mode_end_time": user.quite_mode_end_time,
-    }
+    })
     # try:
     #     user_profile = UserProfile.objects.get(user=user)
     #     context.update({

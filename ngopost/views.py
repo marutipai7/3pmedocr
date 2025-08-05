@@ -24,7 +24,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
 from datetime import datetime
 from django.core.paginator import Paginator
-
+from dashboard.views import get_common_context
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 @dashboard_login_required
 def post_view(request):
     user = request.user_obj
-
+    context = get_common_context(request, user)
     # GET request handling - load form data
     history_query = request.GET.get('history_query', '').strip().lower()
     saved_query = request.GET.get('saved_query', '').strip().lower()
@@ -81,7 +81,7 @@ def post_view(request):
             post.update_status_if_needed()
         post.donation_list = Donation.objects.filter(ngopost=post).select_related('user').order_by('-payment_date')
 
-    context = {
+    context.update({
         'post_history': post_history,
         'saved_posts': saved_posts,
         'history_query': history_query,
@@ -96,7 +96,7 @@ def post_view(request):
         'age_options': AgeOption.objects.filter(is_active=True),
         'gender_options': GenderOption.objects.filter(is_active=True),
         'spending_power_options': SpendingPowerOption.objects.filter(is_active=True),
-    }
+    })
     return render(request, 'post.html', context)
 
 

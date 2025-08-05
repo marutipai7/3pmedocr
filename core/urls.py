@@ -10,7 +10,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include('registration.urls')),
     path('dashboard', dashboard_views.dashboard_home, name='dashboard'),
-    path('dashboard/saved', dashboard_views.saved, name='saved'),
     path('logout', dashboard_views.logout_view, name='logout'),
     path('map/', include('maps.urls')),
     path('help/', include('support.urls')),
