@@ -20,7 +20,7 @@ from django.utils import timezone
 from datetime import timedelta, date
 import logging
 from django.db import connection
-
+from registration.models import AdvertiserProfile, ClientProfile, MedicalProviderProfile, NGOProfile
 
 
 @dashboard_login_required
@@ -30,10 +30,16 @@ def points_dashboard(request):
 
     if user_type == 'ngo':
         chart_action_types = ['Map', 'Referral', 'Post']
+        user_profile = NGOProfile.objects.filter(user=user).first()
     elif user_type == 'client':
         chart_action_types = ['Map', 'Referral', 'Subscription']
+        user_profile = ClientProfile.objects.filter(user=user).first()
     elif user_type == 'advertiser':
         chart_action_types = ['Map', 'Referral', 'Coupon']
+        user_profile = AdvertiserProfile.objects.filter(user=user).first()
+    elif user_type == 'provider':
+        chart_action_types = ['Map', 'Referral', 'Coupon']
+        user_profile = MedicalProviderProfile.objects.filter(user=user).first()
     else:
         chart_action_types = []
 
@@ -85,8 +91,10 @@ def points_dashboard(request):
     chart_labels = [d.strftime('%d/%m') for d in last_7_days]
 
     # 🔍 Search & Filters - PREVIOUS DATA HERE OF filter_point
-   
-
+    if user_type == 'ngo':
+        user_display_name = user_profile.ngo_name if user_profile else 'Unknown'
+    else:
+        user_display_name = user_profile.company_name if user_profile else 'Unknown'
     return render(request, 'ngo_points.html', {
         'total_points': total_points,
         'action_points': action_points,
@@ -95,6 +103,8 @@ def points_dashboard(request):
         # 'history': history_data,
         'all_badges': all_badges,
         'badge': badge,
+        'user':user,
+        'user_display_name': user_display_name,
     })
 
 from django.core.paginator import Paginator

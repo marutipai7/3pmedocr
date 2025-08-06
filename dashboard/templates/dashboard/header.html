@@ -91,13 +91,15 @@
         </div>
       </a>
       {% endif %}
+      {% if user.user_type == 'ngo' or user.user_type == 'provider' %}
       <a href="{% url 'cart' %}" class="relative">
-        <img src="{% static 'images/cart.svg' %}" alt="star" class="cursor-pointer has-tooltip" />
-        <div
+        <img src="{% static 'images/cart.svg' %}" alt="star" title="Cart" class="cursor-pointer has-tooltip" />
+         <div
           class="absolute py-1 px-1.5 text-start text-xs tooltip -bottom-7 right-1 z-10 bg-white border rounded-md border-living-coral font-normal">
           Cart
         </div>
       </a>
+      {% endif %}
       <div class="relative">
         <img src="{% static 'images/bell.svg' %}" alt="bell" class="cursor-pointer has-tooltip" id="bell-icon" />
         <div

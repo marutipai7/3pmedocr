@@ -1,20 +1,18 @@
 from django.urls import path
-from .views import dashboard_home, logout_view, saved
-from .views import get_coupon_chart_data
-from .views import save_event, get_events, get_upcoming_events
 from . import views
 
-
-
-
 urlpatterns = [
-    path('advertiser/', dashboard_home, name='advertiser-home'),
-    path('api/coupon-chart-data/', get_coupon_chart_data, name='coupon_chart_data'),
+    path('advertiser/', views.dashboard_home, name='advertiser-home'),
+    path('api/coupon-chart-data/', views.get_coupon_chart_data, name='coupon_chart_data'),
     path('save-event/', views.save_event, name='save_event'),
-    path('get-events/', get_events, name='get_events'),
-    path('get-upcoming-events/', get_upcoming_events, name='get_upcoming_events'),
+    path('get-events/', views.get_events, name='get_events'),
+    path('get-upcoming-events/', views.get_upcoming_events, name='get_upcoming_events'),
     path('ngo-graph-data/', views.get_ngo_graph_data, name='ngo-graph-data'),
-    path('dashboard/saved/', views.saved, name='saved'),
-    path('dashboard/advance/', views.advertiser_advance, name='advertiser-advance'),
-    path('dashboard/cart/', views.cart, name='cart')
+    path('saved/', views.saved, name='saved'),
+    path('advance/', views.advertiser_advance, name='advertiser-advance'),
+    path('cart/', views.cart, name='cart'),
+    path('saved-coupon-history/', views.adv_saved_coupon_history, name='saved_coupon_history'),
+    path('coupon_detail/<int:coupon_id>/', views.coupon_detail, name='coupon_detail'),
+    path('saved/platform-bill/<int:coupon_id>/', views.platform_bill, name='platform_bill'),
+    path('export-saved-coupon-history/', views.export_saved_coupon_history, name='export_saved_coupon_history'),
 ]

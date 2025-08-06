@@ -2,12 +2,11 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.db.models import Sum, Count, DecimalField, Q
 from django.utils import timezone
-from .utils import dashboard_login_required
+from .utils import dashboard_login_required, get_common_context
 from .models import SettingMenu, CouponPerformance,  CalendarEvent
 from registration.models import MedicalProviderProfile, NGOProfile, ClientProfile, AdvertiserProfile
 from ngopost.models import NGOPost
 from .models import TrendingCoupon
-from points.models import PointsBadge, PointsHistory, PointsActionType
 from django.shortcuts import render
 from django.http import JsonResponse
 import json
@@ -19,45 +18,11 @@ from django.db.models.functions import TruncDate
 import random
 from datetime import date
 from coupon.utils import get_saved_coupons_for_user
-def get_common_context(request,user):
-    user = request.user_obj
-    user_type = user.user_type
-
-    # Sidebar menu
-    menu_items = SettingMenu.objects.filter(
-        is_active=True, user_types__contains=[user_type]
-    ).order_by('order')
-
-    # Badge calculation
-    if user_type == 'ngo':
-        chart_action_types = ['Map', 'Referral', 'Post']
-    elif user_type == 'client':
-        chart_action_types = ['Map', 'Referral', 'Subscription']
-    elif user_type == 'advertiser':
-        chart_action_types = ['Map', 'Referral', 'Coupon']
-    else:
-        chart_action_types = []
-
-    all_actions = PointsActionType.objects.filter(action_type__in=chart_action_types)
-    action_points = {
-        action.action_type: PointsHistory.objects.filter(
-            user_id=user.id, action_type=action
-        ).aggregate(total=Sum('points'))['total'] or 0
-        for action in all_actions
-    }
-
-    total_points = sum(action_points.values())
-    badge = PointsBadge.objects.filter(
-        min_points__lte=total_points
-    ).filter(
-        Q(max_points__gte=total_points) | Q(max_points__isnull=True)
-    ).order_by('min_points').first()
-
-    return {
-        'user_profile': user,
-        'sidebar_menu': menu_items,
-        'badge': badge,
-    }
+from django.core.paginator import Paginator
+from coupon.models import Coupon
+import logging
+import os
+logger = logging.getLogger(__name__)
 
 @dashboard_login_required
 def dashboard_home(request):
@@ -252,7 +217,7 @@ def logout_view(request):
     request.session.flush() 
     return redirect('/') 
 
-
+## Saved Section Common
 @dashboard_login_required
 def saved(request):
     user = request.user_obj
@@ -295,6 +260,7 @@ def saved(request):
 
         context.update({
             'ngo_profile': ngo_profile,
+            'user_display_name': ngo_profile.ngo_name,
             'user_profile': user_profile,
             'menu_items': menu_items,
             'saved_posts': saved_posts,
@@ -305,34 +271,162 @@ def saved(request):
         return render(request, "dashboard/saved_ngo.html", context)
     
     elif user.user_type == 'advertiser':
-        query = request.GET.get('query', '').strip()
-        limit = request.GET.get('limit', '50')
-        try:
-            limit = int(limit)
-        except ValueError:
-            limit = 50
-
-        saved_coupons = get_saved_coupons_for_user(user, query=query, limit=limit)
-        print(f"Saved coupons count: {len(saved_coupons)}")
-        print(f"Query: {query}")
-        print(f"Limit: {limit}")
-
+        advertiser_profile = AdvertiserProfile.objects.get(user=user)
         context.update({
-            'saved_coupon_history': saved_coupons,
-            'query': query,
-            'limit': str(limit),
-            'today': timezone.now().date(),  # Add today's date for status comparison
+            'advertiser_profile': advertiser_profile,
+            'user_display_name': advertiser_profile.company_name,
+            'user_profile': user,
+            'user': user
         })
-
-        if request.headers.get("x-requested-with") == "XMLHttpRequest":
-            # AJAX request: return only the coupon table HTML
-            html = render_to_string("advertiser/partials/saved-coupon-history-table.html", context, request=request)
-            return JsonResponse({"html": html})
-
         # Normal page render
         return render(request, "dashboard/saved_advertiser.html", context)
     elif user.user_type == 'provider':
+        provider_profile = MedicalProviderProfile.objects.get(user=user)
+        context.update({
+            'provider_profile': provider_profile,
+            'user_display_name': provider_profile.company_name,
+            'user_profile': user,
+            'user': user
+        })
         return render(request, "dashboard/saved_provider.html", context)
+
+## FOR Advertiser Saved Coupon In Saved Section ##
+@require_GET
+@dashboard_login_required
+def adv_saved_coupon_history(request):
+    user = request.user_obj
+    query = request.GET.get('query', '').strip()
+    page = int(request.GET.get('page', 1))
+    limit = int(request.GET.get('limit', 10))
+    date_range = request.GET.get('daterange', '').strip().lower()
+
+    filters = Q(advertiser=user)
+    if query:
+        filters &= (
+            Q(category__name__icontains=query) |
+            Q(brand_name__name__icontains=query) |
+            Q(validity__icontains=query)
+        )
+    now = timezone.now()
+    if date_range == "1 week":
+        filters &= Q(created_at__gte=now - timedelta(weeks=1))
+    elif date_range == "1 month":
+        filters &= Q(created_at__gte=now - timedelta(days=30))
+    elif date_range == "1 year":
+        filters &= Q(created_at__gte=now - timedelta(days=365))
+    elif date_range == "custom":
+        # Optional: handle custom start_date and end_date from request.GET
+        start = request.GET.get('start_date')
+        end = request.GET.get('end_date')
+        try:
+            start_date = datetime.strptime(start, "%Y-%m-%d")
+            end_date = datetime.strptime(end, "%Y-%m-%d")
+            filters &= Q(created_at__range=(start_date, end_date))
+        except Exception:
+            pass  # Invalid format, ignore or handle as needed
+    saved_coupons = Coupon.objects.filter(filters, saved=True).order_by('-created_at')
+    paginator = Paginator(saved_coupons, limit)
+    page_obj = paginator.get_page(page)
+
+    html = render_to_string("advertiser/partials/saved-coupon-history-table.html", {
+        "saved_coupon_history": page_obj.object_list,
+        'today': date.today(),
+    })
+
+    return JsonResponse({
+        "html": html,
+        "current_page": page_obj.number,
+        "total_pages": paginator.num_pages,
+    })
+
+@dashboard_login_required
+@require_GET
+def coupon_detail(request, coupon_id):
+    user = request.user_obj
+    try:
+        coupon = Coupon.objects.get(id=coupon_id, advertiser=user)
+    except Coupon.DoesNotExist:
+        return JsonResponse({'error': 'Coupon not found'}, status=404)
+
+    try:
+        data = {
+            'id': coupon.id,
+            'uploaded_by': coupon.advertiser.email if coupon.advertiser else '',
+            'uploaded_on': coupon.created_at.strftime('%Y-%m-%d %H:%M:%S') if coupon.created_at else '',
+            'title': getattr(coupon, 'title', ''),
+            'description': getattr(coupon, 'description', ''),
+            'category': getattr(coupon.category, 'name', '') if coupon.category else '',
+            'brand_name': getattr(coupon.brand_name, 'name', '') if hasattr(coupon, 'brand_name') and coupon.brand_name else '',
+            'offer_type': getattr(coupon.offer_type, 'name', '') if hasattr(coupon, 'offer_type') and coupon.offer_type else '',
+            'max_redemptions': getattr(coupon, 'max_redemptions', 0),
+            'redeemed_count': getattr(coupon, 'redeemed_count', 0),
+            'validity': coupon.validity.strftime('%d/%m/%y,%H:%M') if getattr(coupon, 'validity', None) else '',
+            'status': 'Active' if getattr(coupon, 'validity', None) and coupon.validity > timezone.now().date() else 'Expired',
+            'image_url': coupon.image.url if getattr(coupon, 'image', None) else '',
+            'age_group': getattr(coupon.age_group, 'name', '') if hasattr(coupon, 'age_group') and coupon.age_group else '',
+            'gender': getattr(coupon.gender, 'name', '') if hasattr(coupon, 'gender') and coupon.gender else '',
+            'city': getattr(coupon.city, 'name', '') if hasattr(coupon, 'city') and coupon.city else '',
+            'spending_power': getattr(coupon.spending_power, 'name', '') if hasattr(coupon, 'spending_power') and coupon.spending_power else '',
+        }
+    except Exception as e:
+        logger.error(f"Error building coupon detail data: {e}", exc_info=True)
+        return JsonResponse({'error': 'Server error'}, status=500)
+    return JsonResponse(data)
+
+@dashboard_login_required
+@require_GET
+def export_saved_coupon_history(request):
+    user = request.user_obj
+    # date_range = request.GET.get('daterange', '').strip().lower()
+    filters = Q(advertiser=user)
+    saved_coupons = Coupon.objects.filter(filters, saved=True).order_by('-created_at')
+    html = render_to_string("partials/export-saved-history-table.html", {
+        "saved_coupon_history": saved_coupons,
+        'today': date.today(),
+    })
+
+    return JsonResponse({
+        "html": html,
+        "total_items": saved_coupons.count(),  # Add this
+    })
+
+@dashboard_login_required
+@require_GET
+def platform_bill(request, coupon_id):
+    user = request.user_obj
+    try:
+        coupon = Coupon.objects.get(id=coupon_id, advertiser=user)
+        profile = coupon.advertiser.advertiserprofile
+    except Coupon.DoesNotExist:
+        return JsonResponse({'error': 'Coupon not found'}, status=404)
+    try:
+        data = {
+            'id': coupon.id,
+            'company_name': profile.company_name if profile else '',
+            'company_address': profile.address if profile else '',
+            'phone_number': coupon.advertiser.phone_number if coupon.advertiser else '',
+            'uploaded_by': coupon.advertiser.email if coupon.advertiser else '',
+            'uploaded_on': coupon.created_at.strftime('%Y-%m-%d %H:%M:%S') if coupon.created_at else '',
+            'quantity': getattr(coupon, 'max_redemptions', 0),
+            'validity': coupon.validity.strftime('%d/%m/%y,%H:%M') if getattr(coupon, 'validity', None) else '',
+            'rate_per_display': getattr(coupon, 'rate_per_display', 0),
+            'payment_method': getattr(coupon, 'payment_method', ''),
+            'displays_per_coupon': getattr(coupon, 'displays_per_coupon', 0),
+            'gst_amount': getattr(coupon, 'gst_amount', 0),
+            'final_paid_amount': getattr(coupon, 'final_paid_amount', 0),
+
+            ## Platform Company details
+            'company': os.environ.get("COMPANY", ""),
+            'gstin': os.environ.get("GSTIN", ""),
+            'address': os.environ.get("ADDRESS", ""),
+            # 'phone': os.environ.get("PHONE", ""),
+            # 'email': os.environ.get("EMAIL", ""),
+            # 'website': os.environ.get("WEBSITE", ""),
+        }
+    except Exception as e:
+        logger.error(f"Error building coupon detail data: {e}", exc_info=True)
+        return JsonResponse({'error': 'Server error'}, status=500)
+    return JsonResponse(data)
 
 
 # ngo graph 
@@ -402,7 +496,8 @@ def get_ngo_graph_data(request):
         }
     })
     
-    
+
+
 def get_ngo_graph_data_old(request):
     today = timezone.now().date()
 
@@ -434,18 +529,61 @@ def get_ngo_graph_data_old(request):
         }
     })
 
+
 @dashboard_login_required
 def advertiser_advance(request):
     user = request.user_obj
-    context = {
-        "user": user
-    }
-    return render(request, "dashboard/advertiser_advance.html", context)
+    context = get_common_context(request, user)
+    if user.user_type == 'advertiser':
+        advertiser_profile = AdvertiserProfile.objects.get(user=user)
+        context.update({
+            'advertiser_profile': advertiser_profile,
+            'user_display_name': advertiser_profile.company_name,
+            'user_profile': user,
+            'user': user
+        })
+        # Normal page render
+        return render(request, "dashboard/advertiser_advance.html", context)
+    elif user.user_type == 'ngo':
+        provider_profile = NGOProfile.objects.get(user=user)
+        context.update({
+            'provider_profile': provider_profile,
+            'user_display_name': provider_profile.company_name,
+            'user_profile': user,
+            'user':user
+        })
+        return render(request, "dashboard/advertiser_advance.html", context)
+    elif user.user_type == 'provider':
+        provider_profile = MedicalProviderProfile.objects.get(user=user)
+        context.update({
+            'provider_profile': provider_profile,
+            'user_display_name': provider_profile.company_name,
+            'user_profile': user,
+            'user':user
+        })
+        return render(request, "dashboard/advertiser_advance.html", context)
+
 
 @dashboard_login_required
 def cart(request):
     user = request.user_obj
-    context = {
-        "user": user
-    }
-    return render(request, "dashboard/cart.html", context)
+    context = get_common_context(request, user)
+    if user.user_type == 'advertiser':
+        advertiser_profile = AdvertiserProfile.objects.get(user=user)
+        context.update({
+            'advertiser_profile': advertiser_profile,
+            'user_display_name': advertiser_profile.company_name,
+            'user_profile': user,
+            'user': user
+        })
+        # Normal page render
+        return render(request, "dashboard/cart.html", context)
+    elif user.user_type == 'provider':
+        provider_profile = MedicalProviderProfile.objects.get(user=user)
+        context.update({
+            'provider_profile': provider_profile,
+            'user_display_name': provider_profile.company_name,
+            'user_profile': user,
+            'user':user
+        })
+        return render(request, "dashboard/cart.html", context)

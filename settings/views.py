@@ -5,7 +5,7 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from maps.models import SearchHistory, SavedLocation
-from dashboard.utils import dashboard_login_required
+from dashboard.utils import dashboard_login_required, get_common_context
 from registration.models import (
     User,
     NGOProfile,
@@ -27,7 +27,6 @@ from django.template.loader import render_to_string
 from django.db import transaction
 import logging
 from .models import UserColorScheme
-from dashboard.views import get_common_context
 
 logger = logging.getLogger(__name__)
 

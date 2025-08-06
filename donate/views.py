@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from dashboard.utils import dashboard_login_required
 from ngopost.models import NGOPost
-from registration.models import NGOProfile, User
+from registration.models import NGOProfile, User, AdvertiserProfile, ClientProfile, MedicalProviderProfile
 from django.http import JsonResponse
 from django.utils import timezone
 import uuid
@@ -25,6 +25,14 @@ logger = logging.getLogger(__name__)
 
 @dashboard_login_required
 def donate_view(request):
+    user = request.user_obj
+    if user.user_type == 'advertiser':
+        user_profile = AdvertiserProfile.objects.filter(user=user).first()
+    elif user.user_type == 'client':
+        user_profile = ClientProfile.objects.filter(user=user).first()
+    elif user.user_type == 'provider':
+        user_profile = MedicalProviderProfile.objects.filter(user=user).first()
+
     org_query = request.GET.get('org_query', '').strip().lower()
     donation_query = request.GET.get('donation_query', '').strip().lower()
     limit = request.GET.get('limit', '50')  # default to 50
@@ -69,6 +77,7 @@ def donate_view(request):
         "org_query": org_query,
         "donation_query": donation_query,
         "limit": str(limit),
+        'user_display_name': user_profile.company_name,
     })
     return render(request, "donate.html", context)
 
