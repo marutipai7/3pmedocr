@@ -12,14 +12,13 @@ from django.core.paginator import Paginator
 from django.template.loader import render_to_string
 from django.db.models import Q
 from django.views.decorators.http import require_GET, require_http_methods
-from dashboard.utils import dashboard_login_required
+from dashboard.utils import dashboard_login_required, get_common_context
 from .models import (
     Coupon, CategoryOption, BrandOption, OfferTypeOption, CountryOption,
     StateOption, CityOption, PincodeOption, AgeOption, GenderOption, SpendingPowerOption
 )
 from points.models import PointsActionType, PointsHistory
 from registration.views import validate_and_save_file
-from dashboard.views import get_common_context
 # Load .env file
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(os.path.join(BASE_DIR, '.env'))

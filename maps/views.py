@@ -11,10 +11,9 @@ from registration.models import UserProfile, NGOProfile, AdvertiserProfile, Clie
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from math import radians, cos, sin, sqrt, atan2
-from dashboard.utils import dashboard_login_required
+from dashboard.utils import dashboard_login_required, get_common_context
 from django.views.decorators.http import require_POST
 from points.models import PointsActionType, PointsHistory, PointsBadge
-from dashboard.views import get_common_context
 
 @dashboard_login_required
 def map_view(request):
@@ -25,7 +24,6 @@ def map_view(request):
         profile = AdvertiserProfile.objects.filter(user=user).first()
     elif user.user_type == 'client':
         profile = ClientProfile.objects.filter(user=user).first()
-        ['Map', 'Referral', 'Coupon']
     else:
         pass
 

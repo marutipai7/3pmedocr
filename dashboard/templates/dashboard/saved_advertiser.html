@@ -43,7 +43,7 @@
               </button>
               <button
                 class="tab-btn-advertiser text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
-                data-tab="saved-coupon"
+                data-tab="saved-coupon-history"
               >
                 Saved Coupon
               </button>
@@ -1531,118 +1531,7 @@
           </div>
 
           <!-- Saved Coupon Content -->
-          <div class="saved-coupon tab-content pt-6 space-y-6 hidden">
-            <!-- Header -->
-            <div class="px-2 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
-              <p class="text-sm font-semibold whitespace-nowrap">Saved Coupon History</p>
-              <div class="flex items-center justify-start md:justify-end gap-5 w-full sm:w-5/6">
-                <div class="w-full max-w-[280px] rounded-[6px] bg-light-white flex items-center gap-2 px-2">
-                  <span class="material-symbols-outlined text-dark-gray">
-                    search
-                  </span>
-                  <input
-                    type="text"
-                    placeholder="Search by name or categories"
-                    class="w-full py-2.5 focus:!outline-none placeholder:text-medium-gray"
-                    value="{{ query }}"
-                  />
-                </div>
-                <div class="dropdown relative flex justify-end">
-                  <button class="filterToggle w-full max-w-[90px] h-[40px] border border-living-coral rounded-[10px] text-living-coral flex items-center justify-center gap-1 cursor-pointer group hover:bg-living-coral hover:text-white px-3">
-                    <span class="material-symbols-outlined text-living-coral group-hover:text-white">
-                      keyboard_arrow_down
-                    </span>
-                    Filter
-                  </button>
-                  <div class="filterDropdown text-sm absolute right-0 top-10 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-[95px] z-10">
-                    <div class="p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded active" data-limit="5">
-                     Show 5
-                    </div>
-                    <div class="p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded active" data-limit="10">
-                     Show 10
-                    </div>
-                    <div class="p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded active" data-limit="15">
-                      Show 15
-                    </div>
-                  </div>
-                </div>
-                <button class="coupon-view-btn w-full max-w-[100px] h-[40px] border border-living-coral rounded-[10px] text-living-coral flex items-center justify-center gap-1 cursor-pointer group hover:bg-living-coral hover:text-white">
-                  <span class="material-symbols-outlined text-living-coral group-hover:text-white">
-                    file_export
-                  </span>
-                  <span class="hidden sm:block">View</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Table -->
-             {% include "advertiser/preview-popup.html" %}
-            <div class="overflow-x-auto">
-              <table class="couponSavedHistoryTable min-w-full table-auto whitespace-nowrap docTable">
-                <thead class="bg-living-coral text-white text-sm sm:text-18-b">
-                  <tr>
-                    <th class="text-center px-4 py-4 border-r border-white">
-                      <div class="flex items-center justify-center gap-2">
-                        Date & Time
-                        <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
-                      </div>
-                    </th>
-                    <th class="text-center px-4 py-4 border-r border-white">
-                      <div class="flex items-center justify-center gap-2">
-                        Category
-                        <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
-                      </div>
-                    </th>
-                    <th class="text-center px-4 py-4 border-r border-white">
-                      <div class="flex items-center justify-center gap-2">
-                        Brand Name
-                        <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
-                      </div>
-                    </th>
-                    <th class="text-center px-4 py-4 border-r border-white">
-                      <div class="flex items-center justify-center gap-2">
-                        Max Redemptions
-                        <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
-                      </div>
-                    </th>
-                    <th class="text-center px-4 py-4 border-r border-white">
-                      <div class="flex items-center justify-center gap-2">
-                        Redeemed
-                        <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
-                      </div>
-                    </th>
-                    <th class="text-center px-4 py-4 border-r border-white">
-                      <div class="flex items-center justify-center gap-2">
-                        Remaining
-                        <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
-                      </div>
-                    </th>
-                    <th class="text-center px-4 py-4 border-r border-white">
-                      <div class="flex items-center justify-center gap-2">
-                        Validity
-                        <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
-                      </div>
-                    </th>
-                    <th class="text-center px-4 py-4 border-r border-white">
-                      <div class="flex items-center justify-center gap-2">
-                        Status
-                        <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
-                      </div>
-                    </th>
-                    <th class="text-center px-4 py-4">
-                      <div class="flex items-center justify-center gap-2">
-                        Actions
-                        <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody class="text-sm sm:text-16-nr">
-                  {% include 'advertiser/partials/saved-coupon-history-table.html' %}
-                </tbody>
-              </table>
-            </div>
-          </div>
+           {% include "advertiser/saved-coupon.html" %}
 
           <!-- Donation History -->
           <div
@@ -2134,6 +2023,9 @@
           <!-- View Popup -->
           {% include "advertiser/view-saved-history.html" %}
 
+          <!-- Platform bill -->
+          {% include "advertiser/platform-bill.html" %}
+
         </div>
 
         <div class="fixed bottom-6 right-8 z-50">
@@ -2155,161 +2047,7 @@
             </button>
           </div>
         </div>
-      </div>
-      <!-- preview popup -->
-        <div class="preview-popup popup hidden fixed inset-0 items-center justify-center bg-black/40 px-3 z-50 h-full">
-          <div
-            class="bg-white pb-3 rounded-[10px] shadow-lg max-w-[560px] h-[640px] w-full space-y-4 overflow-hidden">
-            <div class="flex items-center justify-between text-white h-10 bg-violet-sky px-3">
-              <div class="flex items-center gap-4">
-                <span class="material-symbols-outlined cursor-pointer">share</span>
-                <span class="material-symbols-outlined cursor-pointer">download</span>
-              </div>
-              <span class="font-medium">Post History</span>
-              <span class="material-symbols-outlined cursor-pointer close-popup">close</span>
-            </div>
-            <div class="px-4 h-[calc(100%-40px)] overflow-y-auto scroll space-y-2 pb-6">
-              <div class="w-full rounded-[4px] overflow-hidden">
-                <img id="preview-creative1" src="/static/images/post.svg" alt="post" loading="lazy" class="w-full h-40 object-cover">
-              </div>
-              <!-- Audience Profile -->
-              <div class="my-4 pt-4 border-t-2 border-dashed border-semi-transparent-black">
-                <div class="text-18-fs text-violet-sky mb-3">Audience Profile</div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8 text-jet-black">
-                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
-                    <div class="flex items-center justify-between w-2/5">
-                      <span class="text-14-fs">Age</span>
-                      <span>:</span>
-                    </div>
-                    <span id="preview-age-group"></span>
-                  </div>
-                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
-                    <div class="flex items-center justify-between w-2/5 sm:w-1/2">
-                      <span class="text-14-fs">Gender</span>
-                      <span>:</span>
-                    </div>
-                    <span id="preview-gender"></span>
-                  </div>
-                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
-                    <div class="flex items-center justify-between w-2/5">
-                      <span class="text-14-fs">City</span>
-                      <span>:</span>
-                    </div>
-                    <span id="preview-city"></span>
-                  </div>
-                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
-                    <div class="flex items-center justify-between w-2/5 sm:w-1/2">
-                      <span class="text-14-fs">Spending Power</span>
-                      <span>:</span>
-                    </div>
-                    <span id="preview-spending-power"></span>
-                  </div>
-                </div>
-              </div>
-              <!-- Post Details -->
-              <div class="py-3">
-                <div class="text-18-fs text-violet-sky mb-3">Post Details</div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8 text-jet-black">
-                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
-                    <div class="flex items-center justify-between w-2/5">
-                      <span class="text-14-fs">Header</span>
-                      <span>:</span>
-                    </div>
-                    <span id="preview-header"></span>
-                  </div>
-                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
-                    <div class="flex items-center justify-between w-2/5 sm:w-1/2">
-                      <span class="text-14-fs">Date & Time</span>
-                      <span>:</span>
-                    </div>
-                    <span id="preview-date-time"></span>
-                  </div>
-                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
-                    <div class="flex items-center justify-between w-2/5">
-                      <span class="text-14-fs">Views</span>
-                      <span>:</span>
-                    </div>
-                    <span id="preview-views"></span>
-                  </div>
-                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
-                    <div class="flex items-center justify-between w-2/5 sm:w-1/2">
-                      <span class="text-14-fs">Post Type</span>
-                      <span>:</span>
-                    </div>
-                    <span id="preview-post-type"></span>
-                  </div>
-                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
-                    <div class="flex items-center justify-between w-2/5">
-                      <span class="text-14-fs">Target Donation</span>
-                      <span>:</span>
-                    </div>
-                    <span id="preview-target-donation"></span>
-                  </div>
-                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
-                    <div class="flex items-center justify-between w-2/5 sm:w-1/2">
-                      <span class="text-14-fs">Donation Received</span>
-                      <span>:</span>
-                    </div>
-                    <span id="preview-donation-received"></span>
-                  </div>
-                  <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
-                    <div class="flex items-center justify-between w-2/5">
-                      <span class="text-14-fs">Status</span>
-                      <span>:</span>
-                    </div>
-                    <span id="preview-status"></span>
-                  </div>
-                </div>
-                
-                <div class="border-t-2 border-dashed py-3 border-semi-transparent-black overflow-x-auto w-full no-scrollbar mt-4">
-                  <table id="preview-donation-table" class="table-auto min-w-full text-sm text-dark-gray whitespace-nowrap">
-                    <thead class="bg-violet-sky  text-white">
-                      <tr>
-                        <th class="text-center px-4 py-2 border-r border-white">Date & Time
-                          <img src="/static/images/sort-alt.svg" alt="sort" class="inline ml-2" />
-                        </th>
-                        <th class="px-4 py-2 text-center border-r border-white">Name</th>
-                        <th class="text-center px-4 py-2 border-r border-white">City</th>
-                        <th class="text-center px-4 py-2 border-r border-white">
-                          <div class="flex items-center justify-center">
-                            <p>Donation</p>
-                            <p>Received</p>
-                          </div>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody class="bg-snow-gray text-dark-gray text-[14px]">
-                      <!-- JS will fill this -->
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <div class="border-t-2 border-dashed py-3 border-semi-transparent-black grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8 text-jet-black">
-                <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
-                  <div class="flex items-center justify-between w-1/2">
-                    <span class="text-14-fs">Post Reference ID</span>
-                    <span>:</span>
-                  </div>
-                  <span id="preview-post-reference-id"></span>
-                </div>
-                <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
-                  <div class="flex items-center justify-between w-1/2">
-                    <span class="text-14-fs">Uploaded By</span>
-                    <span>:</span>
-                  </div>
-                  <span id="preview-uploaded-by"></span>
-                </div>
-                <div class="text-14-nr flex items-center justify-between sm:justify-start gap-3">
-                  <div class="flex items-center justify-between w-1/2">
-                    <span class="text-14-fs">Downloaded On</span>
-                    <span>:</span>
-                  </div>
-                  <p>20/03/25,14:30</p>
-                </div>
-            </div>
-            </div>
-          </div>
-        </div>
+      </div>  
 {% endblock%}
 
 {% block extra_js %}
@@ -2317,11 +2055,8 @@
 <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script src="{% static 'js/toaster.js' %}"></script>
-<script src="{% static 'js/Register-Advertiser/ad-coupon.js' %}"></script>
 <script src="{% static 'js/Register-Advertiser/saved.js' %}"></script>
 <script src="{% static 'js/tabs.js' %}"></script>
-<script src="{% static 'js/table-pagination.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-{% comment %} <script src="{% static 'js/Register-Advertiser/adv-tabs.js' %}"></script> {% endcomment %}
 <script src="{% static 'js/Register-Advertiser/cards-pagination.js' %}"></script>
 {% endblock %}

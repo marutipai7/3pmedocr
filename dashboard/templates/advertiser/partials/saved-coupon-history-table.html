@@ -1,7 +1,3 @@
-<!-- DEBUG: {{ coupon.category }} / {{ coupon.brand_name }} -->
-{% if saved_coupon_history %}
-    <tr><td colspan="9">Coupons loaded: {{ saved_coupon_history|length }}</td></tr>
-{% endif %}
 {% for coupon in saved_coupon_history %}
                     <tr>
                       <td class="px-4 py-4.5 text-center">

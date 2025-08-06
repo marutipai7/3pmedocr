@@ -14,7 +14,7 @@ from .models import (
     )
 import logging
 from registration.views import validate_and_save_file
-from dashboard.utils import dashboard_login_required
+from dashboard.utils import dashboard_login_required, get_common_context
 from django.http import JsonResponse, Http404
 from django.views.decorators.http import require_GET, require_POST
 from donate.models import Donation
@@ -24,7 +24,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
 from datetime import datetime
 from django.core.paginator import Paginator
-from dashboard.views import get_common_context
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 

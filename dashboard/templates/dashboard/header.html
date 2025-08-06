@@ -79,9 +79,11 @@
         <img src="{% static 'images/walleticon.svg' %}" alt="star" title="Wallet" class="cursor-pointer" />
       </a>
       {% endif %}
+      {% if user.user_type == 'ngo' or user.user_type == 'provider' %}
       <a href="{% url 'cart' %}">
         <img src="{% static 'images/cart.svg' %}" alt="star" title="Cart" class="cursor-pointer" />
       </a>
+      {% endif %}
       <img src="{% static 'images/bell.svg' %}" alt="bell" title="Notifications" class="cursor-pointer" id="bell-icon" />
       <!-- Notification Dropdown -->
       <div id="notificationDropdown" class="notificationDropdown hidden absolute right-20 top-15 mt-2 bg-white shadow-lg rounded-md z-50 w-130 border border-violet-sky">

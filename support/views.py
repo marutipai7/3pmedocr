@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.core.serializers.json import DjangoJSONEncoder
 from .models import IssueType, IssueOption, SupportTicket, FAQ
-from dashboard.utils import dashboard_login_required
+from dashboard.utils import dashboard_login_required, get_common_context
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
 from registration.models import User
@@ -14,7 +14,6 @@ import logging
 import json
 from .utils import send_custom_email
 from datetime import datetime, time
-from dashboard.views import get_common_context
 logger = logging.getLogger(__name__) #for debugging purposes
 
 @dashboard_login_required
