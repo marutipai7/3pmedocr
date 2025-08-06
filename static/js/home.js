@@ -417,7 +417,7 @@ $(document).ready(function () {
       $calendarDays.empty();
       dayNames.forEach((day) => {
         $calendarDays.append(
-          `<div class="font-semibold text-sm text-gray-700">${day}</div>`
+          `<div class="font-semibold text-sm text-gray-700 mt-auto">${day}</div>`
         );
       });
       $calendarDays.append(
@@ -1043,7 +1043,7 @@ $(document).ready(function () {
             currentMonth === today.getMonth() &&
             currentYear === today.getFullYear();
 
-          const baseClasses = `cursor-pointer foNT-normal text-xl text-jet-black`;
+          const baseClasses = `cursor-pointer foNT-normal text-xl text-jet-black relative p-0.5`;
 
           const dateClass = isToday
             ? `text-${highlightColor}`
@@ -1066,7 +1066,10 @@ $(document).ready(function () {
             eventsForDate.forEach((event) => {
               const eventColor = event.color || `bg-${highlightColor}`;
               console.log('Popup Event:', event.name, 'Color:', eventColor); // Debug log
-              eventIndicators += `<div class="w-2 h-2 ${eventColor} rounded-full mx-auto mt-1" style="background-color: ${getColorValue(eventColor)};"></div>`;
+              eventIndicators += `<div class="w-2 h-2 ${eventColor} rounded-full mx-auto mt-1 has-tooltip" style="background-color: ${getColorValue(eventColor)};"></div>
+                                  <div class="absolute py-1 px-1.5 text-start text-xs tooltip mt-1 z-50 bg-white border rounded-md border-living-coral font-normal">
+                                    ${event.name} at ${event.time}
+                                  </div>`;
             });
           }
 
@@ -1082,33 +1085,33 @@ $(document).ready(function () {
         );
         updateMonthYearLabel();
       }
-      $calendarDays.on("click", "div[data-date]", function () {
-        // Remove highlight from all
-        $calendarDays
-          .find("div[data-date]")
-          .removeClass(`text-${highlightColor}`);
+      // $calendarDays.on("click", "div[data-date]", function () {
+      //   // Remove highlight from all
+      //   $calendarDays
+      //     .find("div[data-date]")
+      //     .removeClass(`text-${highlightColor}`);
 
-        // Highlight selected one
-        $(this).addClass(`text-${highlightColor}`);
+      //   // Highlight selected one
+      //   $(this).addClass(`text-${highlightColor}`);
 
-        // Store selected date
-        selectedDate = $(this).data("date");
+      //   // Store selected date
+      //   selectedDate = $(this).data("date");
         
-        // Show events for this date if any
-        const eventsForDate = getEventsForDate(selectedDate);
-        if (eventsForDate.length > 0) {
-          let eventsHtml = '<div class="event-display mt-2 p-2 bg-gray-100 rounded">';
-          eventsForDate.forEach(event => {
-            eventsHtml += `<div class="text-sm text-gray-700">• ${event.name} at ${event.time}</div>`;
-          });
-          eventsHtml += '</div>';
+      //   // Show events for this date if any
+      //   const eventsForDate = getEventsForDate(selectedDate);
+      //   if (eventsForDate.length > 0) {
+      //     let eventsHtml = '<div class="event-display mt-2 p-2 bg-gray-100 rounded">';
+      //     eventsForDate.forEach(event => {
+      //       eventsHtml += `<div class="text-sm text-gray-700">• ${event.name} at ${event.time}</div>`;
+      //     });
+      //     eventsHtml += '</div>';
           
-          // Remove any existing event display
-          $calendarDays.find('.event-display').remove();
-          // Add new event display
-          $(this).append(eventsHtml);
-        }
-      });
+      //     // Remove any existing event display
+      //     $calendarDays.find('.event-display').remove();
+      //     // Add new event display
+      //     $(this).append(eventsHtml);
+      //   }
+      // });
 
       $root
         .find(".bg-light-sea-green")

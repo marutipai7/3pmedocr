@@ -6161,3 +6161,9 @@ body {
   inherits: false;
   initial-value: solid;
 }
+.tooltip {
+  display: none;
+}
+.has-tooltip:hover~.tooltip {
+  display: block;
+}
