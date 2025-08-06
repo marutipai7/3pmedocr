@@ -333,6 +333,68 @@ function loadSavedCouponHistory(page = 1, range = '') {
     });
     loadSavedCouponHistory(1, '');
 
+        // CSRF helper
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+$(document).on('click', '.saved-icon', function () {
+        const $icon = $(this);
+        const couponId = $icon.data('coupon-id');
+        const isSaved = $icon.attr('data-saved') === 'true';
+        const action = isSaved ? 'unsave' : 'save';
+
+        // Optimistic UI toggle
+        if (isSaved) {
+            $icon.removeClass('material-filled text-living-coral').addClass('text-dark-blue');
+            $icon.attr('data-saved', 'false');
+        } else {
+            $icon.addClass('material-filled text-living-coral').removeClass('text-dark-blue');
+            $icon.attr('data-saved', 'true');
+        }
+
+        $.ajax({
+            url: '/coupons/coupon-history/',
+            type: 'POST',
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            data: {
+                coupon_id: couponId,
+                action: action,
+            },
+            success: function (response) {
+                if (response.success) {
+                    const message = response.saved ? 'Post saved!' : 'Post unsaved!';
+                    window.showToaster('success', message);
+                    // Optional: refresh table
+                    // loadCouponHistory(); 
+                } else {
+                    window.showToaster('error', response.error || 'Could not update saved status.');
+                }
+            },
+            error: function () {
+                // Rollback UI on error
+                if (action === 'save') {
+                    $icon.removeClass('material-filled text-living-coral').addClass('text-dark-blue');
+                    $icon.attr('data-saved', 'false');
+                } else {
+                    $icon.addClass('material-filled text-living-coral').removeClass('text-dark-blue');
+                    $icon.attr('data-saved', 'true');
+                }
+                window.showToaster('error', 'Could not update saved status.');
+            }
+        });
+    });
 $(document).on('click', '[data-popup]', function (e) {
     e.stopPropagation();
     var popupType = $(this).data('popup');
