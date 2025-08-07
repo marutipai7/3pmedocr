@@ -90,7 +90,7 @@
                         <div class="text-sm text-gray-500">Posted on: {{ post.created_at|date:'d M Y' }}</div>
                         <div class="flex items-center gap-3">
                           {% if post.id %}
-                          <a href="{% url 'donate-pay' post.id %}" class="pay-button bg-vivid-orange text-white px-12 py-2 rounded-md">
+                          <a href="{% url 'donate-pay' post.id %}" class="pay-button bg-dark-blue text-white px-12 py-2 rounded-md">
                         <span class="text-sm">Donate Now</span>
                       </a>
                           {% endif %}
@@ -168,7 +168,7 @@
                   </tr>
                 </thead>
                 <tbody class="donate-history">
-                  {% include 'donate-history.html' %}
+                  {% include 'client/donate-history.html' %}
                 </tbody>
               </table>
             </div>

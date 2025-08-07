@@ -415,6 +415,8 @@ def login_auth(request):
         
         request.session['user_id'] = user.id
         dashboard_url = reverse("dashboard")
+        logger.info(f"User {user.email} logged in successfully. Redirecting to {dashboard_url}")
+        logger.info(f"User ID: {user.id}, Email: {user.email}, User Type: {user.user_type}")
         return JsonResponse({"success": True, "redirect": dashboard_url})
     except User.DoesNotExist:
         errors["password"] = "Invalid email or password."

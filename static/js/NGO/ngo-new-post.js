@@ -634,7 +634,106 @@ $(document).ready(function () {
             }
         });
     });
+    $(document).on('click', '.download-btn', function() {
+        var postId = $(this).data('post-id');
+        $.ajax({
+            url: '/posts/' + postId + '/detail/',
+            type: 'GET',
+            success: function(data) {
+                // Fill popup fields
+                $('#download-header').text(data.header);
+                $('#download-description').text(data.description);
+                $('#download-tags').text(data.tags);
+                $('#download-post-type').text(data.post_type);
+                $('#download-donation-frequency').text(data.donation_frequency);
+                $('#download-target-donation').text(data.target_donation);
+                $('#download-country').text(data.country);
+                $('#download-state').text(data.state);
+                $('#download-city').text(data.city);
+                $('#download-pincode').text(data.pincode);
+                $('#download-age-group').text(data.age_group);
+                $('#download-gender').text(data.gender);
+                $('#download-date-time').text(data.date_time || '-');
+                $('#download-views').text(data.views || '-');
+                $('#download-donation-received').text(data.donation_received || '-');
+                $('#download-status').text(data.status || '-');
+                $('#download-spending-power').text(data.spending_power);
+                $('#download-start-date').text(data.start_date);
+                $('#download-end-date').text(data.end_date);
+                $('#download-post-reference-id').text(data.post_reference_id || '-');
+                $('#download-uploaded-by').text(data.uploaded_by || '-');
+                if (data.creative1) {
+                    $('#download-creative1').attr('src', data.creative1).show();
+                } else {
+                    $('#download-creative1').hide();
+                }
+                if (data.creative2) {
+                    $('#download-creative2').attr('src', data.creative2).show();
+                } else {
+                    $('#download-creative2').hide();
+                }
+                // Fill donation table
+                var $tbody = $('#download-donation-table tbody');
+                $tbody.empty();
+                if (data.donations && data.donations.length > 0) {
+                    data.donations.forEach(function(donation) {
+                        $tbody.append(
+                            '<tr>' +
+                                '<td class="px-4 py-2.5 text-center">' + donation.payment_date + '</td>' +
+                                '<td class="px-4 py-2.5 text-center">' + donation.name + '</td>' +
+                                '<td class="px-4 py-2.5 text-center">' + donation.city + '</td>' +
+                                '<td class="px-4 py-2.5 text-center">₹' + donation.amount + '</td>' +
+                            '</tr>'
+                        );
+                    });
+                } else {
+                    $tbody.append('<tr><td colspan="4" class="text-center py-4">No donations yet.</td></tr>');
+                }
+                // Show the popup
+                $('.download-popup').removeClass('hidden').addClass('flex');
+            },
+            error: function() {
+                window.showToaster('error', 'Could not load post details.');
+            }
+        });
+    });
 
+    $(document).on('click', '.download-btn', function (event) {
+        event.stopPropagation();
+        // Find the next sibling with class 'download-container'
+        const $container = $(this).closest('.popup').find('.download-container');
+
+        if ($container.length === 0) {
+            console.error('[ERROR] download-container not found');
+            return;
+        }
+
+        // Clone the element properly
+        const clone = $container[0].cloneNode(true);
+        clone.style.position = 'static';
+        clone.style.visibility = 'visible';
+        clone.style.display = 'block';
+        clone.style.zIndex = '1';
+        clone.id = 'download-container-clone';
+        document.body.appendChild(clone);
+    
+        const opt = {
+            margin:       0,
+            filename:     'coupon-details.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, scrollY: 0, scrollX: 0 },
+            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+    
+        html2pdf().set(opt).from(clone).save()
+            .then(() => {
+                document.body.removeChild(clone);
+            })
+            .catch(err => {
+                console.error('[ERROR] PDF generation failed:', err);
+                document.body.removeChild(clone);
+            });
+    });
     function loadPostHistory(page = 1,  $container = $('#postHistory')) {
         const query = $container.find('input[name=history_query]').val();
         const limit = $container.find('select[name=history_limit]').val();

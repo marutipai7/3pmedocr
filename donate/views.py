@@ -79,7 +79,7 @@ def donate_view(request):
         "limit": str(limit),
         'user_display_name': user_profile.company_name,
     })
-    return render(request, "donate.html", context)
+    return render(request, "client/donate.html", context)
 
 @dashboard_login_required
 def donate_pay_view(request, post_id=None):
@@ -146,7 +146,7 @@ def donate_pay_view(request, post_id=None):
         except PointsActionType.DoesNotExist:
             logger.warning("PointsActionType for 'Donate' does not exist. No points awarded.")
         return JsonResponse({'success': True, 'order_id': order_id, 'transaction_id': transaction_id})
-    return render(request, "donate-pay.html", {"post": post, "ngo_profile": ngo_profile})
+    return render(request, "client/donate-pay.html", {"post": post, "ngo_profile": ngo_profile})
 
 
 @dashboard_login_required
@@ -167,7 +167,7 @@ def donation_history_ajax(request):
     paginator = Paginator(donations, 10)  # change to 10 or whatever you want later
     page_obj = paginator.get_page(page_number)
 
-    donation_html = render_to_string("donate-history.html", {"donations": page_obj})
+    donation_html = render_to_string("client/donate-history.html", {"donations": page_obj})
 
     return JsonResponse({
         "html": donation_html,
