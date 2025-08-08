@@ -394,40 +394,69 @@ function downloadDonatePDF() {
 
 
 ////////////
-//open platform popup
+// open platform popup
 function openPlatformPopup(donationId) {
-  fetch(`/donate/get-platform-bill/${donationId}/`)
-    .then(response => response.json())
-    .then(data => {
-      document.getElementById("receiptNoPlatform").innerText = data.receipt_no;
-      document.getElementById("paymentDatePlatform").innerText = data.payment_date;
-      document.getElementById("ngoNamePlatform").innerText = data.ngo_name;
-      document.getElementById("signPlatform").innerText = data.ngo_name;
-      // document.getElementById("panNumberPlatform").innerText = data.pan;
-      document.getElementById("addressPlatform").innerText = data.address;
-      document.getElementById("namePlatform").innerText = data.name;
-      document.getElementById("emailPlatform").innerText = data.email;
-      document.getElementById("amountPlatform").innerText = data.amount;
-      document.getElementById("actualAmountPlatform").innerText = data.amount;
-      document.getElementById("subTotalPlatform").innerText = data.amount;
-      document.getElementById("gstPlatform").innerText = data.gst;
-      document.getElementById("finalTotalPlatform").innerText = data.finalTotal;
-      // document.getElementById("payModePlatform").innerText = data.pay_mode;
-      
-      document.getElementById("platformReceiptModal").style.display = 'block'; 
-    })
-    .catch(err => {
-      console.error("Error loading receipt:", err);
-      alert("Unable to load bill.");
-    });
+    console.log("Opening platform popup for donation ID:", donationId);
+
+    fetch(`/donate/get-platform-bill/${donationId}/`)
+        .then(response => {
+            console.log("Fetch completed. Status:", response.status);
+            return response.text();
+        })
+        .then(text => {
+            console.log("Raw fetch response:", text);
+
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (e) {
+                console.error("JSON parse error:", e);
+                return;
+            }
+
+            // ✅ Fill modal content
+            document.getElementById("receiptNoPlatform").textContent = data.receipt_no || "";
+            document.getElementById("paymentDatePlatform").textContent = data.payment_date || "";
+            document.getElementById("ngoNamePlatform").textContent = data.ngo_name || "";
+            document.getElementById("addressPlatform").textContent = data.address || "";
+            document.getElementById("namePlatform").textContent = data.name || "";
+            document.getElementById("emailPlatform").textContent = data.email || "";
+            document.getElementById("amountPlatform").textContent = data.amount || "";
+            document.getElementById("subTotalPlatform").textContent = data.amount || "";
+            document.getElementById("gstPlatform").textContent = data.gst || "";
+            document.getElementById("finalTotalPlatform").textContent = data.finalTotal || "";
+            document.getElementById("actualAmountPlatform").textContent = data.amount || "";
+            document.getElementById("signPlatform").textContent = data.ngo_name || "";
+
+            // ✅ Open modal
+            const modal = document.getElementById("platformReceiptModal");
+            console.log("Modal found:", !!modal);
+
+            if (!modal) {
+                console.error("Modal not found in DOM!");
+                return;
+            }
+
+            modal.classList.remove("hidden");
+            modal.style.display = "flex";  // Force visible
+            modal.style.visibility = "visible";
+
+            console.log("Modal visibility class removed.");
+            console.log("Modal computed display:", window.getComputedStyle(modal).display);
+            console.log("Modal computed visibility:", window.getComputedStyle(modal).visibility);
+        })
+        .catch(err => {
+            console.error("Error loading receipt:", err);
+        });
 }
 
-//close platform popup
+// close platform popup
 function closePlatformPopup() {
-  const modal = document.querySelector(".platformReceiptPopup");
-  modal.classList.add("hidden");
-  modal.style.display = "none"; // This ensures it hides regardless of inline flex
+    const modal = document.querySelector(".platformReceiptPopup");
+    modal.classList.add("hidden");
+    modal.style.display = "none"; // ensures it hides regardless of inline flex
 }
+
 
 //download platform pdf 
 function downloadPlatformPDF() {
@@ -442,3 +471,41 @@ function downloadPlatformPDF() {
 
   html2pdf().set(opt).from(element).save();
 }
+
+$(document).on('click', '.donate-bookmark-toggle', function() {
+        console.log('Bookmark clicked!');
+        var $icon = $(this);
+        var donationId = $icon.data('donation-id');
+        var isSaved = $icon.data('saved') === true || $icon.data('saved') === 'true';
+        var action = isSaved ? 'unsave' : 'save';
+    
+        $.ajax({
+            url: '/donate/toggle-saved/',
+            type: 'POST',
+            data: {
+                donation_id: donationId,
+                action: action,
+                csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(response) {
+                if (response.success) {
+                    $icon.data('saved', response.saved);
+                    if (response.saved) {
+                        $icon.addClass('material-filled text-living-coral');
+                    } else {
+                        $icon.removeClass('material-filled text-living-coral');
+                        // If in Saved Donation table, remove the row
+                        if ($icon.closest('.saved-donation').length || $icon.closest('table').closest('.saved-donation').length) {
+                            $icon.closest('tr').remove();
+                        }
+                    }
+                    window.showToaster('success', response.saved ? 'Donation saved!' : 'Donation unsaved!');
+                } else {
+                    window.showToaster('error', response.error || 'Could not update saved status.');
+                }
+            },
+            error: function() {
+                window.showToaster('error', 'Could not update saved status.');
+            }
+        });
+    });

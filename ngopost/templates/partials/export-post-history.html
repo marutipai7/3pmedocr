@@ -18,22 +18,9 @@
       </div>
     </div>
   </td>
-  <td class="px-4 py-4.5">
-    <div class="flex items-center justify-center gap-6">
-      <span class="material-symbols-outlined bookmark-fill cursor-pointer save-post-btn bookmark-toggle{% if post.saved %} material-filled text-violet-sky{% endif %}"
-            data-post-id="{{ post.id }}"
-            data-saved="{{ post.saved|yesno:'true,false' }}"> 
-        bookmark
-      </span>
-      <span class="material-symbols-outlined cursor-pointer preview-btn"
-            data-post-id="{{ post.id }}">visibility</span>
-      <span class="material-symbols-outlined cursor-pointer post-download-btn"
-            data-post-id="{{ post.id }}">download</span>
-    </div>
-  </td>
 </tr>
 {% empty %}
 <tr>
-<td colspan="8" style="text-align: center; padding: 12px;">No Post history available.</td>
+  <td colspan="8" style="text-align: center; padding: 12px;">No Post history available.</td>
 </tr>
 {% endfor %}

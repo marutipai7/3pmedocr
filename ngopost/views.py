@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from datetime import datetime
+from datetime import datetime, date
 from .models import (
     NGOPost, 
     PostTypeOption, 
@@ -114,7 +114,11 @@ def post_history_ajax(request):
     filters = Q(user=user)
 
     if query:
-        filters &= Q(status__icontains=query) | Q(header__icontains=query)
+        filters &= (
+            Q(header__icontains=query) |
+            Q(status__icontains=query) |
+            Q(post_type__name__icontains=query)
+        )
 
     if start_date:
         try:
@@ -317,3 +321,35 @@ def update_post_status(request):
         return JsonResponse({'success': True, 'status': post.status})
     except NGOPost.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Post not found'}, status=404)
+    
+@dashboard_login_required
+@require_GET
+def export_post_history(request):
+    user = request.user_obj
+    # date_range = request.GET.get('daterange', '').strip().lower()
+    filters = Q(user=user)
+    posts = NGOPost.objects.filter(filters).order_by('-created_at')
+    html = render_to_string("partials/export-post-history.html", {
+        "post_history": posts,
+        'today': date.today(),
+    })
+    return JsonResponse({
+        "html": html,
+        "total_items": posts.count(),  # Add this
+    })
+
+@dashboard_login_required
+@require_GET
+def export_saved_post_history(request):
+    user = request.user_obj
+    # date_range = request.GET.get('daterange', '').strip().lower()
+    filters = Q(user=user)
+    posts = NGOPost.objects.filter(filters, saved=True).order_by('-created_at')
+    html = render_to_string("partials/export-saved-post-history.html", {
+    "saved_post_history": posts,
+    'today': date.today(),
+    })
+    return JsonResponse({
+    "html": html,
+    "total_items": posts.count(),  # Add this
+    })

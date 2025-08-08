@@ -33,7 +33,7 @@
               class="flex gap-6 whitespace-nowrap mt-8 overflow-x-auto no-scrollbar"
             >
               <button
-                class="tab-btn-ngo active-tab1-ngo text-sm sm:text-18-nr px-4 font-medium cursor-pointer text-light-gray1"
+                class="tab-btn-ngo active-tab-ngo text-sm sm:text-18-nr px-4 font-medium cursor-pointer text-light-gray1"
                 data-tab="places"
               >
                 Places
@@ -2293,7 +2293,8 @@
 
           <!-- Saved Post -->
           <!-- Saved Post Content -->
-          <div class="saved-post tab-content hidden py-6 space-y-6">
+           {% include 'ngo/saved-post-history.html' %}
+          {% comment %} <div class="saved-post tab-content hidden py-6 space-y-6">
             <!-- Header -->
             <div class="px-2 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
               <p class="text-sm font-semibold whitespace-nowrap">Saved Post</p>
@@ -2421,11 +2422,16 @@
                 </tbody>
               </table>
             </div>
-          </div>
+          </div> {% endcomment %}
         </div>
       </div>
+      {% include 'ngo/preview-popup.html' %}
+
+      {% include 'ngo/download-popup.html' %}
+
+      {% include 'ngo/view-saved-post-history.html' %}
       <!-- preview popup -->
-        <div class="preview-popup popup hidden fixed inset-0 items-center justify-center bg-black/40 px-3 z-50 h-full">
+        {% comment %} <div class="preview-popup popup hidden fixed inset-0 items-center justify-center bg-black/40 px-3 z-50 h-full">
           <div
             class="bg-white pb-3 rounded-[10px] shadow-lg max-w-[560px] h-[640px] w-full space-y-4 overflow-hidden">
             <div class="flex items-center justify-between text-white h-10 bg-violet-sky px-3">
@@ -2577,14 +2583,14 @@
             </div>
             </div>
           </div>
-        </div>
+        </div> {% endcomment %}
 {% endblock%}
 
 {% block extra_js %}
     <script src="{% static 'js/tabs.js' %}"></script>
     <script src="{% static 'js/table-paginationjs' %}"></script>
     <script src="{% static 'js/NGO/card-pagination.js' %}"></script>
-    <script src="{% static 'js/NGO/ngo-saved.js' %}"></script>
     <script src="{% static 'js/NGO/ngo-new-post.js' %}"></script>
+    {% comment %} <script src="{% static 'js/NGO/ngo-saved.js' %}"></script> {% endcomment %}
     <script src="{% static 'js/toaster.js' %}"></script>
 {% endblock %}

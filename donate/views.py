@@ -21,6 +21,7 @@ from django.http import HttpResponse
 from django.utils.encoding import smart_str
 from registration.models import ContactPerson, User
 from dashboard.views import get_common_context
+from django.views.decorators.http import require_POST
 logger = logging.getLogger(__name__)
 
 @dashboard_login_required
@@ -79,7 +80,7 @@ def donate_view(request):
         "limit": str(limit),
         'user_display_name': user_profile.company_name,
     })
-    return render(request, "client/donate.html", context)
+    return render(request, "advertiser/donate.html", context)
 
 @dashboard_login_required
 def donate_pay_view(request, post_id=None):
@@ -146,7 +147,7 @@ def donate_pay_view(request, post_id=None):
         except PointsActionType.DoesNotExist:
             logger.warning("PointsActionType for 'Donate' does not exist. No points awarded.")
         return JsonResponse({'success': True, 'order_id': order_id, 'transaction_id': transaction_id})
-    return render(request, "client/donate-pay.html", {"post": post, "ngo_profile": ngo_profile})
+    return render(request, "advertiser/donate-pay.html", {"post": post, "ngo_profile": ngo_profile})
 
 
 @dashboard_login_required
@@ -167,7 +168,7 @@ def donation_history_ajax(request):
     paginator = Paginator(donations, 10)  # change to 10 or whatever you want later
     page_obj = paginator.get_page(page_number)
 
-    donation_html = render_to_string("client/donate-history.html", {"donations": page_obj})
+    donation_html = render_to_string("advertiser/partials/donate-history.html", {"donations": page_obj})
 
     return JsonResponse({
         "html": donation_html,
@@ -215,7 +216,7 @@ def get_platform_bill(request, donation_id):
     # Get the related NGO user
     ngo_user = donation.ngopost.user
     
-     # Try to get the ContactPerson for the NGO profile
+    # Try to get the ContactPerson for the NGO profile
     contact_person = ContactPerson.objects.filter(
         profile_type='ngo',
         profile_id=ngoprofile.id
@@ -238,7 +239,27 @@ def get_platform_bill(request, donation_id):
 
     return JsonResponse(response_data)
 
-  
+@dashboard_login_required
+@require_POST
+def toggle_saved_donation(request):
+    donation_id = request.POST.get('donation_id')
+    action = request.POST.get('action')
+
+    if not donation_id or action not in ['save', 'unsave']:
+        return JsonResponse({'success': False, 'error': 'Invalid data'}, status=400)
+
+    try:
+        donation = Donation.objects.get(id=donation_id, user=request.user_obj)
+        donation.saved = (action == 'save')
+        donation.save()
+
+        logger.info(f"User {request.user_obj} set saved={donation.saved} for donation {donation_id} (action={action})")
+        return JsonResponse({'success': True, 'saved': donation.saved})
+
+    except Donation.DoesNotExist:
+        logger.warning(f"Donation {donation_id} not found or does not belong to user {request.user_obj}")
+        return JsonResponse({'success': False, 'error': 'Donation not found'}, status=404)
+
 # csv 
 @dashboard_login_required
 def export_donations_csv(request):
@@ -265,4 +286,5 @@ def export_donations_csv(request):
         ])
 
     return response
+
 

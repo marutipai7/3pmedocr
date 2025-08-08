@@ -7,8 +7,9 @@ from .models import SettingMenu, CouponPerformance,  CalendarEvent
 from registration.models import MedicalProviderProfile, NGOProfile, ClientProfile, AdvertiserProfile
 from ngopost.models import NGOPost
 from .models import TrendingCoupon
+from donate.models import Donation
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 import json
 from django.template.loader import render_to_string
 from datetime import datetime, timedelta
@@ -22,6 +23,7 @@ from django.core.paginator import Paginator
 from coupon.models import Coupon
 import logging
 import os
+from django.shortcuts import get_object_or_404
 logger = logging.getLogger(__name__)
 
 @dashboard_login_required
@@ -289,6 +291,7 @@ def saved(request):
             'user': user
         })
         return render(request, "dashboard/saved_provider.html", context)
+
 
 ## FOR Advertiser Saved Coupon In Saved Section ##
 @require_GET
