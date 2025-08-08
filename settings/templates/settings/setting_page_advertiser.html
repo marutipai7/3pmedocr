@@ -196,7 +196,7 @@
             <span class="material-symbols-outlined cursor-pointer" onclick="closePopup('successPopup')"> close</span>
         </div>
         <div class="flex items-center justify-center flex-col">
-            <img src="/static/images/successfull.svg" alt="">
+            <img src="{% static 'images/successfull.svg' %}" alt="">
             <p class="font-normal text-base text-jet-black">Your request has been sent to the administrator. We will update you shortly </p>
         </div>
         
@@ -442,7 +442,7 @@
     </div>
     </div>
     <!--Notification Control Section-->
-    <div class="hidden tab-content" id="notification-control">
+    <div class="hidden tab-content notification-control" id="notification-control">
     <p class="font-semibold pt-4 px-4 text-lg">
         Notification Channel Management
     </p>
@@ -763,7 +763,6 @@
     <div class="hidden edit-details">
         <p class="text-living-coral pl-4 sm:pl-6">Account Details</p>
         <div id="edit-account-details-render">
-        
         </div>
     </div>
     </div>

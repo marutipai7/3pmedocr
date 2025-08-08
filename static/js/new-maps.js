@@ -14,6 +14,8 @@ let allFetchedPlaces = [];
 let routeLines = [];
 let lastLat, lastLon, lastPlace;
 let routingControl;
+let searchAbortController;
+let debounceTimer;
 let currentMode = "auto";
 let geoWatchId = null;
 
@@ -73,7 +75,7 @@ if (navigator.geolocation) {
     window.showToaster('error', 'Geolocation not supported by your browser.');
 }
 
-tile_url = "http://192.168.1.110:4090/styles/test-style/256/{z}/{x}/{y}.png"
+tile_url = "http://192.168.1.110:4090/styles/light-mode-nopoi/256/{z}/{x}/{y}.png"
 
 // Initialize map with user's location
 function showLocation(position) {
@@ -260,8 +262,8 @@ function fetchPlaces(type, buttonElement, mode = "map") {
                 lon: place.longitude,
                 address: place.address,
                 phone: place.phone_number,
-                rating: place.rating || "0 stars",
-                reviews: place.reviews || "0 reviews",
+                rating: place.rating || 0,
+                reviews: place.reviews || 0,
                 website: place.website,
                 tags: place.tags || {}
             };
@@ -313,92 +315,92 @@ function fetchPlaces(type, buttonElement, mode = "map") {
 }
 
 // Handles pagination logic and UI for displaying a limited number of place cards per page
-    function setupPagination() {
-        const cardsPerPage = 6;
-        const cards = $(".places-card");
-        const totalCards = cards.length;
-        const totalPages = Math.ceil(totalCards / cardsPerPage);
-        let currentPage = 1;
+function setupPagination() {
+    const cardsPerPage = 6;
+    const cards = $(".places-card");
+    const totalCards = cards.length;
+    const totalPages = Math.ceil(totalCards / cardsPerPage);
+    let currentPage = 1;
 
-        function showPage(page) {
-            cards.hide();
-            const start = (page - 1) * cardsPerPage;
-            const end = start + cardsPerPage;
-            cards.slice(start, end).show();
+    function showPage(page) {
+        cards.hide();
+        const start = (page - 1) * cardsPerPage;
+        const end = start + cardsPerPage;
+        cards.slice(start, end).show();
 
-            $("#pagination button").removeClass("font-semibold").removeAttr("style");
-            $(`#pagination button[data-page='${page}']`).addClass("font-semibold").css({
-                "background-color": bgColor,
-                "color": "white"
-            });
-        }
-
-        let paginationHTML = `
-            <div class="flex items-center gap-4">
-                <p class="text-dark-gray cursor-pointer" id="prev">Previous</p>
-        `;
-        for (let i = 1; i <= totalPages; i++) {
-            paginationHTML += `
-                <button 
-                    data-page="${i}" 
-                    class="px-4 py-2 rounded-lg cursor-pointer bg-pagination text-jet-black hover:bg-${selectedColor} hover:transition"
-                >
-                    ${i}
-                </button>
-            `;
-        }
-        paginationHTML += `<p class="text-dark-gray cursor-pointer" id="next">Next</p></div>`;
-        $("#pagination").html(paginationHTML);
-
-        // Events
-        $("#pagination").off("click").on("click", "button", function () {
-            const page = $(this).data("page");
-            currentPage = page;
-            showPage(page);
+        $("#pagination button").removeClass("font-semibold").removeAttr("style");
+        $(`#pagination button[data-page='${page}']`).addClass("font-semibold").css({
+            "background-color": bgColor,
+            "color": "white"
         });
-
-        $("#pagination").on("click", "#prev", function () {
-            if (currentPage > 1) {
-                currentPage--;
-                showPage(currentPage);
-            }
-        });
-
-        $("#pagination").on("click", "#next", function () {
-            if (currentPage < totalPages) {
-                currentPage++;
-                showPage(currentPage);
-            }
-        });
-
-        showPage(currentPage);
     }
+
+    let paginationHTML = `
+        <div class="flex items-center gap-4">
+            <p class="text-dark-gray cursor-pointer" id="prev">Previous</p>
+    `;
+    for (let i = 1; i <= totalPages; i++) {
+        paginationHTML += `
+            <button 
+                data-page="${i}" 
+                class="px-4 py-2 rounded-lg cursor-pointer bg-pagination text-jet-black hover:bg-${selectedColor} hover:transition"
+            >
+                ${i}
+            </button>
+        `;
+    }
+    paginationHTML += `<p class="text-dark-gray cursor-pointer" id="next">Next</p></div>`;
+    $("#pagination").html(paginationHTML);
+
+    // Events
+    $("#pagination").off("click").on("click", "button", function () {
+        const page = $(this).data("page");
+        currentPage = page;
+        showPage(page);
+    });
+
+    $("#pagination").on("click", "#prev", function () {
+        if (currentPage > 1) {
+            currentPage--;
+            showPage(currentPage);
+        }
+    });
+
+    $("#pagination").on("click", "#next", function () {
+        if (currentPage < totalPages) {
+            currentPage++;
+            showPage(currentPage);
+        }
+    });
+
+    showPage(currentPage);
+}
 
     // Generate star rating HTML with half stars and review count
-    function generateStars(rating, reviews) {
-        rating = parseFloat(rating);
-        if (isNaN(rating)) {
-            $('#rating-stars').html('<span class="text-red-500">Invalid rating</span>');
-            return;
-        }
-
-        const fullStar = '<span class="material-symbols-outlined material-filled text-star-yellow">star</span>';
-        const halfStar = '<span class="material-symbols-outlined material-filled text-star-yellow">star_half</span>';
-        const emptyStar = '<span class="material-symbols-outlined text-star-yellow">star</span>';
-
-        let html = `${rating.toFixed(1)} `;
-
-        const fullStars = Math.floor(rating);
-        const hasHalfStar = rating - fullStars >= 0.25 && rating - fullStars < 0.75;
-        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-
-        html += fullStar.repeat(fullStars);
-        if (hasHalfStar) html += halfStar;
-        html += emptyStar.repeat(emptyStars);
-
-        html += ` <span class="text-dark-gray text-14-nr">(${reviews})</span>`;
-        return html;
+function generateStars(rating, reviews) {
+    rating = parseFloat(rating);
+    if (isNaN(rating)) {
+        $('#rating-stars').html('<span class="text-red-500">Invalid rating</span>');
+        return;
     }
+
+    const fullStar = '<span class="material-symbols-outlined material-filled text-star-yellow">star</span>';
+    const halfStar = '<span class="material-symbols-outlined material-filled text-star-yellow">star_half</span>';
+    const emptyStar = '<span class="material-symbols-outlined text-star-yellow">star</span>';
+
+    let html = `${rating.toFixed(1)} `;
+
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating - fullStars >= 0.25 && rating - fullStars < 0.75;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    html += fullStar.repeat(fullStars);
+    if (hasHalfStar) html += halfStar;
+    html += emptyStar.repeat(emptyStars);
+
+    html += ` <span class="text-dark-gray text-14-nr">(${reviews})</span>`;
+    return html;
+}
 
     let bookmarkedPlaceIds = new Set();
     // Renders a list of place cards dynamically into the view with relevant info and actions
@@ -549,7 +551,11 @@ function fetchPlaces(type, buttonElement, mode = "map") {
             "X-CSRFToken": getCookie("csrftoken")
         },
         body: JSON.stringify({ mongo_id: place.mongo_id, type: place.type })
-    });
+    })
+    .catch(err => {
+            console.error("Searching History error:", err);
+            window.showToaster("error", err.message || "Searching History failed.");
+        });
 
     lastLat = lat; lastLon = lon; lastPlace = place;
 
@@ -628,10 +634,11 @@ function fetchPlaces(type, buttonElement, mode = "map") {
                     </div>
                     <p class="text-sm">${place?.address || ""}</p>
                     <p class="text-sm">${place?.phone || ""}</p>
-                    <p class="flex gap-2 items-center">${place?.rating || ""} 
-                    <span class="text-xl text-star-orange">
-                        ${place?.rating ? '★'.repeat(Math.floor(place.rating)) + '☆'.repeat(5 - Math.floor(place.rating)) + ` (${place.rating})` : ''}
-                    </span>
+                    <p class="flex gap-2 items-center">
+                        <span class="text-xl text-star-orange">
+                            ${'★'.repeat(Math.floor(place?.rating || 0))}${'☆'.repeat(5 - Math.floor(place?.rating || 0))}
+                        </span>
+                        <span class="text-sm">(${place?.rating?.toFixed(1) || "0.0"}) • ${place?.reviews || 0} reviews</span>
                     </p>
                 </div>
 
@@ -740,15 +747,18 @@ function fetchPlaces(type, buttonElement, mode = "map") {
     function createPlaceItem(place) {
         const lat = place.latitude;
         const lon = place.longitude;
-        const name = place.title || place.name;
-        const rating = place.rating || 3;
+        const rating = typeof place.rating === 'number' ? place.rating : parseFloat(place.rating) || 0;
+        const reviews = typeof place.reviews === 'number' ? place.reviews : parseInt(place.reviews) || 0;
         const stars = '★'.repeat(Math.floor(rating)) + '☆'.repeat(5 - Math.floor(rating));
 
         const $item = $(`
             <div class="px-4 py-3 border-b border-${selectedColor} last:border-b-0 cursor-pointer transition-all hover:bg-opacity-10">
                 <div class="flex flex-col gap-2">
                 <p class="text-lg font-semibold">${place.title}</p>
-                <p class="flex gap-2 items-center">${rating} <span class="text-xl text-star-orange">${stars}</span> ${place.reviews}</p>
+                <p class="flex gap-2 items-center">
+                    <span class="text-xl text-star-orange">${stars}</span>
+                    <span class="text-sm">(${rating.toFixed(1)}) • ${reviews} reviews</span>
+                </p>
                 <p>${place.type}</p>
                 <p class="text-sm">${place.address}</p>
                 <p class="text-sm">${place.phone_number}</p>
@@ -785,7 +795,8 @@ function fetchPlaces(type, buttonElement, mode = "map") {
         const lat = place.latitude;
         const lon = place.longitude;
         const name = place.title || place.name;
-        const rating = place.rating || 3;
+        const rating = typeof place.rating === 'number' ? place.rating : parseFloat(place.rating) || 0;
+        const reviews = typeof place.reviews === 'number' ? place.reviews : parseInt(place.reviews) || 0;
         const stars = '★'.repeat(Math.floor(rating)) + '☆'.repeat(5 - Math.floor(rating));
         const isBookmarked = bookmarkedPlaceIds.has(place.mongo_id);
 
@@ -799,7 +810,10 @@ function fetchPlaces(type, buttonElement, mode = "map") {
                     </div>
                     ${place.address ? `<p class="text-sm">${place.address}</p>` : ""}
                     ${place.phone_number ? `<p class="text-sm">${place.phone_number}</p>` : ""}
-                    <p class="flex gap-2 items-center">${rating} <span class="text-xl text-star-orange">${stars} (${place.reviews})</span></p>
+                    <p class="flex gap-2 items-center">
+                        <span class="text-xl text-star-orange">${stars}</span>
+                        <span class="text-sm">(${rating.toFixed(1)}) • ${reviews} reviews</span>
+                    </p>
                 </div>
                 <!-- Tabs -->
                 <div class="flex mb-3">
@@ -932,58 +946,70 @@ function fetchPlaces(type, buttonElement, mode = "map") {
 
     // Search input handler: fetch and show suggestions
     $searchBox.on("input", function () {
-    $(".map-search").css('background-color', bgColor);
-    const query = $(this).val().toLowerCase();
-    $suggestionBox.empty();
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            const query = $(this).val().toLowerCase();
+            $suggestionBox.empty();
 
-    if (query) {
-        $bookmarkIcon.addClass("!hidden");
-        $historyIcon.addClass("!hidden");
-        $closeIcon.removeClass("!hidden");
-        $(".map-search").addClass("placeholder:text-white");
-        $(".map-search,.search,.close-icon").addClass("text-white");
-    } else {
-        $bookmarkIcon.removeClass("!hidden");
-        $historyIcon.removeClass("!hidden");
-        $closeIcon.addClass("!hidden");
-        $(".map-search").removeAttr("style");
-        $(".map-search,.search,.close-icon").removeClass("text-white");
-        $(".map-search").removeClass("placeholder:text-white");
-        $suggestionBox.hide();
-        return;
-    }
+            if (!query) {
+                $bookmarkIcon.removeClass("!hidden");
+                $historyIcon.removeClass("!hidden");
+                $closeIcon.addClass("!hidden");
+                $(".map-search").removeAttr("style");
+                $(".map-search,.search,.close-icon").removeClass("text-white");
+                $(".map-search").removeClass("placeholder:text-white");
+                $suggestionBox.hide();
+                return;
+            }
 
-    fetch("search/", {
-        method: "POST",
-        headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": getCookie("csrftoken"),
-        },
-        body: JSON.stringify({
-        q: query,
-        lat: currentLat,
-        lng: currentLon
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        $suggestionBox.empty();
-        const matches = data.results || [];
-        const places = data.places || [];
+            // Cancel previous request
+            if (searchAbortController) {
+                searchAbortController.abort();
+            }
+            searchAbortController = new AbortController();
 
-        if (!matches.length && !places.length) {
-            $suggestionBox.html("<p class='p-2'>No Suggestion Found...</p>").show();
-            return;
-        }
-    
-        renderSuggestions(matches);
-        addFilterDropdown();
-        })
-        .catch(err => {
-        console.error("Search error:", err);
-        window.showToaster("error", "Failed to fetch search results.");
-        });
+            $bookmarkIcon.addClass("!hidden");
+            $historyIcon.addClass("!hidden");
+            $closeIcon.removeClass("!hidden");
+            $(".map-search").addClass("placeholder:text-white");
+            $(".map-search,.search,.close-icon").addClass("text-white");
+            $(".map-search").css('background-color', bgColor);
+
+            fetch("search/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie("csrftoken"),
+                },
+                signal: searchAbortController.signal,
+                body: JSON.stringify({
+                    q: query,
+                    lat: currentLat,
+                    lng: currentLon
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                $suggestionBox.empty();
+                const matches = data.results || [];
+                const places = data.places || [];
+
+                if (!matches.length && !places.length) {
+                    $suggestionBox.html("<p class='p-2'>No Suggestion Found...</p>").show();
+                    return;
+                }
+
+                renderSuggestions(matches);
+                addFilterDropdown();
+            })
+            .catch(err => {
+                if (err.name === "AbortError") return; // Ignore aborted
+                console.error("Search error:", err);
+                window.showToaster("error", "Failed to fetch search results.");
+            });
+        }, 300); // adjust debounce delay as needed
     });
+
 
     // Clear search input and hide suggestions on close icon click    
     $closeIcon.on("click", function () {
@@ -1198,7 +1224,8 @@ $(".history-icon").on("click", function (e) {
                 window.showToaster("info", "Already bookmarked.");
             }
         })
-        .catch(() => {
+        .catch(err => {
+            console.error("Bookmarking error", err);
             window.showToaster("error", "Could not save bookmark.");
         });
         $(this).addClass(`material-filled text-${selectedColor}`);

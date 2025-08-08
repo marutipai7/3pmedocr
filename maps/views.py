@@ -5,15 +5,13 @@ import requests
 from bson import ObjectId
 from django.conf import settings
 from django.http import JsonResponse
-from django.db.models import Sum, Count, DecimalField, Q
 from .models import SavedLocation, SearchHistory, PincodeLocation
-from registration.models import UserProfile, NGOProfile, AdvertiserProfile, ClientProfile
+from registration.models import NGOProfile, AdvertiserProfile, ClientProfile
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from math import radians, cos, sin, sqrt, atan2
 from dashboard.utils import dashboard_login_required, get_common_context
 from django.views.decorators.http import require_POST
-from points.models import PointsActionType, PointsHistory, PointsBadge
 
 @dashboard_login_required
 def map_view(request):
@@ -39,7 +37,6 @@ def map_view(request):
         return render(request, 'maps/maps.html', context)
     else:
         return JsonResponse({"error": "Invalid input"}, status=400)
-
 
 @dashboard_login_required
 @require_POST
@@ -215,23 +212,14 @@ def search_by_name(request):
                     }
                 }
             }
-        })
+        }).limit(10)
         for doc in matches:
             coords = doc.get("location", {}).get("coordinates", [None, None])
             if coords[0] is None or coords[1] is None:
                 continue
-
-            # Clean rating (e.g. "4.6 stars" -> 4.6 float)
-            try:
-                rating = float(str(doc.get("rating", "0")).split()[0])
-            except:
-                rating = 0.0
-
-            # Extract review count (e.g. "5 reviews" -> 5 int)
-            try:
-                review_count = int(str(doc.get("reviews", "0")).split()[0])
-            except:
-                review_count = 0
+            
+            rating = float(doc.get("rating") or 0)
+            review_count = int(doc.get("reviews") or 0)
 
             results.append({
                 "mongo_id": str(doc.get("_id")),
@@ -288,42 +276,42 @@ def search_by_name(request):
     # Limit results to top 5 for both
     return JsonResponse({"results": results[:5], "places": None})
 
-@require_POST
-def search_autocomplete(request):
-    try:
-        data = json.loads(request.body)
-        query = data.get("q", "").strip()
-        if not query:
-            return JsonResponse({"results": []})
-    except (ValueError, json.JSONDecodeError):
-        return JsonResponse({"error": "Invalid request"}, status=400)
+# @require_POST
+# def search_autocomplete(request):
+#     try:
+#         data = json.loads(request.body)
+#         query = data.get("q", "").strip()
+#         if not query:
+#             return JsonResponse({"results": []})
+#     except (ValueError, json.JSONDecodeError):
+#         return JsonResponse({"error": "Invalid request"}, status=400)
 
-    try:
-        response = requests.get(
-            "http://122.170.111.109:3090/api",
-            params={"q": query},
-            timeout=3
-        )
-        response.raise_for_status()
-        photon_data = response.json()
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+#     try:
+#         response = requests.get(
+#             "http://122.170.111.109:3090/api",
+#             params={"q": query},
+#             timeout=3
+#         )
+#         response.raise_for_status()
+#         photon_data = response.json()
+#     except Exception as e:
+#         return JsonResponse({"error": str(e)}, status=500)
 
-    results = []
-    for feature in photon_data.get("features", []):
-        geometry = feature.get("geometry", {}).get("coordinates", [None, None])
-        props = feature.get("properties", {})
-        if geometry[0] is not None and geometry[1] is not None:
-            results.append({
-                "name": props.get("name") or props.get("street") or "Unnamed",
-                "city": props.get("city"),
-                "country": props.get("country"),
-                "latitude": geometry[1],
-                "longitude": geometry[0],
-                "label": props.get("label")
-            })
+#     results = []
+#     for feature in photon_data.get("features", []):
+#         geometry = feature.get("geometry", {}).get("coordinates", [None, None])
+#         props = feature.get("properties", {})
+#         if geometry[0] is not None and geometry[1] is not None:
+#             results.append({
+#                 "name": props.get("name") or props.get("street") or "Unnamed",
+#                 "city": props.get("city"),
+#                 "country": props.get("country"),
+#                 "latitude": geometry[1],
+#                 "longitude": geometry[0],
+#                 "label": props.get("label")
+#             })
 
-    return JsonResponse({"results": results})
+#     return JsonResponse({"results": results})
 
 @dashboard_login_required
 def saved_amenity(request):
