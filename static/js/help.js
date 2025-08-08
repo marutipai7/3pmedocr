@@ -862,6 +862,8 @@ document.getElementById("issue_type").addEventListener("change", function () {
 const form = document.querySelector(".support-form");
 const submitBtn = document.querySelector(".ngo-issue-submit-btn");
 const fileInput = document.getElementById("ngo-issue-image");
+const fileContainerElementNgo = document.getElementById("ngo-file-container");
+const ngoSelectedFiles = [];
 
 const itemsPerPage = 5;
 let allTickets = [];
@@ -869,6 +871,17 @@ let currentPage = 1;
 
 fileInput.addEventListener("change", function () {
   if (fileInput.files.length > 0) {
+    for (let i = 0; i < fileInput.files.length; i++) {
+      const file = fileInput.files[i];
+      if (
+        !ngoSelectedFiles.some(
+          (f) => f.name === file.name && f.size === file.size
+        )
+      ) {
+        ngoSelectedFiles.push(file);
+      }
+    }
+    updateNgoFileDisplay();
     submitBtn.disabled = false;
     submitBtn.classList.remove(
       "cursor-not-allowed",
@@ -886,6 +899,53 @@ fileInput.addEventListener("change", function () {
     );
   }
 });
+
+function updateNgoFileDisplay(submitBtn) {
+  fileContainerElementNgo.innerHTML = "";
+
+  if (ngoSelectedFiles.length === 0) {
+    console.log("No files selected");
+    fileContainerElementNgo.innerHTML =
+      '<span class="ngo-file-name font-normal text-sm">Upload image of the issue</span>';
+    return;
+  }
+
+  const filesWrapper = document.createElement("div");
+  filesWrapper.className = "flex items-center gap-2 h-full flex-nowrap";
+
+  ngoSelectedFiles.forEach((file, index) => {
+    const fileElement = document.createElement("div");
+    fileElement.className =
+      "flex items-center gap-1 bg-gray-100 px-2 py-1 rounded flex-shrink-0 h-8";
+
+    const fileName = document.createElement("span");
+    fileName.className =
+      "text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px] sm:max-w-[150px]";
+    fileName.textContent = file.name;
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className =
+      "material-symbols-outlined text-red-500 cursor-pointer text-sm flex-shrink-0";
+    removeBtn.textContent = "close";
+    removeBtn.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      removeNgoFile(index, submitBtn);
+    };
+
+    fileElement.appendChild(fileName);
+    fileElement.appendChild(removeBtn);
+    filesWrapper.appendChild(fileElement);
+  });
+
+  fileContainerElementNgo.appendChild(filesWrapper);
+}
+
+function removeNgoFile(index, submitBtn) {
+  ngoSelectedFiles.splice(index, 1);
+  updateNgoFileDisplay(submitBtn);
+}
 
 //submit btn
 form.addEventListener("submit", async function (e) {

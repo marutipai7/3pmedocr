@@ -2,7 +2,7 @@
 
 <aside class="sidebar w-[200px] md:w-[280px] h-full transition-all transform duration-300 ease-in-out shadow-lg" id="sidebar">
     <!-- Badge Section -->
-    <div class="px-2 py-4 relative border-b border-gray-200">
+    <div class="relative w-full flex items-center justify-between p-6 bg-white">
         <div class="flex flex-col items-center gap-2">
             <!-- Badge Icon -->
             <div class="relative">
@@ -14,7 +14,7 @@
             </div>
             <!-- Badge Name -->
             <div>
-                <p class="font-semibold text-gray-800 text-sm text-center">{{ badge.name|default:"No Badge" }}</p>
+                <p class="text-18-nr">{{ badge.name|default:"No Badge" }}</p>
             </div>
         </div>
         <div class="menu-toggle absolute right-0 top-1/2 -translate-y-1/2 h-[48px] w-[48px] bg-transparent-living-coral flex items-center justify-center rounded-l-md cursor-pointer z-10">
@@ -31,7 +31,7 @@
             <li>
                 <a href="{{ menu.url }}" class="flex items-center gap-3 px-6 py-3 w-full hover:bg-gray-100 transition-colors {% if request.resolver_match.url_name == menu.url_name %}bg-blue-50 text-blue-600{% endif %}">
                     {% if menu.icon %}
-                    <span class="material-symbols-outlined">{{ menu.icon }}</span>
+                    <span class="material-symbols-outlined {% if menu.icon == 'emoji_events' %}material-filled{% endif %}">{{ menu.icon }}</span>
                     {% endif %}
                     <p>{{ menu.name }}</p>
                 </a>

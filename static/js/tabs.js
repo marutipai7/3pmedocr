@@ -134,24 +134,43 @@ $(document).ready(function () {
   $(".tab-btn-ngo").click(function () {
     var target = $(this).data("tab");
 
-    $(".tab-btn-ngo").removeClass("active-tab1-ngo");
-    $(this).addClass("active-tab1-ngo");
+    // Remove active styles from all tabs
+    $(".tab-btn-ngo")
+      .removeClass("active-tab-ngo font-semibold text-dark-gray border-b-2 border-violet-sky")
+      .addClass("font-medium text-light-gray1");
 
+    // Add active styles to the clicked tab
+    $(this)
+      .addClass("active-tab-ngo font-semibold text-dark-gray border-b-2 border-violet-sky")
+      .removeClass("font-medium text-light-gray1");
+
+    // Show the selected tab content
     $(".tab-content").addClass("hidden");
-    console.log('target', target);
     $("." + target).removeClass("hidden");
-    if (target === "points") {
-      $(".referral").removeClass("hidden");
-    } else {
-      $(".referral").addClass("hidden");
-    }
+
+    // Conditional visibility for diamond user
     if (target === "points") {
       $(".diamond-user").show();
     } else {
       $(".diamond-user").hide();
     }
+
+    if (target === "documents") {
+      $(".editIcon").hide();
+      $('.fileLimit').removeClass('hidden');
+    }
+    else {
+      $(".editIcon").show();
+      $('.fileLimit').addClass('hidden');
+    }
+
+    if (target === "notification-control"){
+      $('.edit-toggle').hide();
+    }
+    else{
+      $('.edit-toggle').show();
+    }
   });
-  $(".tab-btn-ngo").eq(0).click();
 
 
   $(".tab-btn-client").click(function () {
