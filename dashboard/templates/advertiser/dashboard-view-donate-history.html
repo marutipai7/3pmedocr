@@ -1,6 +1,6 @@
 {% load static %}
 
-<div class="view-donation-history-popup popup hidden fixed inset-0 items-center justify-center" style="background: rgba(0, 0, 0, 0.4); padding-left: 0.75rem; padding-right: 0.75rem; z-index: 50;">
+<div class="view-saved-donation-history-popup popup hidden fixed inset-0 items-center justify-center" style="background: rgba(0, 0, 0, 0.4); padding-left: 0.75rem; padding-right: 0.75rem; z-index: 50;">
   <div style="background-color: #ffffff; border-radius: 10px; max-width: 1000px; max-height: 640px; width: 100%; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding-bottom: 12px; display: flex; flex-direction: column; gap: 16px;">
     
     <!-- Header -->
@@ -10,7 +10,7 @@
         <span class="material-symbols-outlined download-btn" style="cursor: pointer;">download</span>
       </div>
       <span style="font-weight: 500;">Donation History</span>
-      <span class="material-symbols-outlined close-donation-history-popup" style="cursor: pointer;">close</span>
+      <span class="material-symbols-outlined close-saved-donation-history-popup" style="cursor: pointer;">close</span>
     </div>
 
     <div class="download-container" style="height: calc(100% - 40px); overflow-y: auto; scroll-behavior: smooth; padding-bottom: 6px;">
@@ -59,7 +59,7 @@
                 <th style="text-align: center; padding: 0.25rem; font-size: 0.875rem; border-right: 1px solid white;">Status (Edit if required)</th>
                 </tr>
             </thead>
-            <tbody style="background-color: #F5F5F5; color: #484848; font-size: 0.875rem;" id="donateHistoryTableExport">
+            <tbody style="background-color: #F5F5F5; color: #484848; font-size: 0.875rem;" id="donatesavedHistoryTableExport">
             </tbody>
             </table>
         </div>

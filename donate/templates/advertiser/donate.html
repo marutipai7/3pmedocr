@@ -3,6 +3,7 @@
 {% block title %}Donate{% endblock %}
 {% block content %}
 <body>
+  {% csrf_token %}
   <main class="h-screen w-full">
     <!-- Main Content -->
     <div class="h-[calc(100vh-100px)] w-full flex">
@@ -147,15 +148,24 @@
       </div>
     </div>
   </div>
+
+
+  <!-- platform bill  -->
+        {% include 'advertiser/view-donate-history.html' %}
+
       <!-- donate receipt  -->
         {% include 'advertiser/donation-receipt.html' %}
 
     <!-- platform bill  -->
         {% include 'advertiser/donation-platform-bill.html' %}
+    
+    {% comment %} <!-- saved donations popup -->
+        {% include 'advertiser/saved-donations-popup.html' %} {% endcomment %}
 </body>
 {% endblock%}
 
 {% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="{% static 'js/tabs.js' %}"></script>
 <script src="{% static 'js/donate.js' %}"></script>
 <script src="{% static 'js/table-pagination.js' %}"></script>

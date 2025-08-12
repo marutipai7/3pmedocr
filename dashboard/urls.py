@@ -15,4 +15,9 @@ urlpatterns = [
     path('coupon_detail/<int:coupon_id>/', views.coupon_detail, name='coupon_detail'),
     path('saved/platform-bill/<int:coupon_id>/', views.platform_bill, name='platform_bill'),
     path('export-saved-coupon-history/', views.export_saved_coupon_history, name='export_saved_coupon_history'),
+    path('donation-history/', views.get_donation_history, name='donation_history'),
+    path('export-donation-history/', views.export_donation_history, name='export_donation_history'),
+    path('toggle-saved/', views.toggle_saved_donation, name='toggle_saved_coupon'),
+    path('get-donate-bill/<int:donation_id>/', views.get_donate_bill, name='get-donate-bill'),
+    path('get-platform-bill/<int:donation_id>/', views.get_platform_bill, name='get-platform-bill'),
 ]

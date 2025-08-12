@@ -220,3 +220,17 @@ if (uploadTrigger && panInput) {
         }
     });
 }
+
+// On file selection, update virus scan status
+document.querySelector('.pan-upload-input').addEventListener('change', function () {
+  const checkbox = document.querySelector('.scan-toggle');
+  const statusText = document.querySelector('.status-text');
+
+  if (this.files && this.files.length > 0) {
+    checkbox.checked = true;
+    checkbox.classList.remove('border-dark-gray');
+    checkbox.classList.add('border-green');
+    statusText.textContent = 'Virus Scan';
+    statusText.className = 'status-text text-green text-16-nr';
+  }
+});

@@ -14,7 +14,8 @@ import json
 from django.template.loader import render_to_string
 from datetime import datetime, timedelta
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_GET, require_POST
+from registration.models import ContactPerson
 from django.db.models.functions import TruncDate
 import random
 from datetime import date
@@ -398,7 +399,7 @@ def export_saved_coupon_history(request):
 def platform_bill(request, coupon_id):
     user = request.user_obj
     try:
-        coupon = Coupon.objects.get(id=coupon_id, advertiser=user)
+        coupon = Coupon.objects.get(id=coupon_id, advertiser=user, saved=True)
         profile = coupon.advertiser.advertiserprofile
     except Coupon.DoesNotExist:
         return JsonResponse({'error': 'Coupon not found'}, status=404)
@@ -430,6 +431,164 @@ def platform_bill(request, coupon_id):
         logger.error(f"Error building coupon detail data: {e}", exc_info=True)
         return JsonResponse({'error': 'Server error'}, status=500)
     return JsonResponse(data)
+
+@dashboard_login_required
+@require_GET
+def get_donation_history(request):
+    user = request.user_obj
+
+    # --- 2. If not POST, continue with GET listing logic ---
+    query = request.GET.get('query', '').strip()
+    page = int(request.GET.get('page', 1))
+    limit = int(request.GET.get('limit', 10))
+    date_range = request.GET.get('daterange', '').strip().lower()
+    saved_only = request.GET.get('saved_only', '').lower() == 'true'
+
+    filters = Q(user=user)
+    if query:
+        filters &= (
+            Q(ngopost__header__icontains=query) |
+            Q(payment_status__icontains=query) |
+            Q(ngopost__post_type__name__icontains=query)
+        )
+
+    now = timezone.now()
+    if date_range == "1 week":
+        filters &= Q(created_at__gte=now - timedelta(weeks=1))
+    elif date_range == "1 month":
+        filters &= Q(created_at__gte=now - timedelta(days=30))
+    elif date_range == "1 year":
+        filters &= Q(created_at__gte=now - timedelta(days=365))
+    elif date_range == "custom":
+        # Optional: handle custom start_date and end_date from request.GET
+        start = request.GET.get('start_date')
+        end = request.GET.get('end_date')
+        try:
+            start_date = datetime.strptime(start, "%Y-%m-%d")
+            end_date = datetime.strptime(end, "%Y-%m-%d")
+            filters &= Q(created_at__range=(start_date, end_date))
+        except Exception:
+            pass  # Invalid format, ignore or handle as needed
+    if saved_only:
+        filters &= Q(saved=True)
+    donations = Donation.objects.filter(filters).order_by('-created_at')
+    paginator = Paginator(donations, limit)
+    page_obj = paginator.get_page(page)
+    
+    html = render_to_string("advertiser/partials/donate-history.html", {
+        "donation_history": page_obj.object_list,
+        'today': date.today(),
+    })
+    logger.info(f"User {user.id} fetched donation history: {query}")
+    return JsonResponse({
+        "html": html,
+        "current_page": page_obj.number,
+        "total_pages": paginator.num_pages,
+        "total_items": paginator.count,  # Add this
+    })
+
+# show data on receipt 
+@dashboard_login_required    
+def get_donate_bill(request, donation_id):
+    donation = Donation.objects.select_related('ngopost__user__ngoprofile').get(id=donation_id)
+    ngoprofile = donation.ngopost.user.ngoprofile
+    
+    # Get the related NGO user
+    ngo_user = donation.ngopost.user
+    
+     # Try to get the ContactPerson for the NGO profile
+    contact_person = ContactPerson.objects.filter(
+        profile_type='ngo',
+        profile_id=ngoprofile.id
+    ).first()  # use .first() to avoid MultipleObjectsReturned
+
+
+    response_data = {
+        "receipt_no": donation.id,
+        "payment_date": donation.payment_date.strftime("%d-%b-%Y"),
+        "ngo_name": donation.ngopost.user.ngoprofile.ngo_name,
+        "pan": donation.pan_number,
+        "amount": f"₹{donation.amount}",
+        "pay_mode": f"₹{donation.payment_method}",
+        "address": f"{donation.ngopost.user.ngoprofile.address}, {donation.ngopost.user.ngoprofile.city}, {donation.ngopost.user.ngoprofile.state}, {donation.ngopost.user.ngoprofile.pincode}",
+        "name": contact_person.name,
+        "email": ngo_user.email,
+    }
+
+    return JsonResponse(response_data)
+
+
+# show data on receipt 
+@dashboard_login_required    
+def get_platform_bill(request, donation_id):
+    donation = Donation.objects.select_related('ngopost__user__ngoprofile').get(id=donation_id)
+    ngoprofile = donation.ngopost.user.ngoprofile
+    
+    # Get the related NGO user
+    ngo_user = donation.ngopost.user
+    
+    # Try to get the ContactPerson for the NGO profile
+    contact_person = ContactPerson.objects.filter(
+        profile_type='ngo',
+        profile_id=ngoprofile.id
+    ).first()  # use .first() to avoid MultipleObjectsReturned
+
+
+    response_data = {
+        "receipt_no": donation.id,
+        "payment_date": donation.payment_date.strftime("%d-%b-%Y"),
+        "ngo_name": donation.ngopost.user.ngoprofile.ngo_name,
+        "pan": donation.pan_number,
+        "gst": donation.gst,
+        "amount": f"₹{donation.amount}",
+        "pay_mode": f"₹{donation.payment_method}",
+        "address": f"{donation.ngopost.user.ngoprofile.address}, {donation.ngopost.user.ngoprofile.city}, {donation.ngopost.user.ngoprofile.state}, {donation.ngopost.user.ngoprofile.pincode}",
+        "name": contact_person.name,
+        "email": ngo_user.email,
+        "finalTotal": f"{(donation.amount + donation.gst):.2f}",
+    }
+
+    return JsonResponse(response_data)
+
+@dashboard_login_required
+@require_POST
+def toggle_saved_donation(request):
+    donation_id = request.POST.get('donation_id')
+    action = request.POST.get('action')
+
+    if not donation_id or action not in ['save', 'unsave']:
+        return JsonResponse({'success': False, 'error': 'Invalid data'}, status=400)
+
+    try:
+        donation = Donation.objects.get(id=donation_id, user=request.user_obj)
+        donation.saved = (action == 'save')
+        donation.save()
+
+        logger.info(f"User {request.user_obj} set saved={donation.saved} for donation {donation_id} (action={action})")
+        return JsonResponse({'success': True, 'saved': donation.saved})
+
+    except Donation.DoesNotExist:
+        logger.warning(f"Donation {donation_id} not found or does not belong to user {request.user_obj}")
+        return JsonResponse({'success': False, 'error': 'Donation not found'}, status=404)
+
+# csv 
+@dashboard_login_required
+@require_GET
+def export_donation_history(request):
+    user = request.user_obj
+    # date_range = request.GET.get('daterange', '').strip().lower()
+    filters = Q(user=user)
+    # For export, we want to show all donations, not just saved ones
+    donations = Donation.objects.filter(filters).order_by('-created_at')
+    html = render_to_string("advertiser/partials/export-donate-history.html", {
+        "donation_history": donations,
+        'today': date.today(),
+    })
+    logger.info(f"Exporting donation history for user {user} with {donations.count()} records")
+    return JsonResponse({
+        "html": html,
+        "total_items": donations.count(),  # Add this
+    })
 
 
 # ngo graph 

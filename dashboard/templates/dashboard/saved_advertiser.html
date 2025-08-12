@@ -54,7 +54,7 @@
               </button>
               <button
                 class="tab-btn-advertiser text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
-                data-tab="donation-history"
+                data-tab="donationSaved"
               >
                 Donation History
               </button>
@@ -1539,248 +1539,10 @@
            {% include "advertiser/saved-coupon.html" %}
 
           <!-- Donation History -->
-          <div
-            class="donation-history tab-content pt-6 space-y-6 hidden"
-          >
-            <!-- Header -->
-            <div
-              class="px-2 flex flex-col md:flex-row items-start md:items-center justify-between gap-2"
-            >
-              <p class="text-sm font-semibold whitespace-nowrap">Donation History</p>
-              <div class="flex items-center justify-start md:justify-end gap-5 w-full sm:w-5/6">
-                <div
-                  class="w-full max-w-[280px] rounded-[6px] bg-light-white flex items-center gap-2 px-2"
-                >
-                  <span class="material-symbols-outlined text-dark-gray">
-                    search
-                  </span>
-                  <input
-                    type="text"
-                    placeholder="Search by name or categories"
-                    class="w-full py-2.5 focus:!outline-none placeholder:text-medium-gray"
-                  />
-                </div>
-                <div class="dropdown relative flex justify-end">
-                  <button
-                  class="filterToggle w-full max-w-[90px] h-[40px] border border-living-coral rounded-[10px] text-living-coral flex items-center justify-center gap-1 cursor-pointer group hover:bg-living-coral hover:text-white px-3"
-                >
-                  <span class="material-symbols-outlined text-living-coral group-hover:text-white">
-                    keyboard_arrow_down
-                  </span>
-                  Filter
-                </button>
-                <div
-                    class="filterDropdown text-sm absolute right-0 top-10 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-[95px] z-10"
-                  >
-                    <div
-                      class="p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
-                    >
-                     Show 5
-                    </div>
-                    <div
-                      class="p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
-                    >
-                     Show 10
-                    </div>
-                    <div
-                      class="p-2 pl-4 cursor-pointer hover:bg-living-coral hover:text-white rounded"
-                    >
-                      Show 15
-                    </div>
-                  </div>
-                </div>
-                <button
-                  class="donation-view-btn w-full max-w-[100px] h-[40px] border border-living-coral rounded-[10px] text-living-coral flex items-center justify-center gap-1 cursor-pointer group hover:bg-living-coral hover:text-white"
-                >
-                  <span class="material-symbols-outlined text-living-coral group-hover:text-white">
-                    file_export
-                  </span>
-                  <span class="hidden sm:block">View</span>
-                </button>
-              </div>
-            </div>
+           {% include "advertiser/dashboard-donate-history-table.html" %}
 
-            <!-- Table -->
-            <div class="overflow-x-auto">
-              <table class="min-w-full table-auto whitespace-nowrap docTable">
-                <thead class="bg-living-coral text-white text-sm sm:text-18-b">
-                  <tr>
-                    <th class="text-center px-4 py-4 border-r border-white">
-                      <div class="flex items-center justify-center gap-2">
-                        Date & Time
-                        <img
-                          src="/static/images/sort-alt.svg"
-                          alt="sort"
-                          loading="lazy"
-                        />
-                      </div>
-                    </th>
-                    <th class="text-center px-4 py-4 border-r border-white">
-                      Post Name
-                    </th>
-                    <th class="text-center px-4 py-4 border-r border-white">
-                      NGO Name
-                    </th>
-                    <th class="text-center px-4 py-4 border-r border-white">
-                      Post Type
-                    </th>
-                    <th class="text-center px-4 py-4 border-r border-white">
-                      Paid Donation
-                    </th>
-                    <th class="text-center px-4 py-4 border-r border-white">
-                      Status
-                    </th>
-                    <th class="text-center px-4 py-4 w-40">Actions</th>
-                  </tr>
-                </thead>
-                <tbody class="bg-snow-gray text-dark-gray text-16-fs">
-                  <tr>
-                    <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
-                    <td class="px-4 py-4.5 text-center">Bills</td>
-                    <td class="px-4 py-4.5 text-center">Bharat Seva Mandal</td>
-                    <td class="px-4 py-4.5 text-center">Poverty Relief</td>
-                    <td class="px-4 py-4.5 text-center">₹500000</td>
-                    <td class="px-6 py-4.5 text-center">
-                      <div
-                        class="bg-mint-cream text-green py-2 rounded-md border-none px-3"
-                      >
-                        Successful
-                      </div>
-                    </td>
-                    <td
-                      class="w-40 px-4 py-4.5 text-center flex items-center justify-center"
-                    >
-                      <span
-                        class="material-symbols-outlined saved-icon material-filled text-living-coral cursor-pointer hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
-                      >
-                        bookmark
-                      </span>
-                      <span
-                        class="cursor-pointer platform-bill-view hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
-                      >
-                        <img src="/static/images/assignment.svg" alt="Icon" />
-                      </span>
-                      <span
-                        class="cursor-pointer donation-receipt-view hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
-                      >
-                        <img
-                          src="/static/images/calendar_today.svg"
-                          alt="Icon"
-                        />
-                      </span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
-                    <td class="px-4 py-4.5 text-center">Bills</td>
-                    <td class="px-4 py-4.5 text-center">Bharat Seva Mandal</td>
-                    <td class="px-4 py-4.5 text-center">Education</td>
-                    <td class="px-4 py-4.5 text-center">₹500000</td>
-                    <td class="px-6 py-4.5 text-center">
-                      <div
-                        class="bg-soft-pink text-strong-red py-2 rounded-md border-none px-3"
-                      >
-                        Failed
-                      </div>
-                    </td>
-                    <td
-                      class="w-40 px-4 py-4.5 text-center flex items-center justify-center"
-                    >
-                      <span
-                        class="material-symbols-outlined saved-icon material-filled text-living-coral cursor-pointer hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
-                      >
-                        bookmark
-                      </span>
-                      <span
-                        class="cursor-pointer platform-bill-view hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
-                      >
-                        <img src="/static/images/assignment.svg" alt="Icon" />
-                      </span>
-                      <span
-                        class="cursor-pointer donation-receipt-view hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
-                      >
-                        <img
-                          src="/static/images/calendar_today.svg"
-                          alt="Icon"
-                        />
-                      </span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
-                    <td class="px-4 py-4.5 text-center">Bills</td>
-                    <td class="px-4 py-4.5 text-center">Bharat Seva Mandal</td>
-                    <td class="px-4 py-4.5 text-center">Health Care</td>
-                    <td class="px-4 py-4.5 text-center">₹10000</td>
-                    <td class="px-6 py-4.5 text-center">
-                      <div
-                        class="bg-soft-pink text-strong-red py-2 rounded-md border-none px-3"
-                      >
-                        Failed
-                      </div>
-                    </td>
-                    <td
-                      class="w-40 px-4 py-4.5 text-center flex items-center justify-center"
-                    >
-                      <span
-                        class="material-symbols-outlined saved-icon material-filled text-living-coral cursor-pointer hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
-                      >
-                        bookmark
-                      </span>
-                      <span
-                        class="cursor-pointer platform-bill-view hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
-                      >
-                        <img src="/static/images/assignment.svg" alt="Icon" />
-                      </span>
-                      <span
-                        class="cursor-pointer donation-receipt-view hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
-                      >
-                        <img
-                          src="/static/images/calendar_today.svg"
-                          alt="Icon"
-                        />
-                      </span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
-                    <td class="px-4 py-4.5 text-center">Bills</td>
-                    <td class="px-4 py-4.5 text-center">Bharat Seva Mandal</td>
-                    <td class="px-4 py-4.5 text-center">Poverty Relief</td>
-                    <td class="px-4 py-4.5 text-center">₹500000</td>
-                    <td class="px-6 py-4.5 text-center">
-                      <div
-                        class="bg-mint-cream text-green py-2 rounded-md border-none px-3"
-                      >
-                        Successful
-                      </div>
-                    </td>
-                    <td
-                      class="w-40 px-4 py-4.5 text-center flex items-center justify-center"
-                    >
-                      <span
-                        class="material-symbols-outlined saved-icon material-filled text-living-coral cursor-pointer hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
-                      >
-                        bookmark
-                      </span>
-                      <span
-                        class="cursor-pointer platform-bill-view hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
-                      >
-                        <img src="/static/images/assignment.svg" alt="Icon" />
-                      </span>
-                      <span
-                        class="cursor-pointer donation-receipt-view hover:bg-transparent-living-coral rounded-full p-1 transition-all mr-2"
-                      >
-                        <img
-                          src="/static/images/calendar_today.svg"
-                          alt="Icon"
-                        />
-                      </span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+
+          
 
             <!-- View Popup -->
              <div
@@ -1953,72 +1715,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- Platform bill Popup -->
-            <div class="platform-bill-modal fixed inset-0 bg-semi-transparent-black items-center justify-center z-50 hidden h-full">
-              <div class="bg-snow-gray rounded-lg p-3 max-w-md w-full h-[80vh]">
-                <div class="flex items-center justify-between h-10">
-                  <div class="flex items-center gap-3">
-                    <span
-                      class="material-symbols-outlined cursor-pointer bg-living-coral text-white rounded-md p-1"
-                      >share</span
-                    >
-                    <span
-                      class="material-symbols-outlined cursor-pointer bg-living-coral text-white rounded-md p-1"
-                      >download</span
-                    >
-                  </div>
-                  <p class="font-semibold text-lg text-living-coral">
-                    Platform Bill
-                  </p>
-                  <button class="close-platform-bill">
-                    <span class="material-symbols-outlined cursor-pointer"
-                      >close</span
-                    >
-                  </button>
-                </div>
-                <div class="h-[calc(100%-40px)] overflow-y-auto scroll">
-                  <img
-                  src="/static/images/platformbill-receipt.svg"
-                  alt="Incorporation Certificate"
-                  class="w-full rounded"
-                />
-                </div>
-              </div>
-            </div>
-
-            <!-- Donation Receipt Popup -->
-            <div class="donation-receipt-modal fixed inset-0 bg-semi-transparent-black items-center justify-center z-50 hidden h-full">
-              <div class="bg-snow-gray rounded-lg p-3 max-w-md w-full h-[80vh]">
-                <div class="flex items-center justify-between h-10">
-                  <div class="flex items-center gap-3">
-                    <span
-                      class="material-symbols-outlined cursor-pointer bg-living-coral text-white rounded-md p-1"
-                      >share</span
-                    >
-                    <span
-                      class="material-symbols-outlined cursor-pointer bg-living-coral text-white rounded-md p-1"
-                      >download</span
-                    >
-                  </div>
-                  <p class="font-semibold text-lg text-living-coral">
-                    Donation Receipt
-                  </p>
-                  <button class="close-donation-receipt">
-                    <span class="material-symbols-outlined cursor-pointer"
-                      >close</span
-                    >
-                  </button>
-                </div>
-                <div class="h-[calc(100%-40px)] overflow-y-auto scroll">
-                  <img
-                  src="/static/images/Donate Bill.svg"
-                  alt="Incorporation Certificate"
-                  class="w-full rounded"
-                />
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -2030,6 +1726,13 @@
 
           <!-- Platform bill -->
           {% include "advertiser/platform-bill.html" %}
+
+
+          {% include "advertiser/dashboard-donation-platform-bill.html" %}
+
+          {% include "advertiser/dashboard-donation-receipt.html" %}
+
+          {% include 'advertiser/dashboard-view-donate-history.html' %}
 
         </div>
 
