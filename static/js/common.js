@@ -214,44 +214,44 @@ $('#register-form').on('submit', function(e) {
         let adServiceValue = $('.ad-service-selected').text().trim();
         $('input[name="ad_service_req"]').val(adServiceValue);
     } else if (formUrl == '/user/save/medical_provider') {
-        var providerType = $('#provider_type_input').val();
-        var servicesOffered = $('#services_offered_input').val();
-        var workingDays = $('#working_days_input').val();
-        var openingTime = $('#opening_time').val();
-        var closingTime = $('#closing_time').val();
-        var valid = true;
-        // Remove previous errors
-        $('.field-error.provider_type, .field-error.services_offered, .field-error.working_days, .field-error.opening_time, .field-error.closing_time').remove();
-        if (!providerType) {
-            valid = false;
-            $('<span class="field-error provider_type text-xs text-dark-red">Please select a provider type.</span>')
-                .insertAfter($('#provider_type_input'));
-        }
-        if (!servicesOffered) {
-            valid = false;
-            $('<span class="field-error services_offered text-xs text-dark-red">Please select at least one service.</span>')
-                .insertAfter($('#services_offered_input'));
-        }
-        if (!workingDays) {
-            valid = false;
-            $('<span class="field-error working_days text-xs text-dark-red">Please select at least one working day.</span>')
-                .insertAfter($('#working_days_input'));
-        }
-        if (!openingTime) {
-            valid = false;
-            $('<span class="field-error opening_time text-xs text-dark-red">Please select an opening time.</span>')
-                .insertAfter($('#opening_time'));
-        }
-        if (!closingTime) {
-            valid = false;  
-            $('<span class="field-error closing_time text-xs text-dark-red">Please select a closing time.</span>')
-                .insertAfter($('#closing_time'));
-        }
-        if (!valid) {
-            e.preventDefault();
-            toastr.error('Please fill all required dropdowns.');
-            return false;
-        }
+        // var providerType = $('#provider_type_input').val();
+        // var servicesOffered = $('#services_offered_input').val();
+        // var workingDays = $('#working_days_input').val();
+        // var openingTime = $('#opening_time').val();
+        // var closingTime = $('#closing_time').val();
+        // var valid = true;
+        // // Remove previous errors
+        // $('.field-error.provider_type, .field-error.services_offered, .field-error.working_days, .field-error.opening_time, .field-error.closing_time').remove();
+        // if (!providerType) {
+        //     valid = false;
+        //     $('<span class="field-error provider_type text-xs text-dark-red">Please select a provider type.</span>')
+        //         .insertAfter($('#provider_type_input'));
+        // }
+        // if (!servicesOffered) {
+        //     valid = false;
+        //     $('<span class="field-error services_offered text-xs text-dark-red">Please select at least one service.</span>')
+        //         .insertAfter($('#services_offered_input'));
+        // }
+        // if (!workingDays) {
+        //     valid = false;
+        //     $('<span class="field-error working_days text-xs text-dark-red">Please select at least one working day.</span>')
+        //         .insertAfter($('#working_days_input'));
+        // }
+        // if (!openingTime) {
+        //     valid = false;
+        //     $('<span class="field-error opening_time text-xs text-dark-red">Please select an opening time.</span>')
+        //         .insertAfter($('#opening_time'));
+        // }
+        // if (!closingTime) {
+        //     valid = false;  
+        //     $('<span class="field-error closing_time text-xs text-dark-red">Please select a closing time.</span>')
+        //         .insertAfter($('#closing_time'));
+        // }
+        // if (!valid) {
+        //     e.preventDefault();
+        //     toastr.error('Please fill all required dropdowns.');
+        //     return false;
+        // }
         let selectService = $('.selected-services').text().trim();
         $('input[name="services_offered"]').val(selectService);
         let selectProviderType = $('.selected-provider-type').text().trim();

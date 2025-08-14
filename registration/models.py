@@ -128,7 +128,7 @@ class ClientProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     company_name = models.CharField(max_length=255)
     company_type = models.ForeignKey(ClientType, on_delete=models.CASCADE, blank=True, null=True)
-    services_interested = models.ForeignKey(AdServiceReq, on_delete=models.CASCADE, blank=True, null=True)
+    services_interested = models.ForeignKey(ClientService, on_delete=models.CASCADE, blank=True, null=True)
     website_url = models.CharField(max_length=255, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     city = models.CharField(max_length=128, blank=True, null=True)

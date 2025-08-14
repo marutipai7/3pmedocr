@@ -249,8 +249,8 @@ def save_ngo(request):
     ngo_service = None
     if ngo_service_id:
         try:
-            ngo_service = NGOService.objects.get(id=ngo_service_id)
-        except NGOService.DoesNotExist:
+            ngo_service = NGOService.objects.get(name=ngo_service_id)
+        except Exception as e:
             errors["ngo_service"] = "Invalid NGO service selected."
 
     address = data.get("address")
@@ -331,6 +331,8 @@ def save_ngo(request):
 
     brand_image_path, err = validate_and_save_file(
         files.get("brand_image"), "brand_image", "Brand Image", user_type="ngo")
+    if not brand_image_path:
+        errors["brand_image"] = "Brand image is required if selected."
     if brand_image_path and err:
         errors["brand_image"] = err
 
@@ -460,17 +462,19 @@ def save_advertiser(request):
     ad_services = None
     if advertiser_type_id:
         try:
-            advertiser_type = AdvertiserType.objects.get(id=advertiser_type_id)
-        except AdvertiserType.DoesNotExist:
+            advertiser_type = AdvertiserType.objects.get(name=advertiser_type_id)
+        except Exception as e:
             errors["advertiser_type"] = "Invalid advertiser type selected."
     if ad_services_id:
         try:
-            ad_services = AdServiceReq.objects.get(id=ad_services_id)
-        except AdServiceReq.DoesNotExist:
-            errors["ad_services"] = "Invalid ad services selected."
+            ad_services = AdServiceReq.objects.get(name=ad_services_id)
+        except Exception as e:
+            errors["ad_service_req"] = "Invalid ad services selected."
     print(advertiser_type, ad_services)    
     
     website = data.get("website")
+    if not website:
+        errors["website"] = "Website is required."
 
     address = data.get("address")
     city = data.get("city")
@@ -547,12 +551,17 @@ def save_advertiser(request):
     contact_role = data.get("contact_person_role")
     ref_otp = data.get("otp2")
     if not contact_name:
-        errors["contact_name"] = "Contact person name is required."
+        errors["contact_person_name"] = "Contact person name is required."
     if not contact_phone:
-        errors["contact_phone"] = "Contact person phone is required."
+        errors["contact_person_phone"] = "Contact person phone is required."
     if not contact_role:
-        errors["contact_role"] = "Contact person role is required."
+        errors["contact_person_role"] = "Contact person role is required."
 
+    selfie_path, err = validate_and_save_file(files.get("selfie"), "selfie", "Selfie Upload", user_type="client")
+    if err:
+        errors["selfie"] = err
+    elif not selfie_path:
+        errors["selfie"] = "Selfie is required."
     # Return errors if any
     if errors:
         return JsonResponse({"success": False, "errors": errors}, status=400)
@@ -662,17 +671,19 @@ def save_client(request):
 
     if company_type_id:
         try:
-            company_type = ClientType.objects.get(id=company_type_id)
-        except ClientType.DoesNotExist:
+            company_type = ClientType.objects.get(name=company_type_id)
+        except Exception as e:
             errors["company_type"] = "Invalid company type."
 
     if company_service_id:
         try:
-            company_service = ClientService.objects.get(id=company_service_id)
-        except ClientService.DoesNotExist:
+            company_service = ClientService.objects.get(name=company_service_id)
+        except Exception as e:
             errors["company_service"] = "Invalid company service."
 
     website = data.get("website")
+    if not website:
+        errors["website"] = "Website is required."
     address = data.get("address")
     city = data.get("city")
     state = data.get("state")
@@ -731,6 +742,8 @@ def save_client(request):
     selfie_path, err = validate_and_save_file(files.get("selfie"), "selfie", "Selfie Upload", user_type="client")
     if err:
         errors["selfie"] = err
+    elif not selfie_path:
+        errors["selfie"] = "Selfie is required."
 
     # OTP & Referral
     email_otp = data.get("otp1")
@@ -864,20 +877,20 @@ def save_medical_provider(request):
     
     if provider_type_id:
         try:
-            provider_type = MedicalProviderType.objects.get(id=provider_type_id)
-        except MedicalProviderType.DoesNotExist:
+            provider_type = MedicalProviderType.objects.get(name=provider_type_id)
+        except Exception as e:
             errors["provider_type"] = "Invalid provider type selected."
     
     if services_offered_id:
         try:
-            services_offered = MedicalProviderServices.objects.get(id=services_offered_id)
-        except MedicalProviderServices.DoesNotExist:
+            services_offered = MedicalProviderServices.objects.get(name=services_offered_id)
+        except Exception as e:
             errors["services_offered"] = "Invalid service selected."
     
     if working_days_id:
         try:
-            working_days = MedicalProviderWorkingDays.objects.get(id=working_days_id)
-        except MedicalProviderWorkingDays.DoesNotExist:
+            working_days = MedicalProviderWorkingDays.objects.get(name=working_days_id)
+        except Exception as e:
             errors["working_days"] = "Invalid working days selected."
     
     website = data.get("website-url")
@@ -890,7 +903,7 @@ def save_medical_provider(request):
     country = data.get("country")
     if not pincode or not re.match(r"^\d{4,10}$", pincode):
         errors["pincode"] = "Enter a valid pincode."
-        
+
     if not opening_hours:
         errors["opening_time"] = "Opening time is required."
     if not closing_hours:
