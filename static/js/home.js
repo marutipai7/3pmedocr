@@ -1085,33 +1085,33 @@ $(document).ready(function () {
         );
         updateMonthYearLabel();
       }
-      // $calendarDays.on("click", "div[data-date]", function () {
-      //   // Remove highlight from all
-      //   $calendarDays
-      //     .find("div[data-date]")
-      //     .removeClass(`text-${highlightColor}`);
+      $calendarDays.on("click", "div[data-date]", function () {
+        // Remove highlight from all
+        $calendarDays
+          .find("div[data-date]")
+          .removeClass(`text-${highlightColor}`);
 
-      //   // Highlight selected one
-      //   $(this).addClass(`text-${highlightColor}`);
+        // Highlight selected one
+        $(this).addClass(`text-${highlightColor}`);
 
-      //   // Store selected date
-      //   selectedDate = $(this).data("date");
+        // Store selected date
+        selectedDate = $(this).data("date");
         
-      //   // Show events for this date if any
-      //   const eventsForDate = getEventsForDate(selectedDate);
-      //   if (eventsForDate.length > 0) {
-      //     let eventsHtml = '<div class="event-display mt-2 p-2 bg-gray-100 rounded">';
-      //     eventsForDate.forEach(event => {
-      //       eventsHtml += `<div class="text-sm text-gray-700">• ${event.name} at ${event.time}</div>`;
-      //     });
-      //     eventsHtml += '</div>';
+        // Show events for this date if any
+        // const eventsForDate = getEventsForDate(selectedDate);
+        // if (eventsForDate.length > 0) {
+        //   let eventsHtml = '<div class="event-display mt-2 p-2 bg-gray-100 rounded">';
+        //   eventsForDate.forEach(event => {
+        //     eventsHtml += `<div class="text-sm text-gray-700">• ${event.name} at ${event.time}</div>`;
+        //   });
+        //   eventsHtml += '</div>';
           
-      //     // Remove any existing event display
-      //     $calendarDays.find('.event-display').remove();
-      //     // Add new event display
-      //     $(this).append(eventsHtml);
-      //   }
-      // });
+        //   // Remove any existing event display
+        //   $calendarDays.find('.event-display').remove();
+        //   // Add new event display
+        //   $(this).append(eventsHtml);
+        // }
+      });
 
       $root
         .find(".bg-light-sea-green")
@@ -1269,17 +1269,17 @@ $(document).ready(function () {
     const eventTime = document.getElementById('start-time').value;
     
     if (!eventName) {
-      alert('Please enter an event name');
+      toastr.error('Please enter an event name');
       return;
     }
     
     if (!selectedDate) {
-      alert('Please select a date');
+      toastr.error('Please select a date');
       return;
     }
     
     if (!eventTime) {
-      alert('Please select a time');
+      toastr.error('Please select a time');
       return;
     }
 
@@ -1301,7 +1301,7 @@ $(document).ready(function () {
       },
       success: function(response) {
         if (response.success) {
-          alert('Event saved successfully!');
+          toastr.success('Event saved successfully!');
           // Clear form
           document.getElementById('event-name').value = '';
           document.getElementById('start-time').value = '09:00';

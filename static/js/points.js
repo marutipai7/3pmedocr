@@ -179,7 +179,7 @@ $(document).ready(function () {
                   pointHoverBorderColor: '#28A745',
               },
               {
-                  label: 'Post',
+                  label: 'coupon',
                   data: [0, 580, 170, 560, 410, 401, 70, 160],
                   borderColor: '#3AAFA9',
                   borderWidth: 2,

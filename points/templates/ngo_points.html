@@ -54,7 +54,7 @@
                 class="flex gap-4 sm:gap-5 whitespace-nowrap mt-8 overflow-x-auto no-scrollbar"
               >
                 <button
-                  class=" tab-btn-ngo active-tab-ngo text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light font-semibold text-dark-gray border-b-2 border-violet-sky"
+                  class=" tab-btn-ngo active-tab-ngo text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
                   data-tab="points"
                 >
                   Points
@@ -88,7 +88,7 @@
                   class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 pt-6"
                 >
                   <!-- Custom Legend -->
-                  <div class="flex flex-wrap items-center gap-10 pl-2" id="referralCustomLegend">
+                  <!-- <div class="flex flex-wrap items-center gap-10 pl-2" id="referralCustomLegend">
                     {% for label, value in action_points.items %}
                       <label class="flex items-center gap-4 cursor-pointer">
                         <input
@@ -103,7 +103,31 @@
                         </span>
                       </label>
                     {% endfor %}
-                  </div>
+                  </div> -->
+                 <div class="flex flex-wrap items-center gap-10 pl-2" id="referralCustomLegend">
+                          {% for label, value in action_points.items %}
+                              <label class="flex items-center gap-4 cursor-pointer">
+                                  <input
+                                      type="checkbox"
+                                      class="legend-checkbox focus:outline-none focus:ring-0 focus:ring-offset-0 rounded-xs text-violet-500 text-2xl w-5 h-5 cursor-pointer"
+                                      data-index="{{ forloop.counter0 }}"
+                                      {% if value > 0 %}checked{% endif %}
+                                  />
+                                  <span class="flex items-center gap-1">
+                                      {% if label|lower == "referral" %}
+                                          <div class="bg-indigo-500 w-2 h-2 rounded-full"></div>
+                                      {% elif label|lower == "map" %}
+                                          <div class="bg-green-500 w-2 h-2 rounded-full"></div>
+                                      {% elif label|lower == "orders" or label|lower == "coupon" %}
+                                          <div class="bg-teal-500 w-2 h-2 rounded-full"></div>
+                                      {% else %}
+                                          <div class="bg-gray-400 w-2 h-2 rounded-full"></div>
+                                      {% endif %}
+                                      {{ label }}
+                                  </span>
+                              </label>
+                          {% endfor %}
+                      </div>
 
 
                   <!-- Right Controls -->
@@ -242,20 +266,21 @@
                   <p class="font-normal text-xl">✅ Important Note:</p>
                   <ul class="list-disc pl-6 font-normal text-lg">
                     <li>
-                      Badges and User Types are for recognition and experience enhancement only, with no monetary value.
+                      The Badges or User types in the app are for recognition
+                      purposes and experience enhancement only.
                     </li>
-                    <li>Points may expire due to inactivity and are non-transferable.</li>
+                    <li>Points may expire due to inactivity of the user.</li>
                     <li>
-                      Above Point classification, features and access levels may change anytime at the discretion of the company.
-                    </li>
-                    <li>
-                      The Badges or User types do not represent any type of securities, monetary value or contractual benefits.
-                    </li>
-                    <li>
-                      The platform does not offer any financial or medical products, it is only a technology platform.
+                      Above Point classification, features and access levels may
+                      change over time at the discretion of the company.
                     </li>
                     <li>
-                      It is deemed to be accepted by users that ,Terms and Conditions may change at any time, and users must comply with applicable changes at the discretion of the company.
+                      The Badges or User types are non transferable, do not
+                      represent security, monetary value or contractual benefits.
+                    </li>
+                    <li>
+                      All the Terms and the Usage Policy of this platform may
+                      change over the time at the discretion of the Company.
                     </li>
                   </ul>
                 </div>
@@ -266,7 +291,7 @@
                 <!--Rewards section-->
                 <div class="flex justify-between items-center pt-5">
                   <p class="font-semibold lg:text-lg sm:text-nowrap text-jet-black">New Coupons for you </p>
-                  <div class="flex gap-4 items-center">
+                  <div class="flex gap-4">
                     <div class="lg:w-110  rounded-[6px] bg-light-white flex items-center gap-2 px-2 sm:w-60">
                       <span class="material-symbols-outlined text-dark-gray">
                         search
@@ -274,12 +299,12 @@
                       <input id="allrewardssearch"
                         type="text"
                         placeholder="Search by  name or categories"
-                        class="w-full py-1.5 focus:!outline-none placeholder:text-medium-gray border-none bg-transparent focus:ring-0 only-text"
+                        class="w-full py-2.5 focus:!outline-none placeholder:text-medium-gray border-none bg-transparent focus:ring-0 only-text"
                       />
                     </div>
                   
                       <div class="relative dropdown">
-                      <button class="filterToggle  flex items-center border border-slate-gray rounded-md p-1 w-8 h-8 cursor-pointer">
+                      <button class="filterToggle  flex items-center border border-slate-gray rounded-md p-1 mt-2 w-8 h-8 cursor-pointer">
                           <span class="material-symbols-outlined flex justify-center items-center">tune</span>
                         </button>
                         <div class="filterDropdown absolute hidden allRewardsCoupons right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026]  rounded-md w-44 z-10">
@@ -330,7 +355,7 @@
               <div class="tab-content hidden rewards-claimed relative">
                 <div class="flex justify-between items-center pt-5">
                   <p class="font-semibold text-lg sm:text-nowrap">Recent Redemptions</p>
-                  <div class="flex gap-4 items-center">
+                  <div class="flex gap-4">
                     <div
                     class="lg:w-110  rounded-[6px] bg-light-white flex items-center gap-2 px-2 sm:w-45"
                   >
@@ -340,13 +365,13 @@
                     <input
                       type="text"
                       placeholder="Search by  name or categories" id="rewards-claimed-search"
-                      class="w-full py-1.5 focus:!outline-none placeholder:text-medium-gray border-none bg-transparent focus:ring-0 only-text"
+                      class="w-full py-2.5 focus:!outline-none placeholder:text-medium-gray border-none bg-transparent focus:ring-0 only-text"
                     />
                     
                   </div>
                     <div class="relative dropdown">
                       <button
-                        class="filterToggle  flex items-center border border-slate-gray rounded-md p-1 w-8 h-8 cursor-pointer">
+                        class="filterToggle  flex items-center border border-slate-gray rounded-md p-1 mt-2 w-8 h-8 cursor-pointer">
                         <span class="material-symbols-outlined flex justify-center items-center">tune</span>
                       </button>
                       <div
@@ -412,7 +437,7 @@
                     <span class="material-symbols-outlined text-dark-gray">
                       search
                     </span>
-                    <form method="get" class="w-full">
+                    <form method="get" class="flex items-center gap-2">
                       <input
                         type="text"
                         name="search"
@@ -423,7 +448,7 @@
                     </form>
                   </div>
                   <div class="dropdown filter-dropdown relative z-10">
-                    <button class="filter-dropdown-btn dropdown-btn flex items-center border border-slate-gray rounded-md p-1 cursor-pointer">
+                    <button class="filter-dropdown-btn dropdown-btn flex items-center border border-slate-gray rounded-md p-2 cursor-pointer">
                         <span class="material-symbols-outlined">tune</span>
                     </button>
                     <form id="filterForm" method="GET" class="relative">
@@ -435,16 +460,13 @@
                     <div class="filter-dropdown-option dropdown-option absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44">
                       <div onclick="applyDateFilter('custom')" class="p-2 pl-4 flex justify-between items-center hover:bg-violet-sky hover:text-white rounded cursor-pointer">
                         Custom date
-                        <span class="material-symbols-outlined calendar-icon">calendar_today</span>
+                        <span class="material-symbols-outlined">calendar_today</span>
                       </div>
                       <div onclick="applyDateFilter('last_week')" class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Week</div>
 
                       <div onclick="applyDateFilter('last_month')" class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Month</div>
 
                       <div onclick="applyDateFilter('last_year')" class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Year</div>
-                    </div>
-                    <div class="datepicker-container hidden px-4 pb-3 absolute  right-43 z-100">
-                        <div class="datepicker-inline" inline-datepicker data-date="06/23/2025"></div>
                     </div>
                   </div>
               </div>

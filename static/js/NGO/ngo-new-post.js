@@ -720,7 +720,7 @@ $(document).ready(function () {
     
         const opt = {
             margin:       0,
-            filename:     'coupon-details.pdf',
+            filename:     'post-details.pdf',
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2, useCORS: true, scrollY: 0, scrollX: 0 },
             jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }

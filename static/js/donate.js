@@ -193,157 +193,168 @@ function openPostDetail(el) {
     }
   }
 
-
-//show donate history in tabla
-document.addEventListener("DOMContentLoaded", () => {
-  let debounceTimeout;
-  let currentPage = 1;
-  let totalPages = 1;
-
-  const searchInput = document.getElementById("donation_search");
-  const paginationWrapper = document.getElementById("paginationWrapper");
-
-  function renderPagination(current, total) {
-    let html = "";
-
-    // Prev button
-    html += `<button onclick="changePage(${current - 1})" class="px-3 py-1 border rounded" ${current === 1 ? "disabled" : ""}>Prev</button>`;
-
-    for (let i = 1; i <= total; i++) {
-      html += `<button onclick="changePage(${i})" class="px-3 py-1 border rounded ${i === current ? "bg-dark-blue text-white font-bold" : ""}">${i}</button>`;
-    }
-
-    // Next button
-    html += `<button onclick="changePage(${current + 1})" class="px-3 py-1 border rounded" ${current === total ? "disabled" : ""}>Next</button>`;
-
-    paginationWrapper.innerHTML = html;
-  }
-
-  function fetchDonations(page = 1) {
-    const donation_query = searchInput?.value || "";
-
-    fetch(`donation-history-ajax/?donation_query=${encodeURIComponent(donation_query)}&page=${page}`)
-      .then(response => response.json())
-      .then(data => {
-        document.querySelector(".donate-history").innerHTML = data.html;
-        currentPage = data.current_page;
-        totalPages = data.total_pages;
-        renderPagination(currentPage, totalPages);
-      });
-  }
-
-  window.changePage = function (page) {
-    if (page < 1 || page > totalPages) return;
-    fetchDonations(page);
-  };
-
-  if (searchInput) {
-    searchInput.addEventListener("keyup", function () {
-      clearTimeout(debounceTimeout);
-      debounceTimeout = setTimeout(() => {
-        fetchDonations(1); // reset to first page on search
-      }, 500);
+// for exporting donation history
+    $('.view-donation-history-btn').on('click', function () {
+      console.log("View donation history button clicked");
+        $('.view-donation-history-popup').addClass('flex').removeClass('hidden');
+        console.log("Loading donation history...");
+        $.ajax({
+            url: "/donate/export-donation-history/",
+            type: "GET",
+            success: function (response) {
+                console.log("Donation history loaded successfully.");
+                $('#donateHistoryTableExport').html(response.html);
+            },
+            error: function () {
+                console.error("Failed to load donation history.");
+                alert("Failed to load donation history.");
+            }
+        });
     });
-  }
+    $('.close-donation-history-popup').on('click', function () {
+        $('.view-donation-history-popup').removeClass('flex').addClass('hidden');
+    });
 
-  // Initial load
-  fetchDonations(1);
-});
+    $(document).on('click', '.download-btn', function (event) {
+        event.stopPropagation();
+        // Find the next sibling with class 'download-container'
+        const $container = $(this).closest('.popup').find('.download-container');
 
-// 50, 100, 200 filters 
-function fetchDonations(page = 1) {
-  const query = document.querySelector('input[name="donation_query"]').value;
-  const limit = document.getElementById('limitSelect').value;
+        if ($container.length === 0) {
+            console.error('[ERROR] download-container not found');
+            return;
+        }
 
-  fetch(`/donate/donation-history-ajax/?donation_query=${query}&page=${page}&limit=${limit}`)
-    .then(response => response.json())
-    .then(data => {
-      document.querySelector('.donate-history').innerHTML = data.html;
-      document.querySelector('.pagination-container').innerHTML = data.pagination;
+        // Clone the element properly
+        const clone = $container[0].cloneNode(true);
+        clone.style.position = 'static';
+        clone.style.visibility = 'visible';
+        clone.style.display = 'block';
+        clone.style.zIndex = '1';
+        clone.id = 'download-container-clone';
+        document.body.appendChild(clone);
+    
+        const opt = {
+            margin:       0,
+            filename:     'donation-details.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, scrollY: 0, scrollX: 0 },
+            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+    
+        html2pdf().set(opt).from(clone).save()
+            .then(() => {
+                document.body.removeChild(clone);
+            })
+            .catch(err => {
+                console.error('[ERROR] PDF generation failed:', err);
+                document.body.removeChild(clone);
+            });
+    });
+function loadDonationHistory(page = 1, $container = $('#donationHistory')) {
+    const query = $container.find('input[name="donation_history_query"]').val();
+    const startDate = $container.data("start-date") || "";
+    const endDate = $container.data("end-date") || "";
+    const dateRange = $container.data("range-label") || ""; // NEW: store daterange
+    const saved = $container.attr('id') === 'donationSaved' ? 'true' : 'false';
+    console.log("Your query: ", query);
+    $.ajax({
+        url: "/donate/donation-history/",
+        type: "GET",
+        data: {
+            query: query,
+            page: page,
+            start_date: startDate,
+            end_date: endDate,
+            daterange: dateRange, // match Django param
+            saved_only: saved,
+        },
+        success: function (response) {
+            $container.find('tbody').html(response.html);
+            renderPagination(response.current_page, response.total_pages, $container);
+        },
+        error: function () {
+            toastr.error("Failed to load donation history.");
+        }
     });
 }
 
-document.getElementById('limitSelect').addEventListener('change', () => {
-  fetchDonations(1);
+function renderPagination(current, total, $container) {
+    let html = '';
+
+    if (current > 1) {
+        html += `<button class="pagination-btn rounded-[8px] px-3 py-1 border" data-page="${current - 1}">Previous</button>`;
+    }
+
+    for (let i = 1; i <= total; i++) {
+        html += `<button class="pagination-btn rounded-[8px] px-3 py-1 border ${i === current ? 'bg-violet-sky text-white' : ''}" data-page="${i}">${i}</button>`;
+    }
+
+    if (current < total) {
+        html += `<button class="pagination-btn rounded-[8px] px-3 py-1 border" data-page="${current + 1}">Next</button>`;
+    }
+
+    $container.find('#pagination-container').html(html);
+}
+
+// Initial tab click to load data
+$('[data-tab="donation-history"]').on('click', function () {
+    loadDonationHistory(1, $('#donationHistory'));
 });
 
-//export csv
-document.addEventListener("DOMContentLoaded", function () {
-  const exportBtn = document.getElementById("exportCSVBtn");
-  exportBtn.addEventListener("click", function () {
-    window.location.href = exportBtn.getAttribute("data-url");
-  });
+// Search typing
+$(document).on('input', 'input[name="donation_history_query"]', function () {
+    const $container = $(this).closest('.postDiv');
+    loadDonationHistory(1, $container);
 });
 
-//dwnld bills
-// function downloadBill() {
-//     const downloadBtn = document.getElementById("downloadBillBtn");
+// Pagination click
+$(document).on('click', '.pagination-btn', function () {
+    const page = $(this).data('page');
+    const $container = $(this).closest('.postDiv');
+    loadDonationHistory(page, $container); // fixed typo
+});
 
-//     if (!downloadBtn) {
-//       console.error("Download button not found.");
-//       return;
-//     }
+// Date range selection
+$(document).on("click", ".donationdaterange", function () {
+    $(".donationdaterange").removeClass("font-bold");
+    $(this).addClass("font-bold");
+    
+    const rangeLabel = $(this).data("range");
+    const { start, end } = calculateDateRange(rangeLabel);
+    
+    const $tabDiv = $(this).closest(".postDiv");
+    $tabDiv.data("start-date", start);
+    $tabDiv.data("end-date", end);
+    $tabDiv.data("range-label", rangeLabel.toLowerCase()); // store for backend
 
-//     const imageUrl = downloadBtn.getAttribute("data-url");
-//     const fileName = "platform_bill.svg";
+    loadDonationHistory(1, $tabDiv);
+});
 
-//     fetch(imageUrl)
-//       .then(response => {
-//         if (!response.ok) {
-//           throw new Error("Network response was not ok");
-//         }
-//         return response.blob();
-//       })
-//       .then(blob => {
-//         const url = window.URL.createObjectURL(blob);
-//         const a = document.createElement("a");
-//         a.href = url;
-//         a.download = fileName;
-//         document.body.appendChild(a);
-//         a.click();
-//         a.remove();
-//         window.URL.revokeObjectURL(url);
-//       })
-//       .catch(error => {
-//         console.error("Download failed:", error);
-//         alert("Download failed. Please try again.");
-//       });
-//   }
+function calculateDateRange(rangeLabel) {
+    const endDate = new Date();
+    let startDate = new Date();
 
-//img downloadDonationBill
-// function downloadDonationBill() {
-//     const downloadBtn = document.getElementById("downloadDonationBillBtn");
+    switch (rangeLabel) {
+        case "1 Week":
+            startDate.setDate(endDate.getDate() - 7);
+            break;
+        case "1 Month":
+            startDate.setMonth(endDate.getMonth() - 1);
+            break;
+        case "1 Year":
+            startDate.setFullYear(endDate.getFullYear() - 1);
+            break;
+        default:
+            return { start: "", end: "" };
+    }
 
-//     if (!downloadBtn) {
-//       console.error("Download button not found.");
-//       return;
-//     }
-
-//     const imageUrl = downloadBtn.getAttribute("data-url");
-//     const fileName = "donation_bill.svg";
-
-//     fetch(imageUrl)
-//       .then(response => {
-//         if (!response.ok) {
-//           throw new Error("Network response was not ok");
-//         }
-//         return response.blob();
-//       })
-//       .then(blob => {
-//         const url = window.URL.createObjectURL(blob);
-//         const a = document.createElement("a");
-//         a.href = url;
-//         a.download = fileName;
-//         document.body.appendChild(a);
-//         a.click();
-//         a.remove();
-//         window.URL.revokeObjectURL(url);
-//       })
-//       .catch(error => {
-//         console.error("Download failed:", error);
-//         alert("Download failed. Please try again.");
-//       });
-// }
+    const formatDate = (d) => d.toISOString().split("T")[0];
+    return {
+        start: formatDate(startDate),
+        end: formatDate(endDate),
+    };
+}
 
 //open donate popup
 function openDonatePopup(donationId) {
@@ -472,6 +483,22 @@ function downloadPlatformPDF() {
   html2pdf().set(opt).from(element).save();
 }
 
+// CSRF helper
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
 $(document).on('click', '.donate-bookmark-toggle', function() {
         console.log('Bookmark clicked!');
         var $icon = $(this);
@@ -485,27 +512,42 @@ $(document).on('click', '.donate-bookmark-toggle', function() {
             data: {
                 donation_id: donationId,
                 action: action,
-                csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val()
+                csrfmiddlewaretoken: getCookie('csrftoken')
             },
             success: function(response) {
                 if (response.success) {
                     $icon.data('saved', response.saved);
                     if (response.saved) {
-                        $icon.addClass('material-filled text-living-coral');
+                        $icon.addClass('material-filled text-violet-sky');
+                        $icon.removeClass('text-living-coral');
                     } else {
-                        $icon.removeClass('material-filled text-living-coral');
+                        $icon.removeClass('material-filled text-violet-sky');
                         // If in Saved Donation table, remove the row
                         if ($icon.closest('.saved-donation').length || $icon.closest('table').closest('.saved-donation').length) {
                             $icon.closest('tr').remove();
                         }
                     }
-                    window.showToaster('success', response.saved ? 'Donation saved!' : 'Donation unsaved!');
+                    // Use toastr if available, otherwise show alert
+                    if (typeof toastr !== 'undefined') {
+                        toastr.success(response.saved ? 'Donation saved!' : 'Donation unsaved!');
+                    } else {
+                        alert(response.saved ? 'Donation saved!' : 'Donation unsaved!');
+                    }
                 } else {
-                    window.showToaster('error', response.error || 'Could not update saved status.');
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error(response.error || 'Could not update saved status.');
+                    } else {
+                        alert(response.error || 'Could not update saved status.');
+                    }
                 }
             },
-            error: function() {
-                window.showToaster('error', 'Could not update saved status.');
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', xhr.responseText);
+                if (typeof toastr !== 'undefined') {
+                    toastr.error('Could not update saved status.');
+                } else {
+                    alert('Could not update saved status.');
+                }
             }
         });
     });
