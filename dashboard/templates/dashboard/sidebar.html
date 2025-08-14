@@ -2,7 +2,7 @@
 
 <aside class="sidebar w-[200px] md:w-[280px] h-full transition-all transform duration-300 ease-in-out shadow-lg" id="sidebar">
     <!-- Badge Section -->
-    <div class="relative w-full flex items-center justify-between p-6 bg-white">
+    <div class="h-40 px-2 py-4 relative border-b border-gray-200">
         <div class="flex flex-col items-center gap-2">
             <!-- Badge Icon -->
             <div class="relative">
@@ -25,7 +25,7 @@
     </div>
         
     <!-- Navigation Menu -->
-    <nav class="h-full py-4 overflow-y-auto no-scrollbar max-h-[31rem]">
+    <nav class="h-[calc(100%-160px)] py-4 overflow-y-auto no-scrollbar">
         <ul class="flex flex-col gap-1">
         {% for menu in sidebar_menu %}
             <li>
@@ -38,7 +38,7 @@
             </li>
         {% endfor %}
         </ul>
-        <div class="w-full flex flex-col px-2 pb-4 mt-4">
+        <div class="w-full flex flex-col px-6 pb-4 mt-4">
             <img src="/static/images/Sale.svg" alt="Diamond User" loading="lazy" class="sidebar-image">
         </div>
     </nav>

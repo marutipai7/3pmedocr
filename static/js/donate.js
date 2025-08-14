@@ -282,17 +282,48 @@ function loadDonationHistory(page = 1, $container = $('#donationHistory')) {
 function renderPagination(current, total, $container) {
     let html = '';
 
-    if (current > 1) {
-        html += `<button class="pagination-btn rounded-[8px] px-3 py-1 border" data-page="${current - 1}">Previous</button>`;
+    html += `<button onclick="changePage(${current - 1})" class="bg-white px-3 py-1 rounded text-light-gray1 text-sm" ${current === 1 ? "disabled" : ""}>Previous</button>`;
+
+    function pageBtn(i) {
+      return `<button onclick="changePage(${i})" class="px-3 py-1.5 rounded-lg text-sm ${i === current ? "bg-dark-blue text-white" : "bg-pagination"}">${i}</button>`;
     }
 
-    for (let i = 1; i <= total; i++) {
-        html += `<button class="pagination-btn rounded-[8px] px-3 py-1 border ${i === current ? 'bg-violet-sky text-white' : ''}" data-page="${i}">${i}</button>`;
+    if (total <= 5) {
+      // Show all pages if <= 5
+      for (let i = 1; i <= total; i++) {
+        html += pageBtn(i);
+      }
+    } else {
+      // Always show first page
+      html += pageBtn(1);
+
+      if (current <= 3) {
+        // Near start
+        for (let i = 2; i <= 4; i++) {
+          html += pageBtn(i);
+        }
+        html += `<span class="px-2">...</span>`;
+        html += pageBtn(total);
+      }
+      else if (current > 3 && current < total - 2) {
+        // Middle
+        html += `<span class="px-2">...</span>`;
+        for (let i = current - 1; i <= current + 1; i++) {
+          html += pageBtn(i);
+        }
+        html += `<span class="px-2">...</span>`;
+        html += pageBtn(total);
+      }
+      else {
+        // Near end
+        html += `<span class="px-2">...</span>`;
+        for (let i = total - 3; i <= total; i++) {
+          html += pageBtn(i);
+        }
+      }
     }
 
-    if (current < total) {
-        html += `<button class="pagination-btn rounded-[8px] px-3 py-1 border" data-page="${current + 1}">Next</button>`;
-    }
+    html += `<button onclick="changePage(${current + 1})" class="bg-white px-3 py-1 rounded text-light-gray1 text-sm" ${current === total ? "disabled" : ""}>Next</button>`;
 
     $container.find('#pagination-container').html(html);
 }

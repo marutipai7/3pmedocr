@@ -1,17 +1,17 @@
 <div class="flex justify-center items-center mt-4 space-x-2">
   {% if page_obj.has_previous %}
     <button onclick="rewardClaimed('{{ search }}', '{{ start_date }}', '{{ end_date }}', {{ page_obj.previous_page_number }})"
-            class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">
+            class="bg-white px-3 py-1 rounded text-light-gray1 text-sm">
       Previous
     </button>
   {% endif %}
 
   {% for num in page_obj.paginator.page_range %}
     {% if page_obj.number == num %}
-      <span class="px-3 py-1 bg-blue-500 text-white rounded">{{ num }}</span>
+      <span class="px-3 py-1.5 rounded-lg text-sm text-white bg-violet-sky">{{ num }}</span>
     {% else %}
       <button onclick="rewardClaimed('{{ search }}', '{{ start_date }}', '{{ end_date }}', {{ num }})"
-              class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">
+              class="px-3 py-1.5 rounded-lg text-sm bg-pagination">
         {{ num }}
       </button>
     {% endif %}
@@ -19,7 +19,7 @@
 
   {% if page_obj.has_next %}
     <button onclick="rewardClaimed('{{ search }}', '{{ start_date }}', '{{ end_date }}', {{ page_obj.next_page_number }})"
-            class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">
+            class="bg-white px-3 py-1 rounded text-light-gray1 text-sm">
       Next
     </button>
   {% endif %}

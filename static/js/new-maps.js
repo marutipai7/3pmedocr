@@ -322,41 +322,72 @@ function setupPagination() {
     const totalPages = Math.ceil(totalCards / cardsPerPage);
     let currentPage = 1;
 
+    if (totalPages <= 1) {
+        $("#pagination").html(""); // clear pagination
+        cards.show(); // show all cards
+        return;
+    }
+
+    function renderPagination() {
+        let paginationHTML = `
+        <div class="flex items-center gap-4">
+            <p class="bg-white px-3 py-1 rounded text-light-gray1 text-sm cursor-pointer" id="prev">Previous</p>
+    `;
+        
+        paginationHTML += pageButton(1);
+
+        if (currentPage <= 3) {
+            for (let i = 2; i <= Math.min(4, totalPages - 1); i++) {
+                paginationHTML += pageButton(i);
+            }
+            if (totalPages > 5) {
+                paginationHTML += `<span>...</span>`;
+                paginationHTML += pageButton(totalPages);
+            }
+        } 
+        else if (currentPage > 3 && currentPage < totalPages - 2) {
+            paginationHTML += `<span>...</span>`;
+            for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+                paginationHTML += pageButton(i);
+            }
+            paginationHTML += `<span>...</span>`;
+            paginationHTML += pageButton(totalPages);
+        }
+        else {
+            paginationHTML += `<span>...</span>`;
+            for (let i = totalPages - 3; i < totalPages; i++) {
+                paginationHTML += pageButton(i);
+            }
+            paginationHTML += pageButton(totalPages);
+        }
+
+        paginationHTML += `<p class="bg-white px-3 py-1 rounded text-light-gray1 text-sm cursor-pointer" id="next">Next</p></div>`;
+        $("#pagination").html(paginationHTML);
+
+        $(`#pagination button[data-page='${currentPage}']`)
+            .addClass("font-semibold")
+            .css({ "background-color": bgColor, "color": "white" });
+    }
+
+    function pageButton(page) {
+        return `<button 
+            data-page="${page}" 
+            class="px-3 py-1.5 rounded-lg text-sm bg-pagination text-jet-black"
+        >${page}</button>`;
+    }
+
     function showPage(page) {
         cards.hide();
         const start = (page - 1) * cardsPerPage;
         const end = start + cardsPerPage;
         cards.slice(start, end).show();
-
-        $("#pagination button").removeClass("font-semibold").removeAttr("style");
-        $(`#pagination button[data-page='${page}']`).addClass("font-semibold").css({
-            "background-color": bgColor,
-            "color": "white"
-        });
+        renderPagination();
     }
-
-    let paginationHTML = `
-        <div class="flex items-center gap-4">
-            <p class="text-dark-gray cursor-pointer" id="prev">Previous</p>
-    `;
-    for (let i = 1; i <= totalPages; i++) {
-        paginationHTML += `
-            <button 
-                data-page="${i}" 
-                class="px-4 py-2 rounded-lg cursor-pointer bg-pagination text-jet-black hover:bg-${selectedColor} hover:transition"
-            >
-                ${i}
-            </button>
-        `;
-    }
-    paginationHTML += `<p class="text-dark-gray cursor-pointer" id="next">Next</p></div>`;
-    $("#pagination").html(paginationHTML);
 
     // Events
-    $("#pagination").off("click").on("click", "button", function () {
-        const page = $(this).data("page");
-        currentPage = page;
-        showPage(page);
+    $("#pagination").on("click", "button", function () {
+        currentPage = $(this).data("page");
+        showPage(currentPage);
     });
 
     $("#pagination").on("click", "#prev", function () {
