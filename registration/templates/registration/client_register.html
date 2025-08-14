@@ -75,7 +75,7 @@
         <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
       </div>
       <div class="dropdown-option absolute left-0 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-full mt-0.5 z-20 max-h-44 overflow-y-auto scroll">
-        {% for service in ad_services %}
+        {% for service in client_services %}
         <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
           <label value="{{ service.id }}" class="flex-1">{{ service.name }}</label>
         </div>

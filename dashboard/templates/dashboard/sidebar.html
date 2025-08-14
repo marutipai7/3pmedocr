@@ -1,11 +1,5 @@
 {% load static %}
-<style>
-:root {
-    {% for k, v in theme_colors.items %}
-        --{{ k }}: {{ v }};
-    {% endfor %}
-}
-</style>
+
 <aside class="sidebar w-[200px] md:w-[280px] h-full transition-all transform duration-300 ease-in-out shadow-lg" id="sidebar">
     <!-- Badge Section -->
     <div class="relative w-full flex items-center justify-between p-6 bg-white">
@@ -35,13 +29,7 @@
         <ul class="flex flex-col gap-1">
         {% for menu in sidebar_menu %}
             <li>
-                <a href="{{ menu.url }}" 
-                class="flex items-center gap-3 px-6 py-3 w-full hover:bg-gray-100 transition-colors"
-                {% if request.resolver_match.url_name == menu.url_name %}
-                    style="background-color: transparent; 
-                            color: {{ theme_colors.primary_bg }}; 
-                            border-right: 4px solid {{ theme_colors.primary_bg }};"
-                {% endif %}>
+                <a href="{{ menu.url }}" class="flex items-center gap-3 px-6 py-3 w-full hover:bg-gray-100 transition-colors {% if request.resolver_match.url_name == menu.url_name %}bg-blue-50 text-blue-600{% endif %}">
                     {% if menu.icon %}
                     <span class="material-symbols-outlined {% if menu.icon == 'emoji_events' %}material-filled{% endif %}">{{ menu.icon }}</span>
                     {% endif %}

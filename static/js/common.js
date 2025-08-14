@@ -44,7 +44,7 @@ $(document).ready(function () {
         })
     })
 
-    // Copy Code Functionlity
+    // Copy Code Functionality
  $('.copy-btn').click(async function (e) {
   e.preventDefault();
 
@@ -205,7 +205,6 @@ $('#register-form').on('submit', function(e) {
 
     var formType = $(this).data('type');
     var formUrl = $(this).attr('action');
-    var formData = new FormData(this);
 
     console.log('Form Url:', formUrl);
 
@@ -255,10 +254,10 @@ $('#register-form').on('submit', function(e) {
         }
         let selectService = $('.selected-services').text().trim();
         $('input[name="services_offered"]').val(selectService);
-        let providerType = $('.selected-provider-type').text().trim();
-        $('input[name="provider_type"]').val(providerType);
-        let workingDays = $('.selected-working-days').text().trim();
-        $('input[name="working_days"]').val(workingDays);
+        let selectProviderType = $('.selected-provider-type').text().trim();
+        $('input[name="provider_type"]').val(selectProviderType);
+        let selectWorkingDays = $('.selected-working-days').text().trim();
+        $('input[name="working_days"]').val(selectWorkingDays);
     } else if (formUrl == '/user/save/client') {
         let selectValue = $('.company-type-selected').text().trim();
         $('input[name="company_type"]').val(selectValue);
@@ -268,6 +267,7 @@ $('#register-form').on('submit', function(e) {
         let selectValue = $('.ngo-service-selected').text().trim();
         $('input[name="ngo_service"]').val(selectValue);
     }
+    var formData = new FormData(this);
 
     $.ajax({
         url: formUrl,
