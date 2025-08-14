@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.db.models import Sum, Count, DecimalField, Q
 from django.utils import timezone
-from .utils import dashboard_login_required, get_common_context
+from .utils import dashboard_login_required, get_common_context, get_theme_colors
 from .models import SettingMenu, CouponPerformance,  CalendarEvent
 from registration.models import MedicalProviderProfile, NGOProfile, ClientProfile, AdvertiserProfile
 from ngopost.models import NGOPost
@@ -39,6 +39,12 @@ def dashboard_home(request):
     # Get common context
     context = get_common_context(request, user)
 
+        # Add theme colors
+    context["theme_colors"] = get_theme_colors(user_type)
+
+    # Add menu
+    context["sidebar_menu"] = menu_items
+    
     try:
         if user_type == 'ngo':
             ngo_profile = NGOProfile.objects.get(user=user)

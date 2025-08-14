@@ -70,31 +70,55 @@
                     <p class="text-lg font-normal text-dark-gray">Platform Fee 2% </p>
                 </div>
 
-                <div class="upload-section relative w-full">
-                    <label class="absolute left-3 -top-3 bg-white px-1 text-xs z-10">
+                <div class="pan-upload-wrapper w-full">
+                    <!-- Upload Section -->
+                    <div class="upload-section relative w-full">
+                    <!-- Floating Label -->
+                    <label class="absolute left-3 -top-3 bg-white px-1 text-xs text-dark-gray z-10">
                         Enter PAN Number & Document
                     </label>
 
-                    <div class="flex items-center w-full mt-2">
-                        <input type="text" placeholder="ETSPA878H" id="pan-number"
-                            class="flex-1 border border-dark-gray rounded-md outline-none text-sm px-4 py-4" name="pan_number" />
-
-                        <div
-                            class="uploadTrigger flex items-center justify-center cursor-pointer ml-2 border-dashed border-2 border-dark-gray rounded-md p-4">
-                            <span
-                                class="material-symbols-outlined text-dark-gray text-2xl">upload</span>
+                    <!-- Input + Upload -->
+                    <div class="flex items-center gap-2 w-full mt-4">
+                        <!-- PAN Text Input -->
+                        <input type="text" placeholder="ETSPA878H" id="pan_number"
+                        class="flex-1 border border-dark-gray rounded-md outline-none text-sm px-4 py-4" name="pan_number"/>
+                        <div class="absolute right-0 -top-5 cursor-pointer hidden remove-file-btn">
+                            <span class="material-symbols-outlined text-dark-blue !text-base">close</span>
+                        </div> 
+                        <!-- Upload Trigger Button -->
+                        <div class="pan-upload-trigger h-14 w-21 flex flex-col items-center justify-center cursor-pointer border-dashed border-2 border-dark-gray rounded-md">
+                            <span class="material-symbols-outlined text-dark-gray !text-2xl upload-icon">upload</span>
+                            <span class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
                         </div>
 
-                        <input type="file" accept="image/*" class="uploadInput hidden" name="pan_document" id="pan_document" />
-                        <span id="pan-file-name" style="margin-left: 10px;"></span>
+                        <!-- Hidden File Input -->
+                        <input type="file" accept="image/*" class="pan-upload-input hidden" name="pan_document" id="pan_document"/>
                     </div>
-                </div>
-                <div class="flex items-center justify-end mt-4">
-                    <label class="flex items-center gap-5">
+                    </div>
 
-                        <span class="status-text text-dark-gray text-16-nr">Virus scan</span>
-                        <input type="checkbox" class="check-scan scan-toggle" />
+                    <!-- File Access Confirmation Popup -->
+                    <div
+                    class="pan-file-access-popup hidden fixed inset-0 bg-black/30 bg-opacity-70 flex items-center justify-center z-50">
+                    <div class="bg-white rounded-lg p-6 max-w-sm w-full border border-living-coral shadow-lg">
+                        <p class="mb-4">This site wants to access your files to upload an image. Do you allow?</p>
+                        <div class="flex justify-end space-x-3">
+                        <button
+                            class="pan-deny-access-btn px-4 py-2 border border-living-coral text-black rounded-md cursor-pointer">No</button>
+                        <button
+                            class="pan-allow-access-btn px-4 py-2 bg-living-coral text-white rounded-md cursor-pointer">Yes</button>
+                        </div>
+                    </div>
+                    </div>
+
+                    <!-- Virus Scan Status -->
+                    <div class="flex items-center justify-end mt-4">
+                    <label class="flex items-center gap-3">
+                        <span class="status-text-donate text-dark-gray text-16-nr">Virus scan</span>
+                        <input type="checkbox" class="check-scan-donate scan-toggle-donate border border-dark-gray rounded "
+                        disabled />
                     </label>
+                    </div>
                 </div>
                 <!-- Select Payment Method -->
                 {% comment %} <div class="mt-6">

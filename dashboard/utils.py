@@ -5,6 +5,10 @@ from points.models import PointsActionType, PointsHistory, PointsBadge
 from .models import SettingMenu
 from django.db.models import Sum, Q
 from registration.models import AdvertiserProfile, ClientProfile, MedicalProviderProfile, NGOProfile
+from settings.models import UserColorScheme
+import logging
+from django.http import JsonResponse
+logger = logging.getLogger(__name__)
 
 def dashboard_login_required(view_func):
     @wraps(view_func)
@@ -71,3 +75,28 @@ def get_common_context(request,user):
         'user': user,
         'user_display_name': user_display_name,
     }
+
+def get_theme_colors(user_type: str) -> dict:
+    """
+    Fetch active theme colors for the given user_type.
+    Falls back to 'user' type if no match is found.
+    Returns a dict with '_' instead of '-' in keys.
+    """
+    def normalize_keys(color_data: dict) -> dict:
+        return {k.replace("-", "_"): v for k, v in color_data.items()}
+
+    try:
+        color_scheme_obj = UserColorScheme.objects.get(user_type=user_type, is_active=True)
+        colors = normalize_keys(color_scheme_obj.color_data)
+        logger.info(f"[Theme Colors] Found active scheme for '{user_type}': {colors}")
+        return colors
+    except UserColorScheme.DoesNotExist:
+        logger.warning(f"[Theme Colors] No active scheme found for '{user_type}', falling back to 'user'")
+        try:
+            default_scheme = UserColorScheme.objects.get(user_type='user', is_active=True)
+            colors = normalize_keys(default_scheme.color_data)
+            logger.info(f"[Theme Colors] Using fallback 'user' scheme: {colors}")
+            return colors
+        except UserColorScheme.DoesNotExist:
+            logger.error("[Theme Colors] No active color scheme found for user or default")
+            return {}
