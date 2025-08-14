@@ -1,5 +1,6 @@
 $(document).ready(function () {
 
+    let uploadConfirmShown = false;
     // Country code js
     const $dropdown = $('.code-dropdown');
     const $btn = $dropdown.find('.code-btn');
@@ -59,23 +60,8 @@ $(document).ready(function () {
     
     $('.dropdown-option div').on('click', function() {
         const selectedText = $(this).text();
-        const selectedValue = $(this).find('label').attr('value') || selectedText;
-        const $dropdown = $(this).closest('.dropdown');
-        
-        // Update the display text
-        $dropdown.find('.dropdown-btn .selected-value').text(selectedText);
-        
-        // Update the hidden input based on the dropdown type
-        const dropdownLabel = $dropdown.find('label').text();
-        
-        if (dropdownLabel.includes('Type Of Medical Provider')) {
-            $('#provider_type_input').val(selectedValue);
-        } else if (dropdownLabel.includes('Services You Offer')) {
-            $('#services_offered_input').val(selectedValue);
-        } else if (dropdownLabel.includes('Opening Days')) {
-            $('#working_days_input').val(selectedValue);
-        }
-        
+        $(this).closest('.dropdown').find('.dropdown-btn .selected-value').text(selectedText);
+        $(this).closest('.dropdown').find('.select-dropdown').val(selectedText);
         $('.dropdown-option').hide();
         $(".dropdown-arrow").removeClass("rotate-180");
     });
@@ -89,9 +75,9 @@ $(document).ready(function () {
         const targetId = $(this).data('target');
         const passwordField = $('#' + targetId);
         if (passwordField.length) {
-          const type = passwordField.attr('type') === 'password' ? 'text' : 'password';
-          passwordField.attr('type', type);     
-          $(this).text(type === 'password' ? 'visibility' : 'visibility_off');
+            const type = passwordField.attr('type') === 'password' ? 'text' : 'password';
+            passwordField.attr('type', type);     
+            $(this).text(type === 'password' ? 'visibility' : 'visibility_off');
         }
       }); 
     // resend
@@ -128,7 +114,12 @@ $(document).ready(function () {
     })
     //Permission Access
     $('.uploadTrigger').on('click', function () {
-        if (confirm("This site wants to access your files to upload an image. Do you allow?")) {
+        if (!uploadConfirmShown) {
+            if (confirm("This site wants to access your files to upload an image. Do you allow?")) {
+                uploadConfirmShown = true;
+                $(this).closest('.upload-section').find('.uploadInput').trigger('click');
+            }
+        } else {
             $(this).closest('.upload-section').find('.uploadInput').trigger('click');
         }
     });
@@ -142,6 +133,13 @@ $(document).ready(function () {
         const $label = $trigger.find('.upload-label');
         const $icon = $trigger.find('.upload-icon');
             
+        if (file.name) {
+            // Show a success toaster when file is chosen
+            toastr.success(`File uploaded successfully.`);
+        } else {
+            // Optional: show error toaster if no file selected
+            toastr.error('No file selected.');
+        }
         $label.text(file.name);
 
         $icon.text('imagesmode').removeClass('text-primary-color').addClass('text-bright-green');
@@ -161,7 +159,6 @@ $(document).ready(function () {
                 .removeClass('text-green-600')
                 .addClass('text-primary-color');
 
-            
             $(this).addClass('hidden');
         });
     });

@@ -25,17 +25,14 @@
         <!-- Email -->
         <div class="flex flex-col sm:flex-row gap-4">
           <div class="flex flex-col gap-4 w-full sm:w-1/2">
-           
             <div class="relative w-full">
               <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Email</label>
               <input type="text" name="email" placeholder="contact@sunrisepharma.com"
                 class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
             </div>
           </div>
-
           <div class="flex flex-col gap-4 w-full sm:w-1/2">
             <!-- Email -->
-
             <div class="flex items-center gap-2">
               <div class="code-dropdown relative inline-block">
                 <div
@@ -62,12 +59,12 @@
         </div>
         <div class="flex flex-col sm:flex-row gap-4">
           <div class="flex flex-col gap-4 w-full sm:w-1/2">
-          
             <div class="dropdown relative inline-block">
               <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Type Of Medical Provider</label>
+              <input type="hidden" name="provider_type" id="provider_type_input">
               <div
                 class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
-                <span class="mr-2 selected-value">select</span>
+                <span class="mr-2 selected-value selected-provider-type">select</span>
                 <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
               </div>
               <div
@@ -79,19 +76,16 @@
                 {% endfor %}
               </div>
             </div>
-            <!-- Add hidden input for provider_type -->
-            <input type="hidden" name="provider_type" id="provider_type_input">
           </div>
-
           <div class="flex flex-col gap-4 w-full sm:w-1/2">
-
-
             <!-- Services You’re Interested In -->
             <div class="dropdown relative inline-block">
               <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Services You Offer</label>
+              <!-- Add hidden input for services_offered -->
+              <input type="hidden" name="services_offered" id="services_offered_input">
               <div
                 class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
-                <span class="mr-2 selected-value">select</span>
+                <span class="mr-2 selected-value selected-services">select</span>
                 <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
               </div>
               <div
@@ -103,8 +97,6 @@
                 {% endfor %}
               </div>
             </div>
-            <!-- Add hidden input for services_offered -->
-            <input type="hidden" name="services_offered" id="services_offered_input">
           </div>
         </div>
         <div class="relative w-full">
@@ -114,13 +106,14 @@
         </div>
           <!-- Opening and Closing Time Dropdowns -->
         <div class="flex gap-4 items-end">
-          {% comment %} <div class="flex flex-col sm:flex-row gap-4 w-full"> {% endcomment %}
             <!-- Days Dropdown -->
             <div class="dropdown relative inline-block flex-1">
               <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Opening Days</label>
+              <!-- Add hidden input for working_days -->
+              <input type="hidden" name="working_days" id="working_days_input">
               <div
                 class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
-                <span class="mr-2 selected-value">Select days</span>
+                <span class="mr-2 selected-value selected-working-days">Select days</span>
                 <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
               </div>
               <div
@@ -131,19 +124,15 @@
                   </div>
                   {% endfor %}
               </div>
-              <!-- Add hidden input for working_days -->
-              <input type="hidden" name="working_days" id="working_days_input">
             </div>
           <!-- Opening Time Dropdown -->
             <div class="dropdown relative inline-block flex-1">
               <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Opening Time</label>
-
               <div
                 class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
                 <span class="mr-2 selected-value">Select time</span>
                 <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
               </div>
-
               <div
                 class="dropdown-option absolute left-0 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-full mt-0.5 z-20 max-h-44 p-4">
                 <div class="flex items-center justify-between w-full">
@@ -160,17 +149,14 @@
                 </div>
               </div>
             </div>
-
             <!-- Closing Time Dropdown -->
             <div class="dropdown relative inline-block flex-1">
               <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Closing Time</label>
-
               <div
                 class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
                 <span class="mr-2 selected-value">Select time</span>
                 <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
               </div>
-
               <div
                 class="dropdown-option absolute left-0 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-full mt-0.5 z-20 max-h-44 p-4">
                 <div class="flex items-center justify-between w-full">
@@ -208,7 +194,6 @@
                 <input type="text" name="state" placeholder="New York"
                   class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
               </div>
-              
               <!--File Access Confirmation Popup -->
               <div
                 class="file-access-popup hidden fixed inset-0 bg-black/30 bg-opacity-70 flex items-center justify-center z-50">
@@ -221,13 +206,11 @@
                   </div>
                 </div>
               </div>
-              
               <!-- Incorporation number & Document -->
               <div class="upload-section relative w-full">
                 <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
                   Incorporation number & Document
                 </label>
-              
                 <div class="flex items-center gap-2 w-full mt-2">
                   <input type="text" name="incorporation_number" placeholder="U85110MH2022PTC123456"
                     class="flex-1 border border-primary-color rounded-md outline-none text-sm px-4 py-4" />
@@ -238,29 +221,23 @@
                     <span class="material-symbols-outlined text-primary-color !text-2xl upload-icon">upload</span>
                     <span class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
                   </div>
-              
                   <input type="file" id="incorporation_doc" name="incorporation_doc" accept="image/*" class="uploadInput hidden" />
                 </div>
               </div>
-              
               <div class="flex items-center justify-end">
                 <label class="flex items-center gap-5">
-                  
                   <span class="status-text text-primary-color text-16-nr">Virus scan</span>
                   <input type="checkbox" class="check-scan scan-toggle" />
                 </label>
               </div>
-
               <!--  PAN Number & Document -->
               <div class="upload-section relative w-full">
                 <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
                   PAN Number & Document
                 </label>
-              
                 <div class="flex items-center gap-2 w-full mt-2">
                   <input type="text" name="pan_number" placeholder="AABCM1234F"
                     class="flex-1 border border-primary-color rounded-md outline-none text-sm px-4 py-4" />
-              
                   <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
                     <span class="material-symbols-outlined text-dark-blue !text-base">close</span>
                   </div> 
@@ -419,7 +396,7 @@
                         class="flex-1 border-none outline-none text-sm bg-transparent"
                         readonly />
               
-                  <input type="file" id="store_front" name="store_front"accept="image/*" class="uploadInput hidden" />
+                  <input type="file" id="store_front" name="store_front" accept="image/*" class="uploadInput hidden" />
               
                 
                   <div class="absolute inset-0 flex items-center justify-center cursor-pointer uploadTrigger">
@@ -451,6 +428,8 @@
               <div class="relative w-full mt-4">
                 <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Enter email OTP</label>
                 <input type="text" name="otp1" placeholder="123456"
+                  maxlength="6" 
+                  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);"
                   class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
                 <p class="text-xs mt-1 flex justify-end mt-1 otp-message "></p>
               </div>
@@ -466,7 +445,7 @@
             <input type="text" name="contact_person_name" placeholder="Rahul Mehta"
               class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
           </div>
-              <!-- Designation -->
+              <!-- Role -->
               
               <div class="flex items-center gap-2">
                 <div class="dropdown code-dropdown relative inline-block">
@@ -519,6 +498,8 @@
               <div class="relative w-full">
                 <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">OTP Verifications</label>
                 <input type="text" name="otp2"
+                  maxlength="6" 
+                  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);"
                   class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
                 <p class="text-xs mt-1 otp-message">Enter the 6 digit code send to registered Email/WhatsApp</p>
               </div>

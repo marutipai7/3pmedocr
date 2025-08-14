@@ -11,10 +11,8 @@
                 <input type="email" name="email" placeholder="you@example.com" required
                     class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
             </div>
-
             <div class="flex flex-col gap-4 w-full sm:w-1/2">
                     <!-- Email -->
-                    
                     <div class="flex items-center gap-2">
                         <div class="code-dropdown relative inline-block">
                           <div class="code-btn flex items-center border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
@@ -26,20 +24,18 @@
                         </div>
                         <div class="relative w-full">
                           <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Phone Number</label>
-                          <input type="text" name="phone-number1" placeholder="9876543210"
+                          <input type="text" name="phone_number" placeholder="9876543210"
                             class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
                         </div>
                       </div>
                   </div>
                 </div>
-              
                 <!-- Name (Full Width) -->
                 <div class="relative w-full">
                   <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Name</label>
-                  <input type="text" name="company-name" placeholder="Rachel sakate"
+                  <input type="text" name="name" placeholder="Rachel sakate"
                     class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
                 </div>
-              
                 <!-- Date of Birth & Gender (Same Line) -->
                 <div class="flex flex-col sm:flex-row gap-4">
                   <div class="relative w-full sm:w-1/2">
@@ -48,7 +44,6 @@
                     <input type="date" name="dob"
                       class="mt-2 block w-full rounded-md border border-primary-color p-4 text-base font-normal focus:outline-none text-blue-teal bg-white" />
                   </div>
-              
                   <div class="dropdown relative inline-block w-full sm:w-1/2">
                     <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Gender</label>
                     <div
@@ -64,20 +59,18 @@
                     </div>
                   </div>
                 </div>
-              
                 <!-- Address -->
                 <div class="relative w-full">
                   <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Address</label>
                   <textarea type="text" name="address" placeholder="12 MG Road, Near City Hospital"
                     class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal"></textarea>
                 </div>
-              
                 <div class="flex flex-col sm:flex-row gap-4 otp-div">
                   <div class="flex flex-col gap-4 w-full sm:w-1/2">
                     <!-- City,Town,District -->
                     <div class="relative w-full">
                       <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">City,Town,District</label>
-                      <input type="text" name="dist" placeholder="Pune"
+                      <input type="text" name="city" placeholder="Pune"
                         class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
                     </div>
                     <!-- State -->
@@ -111,7 +104,7 @@
                         <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Referral Code</label>
                         <input 
                           type="text" 
-                          name="otp1"
+                          name="referral_code"
                           placeholder="(optional)"
                           class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" 
                         />
@@ -147,6 +140,7 @@
                     <div class="relative w-full mt-6">
                         <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10 ">OTP Verifications</label>
                         <input type="text" name="otp1"
+                          maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);"
                           class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
                         <p class="text-xs mt-1 otp-message">Enter the 6 digit code send to registered Email/WhatsApp</p>
                       </div>

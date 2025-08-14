@@ -6,18 +6,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from maps.models import SearchHistory, SavedLocation
 from dashboard.utils import dashboard_login_required, get_common_context
-from registration.models import (
-    User,
-    NGOProfile,
-    ClientProfile,
-    ContactPerson,
-    UserProfile,
-    AdvertiserProfile,
-    ClientType,
-    AdService,
-    AdvertiserType,
-    AdServiceReq,MedicalProviderProfile
-    )
+from registration.models import *
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.files.storage import default_storage
 from django.views.decorators.http import require_POST, require_GET
@@ -37,6 +26,7 @@ def load_country_codes():
     json_path = os.path.join(settings.BASE_DIR, 'static', 'data', 'countryCodes.json')
     with open(json_path, 'r', encoding='utf-8') as f:
         return json.load(f)
+    
 def is_file_clean(file_obj):
     return True
 
@@ -59,6 +49,20 @@ def validate_and_save_file(file_obj, subdir, field_label, user_type='common'):
     os.makedirs(os.path.join(settings.MEDIA_ROOT, upload_dir), exist_ok=True)
     filename = default_storage.save(os.path.join(upload_dir, file_obj.name), file_obj)
     return filename, None
+
+def validate_email_phone(post_data, errors):
+    email = post_data.get("email", "").strip()
+    if not email:
+        errors["email"] = "Email is required."
+    else:
+        try:
+            validate_email(email)
+        except ValidationError:
+            errors["email"] = "Enter a valid email address."
+
+    phone_number = post_data.get("phone", "").strip()
+    if not re.match(r"^\d{10}$", phone_number):
+        errors["phone"] = "Enter a valid 10-digit Indian mobile number."
 
 @dashboard_login_required
 def settings_page(request):
@@ -99,13 +103,13 @@ def settings_page(request):
     # Load profile-type-specific data (optional)
     if user.user_type == 'advertiser':
         profile = AdvertiserProfile.objects.filter(user=user).first()
+        context["all_types"] = AdvertiserType.objects.filter(is_active=True)
+        context["all_services"] = AdServiceReq.objects.filter(is_active=True)
         profile_id = profile.id
         context.update({
                 'company_name': profile.company_name,
                 'advertiser_type': profile.advertiser_type,
-                'all_types': ['Brand', 'Agency', 'Influencer','Agency' 'Other'],
                 'services_interested': profile.ad_services_required,
-                'all_services': ['Digital Marketing', 'Content Creation', 'Social Media Management', 'SEO', 'PPC Advertising', 'Influencer Marketing', 'Brand Strategy', 'Market Research'],
                 'website_url': profile.website_url,
                 'address': profile.address,
                 'city': profile.city,
@@ -147,14 +151,14 @@ def settings_page(request):
     
     elif user.user_type == 'client':
         profile = ClientProfile.objects.filter(user=user).first()
+        context["all_types"] = ClientType.objects.filter(is_active=True)
+        context["all_services"] = ClientService.objects.filter(is_active=True)
         profile_id = profile.id
         if profile:
             context.update({
                 'company_name': profile.company_name,
                 'company_type': profile.company_type,
-                'all_types': ['Private Limited', 'Public Limited', 'Partnership', 'Sole Proprietorship', 'LLP',],
                 'services_interested': profile.services_interested,
-                'all_services': ['Digital Marketing', 'Content Creation', 'Social Media Management', 'SEO', 'PPC Advertising', 'Influencer Marketing', 'Brand Strategy', 'Market Research'],
                 'website_url': profile.website_url,
                 'address': profile.address,
                 'city': profile.city,
@@ -182,14 +186,15 @@ def settings_page(request):
             'contact_role': contact_persons.role,
         })
         return render(request, 'settings/setting_page_client.html', context)
+    
     elif user.user_type == 'ngo':
         profile = NGOProfile.objects.filter(user=user).first()
+        context["all_services"] = NGOService.objects.filter(is_active=True)
         profile_id = profile.id
         if profile:
             context.update({
                 'ngo_name': profile.ngo_name,
                 'ngo_services': profile.ngo_services,
-                'all_services': ['Education', 'Healthcare', 'Poverty Relief', 'General AID'],
                 'website_url': profile.website_url,
                 'address': profile.address,
                 'city': profile.city,
@@ -212,7 +217,6 @@ def settings_page(request):
                 'brand_image_path': os.path.basename(profile.brand_image_path),
                 'referral_code': profile.referral_code if profile.referral_code else "",
             })
-            print(context)
         contact_persons = ContactPerson.objects.filter(
             profile_type=user.user_type,
             profile_id=profile_id
@@ -224,8 +228,12 @@ def settings_page(request):
             'contact_role': contact_persons.role,
         })
         return render(request, 'settings/settings_page.html', context)
+    
     elif user.user_type == 'provider':
         profile = MedicalProviderProfile.objects.filter(user=user).first()
+        context["all_types"] = MedicalProviderType.objects.filter(is_active=True)
+        context["all_services"] = MedicalProviderServices.objects.filter(is_active=True)
+        context["all_workingdays"] = MedicalProviderWorkingDays.objects.filter(is_active=True)
         profile_id = profile.id
         if profile:
             context.update({
@@ -235,10 +243,10 @@ def settings_page(request):
                 'website_url': profile.website_url,
                 'storefront_image_path': profile.storefront_image_path,
             })    
+            
     print(f"Context for settings page: {context}")
 
     return render(request, 'settings/settings_page.html', context)
-
 
 def get_base_context(user):
     context = {
@@ -387,8 +395,6 @@ def handle_provider_profile(user):
         'storefront_image_path': profile.storefront_image_path,
     } if profile else {}
 
-
-
 @require_GET
 @dashboard_login_required
 def get_account_details(request):
@@ -422,12 +428,9 @@ def get_account_details(request):
     except Exception as e:
         return JsonResponse({'success': False, 'message': f'Error loading account details: {str(e)}'})
 
-
 def logout_view(request):
     request.session.flush()  # clears all session data
     return redirect('/login/')
-
-
 
 @require_POST
 @dashboard_login_required
@@ -519,136 +522,143 @@ def update_ngo_profile(request):
     errors={}
     user = request.user_obj
     
-    # --- Basic Validations ---
-    email = data.get("email")
-    if not email:
-        errors["email"] = "Email is required."
-    else:
-        try:
-            validate_email(email)
-        except ValidationError:
-            errors["email"] = "Enter a valid email address."
-    phone_number = data.get("phone")
-    if not phone_number or not re.match(r"^\d{8,15}$", phone_number):
-        errors["phone"] = "Enter a valid phone number (8-15 digits)."
-
+    validate_email_phone(data, errors)
+    
     ngo_services = request.POST.getlist("services")
     if not ngo_services:
         errors["services"] = "Select at least one NGO service."
         
-    
     # Validate address fields
     for field in ["ngo_name","address", "city", "state", "pincode", "country", "contact_name", "contact_phone_number"]:
         if not data.get(field):
-            errors[field] = f"{field.capitalize()} is required."
-        
-    # Update User model
-    user.email = request.POST.get('email')
-    user.phone_country_code = request.POST.get('countryCodes')
-    user.phone_number = request.POST.get('phone')
-    user.save()
+            errors[field] = f"{field.replace('_', ' ').capitalize()} is required."
     
     if errors:
         print(f"Validation errors: {errors}")
         return JsonResponse({"success": False, "errors": errors}, status=400)
+        
+    with transaction.atomic():
+    # Update User model
+        user.email = request.POST.get('email')
+        user.phone_country_code = request.POST.get('countryCodes')
+        user.phone_number = request.POST.get('phone')
+        user.save()
 
     # Update NGOProfile
-    ngo_profile = NGOProfile.objects.filter(user=user).first()
-    if ngo_profile:
-        ngo_profile.ngo_name = request.POST.get('ngo_name')
-        ngo_profile.website_url = request.POST.get('website_url')
-        ngo_profile.address = request.POST.get('address')
-        ngo_profile.city = request.POST.get('city')
-        ngo_profile.state = request.POST.get('state')
-        ngo_profile.country = request.POST.get('country')
-        ngo_profile.pincode = request.POST.get('pincode')
-        ngo_profile.ngo_services = request.POST.getlist('services')
-        ngo_profile.referral_code = request.POST.get('referral_code')
-        ngo_profile.save()
-
+        ngo_profile = NGOProfile.objects.filter(user=user).first()
+        if ngo_profile:
+            for field in ["ngo_name", "website_url", "address", "city", "state", "country", "pincode", "referral_code"]:
+                setattr(ngo_profile, field, data.get(field))
+            ngo_profile.ngo_services = data.getlist("services")
+            ngo_profile.save()
     # Update ContactPerson (if exists)
-    contact_person = ContactPerson.objects.filter(
-        profile_type='ngo', profile_id=ngo_profile.id
-    ).first()
+        contact_person = ContactPerson.objects.filter(profile_type='ngo', profile_id=ngo_profile.id).first()
 
-    if contact_person:
-        contact_person.name = request.POST.get('contact_name')
-        contact_person.phone_country_code = request.POST.get('countryCodes')
-        contact_person.phone_number = request.POST.get('contact_phone_number')
-        contact_person.role = request.POST.get('contact_role')
-        contact_person.save()
+        if contact_person:
+            contact_person.name = request.POST.get('contact_name')
+            contact_person.phone_country_code = request.POST.get('countryCodes', "+91")
+            contact_person.phone_number = request.POST.get('contact_phone_number')
+            contact_person.role = request.POST.get('contact_role')
+            contact_person.save()
 
     return JsonResponse({"success": True, "message": "NGO profile updated successfully."})  # Redirect back to settings page after save
     
 @require_POST
 @dashboard_login_required
 def update_advertiser_profile(request):
-    try:
-        post_data = request.POST
-        user = request.user_obj  # Assuming you're using `request.user_obj` as set in your middleware
+    post_data = request.POST
+    errors = {}
+    user = request.user_obj  
+    
+    validate_email_phone(post_data, errors)
+    
+    required_fields = ["company_name", "city", "state", "country", "pincode"]
+    for field in required_fields:
+        if not post_data.get(field):
+            errors[field] = f"{field.replace('_', ' ').capitalize()} is required."
 
+    if errors:
+        return JsonResponse({"success": False, "errors": errors}, status=400)
+
+    try:
         with transaction.atomic():
             # --- Update User ---
-            user.email = post_data.get('email', user.email)
-            user.phone_number = post_data.get('phone', user.phone_number)
+            user.email = post_data.get('email')
+            user.phone_country_code = post_data.get("countryCodes", "+91")
+            user.phone_number = post_data.get("phone")
             user.save()
 
             # --- Update AdvertiserProfile ---
             advertiser_profile = get_object_or_404(AdvertiserProfile, user=user)
-            advertiser_profile.company_name = post_data.get('company_name', advertiser_profile.company_name)
-            advertiser_profile.advertiser_type = post_data.getlist('advertiser_type') or None
-            advertiser_profile.ad_services_required = post_data.getlist('company_services') or None
-            advertiser_profile.website_url = post_data.get('website_url')
-            advertiser_profile.city = post_data.get('city')
-            advertiser_profile.state = post_data.get('state')
-            advertiser_profile.country = post_data.get('country')
-            advertiser_profile.pincode = post_data.get('pincode')
+            advertiser_profile.company_name = post_data.get("company_name")
+            advertiser_profile.advertiser_type = post_data.getlist("advertiser_type") or None
+            advertiser_profile.ad_services_required = post_data.getlist("company_services") or None
+            advertiser_profile.website_url = post_data.get("website_url")
+            advertiser_profile.city = post_data.get("city")
+            advertiser_profile.state = post_data.get("state")
+            advertiser_profile.country = post_data.get("country")
+            advertiser_profile.pincode = post_data.get("pincode")
             advertiser_profile.save()
 
-            # --- Update ContactPerson (optional) ---
-            contact_name = post_data.get('contact_name')
-            contact_role = post_data.get('contact_role')
-            contact_phone = post_data.get('contact_phone_number')
-
+            # --- Update or Create ContactPerson ---
+            contact_name = post_data.get("contact_name")
+            contact_phone = post_data.get("contact_phone_number")
             if contact_name or contact_phone:
-                contact, created = ContactPerson.objects.get_or_create(
-                    profile_type='advertiser',
+                contact, _ = ContactPerson.objects.get_or_create(
+                    profile_type="advertiser",
                     profile_id=advertiser_profile.id
                 )
                 contact.name = contact_name
-                contact.role = contact_role
+                contact.role = post_data.get("contact_role")
+                contact.phone_country_code = post_data.get("countryCodes", "+91")
                 contact.phone_number = contact_phone
-                contact.phone_country_code = user.phone_country_code or '+91'  # Default if needed
                 contact.save()
 
         return JsonResponse({'success': True, 'message': 'Advertiser profile updated successfully'})
-
+    
     except Exception as e:
-        return JsonResponse({'success': False, 'message': str(e)})
+        return JsonResponse({"success": False, "message": str(e)}, status=500)
 
 @require_POST
 @dashboard_login_required
 def update_client_profile(request):
+    post_data = request.POST
+    errors = {}
+    user = request.user_obj
+    
+    # --- Common Validations ---
+    validate_email_phone(post_data, errors)
+
+    # Required fields
+    required_fields = ["company_name", "company_type", "address", "city", "state", "pincode", "country"]
+    for field in required_fields:
+        if not post_data.get(field):
+            errors[field] = f"{field.replace('_', ' ').capitalize()} is required."
+
+    if errors:
+        return JsonResponse({"success": False, "errors": errors}, status=400)
     try:
-        post_data = request.POST
-        user = request.user_obj
-
-        profile, _ = ClientProfile.objects.get_or_create(user=user)
-        profile.company_name = post_data.get('company_name')
-        profile.company_type = post_data.get('company_type')
-        profile.website_url = post_data.get('website_url')
-        profile.address = post_data.get('address')
-        profile.city = post_data.get('city')
-        profile.state = post_data.get('state')
-        profile.pincode = post_data.get('pincode')
-        profile.country = post_data.get('country')
-        profile.services_interested = post_data.getlist('company_services') or []
-
-        # Optional: Save phone if field exists
-        profile.phone = post_data.get('phone')
-        profile.phone_country_code = post_data.get('countryCodes')
-
-        profile.save()
+        with transaction.atomic():
+            # Update User model
+            user.email = post_data.get('email')
+            user.phone_country_code = post_data.get('countryCodes', "+91")
+            user.phone_number = post_data.get('phone')
+            user.save()
+            
+            # --- Update ClientProfile ---
+            profile, _ = ClientProfile.objects.get_or_create(user=user)
+            profile.company_name = post_data.get("company_name")
+            profile.company_type = post_data.get("company_type")
+            profile.website_url = post_data.get("website_url")
+            profile.address = post_data.get("address")
+            profile.city = post_data.get("city")
+            profile.state = post_data.get("state")
+            profile.pincode = post_data.get("pincode")
+            profile.country = post_data.get("country")
+            profile.services_interested = post_data.getlist("company_services") or []
+            profile.phone = post_data.get("phone")
+            profile.phone_country_code = post_data.get("countryCodes", "+91")
+            profile.save()
 
         return JsonResponse({'success': True, 'message': 'Client profile updated successfully.'})
     except Exception as e:
@@ -717,89 +727,6 @@ def change_password(request):
         return JsonResponse({'success': True, 'message': 'Password changed successfully', "errors" : ''})
     except Exception as e:
         return JsonResponse({'success': False, 'errors': f'Error updating password: {str(e)}', "message" : ''})
-
-@require_POST
-@dashboard_login_required
-def update_ngo_profile_extra(request):
-    if request.method != "POST":
-        return JsonResponse({"success": False, "message": "Invalid request method."}, status=405)
-
-    user = getattr(request, "user_obj", None)
-    if not user:
-        return JsonResponse({"success": False, "message": "Unauthorized."}, status=401)
-
-    data = request.POST
-    errors = {}
-
-
-    # return JsonResponse({"stop": True})
-
-    # --- Basic Validations ---
-    email = data.get("email", "").strip()
-    phone_number = data.get("phone", "").strip()
-    country_code = data.get("countryCodes", "").strip()
-
-    if not email:
-        errors["email"] = "Email is required."
-    else:
-        try:
-            validate_email(email)
-        except ValidationError:
-            errors["email"] = "Enter a valid email address."
-
-    if not phone_number or not re.match(r"^\d{8,15}$", phone_number):
-        errors["phone"] = "Enter a valid phone number (8-15 digits)."
-
-    ngo_services = data.getlist("ngo_services")
-    if not ngo_services:
-        errors["services"] = "Select at least one NGO service."
-
-    required_fields = [
-        "ngo_name", "address", "city", "state", "pincode",
-        "country", "contact_name", "contact_phone_number"
-    ]
-
-    for field in required_fields:
-        if not data.get(field, "").strip():
-            errors[field] = f"{field.replace('_', ' ').capitalize()} is required."
-
-    # If validation fails, return errors before saving anything
-    if errors:
-        return JsonResponse({"success": False, "errors": errors}, status=400)
-
-    # --- Update User model ---
-    user.email = email
-    user.phone_country_code = country_code
-    user.phone_number = phone_number
-    user.save()
-
-    # --- Update NGOProfile ---
-    ngo_profile = NGOProfile.objects.filter(user=user).first()
-    if ngo_profile:
-        ngo_profile.ngo_name = data.get("ngo_name", "").strip()
-        ngo_profile.website_url = data.get("website_url", "").strip()
-        ngo_profile.address = data.get("address", "").strip()
-        ngo_profile.city = data.get("city", "").strip()
-        ngo_profile.state = data.get("state", "").strip()
-        ngo_profile.country = data.get("country", "").strip()
-        ngo_profile.pincode = data.get("pincode", "").strip()
-        ngo_profile.ngo_services = ngo_services
-        ngo_profile.referral_code = data.get("referral_code", "").strip()
-        ngo_profile.save()
-
-        # --- Update ContactPerson ---
-        contact_person = ContactPerson.objects.filter(
-            profile_type='ngo', profile_id=ngo_profile.id
-        ).first()
-
-        if contact_person:
-            contact_person.name = data.get("contact_name", "").strip()
-            contact_person.phone_country_code = country_code
-            contact_person.phone_number = data.get("contact_phone_number", "").strip()
-            contact_person.role = data.get("contact_role", "").strip()
-            contact_person.save()
-
-    return JsonResponse({"success": True, "message": "NGO profile updated successfully."})
 
 @require_GET
 @dashboard_login_required

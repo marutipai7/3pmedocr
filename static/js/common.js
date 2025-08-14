@@ -15,7 +15,6 @@ $(document).ready(function () {
         }
     });
 
-
 // Table row Delete Icon Modal Functionality
     $(".material-symbols-outlined.delete-icon").click(function () {
         rowToDelete = $(this).closest("tr");
@@ -142,28 +141,6 @@ checkbox.on('change', function () {
     }
 });
 
-
-
-//  $('.calendar-icon').on('click', function (e) {
-//     e.stopPropagation();
-//     const $filterDropdown = $(this).closest('.filterDropdown');
-//     const $container = $filterDropdown.closest('.dropdown');
-//     $filterDropdown.addClass('hidden');
-//     $container.find('.datepicker-container').removeClass('hidden');
-//   });
-
-  
-//   $(document).on('click', '.datepicker-container [data-date]', function () {    
-//     const selectedDate = $(this).attr('data-date');
-//     console.log("Selected Date:", selectedDate);   
-//     $('.datepicker-container').addClass('hidden');
-//   }); 
-//   $(document).on('click', function (e) {
-//     if (!$(e.target).closest('.datepicker-container, .calendar-icon').length) {
-//       $('.datepicker-container').addClass('hidden');
-//       $('.filterDropdown').addClass('hidden');
-//     }
-//   });
   function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -179,7 +156,6 @@ checkbox.on('change', function () {
     return cookieValue;
 }
 const csrftoken = getCookie('csrftoken');
-
 $('#register-form').on('submit', function(e) {
     e.preventDefault();
     $('.border-dark-red').removeClass('border-dark-red');
@@ -226,70 +202,72 @@ $('#register-form').on('submit', function(e) {
         toastr.error('You must agree to the terms.');
         return;
     }
-    var providerType = $('#provider_type_input').val();
-    var servicesOffered = $('#services_offered_input').val();
-    var workingDays = $('#working_days_input').val();
-    var openingTime = $('#opening_time').val();
-    var closingTime = $('#closing_time').val();
-    
-    // Debug logging
-    console.log('Dropdown values:', {
-        providerType: providerType,
-        servicesOffered: servicesOffered,
-        workingDays: workingDays,
-        openingTime: openingTime,
-        closingTime: closingTime
-    });
-    
-    // Additional debugging for time inputs
-    console.log('Time input elements:', {
-        openingTimeElement: $('#opening_time').length,
-        closingTimeElement: $('#closing_time').length,
-        openingTimeValue: $('#opening_time').val(),
-        closingTimeValue: $('#closing_time').val(),
-        openingTimeAttr: $('#opening_time').attr('id'),
-        closingTimeAttr: $('#closing_time').attr('id')
-    });
-    
-    var valid = true;
-
-    // Remove previous errors
-    $('.field-error.provider_type, .field-error.services_offered, .field-error.working_days, .field-error.opening_time, .field-error.closing_time').remove();
-
-    if (!providerType) {
-        valid = false;
-        $('<span class="field-error provider_type text-xs text-dark-red">Please select a provider type.</span>')
-            .insertAfter($('#provider_type_input'));
-    }
-    if (!servicesOffered) {
-        valid = false;
-        $('<span class="field-error services_offered text-xs text-dark-red">Please select at least one service.</span>')
-            .insertAfter($('#services_offered_input'));
-    }
-    if (!workingDays) {
-        valid = false;
-        $('<span class="field-error working_days text-xs text-dark-red">Please select at least one working day.</span>')
-            .insertAfter($('#working_days_input'));
-    }
-    if (!openingTime) {
-        valid = false;
-        $('<span class="field-error opening_time text-xs text-dark-red">Please select an opening time.</span>')
-            .insertAfter($('#opening_time'));
-    }
-    if (!closingTime) {
-        valid = false;  
-        $('<span class="field-error closing_time text-xs text-dark-red">Please select a closing time.</span>')
-            .insertAfter($('#closing_time'));
-    }
-    if (!valid) {
-        e.preventDefault();
-        toastr.error('Please fill all required dropdowns.');
-        return false;
-    }
 
     var formType = $(this).data('type');
     var formUrl = $(this).attr('action');
     var formData = new FormData(this);
+
+    console.log('Form Url:', formUrl);
+
+    if (formUrl == '/user/save/advertiser') {
+        let selectValue = $('.advertiser-type-selected').text().trim();
+        $('input[name="advertiser_type"]').val(selectValue);
+        let adServiceValue = $('.ad-service-selected').text().trim();
+        $('input[name="ad_service_req"]').val(adServiceValue);
+    } else if (formUrl == '/user/save/medical_provider') {
+        var providerType = $('#provider_type_input').val();
+        var servicesOffered = $('#services_offered_input').val();
+        var workingDays = $('#working_days_input').val();
+        var openingTime = $('#opening_time').val();
+        var closingTime = $('#closing_time').val();
+        var valid = true;
+        // Remove previous errors
+        $('.field-error.provider_type, .field-error.services_offered, .field-error.working_days, .field-error.opening_time, .field-error.closing_time').remove();
+        if (!providerType) {
+            valid = false;
+            $('<span class="field-error provider_type text-xs text-dark-red">Please select a provider type.</span>')
+                .insertAfter($('#provider_type_input'));
+        }
+        if (!servicesOffered) {
+            valid = false;
+            $('<span class="field-error services_offered text-xs text-dark-red">Please select at least one service.</span>')
+                .insertAfter($('#services_offered_input'));
+        }
+        if (!workingDays) {
+            valid = false;
+            $('<span class="field-error working_days text-xs text-dark-red">Please select at least one working day.</span>')
+                .insertAfter($('#working_days_input'));
+        }
+        if (!openingTime) {
+            valid = false;
+            $('<span class="field-error opening_time text-xs text-dark-red">Please select an opening time.</span>')
+                .insertAfter($('#opening_time'));
+        }
+        if (!closingTime) {
+            valid = false;  
+            $('<span class="field-error closing_time text-xs text-dark-red">Please select a closing time.</span>')
+                .insertAfter($('#closing_time'));
+        }
+        if (!valid) {
+            e.preventDefault();
+            toastr.error('Please fill all required dropdowns.');
+            return false;
+        }
+        let selectService = $('.selected-services').text().trim();
+        $('input[name="services_offered"]').val(selectService);
+        let providerType = $('.selected-provider-type').text().trim();
+        $('input[name="provider_type"]').val(providerType);
+        let workingDays = $('.selected-working-days').text().trim();
+        $('input[name="working_days"]').val(workingDays);
+    } else if (formUrl == '/user/save/client') {
+        let selectValue = $('.company-type-selected').text().trim();
+        $('input[name="company_type"]').val(selectValue);
+        let adServiceValue = $('.company-service-selected').text().trim();
+        $('input[name="company_service"]').val(adServiceValue);
+    } else if (formUrl == '/user/save/ngo') {
+        let selectValue = $('.ngo-service-selected').text().trim();
+        $('input[name="ngo_service"]').val(selectValue);
+    }
 
     $.ajax({
         url: formUrl,
@@ -322,6 +300,7 @@ $('#register-form').on('submit', function(e) {
                         .removeClass('border-primary-color placeholder:text-blue-teal');
                     $input.prev('label').addClass('text-dark-red');
                 });
+                console.log(resp.errors);
                 toastr.error("Please correct the highlighted errors.");
             } else {
                 toastr.error(resp.error || "Registration failed.");
@@ -353,7 +332,6 @@ $('#register-form').on('submit', function(e) {
         }
     });
 });
-
 // Optional: Remove error style when field is corrected
 $('#register-form input').on('input change', function() {
     var $input = $(this);

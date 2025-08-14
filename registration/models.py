@@ -2,6 +2,60 @@ from datetime import time
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 
+class AdvertiserType(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return self.name
+    
+class AdServiceReq(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return self.name
+    
+class ClientService(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return self.name
+    
+class ClientType(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return self.name
+    
+class NGOService(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return self.name
+
+class MedicalProviderType(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return self.name
+    class Meta:
+            db_table = 'medical_provider_type'
+            
+class MedicalProviderServices(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return self.name
+    class Meta:
+            db_table = 'medical_provider_services'
+
+class MedicalProviderWorkingDays(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return self.name
+    class Meta:
+            db_table = 'medical_provider_workingdays'
+
 class User(models.Model):
     USER_TYPE_CHOICES = [
         ('advertiser', 'Advertiser'),
@@ -40,13 +94,12 @@ class UserProfile(models.Model):
     country = models.CharField(max_length=128, blank=True, null=True)
     referral_code = models.CharField(max_length=64, blank=True, null=True)
     otp = models.CharField(max_length=16, blank=True, null=True)
-    email_otp = models.CharField(max_length=16, blank=True, null=True)
 
 class AdvertiserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     company_name = models.CharField(max_length=255)
-    advertiser_type = ArrayField(models.CharField(max_length=64), blank=True, null=True)
-    ad_services_required = ArrayField(models.CharField(max_length=64), blank=True, null=True)
+    advertiser_type = models.ForeignKey(AdvertiserType, on_delete=models.CASCADE, blank=True, null=True)
+    ad_services_required = models.ForeignKey(AdServiceReq, on_delete=models.CASCADE, blank=True, null=True)
     website_url = models.CharField(max_length=255, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     city = models.CharField(max_length=128, blank=True, null=True)
@@ -71,24 +124,11 @@ class AdvertiserProfile(models.Model):
     email_otp = models.CharField(max_length=16, blank=True, null=True)
     referral_code = models.CharField(max_length=64, blank=True, null=True)
 
-class AdvertiserType(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    is_active = models.BooleanField(default=True)
-    def __str__(self):
-        return self.name
-
-class AdServiceReq(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    is_active = models.BooleanField(default=True)
-    def __str__(self):
-        return self.name
-
-
 class ClientProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     company_name = models.CharField(max_length=255)
-    company_type = models.CharField(max_length=128)
-    services_interested = ArrayField(models.CharField(max_length=128), blank=True, null=True)
+    company_type = models.ForeignKey(ClientType, on_delete=models.CASCADE, blank=True, null=True)
+    services_interested = models.ForeignKey(AdServiceReq, on_delete=models.CASCADE, blank=True, null=True)
     website_url = models.CharField(max_length=255, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     city = models.CharField(max_length=128, blank=True, null=True)
@@ -109,23 +149,11 @@ class ClientProfile(models.Model):
     tan_doc_virus_scanned = models.BooleanField(default=False)
     email_otp = models.CharField(max_length=16, blank=True, null=True)
     referral_code = models.CharField(max_length=64, blank=True, null=True)
-
-class ClientType(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    is_active = models.BooleanField(default=True)
-    def __str__(self):
-        return self.name
-
-class AdService(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    is_active = models.BooleanField(default=True)
-    def __str__(self):
-        return self.name
-
+    
 class NGOProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     ngo_name = models.CharField(max_length=255)
-    ngo_services = ArrayField(models.CharField(max_length=128), blank=True, null=True)
+    ngo_services = models.ForeignKey(NGOService, on_delete=models.CASCADE, blank=True, null=True)
     website_url = models.CharField(max_length=255, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     city = models.CharField(max_length=128, blank=True, null=True)
@@ -155,32 +183,6 @@ class NGOProfile(models.Model):
     brand_description = models.TextField(blank=True, null=True)
     email_otp = models.CharField(max_length=16, blank=True, null=True)
     referral_code = models.CharField(max_length=64, blank=True, null=True)
-
-class MedicalProviderType(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    is_active = models.BooleanField(default=True)
-    def __str__(self):
-        return self.name
-    class Meta:
-            db_table = 'medical_provider_type'
-    
-
-class MedicalProviderServices(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    is_active = models.BooleanField(default=True)
-    def __str__(self):
-        return self.name
-    class Meta:
-            db_table = 'medical_provider_services'
-
-class MedicalProviderWorkingDays(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    is_active = models.BooleanField(default=True)
-    def __str__(self):
-        return self.name
-    class Meta:
-            db_table = 'medical_provider_workingdays'
-
 
 class MedicalProviderProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -229,7 +231,6 @@ class ContactPerson(models.Model):
     phone_country_code = models.CharField(max_length=8, blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     role = models.CharField(max_length=128, blank=True, null=True)
-    designation = models.CharField(max_length=128, blank=True, null=True)
     otp = models.CharField(max_length=16, blank=True, null=True)
     referral_code = models.CharField(max_length=64, blank=True, null=True)
     email_otp = models.CharField(max_length=16, blank=True, null=True)
