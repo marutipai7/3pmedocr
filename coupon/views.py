@@ -12,7 +12,7 @@ from django.core.paginator import Paginator
 from django.template.loader import render_to_string
 from django.db.models import Q
 from django.views.decorators.http import require_GET, require_http_methods
-from dashboard.utils import dashboard_login_required
+from dashboard.utils import dashboard_login_required, get_common_context
 from .models import (
     Coupon, CategoryOption, BrandOption, OfferTypeOption, CountryOption,
     StateOption, CityOption, PincodeOption, AgeOption, GenderOption, SpendingPowerOption
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 @dashboard_login_required
 def coupon_view(request):
     user = request.user_obj
-    
+    context = get_common_context(request, user)
     if request.method == 'POST':
         is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
         try:
@@ -191,7 +191,8 @@ def coupon_view(request):
             messages.error(request, error_msg)
             return render(request, 'coupon.html', get_context_data(user, request.POST, missing_fields))
 
-    return render(request, 'coupon.html', get_context_data(user))
+    context.update(get_context_data(user))
+    return render(request, 'coupon.html', context)
 
 
 @dashboard_login_required

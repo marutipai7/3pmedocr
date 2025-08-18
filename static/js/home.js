@@ -417,7 +417,7 @@ $(document).ready(function () {
       $calendarDays.empty();
       dayNames.forEach((day) => {
         $calendarDays.append(
-          `<div class="font-semibold text-sm text-gray-700">${day}</div>`
+          `<div class="font-semibold text-sm text-gray-700 mt-auto">${day}</div>`
         );
       });
       $calendarDays.append(
@@ -1043,7 +1043,7 @@ $(document).ready(function () {
             currentMonth === today.getMonth() &&
             currentYear === today.getFullYear();
 
-          const baseClasses = `cursor-pointer foNT-normal text-xl text-jet-black`;
+          const baseClasses = `cursor-pointer foNT-normal text-xl text-jet-black relative p-0.5`;
 
           const dateClass = isToday
             ? `text-${highlightColor}`
@@ -1066,7 +1066,10 @@ $(document).ready(function () {
             eventsForDate.forEach((event) => {
               const eventColor = event.color || `bg-${highlightColor}`;
               console.log('Popup Event:', event.name, 'Color:', eventColor); // Debug log
-              eventIndicators += `<div class="w-2 h-2 ${eventColor} rounded-full mx-auto mt-1" style="background-color: ${getColorValue(eventColor)};"></div>`;
+              eventIndicators += `<div class="w-2 h-2 ${eventColor} rounded-full mx-auto mt-1 has-tooltip" style="background-color: ${getColorValue(eventColor)};"></div>
+                                  <div class="absolute py-1 px-1.5 text-start text-xs tooltip mt-1 z-50 bg-white border rounded-md border-living-coral font-normal">
+                                    ${event.name} at ${event.time}
+                                  </div>`;
             });
           }
 
@@ -1095,19 +1098,19 @@ $(document).ready(function () {
         selectedDate = $(this).data("date");
         
         // Show events for this date if any
-        const eventsForDate = getEventsForDate(selectedDate);
-        if (eventsForDate.length > 0) {
-          let eventsHtml = '<div class="event-display mt-2 p-2 bg-gray-100 rounded">';
-          eventsForDate.forEach(event => {
-            eventsHtml += `<div class="text-sm text-gray-700">• ${event.name} at ${event.time}</div>`;
-          });
-          eventsHtml += '</div>';
+        // const eventsForDate = getEventsForDate(selectedDate);
+        // if (eventsForDate.length > 0) {
+        //   let eventsHtml = '<div class="event-display mt-2 p-2 bg-gray-100 rounded">';
+        //   eventsForDate.forEach(event => {
+        //     eventsHtml += `<div class="text-sm text-gray-700">• ${event.name} at ${event.time}</div>`;
+        //   });
+        //   eventsHtml += '</div>';
           
-          // Remove any existing event display
-          $calendarDays.find('.event-display').remove();
-          // Add new event display
-          $(this).append(eventsHtml);
-        }
+        //   // Remove any existing event display
+        //   $calendarDays.find('.event-display').remove();
+        //   // Add new event display
+        //   $(this).append(eventsHtml);
+        // }
       });
 
       $root
@@ -1266,17 +1269,17 @@ $(document).ready(function () {
     const eventTime = document.getElementById('start-time').value;
     
     if (!eventName) {
-      alert('Please enter an event name');
+      toastr.error('Please enter an event name');
       return;
     }
     
     if (!selectedDate) {
-      alert('Please select a date');
+      toastr.error('Please select a date');
       return;
     }
     
     if (!eventTime) {
-      alert('Please select a time');
+      toastr.error('Please select a time');
       return;
     }
 
@@ -1298,7 +1301,7 @@ $(document).ready(function () {
       },
       success: function(response) {
         if (response.success) {
-          alert('Event saved successfully!');
+          toastr.success('Event saved successfully!');
           // Clear form
           document.getElementById('event-name').value = '';
           document.getElementById('start-time').value = '09:00';
@@ -1307,6 +1310,7 @@ $(document).ready(function () {
           $(".event-calendar").addClass("hidden");
           // Refresh calendar to show new event
           loadEvents();
+          loadUpcomingEvents(); // Refresh upcoming events list
         } else {
           alert('Error saving event: ' + (response.error || 'Unknown error'));
         }
@@ -1389,10 +1393,62 @@ $(document).ready(function () {
     return colorMap[colorClass] || '#64748b'; // Default to slate-blue if not found
   }
 
+  // Function to load and display upcoming events
+  function loadUpcomingEvents() {
+    $.ajax({
+      url: '/dashboard/get-upcoming-events/',
+      method: 'GET',
+      success: function(response) {
+        const container = $('#upcoming-events-container');
+        if (container.length === 0) {
+          return;
+        }
+        const title = container.find('h4').first(); // Keep the title
+        
+        // Clear existing content except title
+        container.find('*').not('h4').remove();
+        
+        if (response.upcoming_events && response.upcoming_events.length > 0) {
+          // Add events
+          response.upcoming_events.forEach(function(event) {
+            const eventElement = $(`
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full" style="background-color: ${event.color_hex};"></span>
+                <span class="text-gray-700">${event.name}</span>
+              </div>
+            `);
+            container.append(eventElement);
+          });
+        } else {
+          // Show no events message
+          const noEventsElement = $(`
+            <div class="flex items-center gap-2">
+              <span class="text-gray-500">No upcoming events</span>
+            </div>
+          `);
+          container.append(noEventsElement);
+        }
+      },
+      error: function(xhr, status, error) {
+        const container = $('#upcoming-events-container');
+        const title = container.find('h4').first();
+        container.find('*').not('h4').remove();
+        
+        const errorElement = $(`
+          <div class="flex items-center gap-2">
+            <span class="text-red-500">Error loading events</span>
+          </div>
+        `);
+        container.append(errorElement);
+      }
+    });
+  }
+
   // Load events when page loads
   $(document).ready(function() {
     // Load events first, then initialize calendars
     loadEvents();
+    loadUpcomingEvents();
     
     // Also refresh calendars after a short delay to ensure events are loaded
     setTimeout(function() {

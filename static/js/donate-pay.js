@@ -191,20 +191,6 @@ document.querySelector('.pan-allow-access-btn').addEventListener('click', functi
   document.querySelector('.pan-upload-input').click();
 });
 
-// On file selection, update virus scan status
-document.querySelector('.pan-upload-input').addEventListener('change', function () {
-  const checkbox = document.querySelector('.scan-toggle');
-  const statusText = document.querySelector('.status-text');
-
-  if (this.files && this.files.length > 0) {
-    checkbox.checked = true;
-    checkbox.classList.remove('border-dark-gray');
-    checkbox.classList.add('border-green');
-    statusText.textContent = 'Virus Scan';
-    statusText.className = 'status-text text-green text-16-nr';
-  }
-});
-
 // Fix: Trigger file input on upload button click
 var uploadTrigger = document.querySelector('.uploadTrigger');
 var panInput = document.getElementById('pan_document');
@@ -220,3 +206,51 @@ if (uploadTrigger && panInput) {
         }
     });
 }
+
+// On file selection, update virus scan status
+document.querySelector('.pan-upload-input').addEventListener('change', function () {
+  const checkbox = document.querySelector('.check-scan-donate');
+  const statusText = document.querySelector('.status-text-donate');
+
+  if (this.files && this.files.length > 0) {
+    checkbox.checked = true;
+    checkbox.disabled = false;
+    checkbox.classList.remove('border-dark-gray');
+    checkbox.classList.add('border-green');
+    statusText.textContent = 'Virus Scan';
+    statusText.className = 'status-text text-green text-16-nr';
+  }
+});
+
+ $('.pan-upload-input').on('change', function () {
+        const file = this.files[0];
+        if (!file) return;
+
+        const $section = $(this).closest('.upload-section');
+        const $trigger = $section.find('.pan-upload-trigger');
+        const $label = $trigger.find('.upload-label');
+        const $icon = $trigger.find('.upload-icon');
+            
+        $label.text(file.name);
+
+        $icon.text('imagesmode').removeClass('text-dark-gray').addClass('text-bright-green');
+        toastr.success('File uploaded successfully!');
+        
+        $section.find('.remove-file-btn').removeClass('hidden');
+        $('.remove-file-btn').on('click', function () {
+            const $wrapper = $(this).closest('.upload-section');
+            const $fileInput = $wrapper.find('.uploadInput');
+            
+            $fileInput.val('');
+
+            
+            $wrapper.find('.upload-label').text('');
+            $wrapper.find('.upload-icon')
+                .text('upload')
+                .removeClass('text-green-600')
+                .addClass('text-primary-color');
+
+            
+            $(this).addClass('hidden');
+        });
+    });

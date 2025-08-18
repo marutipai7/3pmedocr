@@ -1,0 +1,446 @@
+{% extends "dashboard/layout.html" %}
+{% load static %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+      <!-- Content -->
+      <div class="h-[calc(100vh-100px)] w-full flex">
+        <!-- Main Content -->
+        <div
+          class="h-full flex-1 flex flex-col gap-8 p-6 overflow-y-auto scroll"
+        >
+          <div class="bg-white p-4 shadow-md">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined"> shopping_cart </span>
+                <span class="font-semibold text-2xl">My Cart</span>
+              </div>
+              <span
+                class="material-symbols-outlined cursor-pointer closecart-btn"
+                >close</span
+              >
+            </div>
+
+            <span class="font-normal text-lg"
+              >Almost There -- review and complete</span
+            >
+            <div class="flex flex-col pt-4">
+              <p class="font-semibold text-lg">
+                Upload Prescription <span class="text-strong-red">*</span>
+              </p>
+              <div
+                class="flex shadow-lg mt-2 px-4 py-5 rounded-md bg-white gap-4"
+              >
+                <input
+                  type="file"
+                  id="prescriptionUpload"
+                  multiple
+                  class="hidden"
+                />
+                <button
+                  class="uploadBtn border rounded-md p-2 bg-very-light-gray flex items-center gap-2 cursor-pointer"
+                >
+                  Upload more
+                  <img
+                    src="/static/images/cloud.svg"
+                    alt="cloud"
+                    class="h-8 w-8"
+                  />
+                </button>
+                <div class="fileList flex items-center gap-2"></div>
+              </div>
+            </div>
+            <div class="flex items-center justify-center flex-col gap-2">
+              <img src="/static/images/Emptycart-ngo.svg" alt="" />
+              <p class="font-semibold text-4xl">Your Cart is Empty</p>
+            </div>
+
+            <div class="flex flex-col pt-4">
+              <div class="flex justify-between pt-6">
+                <p class="font-semibold text-lg text-dark-gray">
+                  Select Delivery Address
+                </p>
+                <p
+                  id="addAddress"
+                  class="text-violet-sky flex items-center gap-3 font-normal text-lg cursor-pointer"
+                >
+                  <span class="material-symbols-outlined">add</span>Add Address
+                </p>
+              </div>
+              <div
+                id="addressModal"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black opacity-100 hidden"
+              >
+                <div class="bg-white rounded-lg shadow-lg w-150 p-6 relative">
+                  <span
+                    id="closeModal"
+                    class="material-symbols-outlined absolute top-3 right-4 text-gray-500 cursor-pointer"
+                  >
+                    close
+                  </span>
+                  <h2 class="text-lg font-semibold mb-4">Add Address</h2>
+                  <hr class="text-violet-sky" />
+                  <form>
+                    <div class="flex pt-6 justify-between gap-4">
+                      <!-- First Name -->
+                      <div class="relative w-full">
+                        <input
+                          id="first-name"
+                          type="text"
+                          placeholder=" "
+                          class="peer w-full border border-light-gray rounded-lg px-3 pt-5 pb-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                        <label
+                          for="first-name"
+                          class="absolute left-3 -top-2 bg-white px-1 font-normal text-base text-dark-gray transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-placeholder-shown:px-0 peer-placeholder-shown:bg-transparent peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500 peer-focus:px-1 peer-focus:bg-white"
+                        >
+                          First Name
+                        </label>
+                      </div>
+
+                      <!-- Last Name -->
+                      <div class="relative w-full">
+                        <input
+                          id="last-name"
+                          type="text"
+                          placeholder=" "
+                          class="peer w-full border border-light-gray rounded-lg px-3 pt-5 pb-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                        <label
+                          for="last-name"
+                          class="absolute left-3 -top-2 font-normal text-base text-dark-gray bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-placeholder-shown:px-0 peer-placeholder-shown:bg-transparent peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500 peer-focus:px-1 peer-focus:bg-white"
+                        >
+                          Last Name
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="pt-6 space-y-6">
+                      <!-- Repeating block for each input -->
+                      <div class="relative w-full">
+                        <input
+                          id="flat-no"
+                          type="text"
+                          placeholder=" "
+                          class="peer w-full border border-light-gray rounded-lg px-3 pt-5 pb-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                        <label
+                          for="flat-no"
+                          class="absolute left-3 -top-2 font-normal text-base text-dark-gray bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-placeholder-shown:px-0 peer-placeholder-shown:bg-transparent peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500 peer-focus:px-1 peer-focus:bg-white"
+                        >
+                          Flat no./Apartment no./House no.
+                        </label>
+                      </div>
+
+                      <div class="relative w-full">
+                        <input
+                          id="street-name"
+                          type="text"
+                          placeholder=" "
+                          class="peer w-full border border-light-gray rounded-lg px-3 pt-5 pb-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                        <label
+                          for="street-name"
+                          class="absolute left-3 -top-2 bg-white px-1 font-normal text-base text-dark-gray transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-placeholder-shown:px-0 peer-placeholder-shown:bg-transparent peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500 peer-focus:px-1 peer-focus:bg-white"
+                        >
+                          Street Name
+                        </label>
+                      </div>
+
+                      <div class="relative w-full">
+                        <input
+                          id="city"
+                          type="text"
+                          placeholder=" "
+                          class="peer w-full border border-light-gray rounded-lg px-3 pt-5 pb-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                        <label
+                          for="city"
+                          class="absolute left-3 -top-2 bg-white px-1 font-normal text-base text-dark-gray transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-placeholder-shown:px-0 peer-placeholder-shown:bg-transparent peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500 peer-focus:px-1 peer-focus:bg-white"
+                        >
+                          City
+                        </label>
+                      </div>
+
+                      <div class="relative w-full">
+                        <input
+                          id="state"
+                          type="text"
+                          placeholder=" "
+                          class="peer w-full border border-light-gray rounded-lg px-3 pt-5 pb-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                        <label
+                          for="state"
+                          class="absolute left-3 -top-2 bg-white px-1 font-normal text-base text-dark-gray transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-placeholder-shown:px-0 peer-placeholder-shown:bg-transparent peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500 peer-focus:px-1 peer-focus:bg-white"
+                        >
+                          State/Province
+                        </label>
+                      </div>
+
+                      <div class="relative w-full">
+                        <input
+                          id="country"
+                          type="text"
+                          placeholder=" "
+                          class="peer w-full border border-light-gray rounded-lg px-3 pt-5 pb-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                        <label
+                          for="country"
+                          class="absolute left-3 -top-2 bg-white px-1 font-normal text-base text-dark-gray transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-placeholder-shown:px-0 peer-placeholder-shown:bg-transparent peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500 peer-focus:px-1 peer-focus:bg-white"
+                        >
+                          Country
+                        </label>
+                      </div>
+
+                      <div class="relative w-full">
+                        <input
+                          id="postal-code"
+                          type="text"
+                          placeholder=" "
+                          class="peer w-full border border-light-gray rounded-lg px-3 pt-5 pb-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                        <label
+                          for="postal-code"
+                          class="absolute left-3 -top-2 bg-white px-1 font-normal text-base text-dark-gray transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-placeholder-shown:px-0 peer-placeholder-shown:bg-transparent peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500 peer-focus:px-1 peer-focus:bg-white"
+                        >
+                          Zip/Postal Code
+                        </label>
+                      </div>
+                    </div>
+                    <div class="flex justify-end pt-4 gap-2">
+                      <button
+                        type="button"
+                        class="border border-dark-gray text-dark-gray w-[170px] h-[48px] rounded-md font-semibold text-base cursor-pointer cancel-btn"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        class="w-[170px] h-[48px] rounded-md font-semibold text-base bg-violet-sky text-white cursor-pointer addAddress-btn"
+                      >
+                        Add Address
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <div class="bg-white-card mt-4 rounded-md shadow-md">
+                <div class="flex p-4 justify-between">
+                  <div class="flex gap-2">
+                    <span
+                      class="material-symbols-outlined bg-pale-blue p-2 rounded-md"
+                    >
+                      home
+                    </span>
+                    <div class="flex flex-col">
+                      <p class="font-semibold text-base">Home</p>
+                      <p class="font-normal text-xs text-wrap">
+                        RKL Anand phase 1, Runwal Skylark,704, Floor 7th RKL
+                        Anand Apartment, Pimpri Chinchwad, Maharashtra
+                      </p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="material-symbols-outlined cursor-pointer text-slate-blue"
+                      >edit</span
+                    >
+                    <span
+                      class="material-symbols-outlined cursor-pointer text-vibrant-red"
+                      >delete</span
+                    >
+                    <label class="custom-radio">
+                      <input type="radio" name="address" />
+                      <span class="checkmark"></span>
+                    </label>
+                  </div>
+                </div>
+                <div class="flex p-4 justify-between">
+                  <div class="flex gap-2">
+                    <span
+                      class="material-symbols-outlined bg-pale-blue p-2 rounded-md"
+                    >
+                      home
+                    </span>
+                    <div class="flex flex-col">
+                      <p class="font-semibold text-base">Home</p>
+                      <p class="font-normal text-xs text-wrap">
+                        RKL Anand phase 1, Runwal Skylark,704, Floor 7th RKL
+                        Anand Apartment, Pimpri Chinchwad, Maharashtra
+                      </p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="material-symbols-outlined cursor-pointer text-slate-blue"
+                      >edit</span
+                    >
+                    <span
+                      class="material-symbols-outlined cursor-pointer text-vibrant-red"
+                      >delete</span
+                    >
+                    <label class="custom-radio">
+                      <input type="radio" name="address" />
+                      <span class="checkmark"></span>
+                    </label>
+                  </div>
+                </div>
+                <div class="flex p-4 justify-between">
+                  <div class="flex gap-2">
+                    <span
+                      class="material-symbols-outlined bg-pale-blue p-2 rounded-md"
+                    >
+                      home
+                    </span>
+                    <div class="flex flex-col">
+                      <p class="font-semibold text-base">Home</p>
+                      <p class="font-normal text-xs text-wrap">
+                        RKL Anand phase 1, Runwal Skylark,704, Floor 7th RKL
+                        Anand Apartment, Pimpri Chinchwad, Maharashtra
+                      </p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="material-symbols-outlined cursor-pointer text-slate-blue"
+                      >edit</span
+                    >
+                    <span
+                      class="material-symbols-outlined cursor-pointer text-vibrant-red"
+                      >delete</span
+                    >
+                    <label class="custom-radio">
+                      <input type="radio" name="address" />
+                      <span class="checkmark"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <p class="font-semibold text-lg text-dark-gray pt-4">
+                Select Payment Method
+              </p>
+              <div class="flex bg-white-card rounded-md shadow-md p-4 gap-2">
+                <div
+                  class="flex border border-vivid-blue p-4 rounded-md gap-8 justify-between w-full mt-4"
+                >
+                  <div class="flex items-center">
+                    <img src="/static/images/upi.svg" alt="upi" class="mr-2" />
+                    <p class="font-semibold text-xl text-jet-black">
+                      UPI Payment
+                    </p>
+                  </div>
+                  <label class="custom-radio">
+                    <input type="radio" name="payment" />
+                    <span class="checkmark"></span>
+                  </label>
+                </div>
+
+                <div
+                  class="flex border border-vivid-blue p-4 rounded-md gap-8 justify-between w-full mt-4"
+                >
+                  <div class="flex items-center">
+                    <span class="material-symbols-outlined"> credit_card </span>
+                    <p class="font-semibold text-xl text-jet-black">
+                      Credit or Debit Card
+                    </p>
+                  </div>
+                  <label class="custom-radio">
+                    <input type="radio" name="payment" />
+                    <span class="checkmark"></span>
+                  </label>
+                </div>
+
+                <div
+                  class="flex border border-vivid-blue p-4 rounded-md gap-8 justify-between w-full mt-4"
+                >
+                  <div class="flex items-center">
+                    <span class="material-symbols-outlined">
+                      currency_rupee
+                    </span>
+                    <p class="font-semibold text-xl text-jet-black">
+                      Cash on Delivery
+                    </p>
+                  </div>
+                  <label class="custom-radio">
+                    <input type="radio" name="payment" />
+                    <span class="checkmark"></span>
+                  </label>
+                </div>
+              </div>
+              <p class="font-semibold text-lg text-dark-gray pt-4">
+                Payment Summary
+              </p>
+              <div class="bg-white-card mt-2 p-4 rounded-md shadow-md">
+                <div class="flex justify-between items-center">
+                  <p class="font-normal text-base text-light-gray1">
+                    Estimated medicine cost
+                  </p>
+                  <p class="font-semibold text-lg text-dark-gray">&#8377;0.0</p>
+                </div>
+                <div class="flex justify-between items-center pt-4">
+                  <p class="font-normal text-base text-light-gray1">
+                    GST on medicine (12%)
+                  </p>
+                  <p class="font-semibold text-lg text-dark-gray">
+                    &#8377; 0.0
+                  </p>
+                </div>
+                <div class="flex justify-between items-center pt-4">
+                  <p class="font-semibold text-2xl text-light-gray1">
+                    Total estimated cost + GST
+                  </p>
+                  <p class="font-semibold text-2xl text-dark-gray">
+                    &#8377; 0.0
+                  </p>
+                </div>
+                <p class="font-normal text-base text-center text-light-gray1">
+                  Congratulation! You will earn
+                  <span class="font-bold text-xl text-violet-sky">2.8</span>
+                  Points on the order completion
+                </p>
+                <div class="bg-white-card rounded-md shadow-md mt-2 p-4">
+                  <div class="flex justify-between items-center">
+                    <p
+                      class="font-semibold text-lg text-dark-gray flex items-center gap-2"
+                    >
+                      Your Point Balance
+                      <span
+                        class="material-symbols-outlined text-medium-gray cursor pointer"
+                      >
+                        info
+                      </span>
+                    </p>
+                    <div class="flex items-center gap-3">
+                      <p class="font-bold text-3xl text-violet-sky">4352</p>
+                      <a
+                        href="#"
+                        class="underline text-slate-blue font-normal text-base"
+                        >View Points History</a
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="flex justify-end pt-4 gap-3">
+                  <p
+                    class="font-normal text-lg underline text-soft-light-gray cursor-pointer"
+                  >
+                    View Summary
+                  </p>
+
+                  <button
+                    id="sendrequest-btn"
+                    class="bg-soft-light-gray p-2 text-soft-light-gray1 cursor-pointer rounded-md"
+                    disabled
+                  >
+                    Send Request
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock%}
+
+{% block extra_js %}
+    <script src="{% static 'js/Purchase.js' %}"></script>
+{% endblock %}

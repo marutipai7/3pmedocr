@@ -1,0 +1,37 @@
+{% for donation in donation_history %}
+<tr>
+  <td class="px-4 py-2.5 text-center">{{ donation.payment_date|date:'d/m/y,H:i' }}</td>
+  <td class="px-4 py-2.5 text-center">{{ donation.ngopost.header }}</td>
+  <td class="px-4 py-2.5 text-center">{{ donation.ngopost.user.ngoprofile.ngo_name }}</td>
+  <td class="px-4 py-2.5 text-center">{{ donation.ngopost.post_type.name|default:"N/A" }}</td>
+  <td class="px-4 py-2.5 text-center">₹{{ donation.amount }}</td>
+  <td class="px-4 py-2.5 text-center">
+    {% if donation.payment_status == 'Success' %}
+      <button class="bg-mint-cream text-green px-5 py-2 rounded-md text-sm font-semibold">Successful</button>
+    {% else %}
+      <button class="bg-soft-pink text-strong-red px-6 py-2 rounded-md text-sm font-semibold">Failed</button>
+    {% endif %}
+  </td>
+  <td class="px-4 py-2.5 text-center">
+    <div class="flex items-center justify-center gap-2">
+      <span class="material-symbols-outlined bookmark-fill cursor-pointer save-post-btn donate-bookmark-toggle {% if donation.saved %} material-filled text-violet-sky{% endif %}"
+            data-donation-id="{{ donation.id }}"
+            data-saved="{{ donation.saved|yesno:'true,false' }}">
+        bookmark
+      </span>
+      <span class="mx-1">
+        <img src="/static/images/assignment.svg" alt="Assignment" title="View Platform Bill"
+          class="inline-block w-6 h-6 align-middle cursor-pointer" onclick="openPlatformPopup({{ donation.id }})" />
+      </span>
+      <span>
+        <img src="/static/images/calendar_today.svg" alt="Calendar" title="View Donation Receipt"
+          class="inline-block w-6 h-6 align-middle cursor-pointer" onclick="openDonatePopup({{ donation.id }})" />
+      </span>
+    </div>
+  </td>
+</tr>
+{% empty %}
+<tr>
+  <td colspan="7" class="text-center py-4">No donation history found.</td>
+</tr>
+{% endfor %}

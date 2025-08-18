@@ -3,7 +3,12 @@
 {% block title %}Coupons{% endblock %}
 {% block content %}
 
-      <div class="coupon bg-white shadow-(--box-shadow-5) rounded-[10px] px-2 sm:px-4 py-4 z-10">
+      <div class="coupon bg-white relative transition-all duration-300 text-dark-gray shadow-(--box-shadow-5) rounded-[10px] main-content h-full flex-1 flex flex-col gap-8 overflow-y-auto scroll p-6">
+        <div class="show-sidebar-toggle hidden fixed top-24 left-0 z-50 h-10 w-10 bg-transparent-living-coral items-center justify-center rounded-r-md cursor-pointer">
+          <span class="material-symbols-outlined bold-weight text-living-coral">
+              arrow_forward_ios
+          </span>
+        </div>
           <div class="flex items-center justify-between">
             <div class="space-y-2">
               <p class="flex items-center gap-2">
@@ -17,7 +22,7 @@
           </div>
 
           <!-- Tabs -->
-          <div class="flex gap-4 sm:gap-4 whitespace-nowrap mt-8 overflow-x-auto no-scrollbar">
+          <div class="flex gap-4 sm:gap-4 whitespace-nowrap overflow-x-auto no-scrollbar">
             <button
               class="tab-btn-adv active-tab-adv text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
               data-tab="new-coupon">
@@ -34,7 +39,7 @@
           </div>
 
           <!-- New Coupon content -->
-          <form id="main-coupon-form" action="{% url 'coupons' %}" method="POST" enctype="multipart/form-data" class="new-coupon tab-content pt-6 pb-3 space-y-2 overflow-y-auto scroll" style="max-height: 63vh;">
+          <form id="main-coupon-form" action="{% url 'coupons' %}" method="POST" enctype="multipart/form-data" class="new-coupon tab-content pb-3 space-y-2" style="max-height: 63vh;">
             {% csrf_token %}
             <div id="step-1" class="step">
               <div class="mt-5 space-y-5">

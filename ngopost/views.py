@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from datetime import datetime
+from datetime import datetime, date
 from .models import (
     NGOPost, 
     PostTypeOption, 
@@ -14,7 +14,7 @@ from .models import (
     )
 import logging
 from registration.views import validate_and_save_file
-from dashboard.utils import dashboard_login_required
+from dashboard.utils import dashboard_login_required, get_common_context
 from django.http import JsonResponse, Http404
 from django.views.decorators.http import require_GET, require_POST
 from donate.models import Donation
@@ -24,7 +24,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
 from datetime import datetime
 from django.core.paginator import Paginator
-
+from django.shortcuts import get_object_or_404
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 @dashboard_login_required
 def post_view(request):
     user = request.user_obj
-
+    context = get_common_context(request, user)
     # GET request handling - load form data
     history_query = request.GET.get('history_query', '').strip().lower()
     saved_query = request.GET.get('saved_query', '').strip().lower()
@@ -81,7 +81,7 @@ def post_view(request):
             post.update_status_if_needed()
         post.donation_list = Donation.objects.filter(ngopost=post).select_related('user').order_by('-payment_date')
 
-    context = {
+    context.update({
         'post_history': post_history,
         'saved_posts': saved_posts,
         'history_query': history_query,
@@ -96,7 +96,7 @@ def post_view(request):
         'age_options': AgeOption.objects.filter(is_active=True),
         'gender_options': GenderOption.objects.filter(is_active=True),
         'spending_power_options': SpendingPowerOption.objects.filter(is_active=True),
-    }
+    })
     return render(request, 'post.html', context)
 
 
@@ -114,7 +114,11 @@ def post_history_ajax(request):
     filters = Q(user=user)
 
     if query:
-        filters &= Q(status__icontains=query) | Q(header__icontains=query)
+        filters &= (
+            Q(header__icontains=query) |
+            Q(status__icontains=query) |
+            Q(post_type__name__icontains=query)
+        )
 
     if start_date:
         try:
@@ -151,7 +155,7 @@ def save_ngo_post(request):
     if request.method != "POST":
         return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-    user = request.user_obj  # You said this is set in middleware
+    user = request.user_obj  # set in middleware
 
     data = request.POST
     files = request.FILES.getlist('creatives[]')
@@ -169,33 +173,42 @@ def save_ngo_post(request):
         return JsonResponse({'error': 'Missing required fields', 'missing_fields': missing_fields}, status=400)
 
     try:
+        # Convert IDs to model instances
+        post_type_instance = get_object_or_404(PostTypeOption, id=data['post_type'])
+        country_instance = get_object_or_404(CountryOption, id=data['country'])
+        state_instance = get_object_or_404(StateOption, id=data['state'])
+        city_instance = get_object_or_404(CityOption, id=data['city'])
+        age_instance = get_object_or_404(AgeOption, id=data['age'])
+        gender_instance = get_object_or_404(GenderOption, id=data['gender'])
+        spending_power_instance = get_object_or_404(SpendingPowerOption, id=data['spending_power'])
+
         post = NGOPost.objects.create(
             user=user,
             header=data['header'].strip()[:80],
             description=data['description'].strip()[:500],
             tags=data['tags'].strip()[:255],
-            post_type=data['post_type'],
+            post_type=post_type_instance,
             donation_frequency=data['donation_frequency'],
-            target_donation=data['target_donation'].replace('Rs', '').replace(',', ''),
-            country=data['country'],
-            state=data['state'],
-            city=data['city'],
+            target_donation=data['target_donation'].replace('Rs', '').replace(',', '').strip(),
+            country=country_instance,
+            state=state_instance,
+            city=city_instance,
             pincode=data['pincode'],
-            age_group=data['age'],
-            gender=data['gender'],
-            spending_power=data['spending_power'],
+            age_group=age_instance,
+            gender=gender_instance,
+            spending_power=spending_power_instance,
             start_date=datetime.strptime(data['start-date'], '%Y-%m-%d'),
             end_date=datetime.strptime(data['end-date'], '%Y-%m-%d'),
             creative1=files[0] if len(files) > 0 else None,
             creative2=files[1] if len(files) > 1 else None
         )
 
-        return JsonResponse({'success': True, 'post_id': post.id, 'message':'NGO Post Saved.'})
+        return JsonResponse({'success': True, 'post_id': post.id, 'message': 'NGO Post Saved.'})
 
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return JsonResponse({'error': 'Something went wrong.', 'message':'NGO Post not Saved.', 'details': str(e)}, status=500)
+        return JsonResponse({'error': 'Something went wrong.', 'message': 'NGO Post not Saved.', 'details': str(e)}, status=500)
     
 
 @dashboard_login_required
@@ -206,37 +219,66 @@ def post_detail(request, post_id):
     except NGOPost.DoesNotExist:
         raise Http404('Post not found')
     # Get donations for this post
-    donations = Donation.objects.filter(ngopost=post).select_related('user', 'user__userprofile').order_by('-payment_date')
+    donations = Donation.objects.filter(ngopost=post).select_related('user')
     donation_list = []
     for d in donations:
-        userprofile = getattr(d.user, 'userprofile', None)
+        user = d.user
+        profile = None
+        name = user.email  # fallback
+        city = ''
+        # Dynamically get the correct profile and name/city fields
+        if user.user_type == 'user':
+            profile = getattr(user, 'userprofile', None)
+            if profile:
+                name = profile.name
+                city = profile.city
+        elif user.user_type == 'client':
+            profile = getattr(user, 'clientprofile', None)
+            if profile:
+                name = profile.company_name
+                city = profile.city
+        elif user.user_type == 'advertiser':
+            profile = getattr(user, 'advertiserprofile', None)
+            if profile:
+                name = profile.company_name
+                city = profile.city
+        elif user.user_type == 'provider':
+            profile = getattr(user, 'medicalproviderprofile', None)
+            if profile:
+                name = profile.company_name
+                city = profile.city
+        elif user.user_type == 'ngo':
+            profile = getattr(user, 'ngoprofile', None)
+            if profile:
+                name = profile.ngo_name
+                city = profile.city
         donation_list.append({
             'payment_date': d.payment_date.strftime('%d/%m/%y,%H:%M') if d.payment_date else '',
-            'name': userprofile.name if userprofile and userprofile.name else (d.user.email if d.user else ''),
-            'city': userprofile.city if userprofile and userprofile.city else '',
+            'city': city,
+            'name': name,
             'amount': str(d.amount),
         })
     data = {
         'id': post.id,
         'header': post.header,
         'description': post.description,
-        'tags': post.tags,
-        'post_type': post.post_type,
-        'donation_frequency': post.donation_frequency,
+        'tags': post.tags if isinstance(post.tags, str) else str(post.tags),
+        'post_type': post.post_type.name if post.post_type else '',
+        'donation_frequency': post.donation_frequency if post.donation_frequency else '',
         'target_donation': post.target_donation,
-        'country': post.country,
-        'state': post.state,
-        'city': post.city,
+        'country': post.country.name if post.country else '',
+        'state': post.state.name if post.state else '',
+        'city': post.city.name if post.city else '',
         'pincode': post.pincode,
-        'age_group': post.age_group,
-        'gender': post.gender,
+        'age_group': post.age_group.name if post.age_group else '',
+        'gender': post.gender.name if post.gender else '',
         'views': post.views if hasattr(post, 'views') else 0,
         'post_reference_id': post.id,  # or post.reference_id if you have a custom field
-        'uploaded_by': post.user.email if post.user else '',
-        'status': post.status if hasattr(post, 'status') else '',
+        'uploaded_by': post.user.email if post.user else '', 
+        'status': post.status if post.status else '',
         'donation_received': post.donation_received if hasattr(post, 'donation_received') else 0,
         'date_time': str(post.created_at) if hasattr(post, 'created_at') else '',
-        'spending_power': post.spending_power,
+        'spending_power': post.spending_power.name if post.spending_power else '',
         'start_date': str(post.start_date),
         'end_date': str(post.end_date),
         'creative1': post.creative1.url if post.creative1 else '',
@@ -279,3 +321,35 @@ def update_post_status(request):
         return JsonResponse({'success': True, 'status': post.status})
     except NGOPost.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Post not found'}, status=404)
+    
+@dashboard_login_required
+@require_GET
+def export_post_history(request):
+    user = request.user_obj
+    # date_range = request.GET.get('daterange', '').strip().lower()
+    filters = Q(user=user)
+    posts = NGOPost.objects.filter(filters).order_by('-created_at')
+    html = render_to_string("partials/export-post-history.html", {
+        "post_history": posts,
+        'today': date.today(),
+    })
+    return JsonResponse({
+        "html": html,
+        "total_items": posts.count(),  # Add this
+    })
+
+@dashboard_login_required
+@require_GET
+def export_saved_post_history(request):
+    user = request.user_obj
+    # date_range = request.GET.get('daterange', '').strip().lower()
+    filters = Q(user=user)
+    posts = NGOPost.objects.filter(filters, saved=True).order_by('-created_at')
+    html = render_to_string("partials/export-saved-post-history.html", {
+    "saved_post_history": posts,
+    'today': date.today(),
+    })
+    return JsonResponse({
+    "html": html,
+    "total_items": posts.count(),  # Add this
+    })

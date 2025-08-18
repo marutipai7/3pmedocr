@@ -1,4 +1,4 @@
-{% for donation in donations %}
+{% for donation in donation_history %}
 <tr>
   <td class="px-4 py-2.5 text-center">{{ donation.payment_date|date:'d/m/y,H:i' }}</td>
   <td class="px-4 py-2.5 text-center">{{ donation.ngopost.header }}</td>
@@ -11,18 +11,6 @@
     {% else %}
       <button class="bg-soft-pink text-strong-red px-6 py-2 rounded-md text-sm font-semibold">Failed</button>
     {% endif %}
-  </td>
-  <td class="px-4 py-2.5 text-center">
-    <div class="flex items-center justify-center gap-2">
-      <span class="mx-1">
-        <img src="/static/images/assignment.svg" alt="Assignment" title="View Platform Bill"
-          class="inline-block w-6 h-6 align-middle cursor-pointer" onclick="openPlatformPopup({{ donation.id }})" />
-      </span>
-      <span>
-        <img src="/static/images/calendar_today.svg" alt="Calendar" title="View Donation Receipt"
-          class="inline-block w-6 h-6 align-middle cursor-pointer" onclick="openDonatePopup({{ donation.id }})" />
-      </span>
-    </div>
   </td>
 </tr>
 {% empty %}

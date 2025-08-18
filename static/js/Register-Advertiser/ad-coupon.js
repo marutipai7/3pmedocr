@@ -764,12 +764,63 @@ $(document).ready(function () {
         });
     }
 
-    function renderCouponPagination(current, total) {
+    function renderCouponPagination(current, total, $container = $('.coupon-history')) {
         let html = '';
-        for (let i = 1; i <= total; i++) {
-            html += `<button class="coupon-pagination-btn px-2 py-1 border ${i === current ? 'bg-violet-sky text-white' : ''}" data-page="${i}">${i}</button>`;
+
+        // Previous button
+        if (current >= 1) {
+            html += `<button class="coupon-pagination-btn bg-white px-3 py-1 rounded text-light-gray1 text-sm" data-page="${current - 1}">Previous</button>`;
         }
-        $('#coupon-pagination-container').html(html);
+
+        // Number buttons
+        if (total <= 5) {
+            for (let i = 1; i <= total; i++) {
+                html += pageBtn(i, current);
+            }
+        } else {
+            // Always show first page
+            html += pageBtn(1, current);
+
+            // Near start
+            if (current <= 3) {
+                for (let i = 2; i <= 4; i++) {
+                    html += pageBtn(i, current);
+                }
+                html += `<span class="px-2">...</span>`;
+                html += pageBtn(total, current);
+            }
+            // In middle
+            else if (current > 3 && current < total - 2) {
+                html += `<span class="px-2">...</span>`;
+                for (let i = current - 1; i <= current + 1; i++) {
+                    html += pageBtn(i, current);
+                }
+                html += `<span class="px-2">...</span>`;
+                html += pageBtn(total, current);
+            }
+            // Near end
+            else {
+                html += `<span class="px-2">...</span>`;
+                for (let i = total - 3; i <= total - 1; i++) {
+                    html += pageBtn(i, current);
+                }
+                html += pageBtn(total, current);
+            }
+        }
+
+        // Next button
+        if (current <= total) {
+            html += `<button class="coupon-pagination-btn bg-white px-3 py-1 rounded text-light-gray1 text-sm" data-page="${current + 1}">Next</button>`;
+        }
+        $container.find('#coupon-pagination-container').html(html);
+
+        function pageBtn(i, current) {
+            return `<button 
+            class="coupon-pagination-btn px-3 py-1.5 rounded-lg text-sm ${i === current ? 'bg-violet-sky text-white' : 'bg-pagination'}" 
+            data-page="${i}">
+            ${i}
+        </button>`;
+        }
     }
 
     function loadSavedCouponHistory(page = 1, range = '') {
@@ -798,12 +849,61 @@ $(document).ready(function () {
         });
     }
 
-    function renderSavedCouponPagination(current, total) {
+    function renderSavedCouponPagination(current, total, $container = $('.saved-coupon-history')) {
         let html = '';
-        for (let i = 1; i <= total; i++) {
-            html += `<button class="saved-coupon-pagination-btn px-2 py-1 border ${i === current ? 'bg-violet-sky text-white' : ''}" data-page="${i}">${i}</button>`;
+        if (current >= 1) {
+            html += `<button class="saved-coupon-pagination-btn bg-white px-3 py-1 rounded text-light-gray1 text-sm" data-page="${current - 1}">Previous</button>`;
         }
-        $('#saved-coupon-pagination-container').html(html);
+
+        // Number buttons
+        if (total <= 5) {
+            for (let i = 1; i <= total; i++) {
+                html += pageBtn(i, current);
+            }
+        } else {
+            // Always show first page
+            html += pageBtn(1, current);
+
+            // Near start
+            if (current <= 3) {
+                for (let i = 2; i <= 4; i++) {
+                    html += pageBtn(i, current);
+                }
+                html += `<span class="px-2">...</span>`;
+                html += pageBtn(total, current);
+            }
+            // In middle
+            else if (current > 3 && current < total - 2) {
+                html += `<span class="px-2">...</span>`;
+                for (let i = current - 1; i <= current + 1; i++) {
+                    html += pageBtn(i, current);
+                }
+                html += `<span class="px-2">...</span>`;
+                html += pageBtn(total, current);
+            }
+            // Near end
+            else {
+                html += `<span class="px-2">...</span>`;
+                for (let i = total - 3; i <= total - 1; i++) {
+                    html += pageBtn(i, current);
+                }
+                html += pageBtn(total, current);
+            }
+        }
+
+        // Next button
+        if (current <= total) {
+            html += `<button class="saved-coupon-pagination-btn bg-white px-3 py-1 rounded text-light-gray1 text-sm" data-page="${current + 1}">Next</button>`;
+        }
+        $container.find('#saved-coupon-pagination-container').html(html);
+
+        function pageBtn(i, current) {
+            return `<button 
+            class="saved-coupon-pagination-btn px-3 py-1.5 rounded-lg text-sm ${i === current ? 'bg-violet-sky text-white' : 'bg-pagination'}"
+            data-page="${i}">
+            ${i}
+        </button>`;
+        }
     }
 
     $('[data-tab="coupon-history"]').on('click', function () {

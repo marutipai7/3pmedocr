@@ -29,6 +29,7 @@ class Donation(models.Model):
     pan_number = models.CharField(max_length=32, blank=True, null=True)
     pan_document = models.FileField(upload_to='common_docs/donation_docs/', blank=True, null=True)
     payment_status = models.CharField(max_length=16, choices=PAYMENT_STATUS_CHOICES, default='Success')
+    saved = models.BooleanField(default=False, help_text="Whether the donation is saved/bookmarked by the user")
     created_at = models.DateTimeField(auto_now_add=True) ## Order ID, Payment date, gst, platform fee, amount to ngo, transaction id(alphanumeric), etc.
     # Optionally, add payment_status, transaction_id, or other fields as needed
 

@@ -1,0 +1,26 @@
+{% for post in saved_post_history %}
+<tr class="border-b border-light-gray">
+  <td class="px-4 py-4.5 text-center">{{ post.created_at|date:"d/m/y, H:i" }}</td>
+  <td class="px-4 py-4.5 text-center">{{ post.header }}</td>
+  <td class="px-4 py-4.5 text-center">{{ post.post_type }}</td>
+  <td class="px-4 py-4.5 text-center">{{ post.views }}</td>
+  <td class="px-4 py-4.5 text-center">₹{{ post.target_donation|floatformat:0 }}</td>
+  <td class="px-4 py-4.5 text-center">₹{{ post.donation_received|floatformat:0 }}</td>
+  <td class="px-6 py-4.5 flex items-center justify-center">
+    <div class="statusDropdown relative inline-block w-[120px]">
+      <div class="selectedStatus py-2 px-3 rounded-md flex items-center justify-between cursor-pointer 
+        {% if post.status == 'Ongoing' %}bg-mint-cream text-green
+        {% elif post.status == 'Closed' %}bg-soft-pink text-strong-red
+        {% elif post.status == 'Paused' %}bg-peach text-burnt-orange
+        {% endif %}">
+        <span class="status-label">{{ post.status }}</span>
+        <span class="material-symbols-outlined">keyboard_arrow_down</span>
+      </div>
+    </div>
+  </td>
+</tr>
+{% empty %}
+<tr>
+<td colspan="8" style="text-align: center; padding: 12px;">No Post history available.</td>
+</tr>
+{% endfor %}

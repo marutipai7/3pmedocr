@@ -11,7 +11,7 @@
             class="show-sidebar-toggle hidden absolute top-10 left-0 z-50 h-10 w-10 bg-light-gray items-center justify-center rounded-r-md cursor-pointer"
           >
             <span
-              class="material-symbols-outlined text-violet-sky font-bold text-2xl"
+              class="material-symbols-outlined text-living-coral font-bold text-2xl"
             >
               arrow_forward_ios
             </span>
@@ -88,7 +88,7 @@
                   class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 pt-6"
                 >
                   <!-- Custom Legend -->
-                  <div class="flex flex-wrap items-center gap-10 pl-2" id="referralCustomLegend">
+                  <!-- <div class="flex flex-wrap items-center gap-10 pl-2" id="referralCustomLegend">
                     {% for label, value in action_points.items %}
                       <label class="flex items-center gap-4 cursor-pointer">
                         <input
@@ -103,7 +103,31 @@
                         </span>
                       </label>
                     {% endfor %}
-                  </div>
+                  </div> -->
+                 <div class="flex flex-wrap items-center gap-10 pl-2" id="referralCustomLegend">
+                          {% for label, value in action_points.items %}
+                              <label class="flex items-center gap-4 cursor-pointer">
+                                  <input
+                                      type="checkbox"
+                                      class="legend-checkbox focus:outline-none focus:ring-0 focus:ring-offset-0 rounded-xs text-violet-500 text-2xl w-5 h-5 cursor-pointer"
+                                      data-index="{{ forloop.counter0 }}"
+                                      {% if value > 0 %}checked{% endif %}
+                                  />
+                                  <span class="flex items-center gap-1">
+                                      {% if label|lower == "referral" %}
+                                          <div class="bg-indigo-500 w-2 h-2 rounded-full"></div>
+                                      {% elif label|lower == "map" %}
+                                          <div class="bg-green-500 w-2 h-2 rounded-full"></div>
+                                      {% elif label|lower == "orders" or label|lower == "coupon" %}
+                                          <div class="bg-teal-500 w-2 h-2 rounded-full"></div>
+                                      {% else %}
+                                          <div class="bg-gray-400 w-2 h-2 rounded-full"></div>
+                                      {% endif %}
+                                      {{ label }}
+                                  </span>
+                              </label>
+                          {% endfor %}
+                      </div>
 
 
                   <!-- Right Controls -->
@@ -300,11 +324,11 @@
                 <!--Cards-->
                 <div class="pt-4 flex gap-4" id="featured-rewards"></div>
                 <div class="flex justify-center gap-2 mt-6" id="featured-pagination-controls">
-                  <button id="prevPage1" class="text-light-sky px-4 py-2 text-xs bg-pagination text-jet-black px-2 rounded">
+                  <button id="prevPage1" class="text-light-gray3 px-4 py-2 text-xs">
                     Previous
                   </button>
                   <div id="pagination-numbers1" class="flex gap-2"></div>
-                  <button id="nextPage1" class="text-light-sky px-4 py-2 text-xs bg-pagination text-jet-black px-2 rounded">
+                  <button id="nextPage1" class="text-light-gray3 px-4 py-2 text-xs">
                     Next
                   </button>
                 </div>
@@ -317,11 +341,11 @@
               
                 <div id="popular-coupons"></div>
                 <div class="flex justify-center gap-2 mt-6" id="popular-pagination-controls">
-                  <button id="prevPage2" class="text-light-gray3 px-4 py-2 text-xs bg-pagination text-jet-black px-2 rounded">
+                  <button id="prevPage2" class="text-light-gray3 px-4 py-2 text-xs">
                     Previous
                   </button>
                   <div id="pagination-numbers2" class="flex gap-2"></div>
-                  <button id="nextPage2" class="text-light-gray3 px-4 py-2 text-xs bg-pagination text-jet-black px-2 rounded">
+                  <button id="nextPage2" class="text-light-gray3 px-4 py-2 text-xs">
                     Next
                   </button>
                 </div>
@@ -400,8 +424,8 @@
                     <tbody id="claimedCouponsBody" class="bg-snow-gray text-dark-gray text-16-fs">
                     </tbody>
                   </table>
-                  <div id="claimed-pagination-container"></div>
                 </div>
+                <div id="claimed-pagination-container"></div>
               </div>
 
           <!--Points History Tab Section-->

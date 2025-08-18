@@ -1,0 +1,752 @@
+{% if user_type == 'ngo' %}
+    <div class="hidden tab-content" id="documents">
+        <div class="flex lg:items-center justify-between pt-4 flex-col lg:flex-row">
+          <div class="flex flex-col gap-1">
+            <p class="font-semibold text-lg text-jet-black">
+              NGO Registration Number & Document
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+              {{ngo_registration_number}}
+            </p>
+          </div>
+          <div class="flex lg:items-center gap-4 flex-col lg:flex-row">
+            <div class="flex items-center gap-2 lg:pr-32 text-nowrap">
+            
+              <span class="material-symbols-outlined material-filled text-bright-green">check_box</span>
+              <p class="font-normal text-xs text-bright-green">Approved</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <input
+              type="text"
+              class="border border-dashed border-violet-sky p-2 rounded-md text-center w-28 font-normal text-sm text-jet-black"
+              value="{{ ngo_registration_doc_path }}"
+              readonly
+            />
+            <div class="flex items-center gap-2   text-nowrap">
+            
+              <span class="material-symbols-outlined material-filled text-bright-green">check_box</span>
+              <p class="font-normal text-xs text-bright-green">Virus Scan</p>
+            </div>
+            <span title="View"
+              data-doc-type="ngo_registration_doc"
+              data-doc-path="{{ ngo_registration_doc_path }}"
+              class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+              >visibility</span
+            >
+            <span title="Upload  Document"
+              data-doc-type="ngo_registration_doc"
+              class="material-symbols-outlined border p-1 rounded-md cursor-pointer"
+              >upload</span
+            >
+            </div>
+            
+          </div>
+        </div>
+        <div class="flex lg:items-center justify-between pt-4 flex-col lg:flex-row">
+          <div class="flex flex-col gap-1">
+            <p class="font-semibold text-lg text-jet-black">
+              GST Number & Document
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+              {{gst_number}}
+            </p>
+          </div>
+          <div class="flex lg:items-center gap-4 flex-col lg:flex-row">
+            <div class="flex items-center gap-2  lg:pr-25  text-nowrap">          
+                <span class="material-symbols-outlined material-filled text-strong-red">disabled_by_default</span>
+              <p class="font-normal text-xs text-strong-red">Blurry,Unclear</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <input
+              type="text"
+              class="border border-dashed border-violet-sky p-2 rounded-md text-center w-28 font-normal text-sm text-jet-black"
+              value="{{gst_doc_path}}"
+              readonly
+            />
+              <div class="flex items-center gap-2   text-nowrap">
+            
+              <span class="material-symbols-outlined material-filled text-bright-green">check_box</span>
+              <p class="font-normal text-xs text-bright-green">Virus Scan</p>
+            </div>
+            <span  title="View"
+              data-doc-type="gst_doc"
+              data-doc-path="{{ gst_doc_path }}"
+              class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+              >visibility</span
+            >
+            <span title="Upload  Document"
+              data-doc-type="gst_doc"
+              class="material-symbols-outlined border p-1 rounded-md cursor-pointer"
+              >upload</span
+            >
+            </div>
+            
+          </div>
+        </div>
+        <div class="flex lg:items-center justify-between pt-4 flex-col lg:flex-row">
+          <div class="flex flex-col gap-1">
+            <p class="font-semibold text-lg text-jet-black">
+              PAN Number & Document
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+              {{pan_number}}
+            </p>
+          </div>
+          <div class="flex lg:items-center gap-4 flex-col lg:flex-row">
+            <div class="flex items-center gap-2  lg:pr-14  text-nowrap">          
+              <span class="material-symbols-outlined material-filled text-strong-red">disabled_by_default</span>
+              <p class="font-normal text-xs text-strong-red">Mismatch/Wrong Data</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <input
+              type="text"
+              class="border border-dashed border-violet-sky p-2 rounded-md text-center w-28 font-normal text-sm text-jet-black"
+              value="{{pan_doc_path}}"
+              readonly
+            />
+              <div class="flex items-center gap-2   text-nowrap">
+            
+              <span class="material-symbols-outlined material-filled text-bright-green">check_box</span>
+              <p class="font-normal text-xs text-bright-green">Virus Scan</p>
+            </div>
+            <span  title="View"
+              data-doc-type="pan_doc"
+              data-doc-path="{{ pan_doc_path }}"
+              class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+              >visibility</span
+            >
+            <span title="Upload  Document"
+              data-doc-type="pan_doc"
+              class="material-symbols-outlined border p-1 rounded-md cursor-pointer"
+              >upload</span
+            >
+            </div>
+            
+          </div>
+        </div>
+        <div class="flex lg:items-center justify-between pt-4 flex-col lg:flex-row">
+          <div class="flex flex-col gap-1">
+            <p class="font-semibold text-lg text-jet-black">
+              TAN Number & Document
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+              {{tan_number}}
+            </p>
+          </div>
+          <div class="flex lg:items-center gap-4 flex-col lg:flex-row">
+            <div class="flex items-center gap-2  lg:pr-35  text-nowrap">          
+                <span class="material-symbols-outlined material-filled text-strong-red">disabled_by_default</span>
+              <p class="font-normal text-xs text-strong-red">Expired</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <input
+              type="text"
+              class="border border-dashed border-violet-sky p-2 rounded-md text-center w-28 font-normal text-sm text-jet-black"
+              value="{{tan_doc_path}}"
+              readonly
+            />
+              <div class="flex items-center gap-2   text-nowrap">
+            
+              <span class="material-symbols-outlined material-filled text-bright-green">check_box</span>
+              <p class="font-normal text-xs text-bright-green">Virus Scan</p>
+            </div>
+            <span  title="View"
+              data-doc-type="tan_doc"
+              data-doc-path="{{ tan_doc_path }}"
+              class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+              >visibility</span
+            >
+            <span title="Upload  Document"
+              data-doc-type="tan_doc"
+              class="material-symbols-outlined border p-1 rounded-md cursor-pointer"
+              >upload</span
+            >
+            </div>
+            
+          </div>
+        </div>
+          <div class="flex lg:items-center justify-between pt-4 flex-col lg:flex-row">
+          <div class="flex flex-col gap-1">
+            <p class="font-semibold text-lg text-jet-black">
+              12A Document Number & Document
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+                {{doc_12a_number}}
+            </p>
+          </div>
+          <div class="flex lg:items-center gap-4 flex-col lg:flex-row">
+            <div class="flex items-center gap-2  lg:pr-35  text-nowrap">          
+                <span class="material-symbols-outlined material-filled text-strong-red">disabled_by_default</span>
+              <p class="font-normal text-xs text-strong-red">Expired</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <input
+              type="text"
+              class="border border-dashed border-violet-sky p-2 rounded-md text-center w-28 font-normal text-sm text-jet-black"
+              value="{{doc_12a_path}}"
+              readonly
+            />
+              <div class="flex items-center gap-2   text-nowrap">
+            
+              <span class="material-symbols-outlined material-filled text-bright-green">check_box</span>
+              <p class="font-normal text-xs text-bright-green">Virus Scan</p>
+            </div>
+            <span  title="View"
+              data-doc-type="doc_12a"
+              data-doc-path="{{ doc_12a_path }}"
+              class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+              >visibility</span
+            >
+            <span title="Upload  Document"
+              data-doc-type="doc_12a"
+              class="material-symbols-outlined border p-1 rounded-md cursor-pointer"
+              >upload</span
+            >
+            </div>
+            
+          </div>
+        </div>
+          <div class="flex lg:items-center justify-between pt-4 flex-col lg:flex-row">
+          <div class="flex flex-col gap-1">
+            <p class="font-semibold text-lg text-jet-black">
+              Section 8 Number & Document
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+              {{section8_number}}
+            </p>
+          </div>
+          <div class="flex lg:items-center gap-4 flex-col lg:flex-row">
+            <div class="flex items-center gap-2  lg:pr-35  text-nowrap">          
+                <span class="material-symbols-outlined material-filled text-strong-red">disabled_by_default</span>
+              <p class="font-normal text-xs text-strong-red">Expired</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <input
+              type="text"
+              class="border border-dashed border-violet-sky p-2 rounded-md text-center w-28 font-normal text-sm text-jet-black"
+              value="{{section8_doc_path}}"
+              readonly
+            />
+              <div class="flex items-center gap-2   text-nowrap">
+            
+              <span class="material-symbols-outlined material-filled text-bright-green">check_box</span>
+              <p class="font-normal text-xs text-bright-green">Virus Scan</p>
+            </div>
+            <span  title="View"
+              data-doc-type="section8_doc"
+              data-doc-path="{{ section8_doc_path }}"
+              class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+              >visibility</span
+            >
+            <span title="Upload  Document"
+              data-doc-type="section8_doc"
+              class="material-symbols-outlined border p-1 rounded-md cursor-pointer"
+              >upload</span
+            >
+            </div>
+            
+          </div>
+        </div>
+          <div class="flex lg:items-center justify-between pt-4 flex-col lg:flex-row">
+          <div class="flex flex-col gap-1">
+            <p class="font-semibold text-lg text-jet-black">
+              Brand Image
+            </p>
+          
+          </div>
+          <div class="flex lg:items-center gap-4 flex-col lg:flex-row">
+            <div class="flex items-center gap-2  lg:pr-35  text-nowrap">          
+                <span class="material-symbols-outlined material-filled text-strong-red">disabled_by_default</span>
+              <p class="font-normal text-xs text-strong-red">Expired</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <input
+              type="text"
+              class="border border-dashed border-violet-sky p-2 rounded-md text-center w-28 font-normal text-sm text-jet-black"
+              value="{{brand_image_path}}"
+              readonly
+            />
+              <div class="flex items-center gap-2   text-nowrap">
+            
+              <span class="material-symbols-outlined material-filled text-bright-green">check_box</span>
+              <p class="font-normal text-xs text-bright-green">Virus Scan</p>
+            </div>
+            <span  title="View"
+              data-doc-type="brand_image"
+              data-doc-path="{{ brand_image_path }}"
+              class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+              >visibility</span
+            >
+            <span title="Upload  Document"
+              data-doc-type="brand_image"
+              class="material-symbols-outlined border p-1 rounded-md cursor-pointer"
+              >upload</span
+            >
+            </div>
+            
+          </div>
+        </div>
+    </div>
+{% elif user_type == 'advertiser' %}
+    <div class="hidden tab-content documents">
+    <div class="flex lg:items-center justify-between pt-8 flex-col lg:flex-row">
+    <div class="flex flex-col gap-1">
+        <p class="font-semibold text-lg text-jet-black">
+        Incorporation Number & Document
+        </p>
+        <p class="font-normal text-base text-medium-gray">
+        {{incorporation_number}}
+        </p>
+    </div>
+    <div class="flex lg:items-center gap-4 flex-col lg:flex-row">
+        <div class="flex items-center gap-2 lg:pr-32 text-nowrap">
+        
+        <span class="material-symbols-outlined material-filled text-bright-green">check_box</span>
+        <p class="font-normal text-xs text-bright-green">Approved</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <input
+        type="text"
+        class="border border-dashed border-living-coral p-2 rounded-md text-center w-28 font-normal text-sm text-jet-black"
+        value="{{incorporation_doc_path}}"
+        readonly
+        /> 
+        <div class="flex items-center gap-2   text-nowrap">
+        
+        <span class="material-symbols-outlined material-filled text-bright-green">check_box</span>
+        <p class="font-normal text-xs text-bright-green">Virus Scan</p>
+        </div>
+        <span title="View"
+        data-doc-type="incorporation_doc"
+        data-doc-path="{{incorporation_doc_path}}"
+        class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+        >visibility</span
+        >
+        <span title="Upload  Document"
+        data-doc-type="incorporation_doc"
+        class="material-symbols-outlined border p-1 rounded-md cursor-pointer"
+        >upload</span
+        >
+        </div>
+        
+    </div>
+    </div>
+    <div class="flex lg:items-center justify-between pt-4 flex-col lg:flex-row">
+    <div class="flex flex-col gap-1">
+        <p class="font-semibold text-lg text-jet-black">
+        GST Number & Document
+        </p>
+        <p class="font-normal text-base text-medium-gray">
+        {{gst_number}}
+        </p>
+    </div>
+    <div class="flex lg:items-center gap-4 flex-col lg:flex-row">
+        <div class="flex items-center gap-2  lg:pr-25  text-nowrap">          
+            <span class="material-symbols-outlined material-filled text-strong-red">disabled_by_default</span>
+        <p class="font-normal text-xs text-strong-red">Blurry,Unclear</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <input
+        type="text"
+        class="border border-dashed border-living-coral p-2 rounded-md text-center w-28 font-normal text-sm text-jet-black"
+        value="{{gst_doc_path}}"
+        readonly
+        />
+        <div class="flex items-center gap-2   text-nowrap">
+        
+        <span class="material-symbols-outlined material-filled text-bright-green">check_box</span>
+        <p class="font-normal text-xs text-bright-green">Virus Scan</p>
+        </div>
+        <span  title="View"
+        data-doc-type="gst_doc"
+        data-doc-path="{{gst_doc_path}}"
+        class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+        >visibility</span
+        >
+        <span title="Upload  Document"
+        data-doc-type="gst_doc"
+        class="material-symbols-outlined border p-1 rounded-md cursor-pointer"
+        >upload</span
+        >
+        </div>
+        
+    </div>
+    </div>
+    <div class="flex lg:items-center justify-between pt-4 flex-col lg:flex-row">
+    <div class="flex flex-col gap-1">
+        <p class="font-semibold text-lg text-jet-black">
+        PAN Number & Document
+        </p>
+        <p class="font-normal text-base text-medium-gray">
+        {{pan_number}}
+        </p>
+    </div>
+    <div class="flex lg:items-center gap-4 flex-col lg:flex-row">
+        <div class="flex items-center gap-2  lg:pr-14  text-nowrap">          
+        <span class="material-symbols-outlined material-filled text-strong-red">disabled_by_default</span>
+        <p class="font-normal text-xs text-strong-red">Mismatch/Wrong Data</p>
+        </div>
+        <div class="flex items-center gap-2">
+        <input
+        type="text"
+        class="border border-dashed border-living-coral p-2 rounded-md text-center w-28 font-normal text-sm text-jet-black"
+        value="{{pan_doc_path}}"
+        readonly
+        />
+        <div class="flex items-center gap-2   text-nowrap">
+        
+        <span class="material-symbols-outlined material-filled text-bright-green">check_box</span>
+        <p class="font-normal text-xs text-bright-green">Virus Scan</p>
+        </div>
+        <span  title="View"
+        data-doc-type="pan_doc"
+        data-doc-path="{{pan_doc_path}}"
+        class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+        >visibility</span
+        >
+        <span title="Upload  Document"
+        data-doc-type="pan_doc"
+        class="material-symbols-outlined border p-1 rounded-md cursor-pointer"
+        >upload</span
+        >
+        </div>
+        
+    </div>
+    </div>
+    <div class="flex lg:items-center justify-between pt-4 flex-col lg:flex-row">
+    <div class="flex flex-col gap-1">
+        <p class="font-semibold text-lg text-jet-black">
+        TAN Number & Document
+        </p>
+        <p class="font-normal text-base text-medium-gray">
+        {{tan_number}}
+        </p>
+    </div>
+    <div class="flex lg:items-center gap-4 flex-col lg:flex-row">
+        <div class="flex items-center gap-2  lg:pr-35  text-nowrap">          
+            <span class="material-symbols-outlined material-filled text-strong-red">disabled_by_default</span>
+        <p class="font-normal text-xs text-strong-red">Expired</p>
+        </div>
+        <div class="flex items-center gap-2">
+        <input
+        type="text"
+        class="border border-dashed border-living-coral p-2 rounded-md text-center w-28 font-normal text-sm text-jet-black"
+        value="{{tan_doc_path}}"
+        readonly
+        />
+        <div class="flex items-center gap-2   text-nowrap">
+        
+        <span class="material-symbols-outlined material-filled text-bright-green">check_box</span>
+        <p class="font-normal text-xs text-bright-green">Virus Scan</p>
+        </div>
+        <span  title="View"
+        data-doc-type="tan_doc"
+        data-doc-path="{{tan_doc_path}}"
+        class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+        >visibility</span
+        >
+        <span title="Upload  Document"
+        data-doc-type="tan_doc"
+        class="material-symbols-outlined border p-1 rounded-md cursor-pointer"
+        >upload</span
+        >
+        </div>
+        
+    </div>
+    </div>
+    
+    <div class="flex lg:items-center justify-between pt-4 flex-col lg:flex-row">
+    <div class="flex flex-col gap-1">
+        <p class="font-semibold text-lg text-jet-black">
+        Brand Image
+        </p>
+    
+    </div>
+    <div class="flex lg:items-center gap-4 flex-col lg:flex-row">
+        <div class="flex items-center gap-2  lg:pr-35  text-nowrap">          
+            <span class="material-symbols-outlined material-filled text-strong-red">disabled_by_default</span>
+        <p class="font-normal text-xs text-strong-red">Expired</p>
+        </div>
+        <div class="flex items-center gap-2">
+        <input
+        type="text"
+        class="border border-dashed border-living-coral p-2 rounded-md text-center w-28 font-normal text-sm text-jet-black"
+        value="{{brand_image_path}}"
+        readonly
+        />
+        <div class="flex items-center gap-2   text-nowrap">
+        
+        <span class="material-symbols-outlined material-filled text-bright-green">check_box</span>
+        <p class="font-normal text-xs text-bright-green">Virus Scan</p>
+        </div>
+        <span  title="View"
+        data-doc-type="brand_image"
+        data-doc-path="{{brand_image_path}}"
+        class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+        >visibility</span
+        >
+        <span title="Upload  Document"
+        data-doc-type="brand_image"
+        class="material-symbols-outlined border p-1 rounded-md cursor-pointer"
+        >upload</span
+        >
+        </div>
+        
+    </div>
+    </div>
+    <p class="font-semibold text-lg text-living-coral pt-4">Rejection explanation:</p>
+    <div class="flex flex-col gap-2 pt-2">
+    <p class="font-bold text-base">Blurry or Unreadable Document - <span class="font-normal">The uploaded file is not clear. Please ensure the text and details are fully visible.</span> </p>
+    <p class="font-bold text-base">Expired or Outdated Document - <span class="font-normal">The document has passed its validity date. Please upload a current version.</span> </p>
+    <p class="font-bold text-base">Wrong File Format or Incomplete Upload - <span class="font-normal">Only PDF, JPG, or PNG files are accepted. Ensure the full document is uploaded.</span> </p>
+    <p class="font-bold text-base">Incorrect or Mismatched Information - <span>The document does not match your profile details (e.g., name, ID, registration info).</span> </p>
+    </div>
+    </div>
+{% elif user_type == 'client' %}
+    <div class="hidden tab-content documents" id="">
+        <div
+        class="flex lg:items-center justify-between pt-8 flex-col lg:flex-row"
+        >
+        <div class="flex flex-col gap-1">
+            <p class="font-semibold text-lg text-jet-black">
+            Incorporation Number & Document
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+            {{incorporation_number}}
+            </p>
+        </div>
+        <div class="flex lg:items-center gap-4 flex-col lg:flex-row">
+            <div class="flex items-center gap-2 lg:pr-32 text-nowrap">
+            <span
+                class="material-symbols-outlined material-filled text-bright-green"
+                >check_box</span
+            >
+            <p class="font-normal text-xs text-bright-green">
+                Approved
+            </p>
+            </div>
+            <div class="flex items-center gap-2">
+            <input
+                type="text"
+                class="border border-dashed border-dark-blue p-2 rounded-md text-center w-28 font-normal text-sm text-jet-black"
+                value="{{incorporation_doc_path}}"
+                readonly
+            />
+            <div class="flex items-center gap-2 text-nowrap">
+                <span
+                class="material-symbols-outlined material-filled text-bright-green"
+                >check_box</span
+                >
+                <p class="font-normal text-xs text-bright-green">
+                Virus Scan
+                </p>
+            </div>
+            <span
+                title="View"
+                data-doc-type="incorporation_doc"
+                data-doc-path="{{incorporation_doc_path}}"
+                class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+                >visibility</span
+            >
+            <span
+                title="Upload  Document"
+                data-doc-type="incorporation_doc"
+                class="material-symbols-outlined border p-1 rounded-md cursor-pointer"
+                >upload</span
+            >
+            </div>
+        </div>
+        </div>
+        <div
+        class="flex lg:items-center justify-between pt-4 flex-col lg:flex-row"
+        >
+        <div class="flex flex-col gap-1">
+            <p class="font-semibold text-lg text-jet-black">
+            GST Number & Document
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+            {{gst_number}}
+            </p>
+        </div>
+        <div class="flex lg:items-center gap-4 flex-col lg:flex-row">
+            <div class="flex items-center gap-2 lg:pr-25 text-nowrap">
+            <span
+                class="material-symbols-outlined material-filled text-strong-red"
+                >disabled_by_default</span
+            >
+            <p class="font-normal text-xs text-strong-red">
+                Blurry,Unclear
+            </p>
+            </div>
+            <div class="flex items-center gap-2">
+            <input
+                type="text"
+                class="border border-dashed border-dark-blue p-2 rounded-md text-center w-28 font-normal text-sm text-jet-black"
+                value="{{gst_doc_path}}"
+                readonly
+            />
+            <div class="flex items-center gap-2 text-nowrap">
+                <span
+                class="material-symbols-outlined material-filled text-bright-green"
+                >check_box</span
+                >
+                <p class="font-normal text-xs text-bright-green">
+                Virus Scan
+                </p>
+            </div>
+            <span
+                title="View"
+                data-doc-type="gst_doc"
+                data-doc-path="{{gst_doc_path}}"
+                class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+                >visibility</span
+            >
+            <span
+                title="Upload  Document"
+                data-doc-type="gst_doc"
+                class="material-symbols-outlined border p-1 rounded-md cursor-pointer"
+                >upload</span
+            >
+            </div>
+        </div>
+        </div>
+        <div
+        class="flex lg:items-center justify-between pt-4 flex-col lg:flex-row"
+        >
+        <div class="flex flex-col gap-1">
+            <p class="font-semibold text-lg text-jet-black">
+            PAN Number & Document
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+            {{pan_number}}
+            </p>
+        </div>
+        <div class="flex lg:items-center gap-4 flex-col lg:flex-row">
+            <div class="flex items-center gap-2 lg:pr-14 text-nowrap">
+            <span
+                class="material-symbols-outlined material-filled text-strong-red"
+                >disabled_by_default</span
+            >
+            <p class="font-normal text-xs text-strong-red">
+                Mismatch/Wrong Data
+            </p>
+            </div>
+            <div class="flex items-center gap-2">
+            <input
+                type="text"
+                class="border border-dashed border-dark-blue p-2 rounded-md text-center w-28 font-normal text-sm text-jet-black"
+                value="{{pan_doc_path}}"
+                readonly
+            />
+            <div class="flex items-center gap-2 text-nowrap">
+                <span
+                class="material-symbols-outlined material-filled text-bright-green"
+                >check_box</span
+                >
+                <p class="font-normal text-xs text-bright-green">
+                Virus Scan
+                </p>
+            </div>
+            <span
+                title="View"
+                data-doc-type="pan_doc"
+                data-doc-path="{{pan_doc_path}}"
+                class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+                >visibility</span
+            >
+            <span
+                title="Upload  Document"
+                data-doc-type="pan_doc"
+                class="material-symbols-outlined border p-1 rounded-md cursor-pointer"
+                >upload</span
+            >
+            </div>
+        </div>
+        </div>
+        <div
+        class="flex lg:items-center justify-between pt-4 flex-col lg:flex-row"
+        >
+        <div class="flex flex-col gap-1">
+            <p class="font-semibold text-lg text-jet-black">
+            TAN Number & Document
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+            {{tan_number}}
+            </p>
+        </div>
+        <div class="flex lg:items-center gap-4 flex-col lg:flex-row">
+            <div class="flex items-center gap-2 lg:pr-35 text-nowrap">
+            <span
+                class="material-symbols-outlined material-filled text-strong-red"
+                >disabled_by_default</span
+            >
+            <p class="font-normal text-xs text-strong-red">Expired</p>
+            </div>
+            <div class="flex items-center gap-2">
+            <input
+                type="text"
+                class="border border-dashed border-dark-blue p-2 rounded-md text-center w-28 font-normal text-sm text-jet-black"
+                value="{{tan_doc_path}}"
+                readonly
+            />
+            <div class="flex items-center gap-2 text-nowrap">
+                <span
+                class="material-symbols-outlined material-filled text-bright-green"
+                >check_box</span
+                >
+                <p class="font-normal text-xs text-bright-green">
+                Virus Scan
+                </p>
+            </div>
+            <span
+                title="View"
+                data-doc-type="tan_doc"
+                data-doc-path="{{tan_doc_path}}"
+                class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon"
+                >visibility</span
+            >
+            <span
+                title="Upload  Document"
+                data-doc-type="tan_doc"
+                class="material-symbols-outlined border p-1 rounded-md cursor-pointer"
+                >upload</span
+            >
+            </div>
+        </div>
+        </div>
+
+        <p class="font-semibold text-lg text-dark-blue pt-4">
+        Rejection explanation:
+        </p>
+        <div class="flex flex-col gap-2 pt-2">
+        <p class="font-bold text-base">
+            Blurry or Unreadable Document -
+            <span class="font-normal"
+            >The uploaded file is not clear. Please ensure the text and
+            details are fully visible.</span
+            >
+        </p>
+        <p class="font-bold text-base">
+            Expired or Outdated Document -
+            <span class="font-normal"
+            >The document has passed its validity date. Please upload a
+            current version.</span
+            >
+        </p>
+        <p class="font-bold text-base">
+            Wrong File Format or Incomplete Upload -
+            <span class="font-normal"
+            >Only PDF, JPG, or PNG files are accepted. Ensure the full
+            document is uploaded.</span
+            >
+        </p>
+        <p class="font-bold text-base">
+            Incorrect or Mismatched Information -
+            <span
+            >The document does not match your profile details (e.g.,
+            name, ID, registration info).</span
+            >
+        </p>
+        </div>
+    </div>
+{% endif %}

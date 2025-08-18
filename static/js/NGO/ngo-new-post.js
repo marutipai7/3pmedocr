@@ -176,7 +176,7 @@ $(document).ready(function () {
             description: "Post Your Cause—Reach Generous Donors Today!"
         },
         "saved-post": {
-            icon: "bookmark",
+            icon: "upload",
             title: "New Post",
             description: "Post Your Cause—Reach Generous Donors Today!"
         }
@@ -634,143 +634,291 @@ $(document).ready(function () {
             }
         });
     });
-
-    function loadPostHistory(page = 1,  $container = $('#postHistory')) {
-        const query = $container.find('input[name=history_query]').val();
-        const limit = $container.find('select[name=history_limit]').val();
-        const startDate = $container.data("start-date") || "";
-        const endDate = $container.data("end-date") || "";
-        // console.log('$container', $container); return;
-        const saved = $container.attr('data-div') == 'postHistory' ? 'false' : 'true';
-        
-
+    $(document).on('click', '.post-download-btn', function() {
+        console.log('Download clicked!');
+        console.log('Post ID:', $(this).data('post-id'));
+        var postId = $(this).data('post-id');
         $.ajax({
-            url: "/posts/ajax/post-history/",
-            type: "GET",
-            data: {
-                query: query,
-                limit: limit,
-                page: page,
-                start_date: startDate,
-                end_date: endDate,
-                saved_only: saved,
+            url: '/posts/' + postId + '/detail/',
+            type: 'GET',
+            success: function(data) {
+                // Fill popup fields
+                $('#download-header').text(data.header);
+                $('#download-description').text(data.description);
+                $('#download-tags').text(data.tags);
+                $('#download-post-type').text(data.post_type);
+                $('#download-donation-frequency').text(data.donation_frequency);
+                $('#download-target-donation').text(data.target_donation);
+                $('#download-country').text(data.country);
+                $('#download-state').text(data.state);
+                $('#download-city').text(data.city);
+                $('#download-pincode').text(data.pincode);
+                $('#download-age-group').text(data.age_group);
+                $('#download-gender').text(data.gender);
+                $('#download-date-time').text(data.date_time || '-');
+                $('#download-views').text(data.views || '-');
+                $('#download-donation-received').text(data.donation_received || '-');
+                $('#download-status').text(data.status || '-');
+                $('#download-spending-power').text(data.spending_power);
+                $('#download-start-date').text(data.start_date);
+                $('#download-end-date').text(data.end_date);
+                $('#download-post-reference-id').text(data.post_reference_id || '-');
+                $('#download-uploaded-by').text(data.uploaded_by || '-');
+                if (data.creative1) {
+                    $('#download-creative1').attr('src', data.creative1).show();
+                } else {
+                    $('#download-creative1').hide();
+                }
+                if (data.creative2) {
+                    $('#download-creative2').attr('src', data.creative2).show();
+                } else {
+                    $('#download-creative2').hide();
+                }
+                // Fill donation table
+                var $tbody = $('#download-donation-table tbody');
+                $tbody.empty();
+                if (data.donations && data.donations.length > 0) {
+                    data.donations.forEach(function(donation) {
+                        $tbody.append(
+                            '<tr>' +
+                                '<td class="px-4 py-2.5 text-center">' + donation.payment_date + '</td>' +
+                                '<td class="px-4 py-2.5 text-center">' + donation.name + '</td>' +
+                                '<td class="px-4 py-2.5 text-center">' + donation.city + '</td>' +
+                                '<td class="px-4 py-2.5 text-center">₹' + donation.amount + '</td>' +
+                            '</tr>'
+                        );
+                    });
+                } else {
+                    $tbody.append('<tr><td colspan="4" class="text-center py-4">No donations yet.</td></tr>');
+                }
+                // Show the popup
+                $('.download-popup').removeClass('hidden').addClass('flex');
             },
-            success: function (response) {
-                // $('.postHistoryTable tbody').html(response.html);
-                $container.find('tbody').html(response.html);
-                renderPagination(response.current_page, response.total_pages, $container);
-            },
-            error: function () {
-                toastr.error("Failed to load post history.");
+            error: function() {
+                window.showToaster('error', 'Could not load post details.');
             }
         });
-    }
+    });
 
-    function renderPagination(current, total, $container = $('.postDiv')) {
-        let html = '';
-
-        // Previous button
-        if (current >= 1) {
-            html += `<button class="pagination-btn rounded-[8px] px-3 py-1 border" data-page="${current - 1}">Previous</button>`;
+    $(document).on('click', '.download-btn', function (event) {
+        event.stopPropagation();
+        // Find the next sibling with class 'download-container'
+        const $container = $(this).closest('.popup').find('.download-container');
+        if ($container.length === 0) {
+            console.error('[ERROR] download-container not found');
+            return;
         }
 
-        // Number buttons
-        for (let i = 1; i <= total; i++) {
-            html += `<button class="pagination-btn rounded-[8px] px-3 py-1 border ${i === current ? 'bg-violet-sky text-white' : ''}" data-page="${i}">${i}</button>`;
-        }
-
-        // Next button
-        if (current <= total) {
-            html += `<button class="pagination-btn rounded-[8px] px-3 py-1 border" data-page="${current + 1}">Next</button>`;
-        }
-        $container.find('#pagination-container').html(html);
-        // $('#pagination-container').html(html);
-    }
-
+        // Clone the element properly
+        const clone = $container[0].cloneNode(true);
+        clone.style.position = 'static';
+        clone.style.visibility = 'visible';
+        clone.style.display = 'block';
+        clone.style.zIndex = '1';
+        clone.id = 'download-container-clone';
+        document.body.appendChild(clone);
     
-    $('[data-tab="post-history"], [data-tab="saved-post"]').on('click', function () {
-        const $clickedTab = $(this);
-
-        // Determine corresponding postDiv by tab name
-        const tab = $clickedTab.data('tab'); // "post-history"
-        let $container = null;
-
-        if (tab === 'post-history') {
-            $container = $('#postHistory');
-            loadPostHistory(1, $container);
-        } else if (tab === 'saved-post') {
-            $container = $('#postSaved');
-            loadPostHistory(1, $container);
-        }
-    });
-
-
-    // Real-time filter events
-   $(document).on('change', 'select[name="history_limit"]', function () {
-        const $container = $(this).closest('.postDiv');
-        loadPostHistory(1, $container);
-    });
-
-    $(document).on('click', '#history_query', function () {
-        const $container = $(this).closest('.postDiv');
-        loadPostHistory(1, $container);
-    });
-
-
-    // Pagination click
-    $(document).on('click', '.pagination-btn', function () {
-        const page = $(this).data('page');
-        const $container = $(this).closest('.postDiv');
-        loadPostHistory(page, $container);
-    });
-
-
-    $('.history_filter').on('submit', function (e) {
-        e.preventDefault(); // prevent default form submission
-        loadPostHistory(1);
-    });
-
-    function calculateDateRange(rangeLabel) {
-        const endDate = new Date();
-        let startDate = new Date();
-
-        switch (rangeLabel) {
-            case "1 Week":
-                startDate.setDate(endDate.getDate() - 7);
-                break;
-            case "1 Month":
-                startDate.setMonth(endDate.getMonth() - 1);
-                break;
-            case "1 Year":
-                startDate.setFullYear(endDate.getFullYear() - 1);
-                break;
-            default:
-                return { start: "", end: "" };
-        }
-
-        const formatDate = (d) => d.toISOString().split("T")[0];
-
-        return {
-            start: formatDate(startDate),
-            end: formatDate(endDate),
+        const opt = {
+            margin:       0,
+            filename:     'post-details.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, scrollY: 0, scrollX: 0 },
+            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
         };
+    
+        html2pdf().set(opt).from(clone).save()
+            .then(() => {
+                document.body.removeChild(clone);
+            })
+            .catch(err => {
+                console.error('[ERROR] PDF generation failed:', err);
+                document.body.removeChild(clone);
+            });
+    });
+    // for exporting post history
+    $('.view-post-history-btn').on('click', function () {
+        $('.view-post-history-popup').addClass('flex').removeClass('hidden');
+        $('.loading-spinner').show();
+        $.ajax({
+            url: "/posts/post-history/export/",
+            type: "GET",
+            success: function (response) {
+                $('#postHistoryTableExport').html(response.html);
+            },
+            error: function (xhr, status, error) {
+                alert("Failed to load post history.");
+            },
+            complete: function () {
+            $('.loading-spinner').hide();  // hide after success/error
+            }
+        });
+    });
+
+    $('.close-post-history-popup').on('click', function () {
+        $('.view-post-history-popup').removeClass('flex').addClass('hidden');
+    });
+
+    // for exporting saved post history
+    $('.view-saved-post-history-btn').on('click', function () {
+        console.log('View Saved Post History clicked!');
+        $('.view-saved-post-history-popup').addClass('flex').removeClass('hidden');
+        $('.loading-spinner').show();
+        $.ajax({
+            url: "/posts/saved-post-history/export/",
+            type: "GET",
+            success: function (response) {
+                $('#savedpostHistoryTableExport').html(response.html);
+            },
+            error: function () {
+                alert("Failed to load saved history.");
+            },
+            complete: function () {
+            $('.loading-spinner').hide();  // hide after success/error
+            }
+        });
+    });
+    $('.close-saved-post-history-popup').on('click', function () {
+        $('.view-saved-post-history-popup').removeClass('flex').addClass('hidden');
+    });
+
+    function loadPostHistory(page = 1, $container = $('#postHistory')) {
+    const query = $container.find('input[name="post_history_query"]').val();  // fixed name
+    const startDate = $container.data("start-date") || "";
+    const endDate = $container.data("end-date") || "";
+    const saved = $container.attr('id') === 'postSaved' ? 'true' : 'false';
+
+    $.ajax({
+        url: "/posts/post-history/",
+        type: "GET",
+        data: {
+            query: query,
+            page: page,
+            start_date: startDate,
+            end_date: endDate,
+            saved_only: saved,
+        },
+        success: function (response) {
+            $container.find('tbody').html(response.html);
+            renderPagination(response.current_page, response.total_pages, $container);
+        },
+        error: function () {
+            toastr.error("Failed to load post history.");
+        }
+    });
+}
+
+function renderPagination(current, total, $container) {
+    let html = '';
+
+     // Prev button
+    html += `<button class="pagination-btn bg-white px-3 py-1 rounded text-light-gray1 text-sm" data-page="${current - 1}" ${current === 1 ? 'disabled' : ''}>Previous</button>`;
+
+    function pageBtn(i) {
+        return `<button class="pagination-btn px-3 py-1.5 rounded-lg text-sm ${i === current ? 'bg-violet-sky text-white' : 'bg-pagination'}" data-page="${i}">${i}</button>`;
     }
 
-    // Apply range filter when a predefined range is clicked
-    $(document).on("click", ".filterDateRange", function () {
-        const rangeLabel = $(this).data("range");
-        const { start, end } = calculateDateRange(rangeLabel);
+    if (total <= 5) {
+        // Show all pages if 5 or fewer
+        for (let i = 1; i <= total; i++) {
+            html += pageBtn(i);
+        }
+    } else {
+        // Always show first page
+        html += pageBtn(1);
 
-        const $tabDiv = $(this).closest(".postDiv");
+        if (current <= 3) {
+            // Near start
+            for (let i = 2; i <= 4; i++) {
+                html += pageBtn(i);
+            }
+            html += `<span class="px-2">...</span>`;
+            html += pageBtn(total);
+        }
+        else if (current > 3 && current < total - 2) {
+            // Middle
+            html += `<span class="px-2">...</span>`;
+            for (let i = current - 1; i <= current + 1; i++) {
+                html += pageBtn(i);
+            }
+            html += `<span class="px-2">...</span>`;
+            html += pageBtn(total);
+        }
+        else {
+            // Near end
+            html += `<span class="px-2">...</span>`;
+            for (let i = total - 3; i <= total; i++) {
+                html += pageBtn(i);
+            }
+        }
+    }
 
-        $tabDiv.data("start-date", start);
-        $tabDiv.data("end-date", end);
+    html += `<button class="pagination-btn bg-white px-3 py-1 rounded text-light-gray1 text-sm" data-page="${current + 1}" ${current === total ? 'disabled' : ''}>Next</button>`;
 
-        loadPostHistory(1, $tabDiv);
-    });
+    $container.find('#pagination-container').html(html);
+}
 
+// Initial tab click to load data
+$('[data-tab="post-history"], [data-tab="saved-post"]').on('click', function () {
+    const tab = $(this).data('tab');
+    const $container = tab === 'post-history' ? $('#postHistory') : $('#postSaved');
+    loadPostHistory(1, $container);
+});
 
+// Trigger on typing into search
+$(document).on('input', 'input[name="post_history_query"]', function () {
+    const $container = $(this).closest('.postDiv');
+    loadPostHistory(1, $container);
+});
 
+// Pagination button click
+$(document).on('click', '.pagination-btn', function () {
+    const page = $(this).data('page');
+    const $container = $(this).closest('.postDiv');
+    loadPostHistory(page, $container);
+});
 
+// Custom date range click (correct class name)
+$(document).on("click", ".postdaterange", function () {
+    // Highlight selected range
+    $(".postdaterange").removeClass("font-bold");
+    $(this).addClass("font-bold");
+    
+    // Get selected range
+    const rangeLabel = $(this).data("range");
+    const { start, end } = calculateDateRange(rangeLabel);
+    
+    // Find the nearest tab container
+    const $tabDiv = $(this).closest(".postDiv");
+
+    $tabDiv.data("start-date", start);
+    $tabDiv.data("end-date", end);
+
+    loadPostHistory(1, $tabDiv);
+});
+
+function calculateDateRange(rangeLabel) {
+    const endDate = new Date();
+    let startDate = new Date();
+
+    switch (rangeLabel) {
+        case "1 Week":
+            startDate.setDate(endDate.getDate() - 7);
+            break;
+        case "1 Month":
+            startDate.setMonth(endDate.getMonth() - 1);
+            break;
+        case "1 Year":
+            startDate.setFullYear(endDate.getFullYear() - 1);
+            break;
+        default:
+            return { start: "", end: "" };
+    }
+
+    const formatDate = (d) => d.toISOString().split("T")[0];
+    return {
+        start: formatDate(startDate),
+        end: formatDate(endDate),
+    };
+}
 
 });

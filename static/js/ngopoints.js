@@ -139,9 +139,49 @@ function allrewards(search = '', dateRange = '', page = 1) {
 }
 function setupPagination(totalPages, currentPage) {
   let paginationHtml = '';
-  for (let i = 1; i <= totalPages; i++) {
-    paginationHtml += `<button class="bg-pagination text-jet-black px-2 rounded coupons-page-btn ${i === currentPage ? 'text-blue-500 font-bold' : ''}" data-page="${i}">${i}</button>`;
+
+  function pageBtn(i) {
+    return `<button 
+            class="px-3 py-2 rounded-lg cursor-pointer font-normal text-xs ${i === currentPage ? 'bg-violet-sky text-white' : 'bg-pagination'}" 
+            data-page="${i}">
+            ${i}
+        </button>`;
   }
+
+  if (totalPages <= 5) {
+    for (let i = 1; i <= totalPages; i++) {
+      paginationHtml += pageBtn(i);
+    }
+  } else {
+    // Always show first page
+    paginationHtml += pageBtn(1);
+
+    // Near start
+    if (currentPage <= 3) {
+      for (let i = 2; i <= 4; i++) {
+        paginationHtml += pageBtn(i);
+      }
+      paginationHtml += `<span class="px-2">...</span>`;
+      paginationHtml += pageBtn(totalPages);
+    }
+    // Middle
+    else if (currentPage > 3 && currentPage < totalPages - 2) {
+      paginationHtml += `<span class="px-2">...</span>`;
+      for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+        paginationHtml += pageBtn(i);
+      }
+      paginationHtml += `<span class="px-2">...</span>`;
+      paginationHtml += pageBtn(totalPages);
+    }
+    // Near end
+    else {
+      paginationHtml += `<span class="px-2">...</span>`;
+      for (let i = totalPages - 3; i <= totalPages; i++) {
+        paginationHtml += pageBtn(i);
+      }
+    }
+  } 
+
   $('#pagination-numbers1').html(paginationHtml);
 
   $('#prevPage1').prop('disabled', currentPage === 1);
@@ -202,16 +242,59 @@ $('#nextPage1').on('click', function () {
     });
   }
 
-  function setupPopularPagination(totalPages, currentPage) {
+ function setupPopularPagination(totalPages, currentPage) {
     let paginationHtml = '';
-    for (let i = 1; i <= totalPages; i++) {
-      paginationHtml += `<button class="bg-pagination text-jet-black px-2 rounded popular-page-btn ${i === currentPage ? 'text-blue-500 font-bold' : ''}" data-page="${i}">${i}</button>`;
+
+    function pageBtn(i) {
+      return `<button 
+            class="px-3 py-2 rounded-lg cursor-pointer font-normal text-xs popular-page-btn ${i === currentPage ? 'bg-violet-sky text-white' : 'bg-pagination'}" 
+            data-page="${i}">
+            ${i}
+        </button>`;
     }
+
+    if (totalPages <= 5) {
+      // Show all pages if 5 or fewer
+      for (let i = 1; i <= totalPages; i++) {
+        paginationHtml += pageBtn(i);
+      }
+    } else {
+      // Always show first page
+      paginationHtml += pageBtn(1);
+
+      if (currentPage <= 3) {
+        // Near start
+        for (let i = 2; i <= 4; i++) {
+          paginationHtml += pageBtn(i);
+        }
+        paginationHtml += `<span class="px-2">...</span>`;
+        paginationHtml += pageBtn(totalPages);
+      }
+      else if (currentPage > 3 && currentPage < totalPages - 2) {
+        // In the middle
+        paginationHtml += `<span class="px-2">...</span>`;
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          paginationHtml += pageBtn(i);
+        }
+        paginationHtml += `<span class="px-2">...</span>`;
+        paginationHtml += pageBtn(totalPages);
+      }
+      else {
+        // Near the end
+        paginationHtml += `<span class="px-2">...</span>`;
+        for (let i = totalPages - 3; i <= totalPages; i++) {
+          paginationHtml += pageBtn(i);
+        }
+      }
+    }
+
+    
     $('#pagination-numbers2').html(paginationHtml);
 
     $('#prevPage2').prop('disabled', currentPage === 1);
     $('#nextPage2').prop('disabled', currentPage === totalPages);
   }
+
 
   // Pagination button click events
   $(document).on('click', '.popular-page-btn', function () {

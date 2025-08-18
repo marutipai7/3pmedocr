@@ -1,5 +1,6 @@
 $(document).ready(function () {
 
+    let uploadConfirmShown = false;
     // Country code js
     const $dropdown = $('.code-dropdown');
     const $btn = $dropdown.find('.code-btn');
@@ -74,9 +75,9 @@ $(document).ready(function () {
         const targetId = $(this).data('target');
         const passwordField = $('#' + targetId);
         if (passwordField.length) {
-          const type = passwordField.attr('type') === 'password' ? 'text' : 'password';
-          passwordField.attr('type', type);     
-          $(this).text(type === 'password' ? 'visibility' : 'visibility_off');
+            const type = passwordField.attr('type') === 'password' ? 'text' : 'password';
+            passwordField.attr('type', type);     
+            $(this).text(type === 'password' ? 'visibility' : 'visibility_off');
         }
       }); 
     // resend
@@ -113,7 +114,12 @@ $(document).ready(function () {
     })
     //Permission Access
     $('.uploadTrigger').on('click', function () {
-        if (confirm("This site wants to access your files to upload an image. Do you allow?")) {
+        if (!uploadConfirmShown) {
+            if (confirm("This site wants to access your files to upload an image. Do you allow?")) {
+                uploadConfirmShown = true;
+                $(this).closest('.upload-section').find('.uploadInput').trigger('click');
+            }
+        } else {
             $(this).closest('.upload-section').find('.uploadInput').trigger('click');
         }
     });
@@ -127,6 +133,13 @@ $(document).ready(function () {
         const $label = $trigger.find('.upload-label');
         const $icon = $trigger.find('.upload-icon');
             
+        if (file.name) {
+            // Show a success toaster when file is chosen
+            toastr.success(`File uploaded successfully.`);
+        } else {
+            // Optional: show error toaster if no file selected
+            toastr.error('No file selected.');
+        }
         $label.text(file.name);
 
         $icon.text('imagesmode').removeClass('text-primary-color').addClass('text-bright-green');
@@ -146,9 +159,92 @@ $(document).ready(function () {
                 .removeClass('text-green-600')
                 .addClass('text-primary-color');
 
-            
             $(this).addClass('hidden');
         });
     });
 
+    // Toggle dropdown time trigger visibility
+    document.querySelectorAll(".dropdown-btn").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+        const dropdown = this.closest(".dropdown");
+        const options = dropdown.querySelector(".dropdown-option");
+        options.classList.toggle("hidden");
+
+        // Close other open dropdowns
+        document.querySelectorAll(".dropdown-option").forEach(function (option) {
+            if (option !== options) {
+            option.classList.add("hidden");
+            }
+        });
+        });
+    });
+
+    // Time picker trigger
+    document.querySelectorAll(".trigger-time").forEach(function (trigger) {
+        trigger.addEventListener("click", function (e) {
+        e.stopPropagation();
+        const targetId = this.getAttribute("data-target");
+        const timeInput = document.getElementById(targetId);
+        if (timeInput) {
+            timeInput.showPicker();
+        }
+        });
+    });
+
+    // Update dropdown display when time is selected (using input event for immediate update)
+    document.querySelectorAll('input[type="time"]').forEach(function (timeInput) {
+        console.log('Setting up time input listener for:', timeInput.id, timeInput.value);
+        
+        timeInput.addEventListener("input", function () {
+        updateTimeDisplay(this);
+        console.log('Time input changed:', this.id, this.value);
+        });
+
+        // Also handle change event for browser compatibility
+        timeInput.addEventListener("change", function () {
+        updateTimeDisplay(this);
+        console.log('Time input changed:', this.id, this.value);
+        });
+    });
+
+    function updateTimeDisplay(timeInput) {
+        const dropdown = timeInput.closest(".dropdown");
+        if (dropdown) {
+        const selectedValue = dropdown.querySelector(".selected-value");
+        if (selectedValue && timeInput.value) {
+            // Format the time for display (e.g., "09:00 AM")
+            const timeParts = timeInput.value.split(":");
+            let hours = parseInt(timeParts[0]);
+            const minutes = timeParts[1];
+            const ampm = hours >= 12 ? "PM" : "AM";
+            hours = hours % 12;
+            hours = hours ? hours : 12; // Convert 0 to 12
+            const formattedTime = hours + ":" + minutes + " " + ampm;
+
+            selectedValue.textContent = formattedTime;
+        }
+        }
+  }
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", function (e) {
+        if (!e.target.closest(".dropdown")) {
+        document.querySelectorAll(".dropdown-option").forEach(function (option) {
+            option.classList.add("hidden");
+        });
+        }
+    });
+
+    // Close dropdown when time is selected (optional)
+    document.querySelectorAll('input[type="time"]').forEach(function (timeInput) {
+        timeInput.addEventListener("change", function () {
+        const dropdownOption = this.closest(".dropdown-option");
+        if (dropdownOption) {
+            setTimeout(() => {
+            dropdownOption.classList.add("hidden");
+            }, 200); // Small delay to ensure time is displayed
+        }
+        });
+    });
 });
+

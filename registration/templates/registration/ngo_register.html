@@ -50,7 +50,7 @@
         <!-- NGO Name -->
         <div class="relative w-full">
           <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">NGO Name</label>
-          <input type="text" name="company_name" placeholder="Helping Hands Foundation"
+          <input type="text" name="ngo_name" placeholder="Helping Hands Foundation"
             class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
         </div>
         <!-- Website/Services -->
@@ -65,23 +65,17 @@
           <div class="flex flex-col gap-4 w-full sm:w-1/2">
             <div class="dropdown relative inline-block">
               <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">NGO Services</label>
+              <input type="hidden" name="ngo_service" id="ngo_service">
               <div class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
-                <span class="mr-2 selected-value">select</span>
+                <span class="mr-2 selected-value ngo-service-selected">select</span>
                 <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
               </div>
               <div class="dropdown-option absolute left-0 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-full mt-0.5 z-20 max-h-44 overflow-y-auto scroll">
+                {% for service in ngo_services %}
                 <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
-                  <label for="bingo" class="flex-1">BINGO</label>
+                  <label value="{{ service.id }}" class="flex-1">{{ service.name }}</label>
                 </div>
-                <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
-                  <label for="ingo" class="flex-1">INGO</label>
-                </div>
-                <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
-                  <label for="engo" class="flex-1">ENGO</label>
-                </div>
-                <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
-                  <label for="etc" class="flex-1">Etc.</label>
-                </div>
+                {% endfor %}
               </div>
             </div>
           </div>
@@ -293,7 +287,8 @@
             <!-- Enter email OTP -->
             <div class="relative w-full mt-4">
               <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Enter email OTP</label>
-              <input type="text" name="otp1" placeholder="123456" maxlength="16"
+              <input type="text" name="otp1" placeholder="123456" maxlength="6"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);"
                 class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
               <p class="text-xs mt-1 flex justify-end mt-1 otp-message "></p>
             </div>
@@ -309,7 +304,7 @@
               <input type="text" name="contact_person_name" placeholder="Rahul Mehta"
                 class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
             </div>
-            <!-- Designation -->
+            <!-- Role -->
             <div class="flex items-center gap-2">
               <div class="dropdown code-dropdown relative inline-block">
                 <div class="dropdown-btn flex items-center border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
@@ -350,7 +345,8 @@
             <!-- OTP Verifications -->
             <div class="relative w-full">
               <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">OTP Verifications</label>
-              <input type="text" name="otp2" maxlength="6"
+              <input type="text" name="otp2"
+                maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);"
                 class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
               <p class="text-xs mt-1 otp-message">Enter the 6 digit code send to registered Email/WhatsApp</p>
             </div>

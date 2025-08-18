@@ -1,16 +1,45 @@
-<aside class="sidebar w-[200px] md:w-[280px] h-full shadow-lg">
-    <nav class="h-full py-4 overflow-y-auto scroll">
+{% load static %}
+
+<aside class="sidebar w-[200px] md:w-[280px] h-full transition-all transform duration-300 ease-in-out shadow-lg" id="sidebar">
+    <!-- Badge Section -->
+    <div class="h-40 px-2 py-4 relative border-b border-gray-200">
+        <div class="flex flex-col items-center gap-2">
+            <!-- Badge Icon -->
+            <div class="relative">
+                {% if badge and badge.image_url %}
+                    <img src="{{ badge.image_url }}" alt="{{ badge.name }}" class="w-24 h-24 rounded-full object-cover mx-auto">
+                {% else %}
+                    <img src="{% static 'images/diamond-badge.svg' %}" alt="Default Badge" class="w-12 h-12 rounded-full object-cover">
+                {% endif %}
+            </div>
+            <!-- Badge Name -->
+            <div>
+                <p class="text-18-nr">{{ badge.name|default:"No Badge" }}</p>
+            </div>
+        </div>
+        <div class="menu-toggle absolute right-0 top-1/2 -translate-y-1/2 h-[48px] w-[48px] bg-transparent-living-coral flex items-center justify-center rounded-l-md cursor-pointer z-10">
+            <span class="material-symbols-outlined bold-weight text-living-coral pl-2.5">
+                arrow_back_ios
+            </span>
+        </div>
+    </div>
+        
+    <!-- Navigation Menu -->
+    <nav class="h-[calc(100%-160px)] py-4 overflow-y-auto no-scrollbar">
         <ul class="flex flex-col gap-1">
         {% for menu in sidebar_menu %}
             <li>
-                <a href="{{ menu.url }}" class="flex items-center gap-3 px-6 py-3 w-full">
+                <a href="{{ menu.url }}" class="flex items-center gap-3 px-6 py-3 w-full hover:bg-gray-100 transition-colors {% if request.resolver_match.url_name == menu.url_name %}bg-blue-50 text-blue-600{% endif %}">
                     {% if menu.icon %}
-                    <span class="material-symbols-outlined">{{ menu.icon }}</span>
+                    <span class="material-symbols-outlined {% if menu.icon == 'emoji_events' %}material-filled{% endif %}">{{ menu.icon }}</span>
                     {% endif %}
                     <p>{{ menu.name }}</p>
                 </a>
             </li>
         {% endfor %}
         </ul>
+        <div class="w-full flex flex-col px-6 pb-4 mt-4">
+            <img src="/static/images/Sale.svg" alt="Diamond User" loading="lazy" class="sidebar-image">
+        </div>
     </nav>
 </aside>

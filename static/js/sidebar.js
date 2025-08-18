@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    // Legacy menu toggle functionality (keeping for backward compatibility)
     $(".menu-toggle").click(function () {
         const sidebar = $(".sidebar");
 
@@ -15,7 +16,8 @@ $(document).ready(function () {
         $(".main-content").removeClass("w-full");
         $(".menu-toggle").show();
         $(".show-sidebar-toggle").removeClass('flex').addClass('hidden');
-      });
+    });
+
     const currentPath = window.location.pathname;
 
     // Map keywords to style properties
@@ -61,23 +63,34 @@ $(document).ready(function () {
         }
     }); 
 
-    
-
     // Apply inline styles to matching sidebar link
-  $(".sidebar nav a").each(function () {
-    const href = $(this).attr("href"); // ✅ define href here
-    if (
-        href === currentPath ||
-        (currentPath === '/' && href.includes('index.html')) ||
-        (currentPath.includes("purchase-my-cart.html") && href.includes("purchase"))
-    ) {
-        $(this).css(appliedStyles);
-    }
-});
+    $(".sidebar nav a").each(function () {
+        const href = $(this).attr("href"); // ✅ define href here
+        if (
+            href === currentPath ||
+            (currentPath === '/' && href.includes('index.html')) ||
+            (currentPath.includes("purchase-my-cart.html") && href.includes("purchase"))
+        ) {
+            $(this).css(appliedStyles);
+        }
+    });
 
     // Set CSS variables for scrollbar
     $('.scroll').each(function () {
         $(this).css('--scroll-thumb-color', `${appliedStyles.backgroundColor}`);
     });
 
+    // Add hover effects for sidebar items
+    $(".sidebar nav a").hover(
+        function() {
+            if (!$(this).hasClass('bg-blue-50')) {
+                $(this).css('background-color', '#f3f4f6');
+            }
+        },
+        function() {
+            if (!$(this).hasClass('bg-blue-50')) {
+                $(this).css('background-color', 'transparent');
+            }
+        }
+    );
 });
