@@ -121,11 +121,14 @@
       </div>
       <!-- User Dropdown -->
       <div class="relative inline-block">
-        <button class="profile-btn">
+        <button class="profile-btn has-tooltip">
           <img src="{% static 'images/user.svg' %}" alt="User" loading="lazy" class="w-8 h-8"/>
         </button>
+        <div class="absolute py-1 px-1.5 text-start text-xs tooltip -bottom-6 right-3 z-10 bg-white border rounded-md border-living-coral font-normal">
+          Profile
+        </div>
         <!-- Dropdown -->
-        <div class="profile-dropdown">
+        <div class="profile-dropdown border border-living-coral">
           <a href="/settings/">
           <div class="px-4 py-3 flex items-center space-x-3 cursor-pointer">
             <img src="{% static 'images/user.svg' %}" alt="User" loading="lazy" class="w-8 h-8 rounded-full" />

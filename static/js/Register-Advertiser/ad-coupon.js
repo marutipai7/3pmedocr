@@ -327,11 +327,11 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.success) {
                     const message = response.saved ? 'Post saved!' : 'Post unsaved!';
-                    window.showToaster('success', message);
+                    toastr.success(message);
                     // Optional: refresh table
                     // loadCouponHistory(); 
                 } else {
-                    window.showToaster('error', response.error || 'Could not update saved status.');
+                    toastr.error(response.error || 'Could not update saved status.');
                 }
             },
             error: function () {
@@ -343,7 +343,7 @@ $(document).ready(function () {
                     $icon.addClass('material-filled text-living-coral').removeClass('text-dark-blue');
                     $icon.attr('data-saved', 'true');
                 }
-                window.showToaster('error', 'Could not update saved status.');
+                toastr.error('Could not update saved status.');
             }
         });
     });
@@ -516,7 +516,7 @@ $(document).ready(function () {
         }
 
         if (!valid) {
-            window.showToaster('error','Please fill all required fields.');
+            toastr.error('Please fill all required fields.');
             return;
         }
 
@@ -653,52 +653,52 @@ $(document).ready(function () {
         const pincode = $('input[name="pincode"]').val();
 
         if (!couponCount || couponCount < 5) {
-            window.showToaster('error',"Please enter at least 5 coupons.");
+            toastr.error("Please enter at least 5 coupons.");
             return;
         }
 
         if (!imageFile) {
-            window.showToaster('error',"Please upload a coupon image.");
+            toastr.error("Please upload a coupon image.");
             return;
         }
 
         if (!offerType) {
-            window.showToaster('error',"Please select an Offer Type.");
+            toastr.error("Please select an Offer Type.");
             return;
         }
 
         if (!spendingPower) {
-            window.showToaster('error',"Please select Spending Power.");
+            toastr.error("Please select Spending Power.");
             return;
         }
 
         if (!country) {
-            window.showToaster('error',"Please select Country.");
+            toastr.error("Please select Country.");
             return;
         }
 
         if (!state) {
-            window.showToaster('error',"Please select State.");
+            toastr.error("Please select State.");
             return;
         }
 
         if (!city) {
-            window.showToaster('error',"Please select City.");
+            toastr.error("Please select City.");
             return;
         }
 
         if (!pincode) {
-            window.showToaster('error',"Please select Pincode.");
+            toastr.error("Please select Pincode.");
             return;
         }
 
         if (!maxRedemptions || parseInt(maxRedemptions) < 5) {
-            window.showToaster('error',"Maximum redemptions should be at least 5.");
+            toastr.error("Maximum redemptions should be at least 5.");
             return;
         }
 
         if (!validity || validity === 'DD/MM/YY') {
-            window.showToaster('error',"Please select coupon validity date.");
+            toastr.error("Please select coupon validity date.");
             return;
         }
 
@@ -725,16 +725,16 @@ $(document).ready(function () {
             contentType: false,
             success: function (resp) {
                 if (resp.success) {
-                    window.showToaster('success',resp.message);
+                    toastr.success(resp.message);
                     setTimeout(() => {
                         window.location.href = resp.redirect;
                     }, 1000);
                 } else {
-                    window.showToaster('error', resp.message || "Validation failed on server.");
+                    toastr.error(resp.message || "Validation failed on server.");
                 }
             },
             error: function () {
-                window.showToaster('error',"Server error. Try again.");
+                toastr.error("Server error. Try again.");
             }
         });
     });

@@ -249,7 +249,7 @@ $(document).ready(function () {
                     renderTags();
                     $(this).val('');
                 } else {
-                    window.showToaster('error', 'Only 8 tags can be selected.');
+                    toastr.error('Only 8 tags can be selected.');
                 }
             }
         }
@@ -304,7 +304,7 @@ $(document).ready(function () {
             success: function (response) {
                 $('.field-error').remove();
                 if (response.missing_fields && response.missing_fields.length) {
-                    window.showToaster('error', 'Please fill all required fields');
+                    toastr.error('Please fill all required fields');
                     response.missing_fields.forEach(function(field) {
                         var inputName = fieldNameMap[field] || field.toLowerCase().replace(/ /g, '_');
                         var $input = $('[name="' + inputName + '"]');
@@ -342,7 +342,7 @@ $(document).ready(function () {
                         $('html, body').animate({ scrollTop: $firstError.offset().top - 100 }, 300);
                     }
                 } else if (response.success) {
-                    window.showToaster('success', 'Post Submitted');
+                    toastr.success('Post Submitted');
                     // Reset the form
                     $('#new-post-form')[0].reset();
                     // Clear image previews
@@ -523,13 +523,13 @@ $(document).ready(function () {
                             $icon.closest('tr').remove();
                         }
                     }
-                    window.showToaster('success', response.saved ? 'Post saved!' : 'Post unsaved!');
+                    toastr.success(response.saved ? 'Post saved!' : 'Post unsaved!');
                 } else {
-                    window.showToaster('error', response.error || 'Could not update saved status.');
+                    toastr.error(response.error || 'Could not update saved status.');
                 }
             },
             error: function() {
-                window.showToaster('error', 'Could not update saved status.');
+                toastr.error('Could not update saved status.');
             }
         });
     });
@@ -551,13 +551,13 @@ $(document).ready(function () {
             },
             success: function(response) {
                 if (response.success) {
-                    window.showToaster('success', 'Status updated to ' + response.status);
+                    toastr.success('Status updated to ' + response.status);
                 } else {
-                    window.showToaster('error', response.error || 'Could not update status.');
+                    toastr.error(response.error || 'Could not update status.');
                 }
             },
             error: function() {
-                window.showToaster('error', 'Could not update status.');
+                toastr.error('Could not update status.');
             }
         });
     });
@@ -630,7 +630,7 @@ $(document).ready(function () {
                 $('.preview-popup').removeClass('hidden').addClass('flex');
             },
             error: function() {
-                window.showToaster('error', 'Could not load post details.');
+                toastr.error('Could not load post details.');
             }
         });
     });
@@ -695,7 +695,7 @@ $(document).ready(function () {
                 $('.download-popup').removeClass('hidden').addClass('flex');
             },
             error: function() {
-                window.showToaster('error', 'Could not load post details.');
+                toastr.error('Could not load post details.');
             }
         });
     });

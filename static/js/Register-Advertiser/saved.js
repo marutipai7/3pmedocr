@@ -424,11 +424,11 @@ $(document).on('click', '.saved-icon', function () {
             success: function (response) {
                 if (response.success) {
                     const message = response.saved ? 'Post saved!' : 'Post unsaved!';
-                    window.showToaster('success', message);
+                    toastr.success(message);
                     // Optional: refresh table
                     // loadCouponHistory(); 
                 } else {
-                    window.showToaster('error', response.error || 'Could not update saved status.');
+                    toastr.error(response.error || 'Could not update saved status.');
                 }
             },
             error: function () {
@@ -440,7 +440,7 @@ $(document).on('click', '.saved-icon', function () {
                     $icon.addClass('material-filled text-living-coral').removeClass('text-dark-blue');
                     $icon.attr('data-saved', 'true');
                 }
-                window.showToaster('error', 'Could not update saved status.');
+                toastr.error('Could not update saved status.');
             }
         });
     });

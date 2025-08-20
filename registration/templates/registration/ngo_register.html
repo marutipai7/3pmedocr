@@ -30,20 +30,19 @@
                 class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
             </div>
           </div>
-          <div class="flex flex-col gap-4 w-full sm:w-1/2">
+          <div class="relative w-full">
+            <label class="absolute left-24 -top-0.5 bg-white px-1 text-xs z-10">Phone Number</label>
             <div class="flex items-center gap-2">
-              <div class="code-dropdown relative inline-block">
-                <div class="code-btn flex items-center border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
+              <div class="dropdown code-dropdown relative inline-block">
+                <div class="dropdown-btn code-btn flex items-center border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
                   <span class="material-symbols-outlined">keyboard_arrow_down</span>
-                  <span class="selected-code mr-2">+91</span>
+                  <span class="selected-code countryCode-selected mr-2">+91</span>
                 </div>
-                <div class="code-option absolute left-0 mt-0.5 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-20 max-h-44 overflow-y-auto scroll"></div>
+                <div class="dropdown-option code-option absolute left-0 mt-0.5 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-20 max-h-44 overflow-y-auto scroll"></div>
+                <input type="hidden" name="country-code" id="country-code">
               </div>
-              <div class="relative w-full">
-                <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Phone Number</label>
-                <input type="text" name="phone_number1" placeholder="9876543210"
-                  class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
-              </div>
+              <input type="text" name="phone_number1" placeholder="9876543210"
+                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
             </div>
           </div>
         </div>
@@ -65,7 +64,6 @@
           <div class="flex flex-col gap-4 w-full sm:w-1/2">
             <div class="dropdown relative inline-block">
               <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">NGO Services</label>
-              <input type="hidden" name="ngo_service" id="ngo_service">
               <div class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
                 <span class="mr-2 selected-value ngo-service-selected">select</span>
                 <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
@@ -77,6 +75,7 @@
                 </div>
                 {% endfor %}
               </div>
+              <input type="hidden" name="ngo_service" id="ngo_service">
             </div>
           </div>
         </div>
@@ -305,16 +304,17 @@
                 class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
             </div>
             <!-- Role -->
-            <div class="flex items-center gap-2">
-              <div class="dropdown code-dropdown relative inline-block">
-                <div class="dropdown-btn flex items-center border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
-                  <span class="material-symbols-outlined">keyboard_arrow_down</span>
-                  <span class="selected-code mr-2">+91</span>
+            <div class="relative w-full">
+              <label class="absolute left-24 -top-0.5 bg-white px-1 text-xs z-10">Phone Number</label>
+              <div class="flex items-center gap-2">
+                <div class="dropdown code-dropdown relative inline-block">
+                  <div class="dropdown-btn code-btn flex items-center border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
+                    <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                    <span class="selected-code contact-countryCode-selected mr-2">+91</span>
+                  </div>
+                  <div class="dropdown-option code-option absolute left-0 mt-0.5 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-20 max-h-44 overflow-y-auto scroll"></div>
+                  <input type="hidden" name="contact-country-code" id="contact-country-code">
                 </div>
-                <div class="dropdown-option code-option absolute left-0 mt-0.5 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-20 max-h-44 overflow-y-auto scroll"></div>
-              </div>
-              <div class="relative w-full">
-                <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Phone Number</label>
                 <input type="text" name="contact_person_phone" placeholder="9876543210" maxlength="20"
                   class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
               </div>

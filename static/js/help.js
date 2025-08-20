@@ -93,7 +93,7 @@ function toggleChat() {
 
 function sendEmailSupport() {
   // You can add form validation or sending logic here
-  window.showToaster("success", "Message sent!");
+  toastr.success("Message sent!");
   document.querySelector(".emailPopup").classList.add("hidden");
 }
 

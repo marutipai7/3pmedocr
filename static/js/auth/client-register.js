@@ -2,52 +2,45 @@ $(document).ready(function () {
 
     let uploadConfirmShown = false;
     // Country code js
-    const $dropdown = $('.code-dropdown');
-    const $btn = $dropdown.find('.code-btn');
-    const $options = $dropdown.find('.code-option');
-    const $selectedCode = $btn.find('.selected-code');
+   $('.code-dropdown').each(function() {
+        const $dropdown = $(this);
+        const $btn = $dropdown.find('.code-btn');
+        const $options = $dropdown.find('.code-option');
+        const $selectedCode = $btn.find('.selected-code');
 
-    $.ajax({
-        url: "https://restcountries.com/v3.1/all",
-        method: "GET",
-        success: function (data) {
-            const countryList = data
-                .filter(c => c.idd && c.idd.root)
-                .map(c => {
-                    const name = c.name.common;
-                    const code = c.idd.root + (c.idd.suffixes ? c.idd.suffixes[0] : "");
-                    return { name, code };
-                })
-                .sort((a, b) => a.name.localeCompare(b.name));
+        $.ajax({
+            url: "https://restcountries.com/v3.1/all?fields=name,idd", 
+            method: "GET",
+            success: function (data) {
+                const countryList = data
+                    .filter(c => c.idd && c.idd.root)
+                    .map(c => {
+                        const name = c.name.common;
+                        const code = c.idd.root + (c.idd.suffixes ? c.idd.suffixes[0] : "");
+                        return { name, code };
+                    })
+                    .sort((a, b) => a.name.localeCompare(b.name));
 
-            countryList.forEach(({ name, code }) => {
-                const isIndia = name === "India";
-                const optionHtml = `<div class="px-4 py-2 hover:bg-gray-100 cursor-pointer" data-code="${code}">${name} (${code})</div>`;
-                $options.append(optionHtml);
+                countryList.forEach(({ name, code }) => {
+                    const isIndia = name === "India";
+                    const optionHtml = `<div class="px-4 py-2 hover:bg-gray-100 cursor-pointer" data-code="${code}">${name} (${code})</div>`;
+                    $options.append(optionHtml);
 
-                if (isIndia) {
-                    $selectedCode.text(code);
-                }
-            });
-        },
-        error: function () {
-            $options.append(`<div class="px-4 py-2 text-red-500">Failed to load country codes</div>`);
-        }
-    });
+                    if (isIndia) {
+                        $selectedCode.text(code);
+                    }
+                });
+            },
+            error: function () {
+                $options.append(`<div class="px-4 py-2 text-red-500">Failed to load country codes</div>`);
+            }
+        });
 
-    $btn.on('click', function () {
-        $options.toggleClass("hidden");
-    });
-
-    $options.on('click', 'div', function () {
-        const code = $(this).data('code');
-        $selectedCode.text(code);
-        $options.addClass('hidden');
-    });
-    $(document).on('click', function (e) {
-        if (!$(e.target).closest('.code-dropdown').length) {
+        $options.on('click', 'div', function () {
+            const code = $(this).data('code');
+            $selectedCode.text(code);
             $options.addClass('hidden');
-        }
+        });
     });
     // dropdown js
     $('.dropdown-btn').on('click', function (e) {

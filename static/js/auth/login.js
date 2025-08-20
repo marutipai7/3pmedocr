@@ -108,7 +108,7 @@ $('.role-option').on('click', function () {
 
 $('.continueBtn').on('click', function () {
   if (!selectedRole) {
-    window.showToaster('error', 'Please select a role before continuing.');
+    toastr.error('Please select a role before continuing.');
     return;
   }
 

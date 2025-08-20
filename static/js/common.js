@@ -208,6 +208,11 @@ $('#register-form').on('submit', function(e) {
 
     console.log('Form Url:', formUrl);
 
+    let countryCodeValue = $('.countryCode-selected').text().trim();
+    $('input[name="country-code"]').val(countryCodeValue);
+    let contactCountryCodeValue = $('.contact-countryCode-selected').text().trim();
+    $('input[name="contact-country-code"]').val(contactCountryCodeValue);
+
     if (formUrl == '/user/save/advertiser') {
         let selectValue = $('.advertiser-type-selected').text().trim();
         $('input[name="advertiser_type"]').val(selectValue);
