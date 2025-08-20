@@ -100,7 +100,7 @@ $(document).ready(function () {
     let files = Array.from(e.target.files);
     let currentImages = $('#preview img').length;
     if ((files.length + currentImages) > maxImages) {
-      window.showToaster('error', 'You can only upload up to 4 images.');
+      toastr.error('You can only upload up to 4 images.');
       return;
     }
     files.forEach(file => {

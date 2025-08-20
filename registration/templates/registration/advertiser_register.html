@@ -29,11 +29,16 @@
            class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
   </div>
   <div class="relative w-full">
-    <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Phone Number</label>
-    <div class="flex gap-2 mt-2">
-      <select name="phone_prefix" class="border border-primary-color p-3 rounded-md">
-        <option value="+91">+91</option>
-      </select>
+    <label class="absolute left-24 -top-0.5 bg-white px-1 text-xs z-10">Phone Number</label>
+    <div class="flex items-center gap-2 mt-2">
+      <div class="dropdown code-dropdown relative inline-block">
+        <div class="dropdown-btn code-btn flex items-center border border-primary-color rounded-md p-3 pt-4 cursor-pointer">
+          <span class="material-symbols-outlined">keyboard_arrow_down</span>
+          <span class="selected-code countryCode-selected mr-2">+91</span>
+        </div>
+        <div class="dropdown-option code-option absolute left-0 mt-0.5 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-20 max-h-44 overflow-y-auto scroll"></div>
+        <input type="hidden" name="country-code" id=country-code">
+      </div>
       <input type="text" name="phone" placeholder="9876543210"
              class="w-full border border-primary-color p-3 rounded-md" />
     </div>
@@ -53,7 +58,6 @@
     <!-- Advertiser Type -->
     <div class="dropdown relative inline-block">
       <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Advertiser Type</label>
-      <input type="hidden" name="advertiser_type" id="advertiser_type">
       <div class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
         <span class="mr-2 selected-value advertiser-type-selected">select</span>
         <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
@@ -65,11 +69,11 @@
         </div>
         {% endfor %}
       </div>
+      <input type="hidden" name="advertiser_type" id="advertiser_type">
     </div>
     <!-- Ad Service Required -->
     <div class="dropdown relative inline-block">
       <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Ad Service Required</label>
-      <input type="hidden" name="ad_service_req" id="ad_service_req">
       <div class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
         <span class="mr-2 selected-value ad-service-selected">select</span>
         <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
@@ -81,6 +85,7 @@
         </div>
         {% endfor %}
       </div>
+      <input type="hidden" name="ad_service_req" id="ad_service_req">
     </div>
 </div>
 <!-- Website -->
@@ -283,17 +288,18 @@
       <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Name</label>
       <input type="text" name="contact_person_name" placeholder="Rahul Mehta"
         class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
-    </div>
-    <div class="flex items-center gap-2">
-      <div class="dropdown code-dropdown relative inline-block">
-        <div class="dropdown-btn flex items-center border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
-          <span class="material-symbols-outlined">keyboard_arrow_down</span>
-          <span class="selected-code mr-2">+91</span>
+    </div>      
+    <div class="relative w-full">
+      <label class="absolute left-24 -top-0.5 bg-white px-1 text-xs z-10">Phone Number</label>
+      <div class="flex items-center gap-2">
+        <div class="dropdown code-dropdown relative inline-block">
+          <div class="dropdown-btn code-btn flex items-center border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
+            <span class="material-symbols-outlined">keyboard_arrow_down</span>
+            <span class="selected-code contact-countryCode-selected mr-2">+91</span>
+          </div>
+          <div class="dropdown-option code-option absolute left-0 mt-0.5 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-20 max-h-44 overflow-y-auto scroll"></div>
+          <input type="hidden" name="contact-country-code" id="contact-country-code">
         </div>
-        <div class="dropdown-option code-option absolute left-0 mt-0.5 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-20 max-h-44 overflow-y-auto scroll"></div>
-      </div>
-      <div class="relative w-full">
-        <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Phone Number</label>
         <input type="text" name="contact_person_phone" placeholder="9876543210"
           class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
       </div>
@@ -342,8 +348,8 @@
       <path stroke-linecap="round" stroke-linejoin="round"
             d="M12 11c0-1.104-.895-2-2-2s-2 .896-2 2 .895 2 2 2 2-.896 2-2z M12 11c0-1.104.896-2 2-2s2 .896 2 2-.896 2-2 2-2-.896-2-2z M12 11v6 M6 17h12 M9 4h6l1 2h3v2H5V6h3z" />
     </svg>
-    <input type="file" name="selfie" id="selfie_upload" accept="image/*" class="hidden" onchange="showSelfieSuccess()" />
   </label>
+  <input type="file" name="selfie" id="selfie_upload" accept="image/*" class="hidden" onchange="showSelfieSuccess()" />
 </div>
 
         <!-- Terms of Service -->

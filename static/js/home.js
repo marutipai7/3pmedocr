@@ -563,11 +563,11 @@ $(document).ready(function () {
   //         L.marker([lat, lng]).addTo(map).bindPopup("You are here").openPopup();
   //       },
   //       function () {
-  //         window.showToaster('error', 'Geolocation permission denied. Showing default location.');
+  //         toastr.error('Geolocation permission denied. Showing default location.');
   //       }
   //     );
   //   } else {
-  //     window.showToaster('error', 'Geolocation not supported by your browser.');
+  //     toastr.error('Geolocation not supported by your browser.');
   //   }
   //   const enquirerData = [
   //     { lat: 18.5308, lng: 73.8476, count: 5 },

@@ -1,6 +1,5 @@
 const cards = document.querySelectorAll(".donation-card");
 const closeBtn = document.querySelector(".close-expanded");
-const detailsBox = document.querySelector(".donation-details-box");
 const tabsSection = document.querySelector(".tabs-section");
 const searchFilterSection = document.querySelector(".search-filter-section");
 const paginationSections = document.querySelectorAll(".pagination-section");
@@ -44,7 +43,6 @@ cards.forEach((card) => {
       defaultHeading.classList.add("hidden");
       expandedHeading.classList.remove("hidden");
       expandedPara.classList.remove("hidden");
-      detailsBox.classList.remove("hidden");
       closeBtn.classList.remove("hidden");
 
       // Hide donation amount and donate button
@@ -69,16 +67,16 @@ cards.forEach((card) => {
       locationLine.classList.remove("mt-2");
       locationLine.classList.add("mt-4");
 
-      // Make card fullscreen for expanded view
-      card.classList.add(
-        "fixed",
-        "inset-0",
-        "z-50",
-        "h-screen",
-        "w-screen",
-        "overflow-y-auto",
-        "rounded-none"
-      );
+      // // Make card fullscreen for expanded view
+      // card.classList.add(
+      //   "fixed",
+      //   "inset-0",
+      //   "z-50",
+      //   "h-screen",
+      //   "w-screen",
+      //   "overflow-y-auto",
+      //   "rounded-none"
+      // );
       card.classList.remove("m-4", "rounded-lg");
 
       // Hide UI sections
@@ -96,6 +94,7 @@ cards.forEach((card) => {
 
   readMoreBtn?.addEventListener("click", (e) => {
     e.preventDefault();
+    console.log("Read More clicked");
     expandedPara?.classList.remove("hidden");
     readMoreBtn?.classList.add("hidden");
 
@@ -104,10 +103,12 @@ cards.forEach((card) => {
     const donateBtnContainer = card.querySelector(".donate-btn-container");
     const expandedButtons = card.querySelector(".expanded-buttons");
     const donateWrapper = card.querySelector(".donate-button-wrapper");
+    const donateLine = card.querySelector(".donation-line");
 
     // Hide donation amount and donate button
     donationAmount.classList.add("hidden");
     donateBtnContainer.classList.add("hidden");
+    donateLine.classList.remove("md:block");
 
     // Show visit website and pay buttons
     expandedButtons.classList.remove("hidden");

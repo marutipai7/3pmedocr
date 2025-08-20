@@ -30,13 +30,18 @@
            class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
   </div>
   <div class="relative w-full">
-    <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Phone Number</label>
-    <div class="flex gap-2 mt-2">
-      <select name="phone_prefix" class="border border-primary-color p-3 rounded-md">
-        <option value="+91">+91</option>
-      </select>
+    <label class="absolute left-24 -top-0.5 bg-white px-1 text-xs z-10">Phone Number</label>
+    <div class="flex items-center gap-2 mt-2">
+      <div class="dropdown code-dropdown relative inline-block">
+        <div class="dropdown-btn code-btn flex items-center border border-primary-color rounded-md p-3 pt-4 cursor-pointer">
+          <span class="material-symbols-outlined">keyboard_arrow_down</span>
+          <span class="selected-code countryCode-selected mr-2">+91</span>
+        </div>
+        <div class="dropdown-option code-option absolute left-0 mt-0.5 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-20 max-h-44 overflow-y-auto scroll"></div>
+        <input type="hidden" name="country-code" id="country-code">
+      </div>
       <input type="text" name="phone" placeholder="9876543210"
-             class="w-full border border-primary-color p-3 rounded-md" />
+             class="w-full border border-primary-color p-4 rounded-md" />
     </div>
   </div>
 </div>
@@ -53,7 +58,6 @@
   <!-- Company Type -->
   <div class="dropdown relative inline-block">
       <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Company Type</label>
-      <input type="hidden" name="company_type" id="company_type">
       <div class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
         <span class="mr-2 selected-value company-type-selected">select</span>
         <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
@@ -65,11 +69,11 @@
         </div>
         {% endfor %}
       </div>
+      <input type="hidden" name="company_type" id="company_type">
     </div>
   <!-- Ad Services -->
     <div class="dropdown relative inline-block">
       <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Service you're interested in</label>
-      <input type="hidden" name="company_service" id="company_service">
       <div class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
         <span class="mr-2 selected-value company-service-selected">select</span>
         <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
@@ -81,6 +85,7 @@
         </div>
         {% endfor %}
       </div>
+      <input type="hidden" name="company_service" id="company_service">
     </div>
 </div>
 
@@ -128,17 +133,19 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
   <!-- Incorporation -->
-  <div class="relative w-full">
+  <div class="upload-section relative w-full">
     <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Incorporation No. & Document</label>
     <div class="flex items-center gap-2 mt-2">
       <input type="text" name="incorporation" placeholder="U85110MH2022PTC123456"
              class="w-full border border-primary-color p-4 rounded-md text-sm" />
-      <label for="incorporation_doc" class="cursor-pointer p-2 border border-dashed rounded-md">
-        <svg class="w-5 h-5 text-primary-color" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4-4m0 0l-4 4m4-4v12" />
-        </svg>
-      </label>
-      <input type="file" id="incorporation_doc" name="incorporation_doc" class="hidden">
+      <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
+        <span class="material-symbols-outlined  text-dark-blue ">close</span>
+      </div> 
+      <div class="uploadTrigger h-14 w-21 flex flex-col items-center justify-center cursor-pointer border-dashed border-2 border-primary-color rounded-md">
+        <span class="material-symbols-outlined text-primary-color !text-2xl upload-icon">upload</span>
+        <span class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
+      </div>
+      <input type="file" id="incorporation_doc" name="incorporation_doc" class="uploadInput hidden">
     </div>
     <div class="mt-1 text-sm flex items-center gap-1">
       <input type="checkbox" name="incorporation_virus_checked" class="w-4 h-4" />
@@ -147,17 +154,19 @@
   </div>
 
   <!-- GST -->
-  <div class="relative w-full">
+  <div class="upload-section relative w-full">
     <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">GST No. & Document</label>
     <div class="flex items-center gap-2 mt-2">
       <input type="text" name="gst" placeholder="27AABCM1234F1Z5"
              class="w-full border border-primary-color p-4 rounded-md text-sm" />
-      <label for="gst_doc" class="cursor-pointer p-2 border border-dashed rounded-md">
-        <svg class="w-5 h-5 text-primary-color" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4-4m0 0l-4 4m4-4v12" />
-        </svg>
-      </label>
-      <input type="file" id="gst_doc" name="gst_doc" class="hidden">
+      <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
+        <span class="material-symbols-outlined  text-dark-blue ">close</span>
+      </div> 
+      <div class="uploadTrigger h-14 w-21 flex flex-col items-center justify-center cursor-pointer border-dashed border-2 border-primary-color rounded-md">
+        <span class="material-symbols-outlined text-primary-color !text-2xl upload-icon">upload</span>
+        <span class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
+      </div>
+      <input type="file" id="gst_doc" name="gst_doc" class="uploadInput hidden">
     </div>
     <div class="mt-1 text-sm flex items-center gap-1">
       <input type="checkbox" name="gst_virus_checked" class="w-4 h-4" />
@@ -166,17 +175,19 @@
   </div>
 
   <!-- PAN -->
-  <div class="relative w-full">
+  <div class="upload-section relative w-full">
     <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">PAN No. & Document</label>
     <div class="flex items-center gap-2 mt-2">
       <input type="text" name="pan" placeholder="AABCM1234F"
              class="w-full border border-primary-color p-4 rounded-md text-sm" />
-      <label for="pan_doc" class="cursor-pointer p-2 border border-dashed rounded-md">
-        <svg class="w-5 h-5 text-primary-color" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4-4m0 0l-4 4m4-4v12" />
-        </svg>
-      </label>
-      <input type="file" id="pan_doc" name="pan_doc" class="hidden">
+      <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
+        <span class="material-symbols-outlined  text-dark-blue ">close</span>
+      </div> 
+      <div class="uploadTrigger h-14 w-21 flex flex-col items-center justify-center cursor-pointer border-dashed border-2 border-primary-color rounded-md">
+        <span class="material-symbols-outlined text-primary-color !text-2xl upload-icon">upload</span>
+        <span class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
+      </div>
+      <input type="file" id="pan_doc" name="pan_doc" class="uploadInput hidden">
     </div>
     <div class="mt-1 text-sm flex items-center gap-1">
       <input type="checkbox" name="pan_virus_checked" class="w-4 h-4" />
@@ -185,17 +196,19 @@
   </div>
 
   <!-- TAN -->
-  <div class="relative w-full">
+  <div class="upload-section relative w-full">
     <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">TAN No. & Document</label>
     <div class="flex items-center gap-2 mt-2">
       <input type="text" name="tan" placeholder="MUMA12345B"
              class="w-full border border-primary-color p-4 rounded-md text-sm" />
-      <label for="tan_doc" class="cursor-pointer p-2 border border-dashed rounded-md">
-        <svg class="w-5 h-5 text-primary-color" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4-4m0 0l-4 4m4-4v12" />
-        </svg>
-      </label>
-      <input type="file" id="tan_doc" name="tan_doc" class="hidden">
+      <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
+        <span class="material-symbols-outlined  text-dark-blue ">close</span>
+      </div> 
+      <div class="uploadTrigger h-14 w-21 flex flex-col items-center justify-center cursor-pointer border-dashed border-2 border-primary-color rounded-md">
+        <span class="material-symbols-outlined text-primary-color !text-2xl upload-icon">upload</span>
+        <span class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
+      </div>
+      <input type="file" id="tan_doc" name="tan_doc" class="uploadInput hidden">
     </div>
     <div class="mt-1 text-sm flex items-center gap-1">
       <input type="checkbox" name="tan_virus_checked" class="w-4 h-4" />
@@ -254,16 +267,17 @@
       <input type="text" name="contact_name" placeholder="Rahul Mehta"
         class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
     </div>
-    <div class="flex items-center gap-2">
-      <div class="dropdown code-dropdown relative inline-block">
-        <div class="dropdown-btn flex items-center border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
-          <span class="material-symbols-outlined">keyboard_arrow_down</span>
-          <span class="selected-code mr-2">+91</span>
+    <div class="relative w-full">
+      <label class="absolute left-24 -top-0.5 bg-white px-1 text-xs z-10">Phone Number</label>
+      <div class="flex items-center gap-2">
+        <div class="dropdown code-dropdown relative inline-block">
+          <div class="dropdown-btn code-btn flex items-center border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
+            <span class="material-symbols-outlined">keyboard_arrow_down</span>
+            <span class="selected-code contact-countryCode-selected mr-2">+91</span>
+          </div>
+          <div class="dropdown-option code-option absolute left-0 mt-0.5 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-20 max-h-44 overflow-y-auto scroll"></div>
+          <input type="hidden" name="contact-country-code" id="contact-country-code">
         </div>
-        <div class="dropdown-option code-option absolute left-0 mt-0.5 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-20 max-h-44 overflow-y-auto scroll"></div>
-      </div>
-      <div class="relative w-full">
-        <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Phone Number</label>
         <input type="text" name="contact_phone" placeholder="9876543210"
           class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
       </div>
@@ -311,8 +325,8 @@
       <path stroke-linecap="round" stroke-linejoin="round"
             d="M12 11c0-1.104-.895-2-2-2s-2 .896-2 2 .895 2 2 2 2-.896 2-2z M12 11c0-1.104.896-2 2-2s2 .896 2 2-.896 2-2 2-2-.896-2-2z M12 11v6 M6 17h12 M9 4h6l1 2h3v2H5V6h3z" />
     </svg>
-    <input type="file" name="selfie" id="selfie_upload" accept="image/*" class="hidden" onchange="showSelfieSuccess()" />
   </label>
+  <input type="file" name="selfie" id="selfie_upload" accept="image/*" class="hidden" onchange="showSelfieSuccess()" />
 </div>
 
 

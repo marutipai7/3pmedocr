@@ -3,136 +3,120 @@
 {% block title %}Coupons{% endblock %}
 {% block content %}
 
-      <div class="coupon bg-white relative transition-all duration-300 text-dark-gray shadow-(--box-shadow-5) rounded-[10px] main-content h-full flex-1 flex flex-col gap-8 overflow-y-auto scroll p-6">
-        <div class="show-sidebar-toggle hidden fixed top-24 left-0 z-50 h-10 w-10 bg-transparent-living-coral items-center justify-center rounded-r-md cursor-pointer">
-          <span class="material-symbols-outlined bold-weight text-living-coral">
-              arrow_forward_ios
-          </span>
-        </div>
+
+      <div class="p-4">
+        <div class="coupon bg-white relative transition-all duration-300 text-dark-gray shadow-(--box-shadow-5) rounded-[10px] main-content h-full flex-1 flex flex-col gap-8 overflow-y-auto scroll p-6">
+          <div class="show-sidebar-toggle hidden fixed top-24 left-0 z-50 h-10 w-10 bg-transparent-living-coral items-center justify-center rounded-r-md cursor-pointer">
+            <span class="material-symbols-outlined bold-weight text-living-coral">
+                arrow_forward_ios
+            </span>
+          </div>
           <div class="flex items-center justify-between">
-            <div class="space-y-2">
-              <p class="flex items-center gap-2">
-                <span class="tab-icon material-symbols-outlined"> upload </span>
-                <span class="tab-title font-medium text-xl">Coupons</span>
-              </p>
-              <p class="tab-description text-18-nr">
-                Boost Your Sales—Post New Coupons for Users!
-              </p>
-            </div>
-          </div>
-
-          <!-- Tabs -->
-          <div class="flex gap-4 sm:gap-4 whitespace-nowrap overflow-x-auto no-scrollbar">
-            <button
-              class="tab-btn-adv active-tab-adv text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
-              data-tab="new-coupon">
-              Add New Coupon
-            </button>
-            <button class="tab-btn-adv text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
-              data-tab="coupon-history">
-              Coupon History
-            </button>
-            <button class="tab-btn-adv text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
-              data-tab="saved-coupon-history">
-              Saved Coupon
-            </button>
-          </div>
-
-          <!-- New Coupon content -->
-          <form id="main-coupon-form" action="{% url 'coupons' %}" method="POST" enctype="multipart/form-data" class="new-coupon tab-content pb-3 space-y-2" style="max-height: 63vh;">
-            {% csrf_token %}
-            <div id="step-1" class="step">
-              <div class="mt-5 space-y-5">
-                <!-- Coupon title -->
-                <div class="space-y-2">
-                  <h1 class=" text-18-fs font-semibold">Coupon Details</h1>
-                  <h1 class="text-dark-gray text-14-fs mt-4">Coupon Title</h1>
-                  <input type="text" placeholder="Eg.Summer Mega Offer" maxlength="20" name="title"
-                    class="required-field w-full h-10 p-3 rounded-[6px] border border-dark-gray focus:outline-none focus:ring-0 placeholder:text-dark-gray placeholder:text-14-nr">
-                  <p class="field-error text-xs font-normal text-dark-gray text-end">*Title exists limit of 20 character's</p>
-                </div>
-
-                <!-- Description -->
-                <div class="space-y-2">
-                  <h1 class="text-dark-gray text-14-fs">Description</h1>
-                  <textarea rows="2"  maxlength="120" name="description"
-                    class="required-field block p-3 w-full h-24 rounded-[6px] scroll border border-dark-gray focus:outline-none focus:ring-0 placeholder:text-dark-gray placeholder:text-14-nr"
-                    placeholder="Brief description of the rewards...."></textarea>
-                  <p class="field-error text-xs font-normal text-dark-gray text-end">*Description exists limit of 120 character's</p>
-                </div>
-
-                <!-- Coupon Code -->
-                <div class="space-y-2">
-                  <h1 class="text-dark-gray text-14-fs">Coupon Code</h1>
-                  <input type="text" placeholder="E.g. SUMMER2025" name="code"
-                    class="required-field w-full h-10 p-3 rounded-[6px] border border-dark-gray focus:outline-none focus:ring-0 placeholder:text-dark-gray placeholder:text-14-nr">
-                </div>
-
-                <div class="flex items-center justify-between gap-5">
-
-                  <div class="space-y-2 w-full">
-                    <h1 class="text-dark-gray text-14-fs">Category </h1>
-                    <div class="relative dropdown-wrapper">
-                      <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
-                        <input type="text" readonly value="Select" 
-                          class="required-field dropdown-input w-full h-8 border-none p-2 focus:outline-none focus:ring-0 text-dark-gray text-14-nr text-left" />
-                        <span class="material-symbols-outlined">keyboard_arrow_down</span>
-                        <input type="hidden" name="category" class="dropdown-input-hidden" />
-                      </div>
-                      <div
-                        class="dropdown-list absolute z-10 w-full border border-dark-gray rounded mt-1 hidden shadow-md bg-white h-[162px] overflow-y-auto scroll">
-                        {% for option in category_options %}
-                          <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
-                        {% endfor %}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="space-y-2 w-full">
-                    <h1 class="text-dark-gray text-14-fs">Brand Name </h1>
-                    <div class="relative dropdown-wrapper">
-                      <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
-                        <input type="text" readonly value="Select" 
-                          class="required-field dropdown-input w-full h-8 border-none p-2 focus:outline-none focus:ring-0 text-dark-gray text-14-nr text-left" />
-                        <span class="material-symbols-outlined">keyboard_arrow_down</span>
-                        <input type="hidden" name="brand_name" class="dropdown-input-hidden" />
-                      </div>
-                      <div
-                        class="dropdown-list absolute z-10 w-full border border-dark-gray rounded mt-1 hidden shadow-md bg-white h-[162px] overflow-y-auto scroll">
-                        {% for option in brand_options %}
-                          <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
-                        {% endfor %}
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
+              <div class="space-y-2">
+                <p class="flex items-center gap-2">
+                  <span class="tab-icon material-symbols-outlined"> upload </span>
+                  <span class="tab-title font-medium text-xl">Coupons</span>
+                </p>
+                <p class="tab-description text-18-nr">
+                  Boost Your Sales—Post New Coupons for Users!
+                </p>
               </div>
-              <!-- Dropdowns -->
-              <div class="mt-4 space-y-3">
-                <h2 class="text-18-fs text-black">Target Audience</h2>
-                <div class="space-y-2">
-                  <h1 class="text-dark-gray text-14-fs">Country</h1>
-                  <div class="relative dropdown-wrapper">
-                    <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
-                      <input type="text" readonly value="Select" 
-                        class="required-field dropdown-input w-full h-8 border-none p-2 focus:outline-none focus:ring-0 text-left text-dark-gray text-14-nr" />
-                      <span class="material-symbols-outlined">
-                        keyboard_arrow_down
-                      </span>
-                      <input type="hidden" name="country" class="dropdown-input-hidden" />
-                    </div>
-                    <div
-                        class="dropdown-list absolute z-10 w-full border border-dark-gray rounded mt-1 hidden shadow-md bg-white h-[162px] overflow-y-auto scroll">
-                        {% for option in country_options %}
-                          <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
-                        {% endfor %}
+          </div>
+
+            <!-- Tabs -->
+          <div>
+            <div class="flex gap-4 sm:gap-4 whitespace-nowrap overflow-x-auto no-scrollbar">
+              <button
+                class="tab-btn-adv active-tab-adv text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+                data-tab="new-coupon">
+                Add New Coupon
+              </button>
+              <button class="tab-btn-adv text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+                data-tab="coupon-history">
+                Coupon History
+              </button>
+              <button class="tab-btn-adv text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+                data-tab="saved-coupon-history">
+                Saved Coupon
+              </button>
+            </div>
+          </div>  
+
+            <!-- New Coupon content -->
+            <form id="main-coupon-form" action="{% url 'coupons' %}" method="POST" enctype="multipart/form-data" class="new-coupon tab-content pb-3 space-y-2">
+              {% csrf_token %}
+              <div id="step-1" class="step">
+                <div class="space-y-5">
+                  <!-- Coupon title -->
+                  <div class="space-y-2">
+                    <h1 class=" text-18-fs font-semibold">Coupon Details</h1>
+                    <h1 class="text-dark-gray text-14-fs mt-4">Coupon Title</h1>
+                    <input type="text" placeholder="Eg.Summer Mega Offer" maxlength="20" name="title"
+                      class="required-field w-full h-10 p-3 rounded-[6px] border border-dark-gray focus:outline-none focus:ring-0 placeholder:text-dark-gray placeholder:text-14-nr" />
+                    <p class="field-error text-xs font-normal text-dark-gray text-end">*Title exists limit of 20 character's</p>
+                  </div>
+
+                  <!-- Description -->
+                  <div class="space-y-2">
+                    <h1 class="text-dark-gray text-14-fs">Description</h1>
+                    <textarea rows="2"  maxlength="120" name="description"
+                      class="required-field block p-3 w-full h-24 rounded-[6px] scroll border border-dark-gray focus:outline-none focus:ring-0 placeholder:text-dark-gray placeholder:text-14-nr"
+                      placeholder="Brief description of the rewards...."></textarea>
+                    <p class="field-error text-xs font-normal text-dark-gray text-end">*Description exists limit of 120 character's</p>
+                  </div>
+
+                  <!-- Coupon Code -->
+                  <div class="space-y-2">
+                    <h1 class="text-dark-gray text-14-fs">Coupon Code</h1>
+                    <input type="text" placeholder="E.g. SUMMER2025" name="code"
+                      class="required-field w-full h-10 p-3 rounded-[6px] border border-dark-gray focus:outline-none focus:ring-0 placeholder:text-dark-gray placeholder:text-14-nr" />
+                  </div>
+
+                  <div class="flex items-center justify-between gap-5">
+
+                    <div class="space-y-2 w-full">
+                      <h1 class="text-dark-gray text-14-fs">Category </h1>
+                      <div class="relative dropdown-wrapper">
+                        <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
+                          <input type="text" readonly value="Select" 
+                            class="required-field dropdown-input w-full h-8 border-none p-2 focus:outline-none focus:ring-0 text-dark-gray text-14-nr text-left" />
+                          <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                          <input type="hidden" name="category" class="dropdown-input-hidden" />
+                        </div>
+                        <div
+                          class="dropdown-list absolute z-10 w-full border border-dark-gray rounded mt-1 hidden shadow-md bg-white h-[162px] overflow-y-auto scroll">
+                          {% for option in category_options %}
+                            <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
+                          {% endfor %}
+                        </div>
                       </div>
+                    </div>
+
+                    <div class="space-y-2 w-full">
+                      <h1 class="text-dark-gray text-14-fs">Brand Name </h1>
+                      <div class="relative dropdown-wrapper">
+                        <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
+                          <input type="text" readonly value="Select" 
+                            class="required-field dropdown-input w-full h-8 border-none p-2 focus:outline-none focus:ring-0 text-dark-gray text-14-nr text-left" />
+                          <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                          <input type="hidden" name="brand_name" class="dropdown-input-hidden" />
+                        </div>
+                        <div
+                          class="dropdown-list absolute z-10 w-full border border-dark-gray rounded mt-1 hidden shadow-md bg-white h-[162px] overflow-y-auto scroll">
+                          {% for option in brand_options %}
+                            <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
+                          {% endfor %}
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
-                <div class="flex items-center justify-between gap-5">
-                  <div class="space-y-2 w-full">
-                    <h1 class="text-dark-gray text-14-fs">State</h1>
+                <!-- Dropdowns -->
+                <div class="mt-4 space-y-3">
+                  <h2 class="text-18-fs text-black">Target Audience</h2>
+                  <div class="space-y-2">
+                    <h1 class="text-dark-gray text-14-fs">Country</h1>
                     <div class="relative dropdown-wrapper">
                       <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
                         <input type="text" readonly value="Select" 
@@ -140,275 +124,296 @@
                         <span class="material-symbols-outlined">
                           keyboard_arrow_down
                         </span>
-                        <input type="hidden" name="state" class="dropdown-input-hidden" />
+                        <input type="hidden" name="country" class="dropdown-input-hidden" />
                       </div>
                       <div
                           class="dropdown-list absolute z-10 w-full border border-dark-gray rounded mt-1 hidden shadow-md bg-white h-[162px] overflow-y-auto scroll">
-                          {% for option in state_options %}
+                          {% for option in country_options %}
                             <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
                           {% endfor %}
-                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div class="space-y-2 w-full">
-                    <h1 class="text-dark-gray text-14-fs">City</h1>
-                    <div class="relative dropdown-wrapper">
-                      <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
-                        <input type="text" readonly value="Select" 
-                          class="required-field dropdown-input w-full h-8 border-none p-2 focus:outline-none focus:ring-0 text-left text-dark-gray text-14-nr" />
-                        <span class="material-symbols-outlined">
-                          keyboard_arrow_down
-                        </span>
-                        <input type="hidden" name="city" class="dropdown-input-hidden" />
+                  <div class="flex items-center justify-between gap-5">
+                    <div class="space-y-2 w-full">
+                      <h1 class="text-dark-gray text-14-fs">State</h1>
+                      <div class="relative dropdown-wrapper">
+                        <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
+                          <input type="text" readonly value="Select" 
+                            class="required-field dropdown-input w-full h-8 border-none p-2 focus:outline-none focus:ring-0 text-left text-dark-gray text-14-nr" />
+                          <span class="material-symbols-outlined">
+                            keyboard_arrow_down
+                          </span>
+                          <input type="hidden" name="state" class="dropdown-input-hidden" />
+                        </div>
+                        <div
+                            class="dropdown-list absolute z-10 w-full border border-dark-gray rounded mt-1 hidden shadow-md bg-white h-[162px] overflow-y-auto scroll">
+                            {% for option in state_options %}
+                              <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
+                            {% endfor %}
+                        </div>
                       </div>
-                      <div
+                    </div>
+                    <div class="space-y-2 w-full">
+                      <h1 class="text-dark-gray text-14-fs">City</h1>
+                      <div class="relative dropdown-wrapper">
+                        <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
+                          <input type="text" readonly value="Select" 
+                            class="required-field dropdown-input w-full h-8 border-none p-2 focus:outline-none focus:ring-0 text-left text-dark-gray text-14-nr" />
+                          <span class="material-symbols-outlined">
+                            keyboard_arrow_down
+                          </span>
+                          <input type="hidden" name="city" class="dropdown-input-hidden" />
+                        </div>
+                        <div
+                            class="dropdown-list absolute z-10 w-full border border-dark-gray rounded mt-1 hidden shadow-md bg-white h-[162px] overflow-y-auto scroll">
+                            {% for option in city_options %}
+                              <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
+                            {% endfor %}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="space-y-2 w-full">
+                      <h1 class="text-dark-gray text-14-fs">Pincode</h1>
+                      <div class="relative dropdown-wrapper">
+                        <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
+                          <input type="text" readonly value="Select" 
+                            class="required-field dropdown-input w-full h-8 border-none p-2 focus:outline-none focus:ring-0 text-left text-dark-gray text-14-nr" />
+                          <span class="material-symbols-outlined">
+                            keyboard_arrow_down
+                          </span>
+                          <input type="hidden" name="pincode" class="dropdown-input-hidden" />
+                        </div>
+                        <div
                           class="dropdown-list absolute z-10 w-full border border-dark-gray rounded mt-1 hidden shadow-md bg-white h-[162px] overflow-y-auto scroll">
-                          {% for option in city_options %}
-                            <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
+                          {% for option in pincode_options %}
+                            <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id }}">{{ option.code }}</div>
                           {% endfor %}
                         </div>
-                    </div>
-                  </div>
-                  <div class="space-y-2 w-full">
-                    <h1 class="text-dark-gray text-14-fs">Pincode</h1>
-                    <div class="relative dropdown-wrapper">
-                      <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
-                        <input type="text" readonly value="Select" 
-                          class="required-field dropdown-input w-full h-8 border-none p-2 focus:outline-none focus:ring-0 text-left text-dark-gray text-14-nr" />
-                        <span class="material-symbols-outlined">
-                          keyboard_arrow_down
-                        </span>
-                        <input type="hidden" name="pincode" class="dropdown-input-hidden" />
-                      </div>
-                      <div
-                        class="dropdown-list absolute z-10 w-full border border-dark-gray rounded mt-1 hidden shadow-md bg-white h-[162px] overflow-y-auto scroll">
-                        {% for option in pincode_options %}
-                          <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id }}">{{ option.code }}</div>
-                        {% endfor %}
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex items-center justify-between gap-5">
-                  <div class="space-y-2 w-full">
-                    <h1 class="text-dark-gray text-14-fs">Age</h1>
-                    <div class="relative dropdown-wrapper">
-                      <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
-                        <input type="text" readonly value="Select" 
-                          class="required-field dropdown-input w-full h-8 border-none p-2 focus:outline-none focus:ring-0 text-left text-dark-gray text-14-nr" />
-                        <span class="material-symbols-outlined">
-                          keyboard_arrow_down
-                        </span>
-                        <input type="hidden" name="age_group" class="dropdown-input-hidden" />
-                      </div>
-                      <div
-                          class="dropdown-list absolute z-10 w-full border border-dark-gray rounded mt-1 hidden shadow-md bg-white">
-                          {% for option in age_options %}
-                            <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
-                          {% endfor %}
+                  <div class="flex items-center justify-between gap-5">
+                    <div class="space-y-2 w-full">
+                      <h1 class="text-dark-gray text-14-fs">Age</h1>
+                      <div class="relative dropdown-wrapper">
+                        <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
+                          <input type="text" readonly value="Select" 
+                            class="required-field dropdown-input w-full h-8 border-none p-2 focus:outline-none focus:ring-0 text-left text-dark-gray text-14-nr" />
+                          <span class="material-symbols-outlined">
+                            keyboard_arrow_down
+                          </span>
+                          <input type="hidden" name="age_group" class="dropdown-input-hidden" />
                         </div>
-                    </div>
-                  </div>
-                  <div class="space-y-2 w-full">
-                    <h1 class="text-dark-gray text-14-fs">Gender</h1>
-                    <div class="relative dropdown-wrapper">
-                      <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
-                        <input type="text" readonly value="Select" 
-                          class="required-field dropdown-input w-full h-8 border-none p-2 focus:outline-none focus:ring-0 text-left text-dark-gray text-14-nr" />
-                        <span class="material-symbols-outlined">
-                          keyboard_arrow_down
-                        </span>
-                        <input type="hidden" name="gender" class="dropdown-input-hidden" />
-                      </div>
-                      <div
-                          class="dropdown-list absolute z-10 w-full border border-dark-gray rounded mt-1 hidden shadow-md bg-white">
-                          {% for option in gender_options %}
-                            <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
-                          {% endfor %}
-                        </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="flex items-center justify-between gap-5">
-                  <div class="space-y-2 w-full">
-                    <h1 class="text-dark-gray text-14-fs">Spending power</h1>
-                    <div class="relative dropdown-wrapper">
-                      <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
-                        <input type="text" readonly value="Select" 
-                          class="required-field dropdown-input w-full h-8 border-none p-2 focus:outline-none focus:ring-0 text-left text-dark-gray text-14-nr" />
-                        <span class="material-symbols-outlined">
-                          keyboard_arrow_down
-                        </span>
-                        <input type="hidden" name="spending_power" class="dropdown-input-hidden" />
-                      </div>
-                      <div
-                          class="dropdown-list absolute z-10 w-full border border-dark-gray rounded mt-1 hidden shadow-md bg-white">
-                            {% for option in spending_power_options %}
+                        <div
+                            class="dropdown-list absolute z-10 w-full border border-dark-gray rounded mt-1 hidden shadow-md bg-white">
+                            {% for option in age_options %}
                               <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
                             {% endfor %}
                           </div>
+                      </div>
+                    </div>
+                    <div class="space-y-2 w-full">
+                      <h1 class="text-dark-gray text-14-fs">Gender</h1>
+                      <div class="relative dropdown-wrapper">
+                        <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
+                          <input type="text" readonly value="Select" 
+                            class="required-field dropdown-input w-full h-8 border-none p-2 focus:outline-none focus:ring-0 text-left text-dark-gray text-14-nr" />
+                          <span class="material-symbols-outlined">
+                            keyboard_arrow_down
+                          </span>
+                          <input type="hidden" name="gender" class="dropdown-input-hidden" />
+                        </div>
+                        <div
+                            class="dropdown-list absolute z-10 w-full border border-dark-gray rounded mt-1 hidden shadow-md bg-white">
+                            {% for option in gender_options %}
+                              <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
+                            {% endfor %}
+                          </div>
+                      </div>
                     </div>
                   </div>
-                  <div class="space-y-2 w-full">
-                    <h1 class="text-dark-gray text-14-fs">Offer Type</h1>
-                    <div class="relative dropdown-wrapper">
-                      <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
-                        <input type="text" readonly value="Select" 
-                          class="required-field dropdown-input w-full h-8 border-none p-2 focus:outline-none focus:ring-0 text-left text-dark-gray text-14-nr" />
-                        <span class="material-symbols-outlined">
-                          keyboard_arrow_down
-                        </span>
-                        <input type="hidden" name="offer_type" class="dropdown-input-hidden" />
+                  <div class="flex items-center justify-between gap-5">
+                    <div class="space-y-2 w-full">
+                      <h1 class="text-dark-gray text-14-fs">Spending power</h1>
+                      <div class="relative dropdown-wrapper">
+                        <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
+                          <input type="text" readonly value="Select" 
+                            class="required-field dropdown-input w-full h-8 border-none p-2 focus:outline-none focus:ring-0 text-left text-dark-gray text-14-nr" />
+                          <span class="material-symbols-outlined">
+                            keyboard_arrow_down
+                          </span>
+                          <input type="hidden" name="spending_power" class="dropdown-input-hidden" />
+                        </div>
+                        <div
+                            class="dropdown-list absolute z-10 w-full border border-dark-gray rounded mt-1 hidden shadow-md bg-white">
+                              {% for option in spending_power_options %}
+                                <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
+                              {% endfor %}
+                            </div>
                       </div>
-                      <div
-                        class="dropdown-list absolute z-10 w-full border border-dark-gray rounded mt-1 hidden shadow-md bg-white  h-[162px] overflow-y-auto scroll">
-                        {% for option in offer_type_options %}
-                          <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
-                        {% endfor %}
+                    </div>
+                    <div class="space-y-2 w-full">
+                      <h1 class="text-dark-gray text-14-fs">Offer Type</h1>
+                      <div class="relative dropdown-wrapper">
+                        <div class="w-full border border-dark-gray rounded-[6px] p-1 cursor-pointer flex items-center">
+                          <input type="text" readonly value="Select" 
+                            class="required-field dropdown-input w-full h-8 border-none p-2 focus:outline-none focus:ring-0 text-left text-dark-gray text-14-nr" />
+                          <span class="material-symbols-outlined">
+                            keyboard_arrow_down
+                          </span>
+                          <input type="hidden" name="offer_type" class="dropdown-input-hidden" />
+                        </div>
+                        <div
+                          class="dropdown-list absolute z-10 w-full border border-dark-gray rounded mt-1 hidden shadow-md bg-white  h-[162px] overflow-y-auto scroll">
+                          {% for option in offer_type_options %}
+                            <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
+                          {% endfor %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between gap-5">
+                    <div class="space-y-2 w-full">
+                      <h1 class="text-dark-gray text-14-fs">Maximum Redemptions *</h1>
+                      <input type="text" placeholder="Minimum 5" name="max_redemptions"
+                      class="required-field w-full h-10 p-3 rounded-[6px] border border-dark-gray focus:outline-none focus:ring-0 placeholder:text-dark-gray placeholder:text-14-nr">                  
+                    </div>
+                    <div class="space-y-2 w-full">
+                      <label class="block text-sm font-semibold mb-1">Validity *</label>
+                      <div class="relative calendar-wrapper w-full">
+                        <div
+                          class="w-full h-10 border border-dark-gray rounded-[6px] py-2.5 px-4 cursor-pointer flex items-center justify-between custom-date-trigger">
+                          <span class="selected-date text-16-nr text-dark-gray">DD/MM/YY</span>
+                          <span class="material-symbols-outlined text-dark-gray">calendar_month</span>
+                        </div>
+                        <input type="text" class="required-field start-date-range custom-date-range" name="validity"
+                          style="position: absolute; left: 0; top: 0; opacity: 0; pointer-events: none;" />
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="flex items-center justify-between gap-5">
-                  <div class="space-y-2 w-full">
-                    <h1 class="text-dark-gray text-14-fs">Maximum Redemptions *</h1>
-                    <input type="text" placeholder="Minimum 5" name="max_redemptions"
-                    class="required-field w-full h-10 p-3 rounded-[6px] border border-dark-gray focus:outline-none focus:ring-0 placeholder:text-dark-gray placeholder:text-14-nr">                  
-                  </div>
-                  <div class="space-y-2 w-full">
-                    <label class="block text-sm font-semibold mb-1">Validity *</label>
-                    <div class="relative calendar-wrapper w-full">
-                      <div
-                        class="w-full h-10 border border-dark-gray rounded-[6px] py-2.5 px-4 cursor-pointer flex items-center justify-between custom-date-trigger">
-                        <span class="selected-date text-16-nr text-dark-gray">DD/MM/YY</span>
-                        <span class="material-symbols-outlined text-dark-gray">calendar_month</span>
-                      </div>
-                      <input type="text" class="required-field start-date-range custom-date-range" name="validity"
-                        style="position: absolute; left: 0; top: 0; opacity: 0; pointer-events: none;" />
+                <!-- Upload Section -->
+                <div class="mt-4 space-y-3">
+                  <p class="text-16-nr">Upload coupon image (1 rupee per coupon)<span class="text-dark-red">*</span></p>
+                  <div
+                    class="upload-area relative border-2 border-dashed border-living-coral rounded-md h-[312px] flex items-center justify-center px-6">
+                    <input type="file" class="required-field upload-input hidden" name="coupon_image"/>
+                    <div class="upload-placeholder flex flex-col items-center space-y-2 cursor-pointer">
+                      <img src="/static/images/cloud-upload-living.svg" alt="Cloud" loading="lazy" />
+                      <p class="text-xs sm:text-base text-center">Click or Upload</p>
                     </div>
+                    <div class="upload-preview hidden relative w-full h-60">
+                      <button type="button" class="cancel-upload absolute -top-8 sm:-top-2 right-2">
+                        <span class="material-symbols-outlined cursor-pointer">
+                          close
+                        </span>
+                      </button>
+                      <img src="" alt="Preview" class="uploaded-img mx-auto max-h-60 object-contain" />
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <p class="text-[9px] sm:text-xs py-2 text-dark-gray">
+                      Upload a JPG, PNG, or MP4 up to 10 MB
+                    </p>
+                    <div class="flex items-center gap-1">
+                      <p class="text-xs sm:text-16-nr text-dark-red">Virus Scan</p>
+                      <img src="/static/images/virus-scan.svg" alt="Scan" loading="lazy">
+                    </div>
+                  </div>
+                  <div class="flex justify-end sm:gap-8">
+
+                    <button id="next-step" class="pay-btn w-full max-w-[120px] py-2 rounded-[10px] bg-living-coral text-white cursor-pointer">
+                      Pay
+                    </button>
                   </div>
                 </div>
               </div>
-              <!-- Upload Section -->
-              <div class="mt-4 space-y-3">
-                <p class="text-16-nr">Upload coupon image (1 rupee per coupon)<span class="text-dark-red">*</span></p>
-                <div
-                  class="upload-area relative border-2 border-dashed border-living-coral rounded-md h-[312px] flex items-center justify-center px-6">
-                  <input type="file" class="required-field upload-input hidden" name="coupon_image"/>
-                  <div class="upload-placeholder flex flex-col items-center space-y-2 cursor-pointer">
-                    <img src="/static/images/cloud-upload-living.svg" alt="Cloud" loading="lazy" />
-                    <p class="text-xs sm:text-base text-center">Click or Upload</p>
-                  </div>
-                  <div class="upload-preview hidden relative w-full h-60">
-                    <button type="button" class="cancel-upload absolute -top-8 sm:-top-2 right-2">
-                      <span class="material-symbols-outlined cursor-pointer">
-                        close
-                      </span>
-                    </button>
-                    <img src="" alt="Preview" class="uploaded-img mx-auto max-h-60 object-contain" />
-                  </div>
-                </div>
+              <div id="step-2" class="step hidden">
                 <div class="flex items-center justify-between">
-                  <p class="text-[9px] sm:text-xs py-2 text-dark-gray">
-                    Upload a JPG, PNG, or MP4 up to 10 MB
-                  </p>
-                  <div class="flex items-center gap-1">
-                    <p class="text-xs sm:text-16-nr text-dark-red">Virus Scan</p>
-                    <img src="/static/images/virus-scan.svg" alt="Scan" loading="lazy">
+                  <div class="space-y-2">
+                    <p class="flex items-center gap-3">
+                      <span class="tab-icon material-symbols-outlined"> upload </span>
+                      <span class="tab-title font-medium text-xl">Coupons</span>
+                    </p>
+                    <p class="tab-description text-18-nr">
+                      Boost Your Sales—Post New Coupons for Users!
+                    </p>
                   </div>
                 </div>
-                <div class="flex justify-end sm:gap-8">
+                <!-- Image Section -->
+                <div class="rounded-md overflow-hidden shadow mt-5">
+                  <img id="pay-preview-img" src="/static/images/tablets.svg" alt="Coupon" class="w-full h-48 object-cover">
+                  <div class="bg-white p-4">
+                    <p class="text-sm uppercase text-living-coral font-semibold">Coupon</p>
+                    <div class="flex justify-between items-center">
+                      <h2 id="pay-title" class="text-lg font-semibold">Coupon Title</h2>
+                      <span id="pay-category" class="text-sm font-semibold">Category: </span>
+                    </div>
+                    <p id="pay-description" class="text-sm text-light-gray1 mt-1">Coupon Description</p>
+                    <div class="flex flex-wrap gap-4 mt-2">
+                      <span id="pay-code" class="text-xs bg-gray-100 px-2 py-1 rounded">Code: </span>
+                      <span id="pay-brand" class="text-xs bg-gray-100 px-2 py-1 rounded">Brand: </span>
+                    </div>
+                  </div>
+                </div>
 
-                  <button id="next-step" class="pay-btn w-full max-w-[120px] py-2 rounded-[10px] bg-living-coral text-white cursor-pointer">
-                    Pay
+                <!-- Coupon Entry -->
+                <div class="text-center my-6 text-dark-gray">
+                  <h3 class="text-xl font-bold">Maximum Redemptions *</h3>
+                  <input 
+                      type="number" 
+                      id="couponInput"
+                      name="number_of_coupons" 
+                      min="5" 
+                      value="10" 
+                      class="text-5xl font-bold mt-2 border border-gray-300 rounded px-4 py-2 text-center w-60 focus:outline-none focus:border-living-coral"
+                  />
+                  <p class="mt-2">Minimum: 5</p>
+                </div>
+
+                <!-- Summary -->
+                <div class="text-light-gray1 mt-6 space-y-4">
+                    <p>No. of Coupons Purchased: <span class="float-right font-semibold text-dark-gray" id="coupons-count">10</span></p>
+                    <p>No. of Displays per Coupon: <span class="float-right font-semibold text-dark-gray" id="displays-per-coupon">10</span></p>
+                    <p>Rate per Display: <span class="float-right font-semibold text-dark-gray" id="rate-per-display">₹100.00</span></p>
+                    <p class="font-semibold text-jet-black">Total Value Before GST: <span class="float-right font-semibold text-dark-gray" id="total-before-gst">₹10,000.00</span></p>
+                    <p>Add: GST @ 18% <span class="float-right font-semibold text-dark-gray" id="gst-amount">₹1,800.00</span></p>
+                    <p class="font-semibold text-jet-black">Gross Invoice Amount <span class="float-right font-semibold text-dark-gray" id="gross-amount">₹11,800.00</span></p>
+                    <p>Less: Advance Received (Adjusted) <span class="float-right font-semibold text-dark-gray" id="advance-received">₹100.00</span></p>
+                    <p class="font-semibold text-xl">Net Payable Now <span class="float-right font-semibold text-living-coral" id="net-payable">₹11,700.00</span></p>
+                </div>
+
+                <!-- Hidden inputs (dynamically filled via JS) -->
+              <input type="hidden" name="purchased_count" id="purchased_count_field">
+              <input type="hidden" name="displays_per_coupon" id="displays_per_coupon_field">
+              <input type="hidden" name="rate_per_display" id="rate_per_display_field">
+              <input type="hidden" name="advance_received" id="advance_received_field">
+              <input type="hidden" name="gst_amount" id="gst_amount_field">
+              <input type="hidden" name="final_paid_amount" id="final_paid_amount_field">
+              <input type="hidden" name="payment-method" value="upi">
+
+                <!-- Pay Section -->
+                <div class="flex justify-end sm:gap-8 mt-6">
+                  <button id="prev-step" class="w-full max-w-[120px] py-2 rounded-[10px] border border-living-coral text-living-coral cancel-pay-btn hover:bg-living-coral hover:text-white transition-colors cursor-pointer">
+                      Cancel
+                  </button>
+
+                  <button type="submit" class="w-full max-w-[120px] py-2 rounded-[10px] bg-living-coral text-white hover:bg-red-600 transition-colors cursor-pointer">
+                      Pay
                   </button>
                 </div>
               </div>
-            </div>
-            <div id="step-2" class="step hidden">
-              <div class="flex items-center justify-between">
-                <div class="space-y-2">
-                  <p class="flex items-center gap-3">
-                    <span class="tab-icon material-symbols-outlined"> upload </span>
-                    <span class="tab-title font-medium text-xl">Coupons</span>
-                  </p>
-                  <p class="tab-description text-18-nr">
-                    Boost Your Sales—Post New Coupons for Users!
-                  </p>
-                </div>
-              </div>
-              <!-- Image Section -->
-              <div class="rounded-md overflow-hidden shadow mt-5">
-                <img id="pay-preview-img" src="/static/images/tablets.svg" alt="Coupon" class="w-full h-48 object-cover">
-                <div class="bg-white p-4">
-                  <p class="text-sm uppercase text-living-coral font-semibold">Coupon</p>
-                  <div class="flex justify-between items-center">
-                    <h2 id="pay-title" class="text-lg font-semibold">Coupon Title</h2>
-                    <span id="pay-category" class="text-sm font-semibold">Category: </span>
-                  </div>
-                  <p id="pay-description" class="text-sm text-light-gray1 mt-1">Coupon Description</p>
-                  <div class="flex flex-wrap gap-4 mt-2">
-                    <span id="pay-code" class="text-xs bg-gray-100 px-2 py-1 rounded">Code: </span>
-                    <span id="pay-brand" class="text-xs bg-gray-100 px-2 py-1 rounded">Brand: </span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Coupon Entry -->
-              <div class="text-center my-6 text-dark-gray">
-                <h3 class="text-xl font-bold">Maximum Redemptions *</h3>
-                <input 
-                    type="number" 
-                    id="couponInput"
-                    name="number_of_coupons" 
-                    min="5" 
-                    value="10" 
-                    class="text-5xl font-bold mt-2 border border-gray-300 rounded px-4 py-2 text-center w-60 focus:outline-none focus:border-living-coral"
-                />
-                <p class="mt-2">Minimum: 5</p>
-              </div>
-
-              <!-- Summary -->
-              <div class="text-light-gray1 mt-6 space-y-4">
-                  <p>No. of Coupons Purchased: <span class="float-right font-semibold text-dark-gray" id="coupons-count">10</span></p>
-                  <p>No. of Displays per Coupon: <span class="float-right font-semibold text-dark-gray" id="displays-per-coupon">10</span></p>
-                  <p>Rate per Display: <span class="float-right font-semibold text-dark-gray" id="rate-per-display">₹100.00</span></p>
-                  <p class="font-semibold text-jet-black">Total Value Before GST: <span class="float-right font-semibold text-dark-gray" id="total-before-gst">₹10,000.00</span></p>
-                  <p>Add: GST @ 18% <span class="float-right font-semibold text-dark-gray" id="gst-amount">₹1,800.00</span></p>
-                  <p class="font-semibold text-jet-black">Gross Invoice Amount <span class="float-right font-semibold text-dark-gray" id="gross-amount">₹11,800.00</span></p>
-                  <p>Less: Advance Received (Adjusted) <span class="float-right font-semibold text-dark-gray" id="advance-received">₹100.00</span></p>
-                  <p class="font-semibold text-xl">Net Payable Now <span class="float-right font-semibold text-living-coral" id="net-payable">₹11,700.00</span></p>
-              </div>
-
-              <!-- Hidden inputs (dynamically filled via JS) -->
-            <input type="hidden" name="purchased_count" id="purchased_count_field">
-            <input type="hidden" name="displays_per_coupon" id="displays_per_coupon_field">
-            <input type="hidden" name="rate_per_display" id="rate_per_display_field">
-            <input type="hidden" name="advance_received" id="advance_received_field">
-            <input type="hidden" name="gst_amount" id="gst_amount_field">
-            <input type="hidden" name="final_paid_amount" id="final_paid_amount_field">
-            <input type="hidden" name="payment-method" value="upi">
-
-              <!-- Pay Section -->
-              <div class="flex justify-end sm:gap-8 mt-6">
-                <button id="prev-step" class="w-full max-w-[120px] py-2 rounded-[10px] border border-living-coral text-living-coral cancel-pay-btn hover:bg-living-coral hover:text-white transition-colors cursor-pointer">
-                    Cancel
-                </button>
-
-                <button type="submit" class="w-full max-w-[120px] py-2 rounded-[10px] bg-living-coral text-white hover:bg-red-600 transition-colors cursor-pointer">
-                    Pay
-                </button>
-              </div>
-            </div>
-          </form>
+            </form>
 
 
-          <!-- Coupon History Content -->
-          {% include 'coupon-history.html' %}
+            <!-- Coupon History Content -->
+            {% include 'coupon-history.html' %}
 
-          <!-- Saved Coupon Content -->
-          {% include 'saved-coupon.html' %}
+            <!-- Saved Coupon Content -->
+            {% include 'saved-coupon.html' %}
         </div>
+      </div>
 
         <!-- Preview Popup -->
         {% include "preview-popup.html" %}

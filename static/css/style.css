@@ -1,3 +1,4 @@
+@import "tailwindcss";
 
 @theme {
     --color-primary-color: #1E4D92;
@@ -238,8 +239,7 @@ body {
 }
 
 .profile-dropdown {
-    @apply hidden absolute right-0 -top-1 w-[180px] bg-white rounded-3xl z-50 overflow-hidden;
-    box-shadow: var(--box-shadow-1);
+    @apply hidden absolute right-0 w-[180px] bg-white rounded-md z-50 overflow-hidden shadow-lg;
 }
 
 .active-tab{
@@ -608,7 +608,13 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+.tooltip {
+  display: none;
+}
 
+.has-tooltip:hover~.tooltip {
+  display: block;
+}
 
 
 

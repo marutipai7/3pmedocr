@@ -72,7 +72,7 @@ if (navigator.geolocation) {
             maximumAge: 20000,
         });
 } else {
-    window.showToaster('error', 'Geolocation not supported by your browser.');
+    toastr.error('Geolocation not supported by your browser.');
 }
 
 tile_url = "http://192.168.1.110:4090/styles/light-mode-nopoi/256/{z}/{x}/{y}.png"
@@ -109,7 +109,7 @@ function showLocation(position) {
 
     // If accuracy is poor, use warning marker + reverse geocode
     if (accuracy > 5000) {
-        alert("Your location may be inaccurate. Falling back to default location.");
+        toastr.info("Your location may be inaccurate. Falling back to default location.");
         const cached = JSON.parse(localStorage.getItem("best_location") || "null");
 
         if (cached && cached.lat && cached.lon) {
@@ -154,7 +154,7 @@ function showLocation(position) {
             .openPopup();
             })
             .catch(err => {
-                window.showToaster("error", "Could not determine location.");
+                toastr.error("Could not determine location.");
                 console.error("Reverse geocode fail:", err);
             });
         }
@@ -170,7 +170,7 @@ function showLocation(position) {
 }
 
 function showError(error) {
-    window.showToaster('error', "Error getting location: " + error.message);
+    toastr.error("Error getting location: " + error.message);
 }
 
 function clearMarkers() {
@@ -226,7 +226,7 @@ function fetchPlaces(type, buttonElement, mode = "map") {
     $(buttonElement).css('color', 'white');
 
     if (!currentLat || !currentLon) {
-    window.showToaster('error', "Location not yet available");
+    toastr.error("Location not yet available");
     return;
     }
 
@@ -303,12 +303,12 @@ function fetchPlaces(type, buttonElement, mode = "map") {
                     renderListView(allFetchedPlaces);
                 }
         } else {
-        window.showToaster("error", `No ${type}s found nearby.`);
+        toastr.error(`No ${type}s found nearby.`);
         }
     })
     .catch((err) => {
         console.error("Fetch error:", err);
-        window.showToaster("error", `Failed to load nearby ${type}s.`);
+        toastr.error(`Failed to load nearby ${type}s.`);
         $(".cards, #pagination").addClass('hidden');
         $(".placeholder").removeClass('hidden').text(`No ${type}s found nearby.`);
     });
@@ -585,7 +585,7 @@ function generateStars(rating, reviews) {
     })
     .catch(err => {
             console.error("Searching History error:", err);
-            window.showToaster("error", err.message || "Searching History failed.");
+            toastr.error(err.message || "Searching History failed.");
         });
 
     lastLat = lat; lastLon = lon; lastPlace = place;
@@ -624,7 +624,7 @@ function generateStars(rating, reviews) {
         .then(data => {
             const routes = data.routes;
             if (!routes.length) {
-                window.showToaster("info", "No routes found.");
+                toastr.info("No routes found.");
                 return;
             }
             console.log("Routes fetched:", routes);
@@ -761,7 +761,7 @@ function generateStars(rating, reviews) {
         })
         .catch(err => {
             console.error("Routing error:", err);
-            window.showToaster("error", err.message || "Routing failed.");
+            toastr.error(err.message || "Routing failed.");
         });
     
 
@@ -1036,7 +1036,7 @@ function generateStars(rating, reviews) {
             .catch(err => {
                 if (err.name === "AbortError") return; // Ignore aborted
                 console.error("Search error:", err);
-                window.showToaster("error", "Failed to fetch search results.");
+                toastr.error("Failed to fetch search results.");
             });
         }, 300); // adjust debounce delay as needed
     });
@@ -1129,12 +1129,12 @@ function showFilteredSuggestions(title, filterFn) {
             })
             .then(res => res.json())
             .then(data => {
-                window.showToaster("success", data.message || "Removed successfully.");
+                toastr.success(data.message || "Removed successfully.");
                 $item.remove(); // Remove from UI
             })
             .catch(err => {
                 console.error("Removal error:", err);
-                window.showToaster("error", "Could not remove the item.");
+                toastr.error("Could not remove the item.");
             });
         });
         $suggestionBox.append($item);
@@ -1183,7 +1183,7 @@ $(".bookmark-icon").on("click", function (e) {
     })
     .catch(err => {
         console.error("Error fetching saved:", err);
-        window.showToaster("error", "Could not fetch saved locations.");
+        toastr.error("Could not fetch saved locations.");
     });
 });
 
@@ -1225,7 +1225,7 @@ $(".history-icon").on("click", function (e) {
     })
     .catch(err => {
         console.error("Error fetching history:", err);
-        window.showToaster("error", "Could not fetch recent searches.");
+        toastr.error("Could not fetch recent searches.");
     });
 });
 
@@ -1249,15 +1249,15 @@ $(".history-icon").on("click", function (e) {
                 $btn.html("bookmark");
                 $btn.addClass(`material-filled text-${selectedColor}`);
                 bookmarkedPlaceIds.add(mongo_id);
-                window.showToaster("success", "Saved to bookmarks!");
+                toastr.error("Saved to bookmarks!");
             } else {
                 bookmarkedPlaceIds.delete(mongo_id);
-                window.showToaster("info", "Already bookmarked.");
+                toastr.info("Already bookmarked.");
             }
         })
         .catch(err => {
             console.error("Bookmarking error", err);
-            window.showToaster("error", "Could not save bookmark.");
+            toastr.error("Could not save bookmark.");
         });
         $(this).addClass(`material-filled text-${selectedColor}`);
     });
