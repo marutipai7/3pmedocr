@@ -116,7 +116,7 @@ document.querySelectorAll('.badge-description').forEach(function(descElem) {
 
 
 let currentPage = 1;
-const limit = 4;
+const limit = 3;
 
 function allrewards(search = '', dateRange = '', page = 1) {
   $.ajax({
