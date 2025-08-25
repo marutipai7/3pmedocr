@@ -124,7 +124,7 @@ function sendEmailSupport() {
 // };
 
 // Toggle dropdowns
-/*$(
+$(
   ".issue-type-wrapper .issue-type-input, .issue-type-wrapper .material-symbols-outlined"
 ).on("click", function () {
   $(".issue-type-dropdown").toggleClass("hidden");
@@ -133,7 +133,7 @@ $(
   ".select-issue-wrapper .select-issue-input, .select-issue-wrapper .material-symbols-outlined"
 ).on("click", function () {
   $(".select-issue-dropdown").toggleClass("hidden");
-});*/
+});
 
 // Handle issue type checkbox selection
 // $(".issue-checkbox").on("click", function (e) {

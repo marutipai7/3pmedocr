@@ -16,6 +16,9 @@ from django.template.loader import render_to_string
 from django.db import transaction
 import logging
 from .models import UserColorScheme
+from coupon.models import Coupon
+from donate.models import Donation
+from ngopost.models import NGOPost
 
 logger = logging.getLogger(__name__)
 
@@ -234,19 +237,64 @@ def settings_page(request):
         context["all_types"] = MedicalProviderType.objects.filter(is_active=True)
         context["all_services"] = MedicalProviderServices.objects.filter(is_active=True)
         context["all_workingdays"] = MedicalProviderWorkingDays.objects.filter(is_active=True)
-        profile_id = profile.id
+    
         if profile:
+            profile_id = profile.id
             context.update({
                 'company_name': profile.company_name,
-                'provider_type': profile.provider_type,
+                'provider_type': profile.provider_type,  # Changed from provider_type to company_type for consistency
                 'services_offered': profile.services_offered,
+                'working_days': profile.working_days,
                 'website_url': profile.website_url,
-                'storefront_image_path': profile.storefront_image_path,
-            })    
+                'address': profile.address,
+                'city': profile.city,
+                'state': profile.state,
+                'country': profile.country,
+                'pincode': profile.pincode,
+                'referral_code': profile.referral_code if profile.referral_code else "",
+                'incorporation_number': profile.incorporation_number,
+                'incorporation_doc_path': os.path.basename(profile.incorporation_doc_path) if profile.incorporation_doc_path else "",
+                'gst_number': profile.gst_number,
+                'gst_doc_path': os.path.basename(profile.gst_doc_path) if profile.gst_doc_path else "",
+                'medical_license_number': profile.medical_license_number,
+                'medical_license_doc_path': os.path.basename(profile.medical_license_doc_path) if profile.medical_license_doc_path else "",
+                'pan_number': profile.pan_number,
+                'pan_doc_path': os.path.basename(profile.pan_doc_path) if profile.pan_doc_path else "",
+                'tan_number': profile.tan_number,
+                'tan_doc_path': os.path.basename(profile.tan_doc_path) if profile.tan_doc_path else "",
+                'storefront_image_path': os.path.basename(profile.storefront_image_path) if profile.storefront_image_path else "",
+            })
             
-    print(f"Context for settings page: {context}")
-
-    return render(request, 'settings/settings_page.html', context)
+            # Get contact person details
+            contact_persons = ContactPerson.objects.filter(
+                profile_type=user.user_type,
+                profile_id=profile_id
+            ).first()
+            
+            if contact_persons:
+                context.update({
+                    'contact_name': contact_persons.name,
+                    'contact_phone_country_code': contact_persons.phone_country_code,
+                    'contact_phone_number': contact_persons.phone_number,
+                    'contact_role': contact_persons.role,
+                })
+            else:
+                context.update({
+                    'contact_name': 'N/A',
+                    'contact_phone_country_code': '',
+                    'contact_phone_number': '',
+                    'contact_role': '',
+                })
+        else:
+            # Handle case where profile doesn't exist
+            context.update({
+                'contact_name': 'N/A',
+                'contact_phone_country_code': '',
+                'contact_phone_number': '',
+                'contact_role': '',
+            })
+        
+        return render(request, 'settings/settings_page_provider.html', context)
 
 def get_base_context(user):
     context = {
@@ -387,13 +435,38 @@ def handle_ngo_profile(user):
 
 def handle_provider_profile(user):
     profile = MedicalProviderProfile.objects.filter(user=user).first()
-    return {
+    if not profile:
+        return {}
+    
+    data = {
         'company_name': profile.company_name,
-        'provider_type': profile.provider_type,
+        'company_type': profile.provider_type,
+        'all_types': MedicalProviderType.objects.filter(is_active=True),
         'services_offered': profile.services_offered,
+        'all_services': MedicalProviderServices.objects.filter(is_active=True),
+        'working_days': profile.working_days,
+        'all_workingdays': MedicalProviderWorkingDays.objects.filter(is_active=True),
         'website_url': profile.website_url,
-        'storefront_image_path': profile.storefront_image_path,
-    } if profile else {}
+        'address': profile.address,
+        'city': profile.city,
+        'state': profile.state,
+        'country': profile.country,
+        'pincode': profile.pincode,
+        'referral_code': profile.referral_code or '',
+        'incorporation_number': profile.incorporation_number,
+        'incorporation_doc_path': os.path.basename(profile.incorporation_doc_path) if profile.incorporation_doc_path else "",
+        'gst_number': profile.gst_number,
+        'gst_doc_path': os.path.basename(profile.gst_doc_path) if profile.gst_doc_path else "",
+        'medical_license_number': profile.medical_license_number,
+        'medical_license_doc_path': os.path.basename(profile.medical_license_doc_path) if profile.medical_license_doc_path else "",
+        'pan_number': profile.pan_number,
+        'pan_doc_path': os.path.basename(profile.pan_doc_path) if profile.pan_doc_path else "",
+        'tan_number': profile.tan_number,
+        'tan_doc_path': os.path.basename(profile.tan_doc_path) if profile.tan_doc_path else "",
+        'storefront_image_path': os.path.basename(profile.storefront_image_path) if profile.storefront_image_path else "",
+    }
+    data.update(handle_contact_person(user.user_type, profile.id))
+    return data
 
 @require_GET
 @dashboard_login_required
@@ -416,12 +489,12 @@ def get_account_details(request):
         type = request.GET.get('type', 'view')
         # load_country_codes
         context['country_codes'] = load_country_codes()
-        context['all_types'] = AdvertiserType.objects.filter(is_active=True)
-        context["all_services"] = AdServiceReq.objects.filter(is_active=True)
         
         if type == 'view':
+            # print(f"data is: {context}")
             html = render_to_string('partials/account_details.html', context, request=request)
         elif  type == 'edit':
+            print(f"edit data is: {context}")
             html = render_to_string('partials/edit-account-details.html', context, request=request)
 
         return JsonResponse({'success': True, 'html': html})
@@ -459,7 +532,7 @@ def update_user_document(request):
 
     subdir_map = {
         'ngo_registration_doc': 'registration',
-        'incorporation_doc': 'registration',
+        'incorporation_doc': 'incorporation',
         'gst_doc': 'gst',
         'pan_doc': 'pan',
         'tan_doc': 'tan',
@@ -467,7 +540,7 @@ def update_user_document(request):
         'doc_12a': 'doc_12a',
         'brand_image': 'brand_image',
         'medical_license_doc': 'medical_license',
-        'storefront_image': 'storefront_image',
+        'storefront_image': 'store_front',
     }
         
     upload_subdir = subdir_map.get(doc_type)
@@ -666,6 +739,103 @@ def update_client_profile(request):
 
 @require_POST
 @dashboard_login_required
+def update_provider_profile(request):
+    post_data = request.POST
+    errors = {}
+    user = request.user_obj  
+
+    # --- Validate ---
+    validate_email_phone(post_data, errors)
+    required_fields = ["company_name", "city", "state", "country", "pincode"]
+    for field in required_fields:
+        if not post_data.get(field):
+            errors[field] = f"{field.replace('_', ' ').capitalize()} is required."
+
+    if errors:
+        return JsonResponse({"success": False, "errors": errors}, status=400)
+
+    try:
+        with transaction.atomic():
+            # --- Update User ---
+            user.email = post_data.get('email')
+            user.phone_country_code = post_data.get("countryCodes", "+91")
+            user.phone_number = post_data.get("phone")
+            user.save()
+
+            # --- Update ProviderProfile ---
+            provider_profile = get_object_or_404(MedicalProviderProfile, user=user)
+            provider_profile.company_name = post_data.get("company_name")
+            provider_profile.website_url = post_data.get("website_url")
+            provider_profile.address = post_data.get("address")
+            provider_profile.city = post_data.get("city")
+            provider_profile.state = post_data.get("state")
+            provider_profile.country = post_data.get("country")
+            provider_profile.pincode = post_data.get("pincode")
+            provider_profile.referral_code = post_data.get("referral_code")
+
+            # ✅ ForeignKey Fields (single selection)
+            
+            # Provider Type (ForeignKey) - expect ID or name
+            provider_type_value = post_data.get("provider_type")
+            if provider_type_value:
+                try:
+                    # Try to get by ID first, then by name
+                    if provider_type_value.isdigit():
+                        provider_profile.provider_type = get_object_or_404(MedicalProviderType, id=provider_type_value)
+                    else:
+                        provider_profile.provider_type = get_object_or_404(MedicalProviderType, name=provider_type_value)
+                except:
+                    # If not found, keep the current value
+                    pass
+
+            # Services Offered (ForeignKey) - single selection
+            services_offered_value = post_data.get("services_offered")
+            if services_offered_value:
+                try:
+                    if services_offered_value.isdigit():
+                        provider_profile.services_offered = get_object_or_404(MedicalProviderServices, id=services_offered_value)
+                    else:
+                        provider_profile.services_offered = get_object_or_404(MedicalProviderServices, name=services_offered_value)
+                except:
+                    pass
+
+            # Working Days (ForeignKey) - single selection
+            working_days_value = post_data.get("working_days")
+            if working_days_value:
+                try:
+                    if working_days_value.isdigit():
+                        provider_profile.working_days = get_object_or_404(MedicalProviderWorkingDays, id=working_days_value)
+                    else:
+                        provider_profile.working_days = get_object_or_404(MedicalProviderWorkingDays, name=working_days_value)
+                except:
+                    pass
+
+            provider_profile.save()
+
+            # --- Update or Create ContactPerson ---
+            contact_name = post_data.get("contact_name")
+            contact_phone = post_data.get("contact_phone_number")
+            if contact_name or contact_phone:
+                contact, _ = ContactPerson.objects.get_or_create(
+                    profile_type="provider",
+                    profile_id=provider_profile.id
+                )
+                contact.name = contact_name
+                contact.role = post_data.get("contact_role")
+                contact.phone_country_code = post_data.get("contact_countryCodes", "+91")
+                contact.phone_number = contact_phone
+                contact.save()
+
+        return JsonResponse({'success': True, 'message': 'Provider profile updated successfully'})
+    
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)}, status=500)
+
+
+
+
+@require_POST
+@dashboard_login_required
 def delete_account(request):
     user = request.user_obj
     data = json.loads(request.body)
@@ -694,7 +864,17 @@ def clear_search_history(request):
 def clear_saved_data(request):
     user = request.user_obj
     SavedLocation.objects.filter(user=user).delete()
-    
+
+    if user.user_type == 'advertiser':
+        Coupon.objects.filter(user=user, saved=True).update(saved=False)
+        Donation.objects.filter(user=user, saved=True).update(saved=False)
+
+    if user.user_type == 'ngo':
+        NGOPost.objects.filter(user=user, saved=True).update(saved=False)
+
+    if user.user_type == "provider":
+        Donation.objects.filter(user=user, saved=True).update(saved=False)
+
     return JsonResponse({'status': 'saved data cleared'})
 
 @dashboard_login_required

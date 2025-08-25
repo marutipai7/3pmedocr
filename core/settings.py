@@ -27,6 +27,8 @@ INSTALLED_APPS = [
     'donate',
     'points',
     'coupon',
+    'orders',
+    'shared',
 ]
 
 MIDDLEWARE = [
