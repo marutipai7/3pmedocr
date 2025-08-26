@@ -12,4 +12,6 @@ urlpatterns = [
     path('save/advertiser', views.save_advertiser, name='save_advertiser'),
     path('save/client', views.save_client, name='save_client'),
     path('save/medical_provider', views.save_medical_provider, name='save_medical_provider'),        
+    path("otp/send", views.send_otp, name="send_otp"),
+    path("otp/verify", views.verify_otp, name="verify_otp"), 
 ]

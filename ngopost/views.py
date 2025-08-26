@@ -1,5 +1,4 @@
-from django.shortcuts import render, redirect
-from django.contrib import messages
+from django.shortcuts import render
 from datetime import datetime, date
 from .models import (
     NGOPost, 
@@ -13,16 +12,14 @@ from .models import (
     SpendingPowerOption
     )
 import logging
-from registration.views import validate_and_save_file
+from datetime import datetime
 from dashboard.utils import dashboard_login_required, get_common_context
 from django.http import JsonResponse, Http404
-from django.views.decorators.http import require_GET, require_POST
-from donate.models import Donation
-from django.db.models import Q
-from points.models import PointsActionType, PointsHistory
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET, require_POST
+from django.db.models import Q
+from donate.models import Donation
 from django.template.loader import render_to_string
-from datetime import datetime
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
 # Get an instance of a logger

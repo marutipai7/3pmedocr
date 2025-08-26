@@ -1,26 +1,31 @@
+import json
+import datetime
 from django.shortcuts import render
 from dashboard.utils import dashboard_login_required
-from .models import PointsHistory,PointsActionType,PointsBadge,CouponClaimed
+from .models import (
+    PointsHistory,
+    PointsActionType,
+    PointsBadge,
+    CouponClaimed
+    )
+from registration.models import (
+    User,
+    AdvertiserProfile,
+    ClientProfile,
+    MedicalProviderProfile,
+    NGOProfile
+    )
 from coupon.models import Coupon
 from collections import defaultdict
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.utils.dateparse import parse_date
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-from django.views.decorators.http import require_POST
-import json
-import datetime
-from django.db.models import Sum
-from django.utils.timezone import now
-from registration.models import User 
-from django.db.models import Q
-from django.core.paginator import Paginator
 from django.utils import timezone
-from datetime import timedelta, date
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.db.models import Sum, Q
+from django.core.paginator import Paginator
 import logging
-from django.db import connection
-from registration.models import AdvertiserProfile, ClientProfile, MedicalProviderProfile, NGOProfile
 
 
 @dashboard_login_required
@@ -130,15 +135,15 @@ def get_coupon_data(request, is_popular=False):
             )
 
         if date_range == "1 week":
-            coupons = coupons.filter(created_at__gte=now - timedelta(weeks=1))
+            coupons = coupons.filter(created_at__gte=now - datetime.timedelta(weeks=1))
         elif date_range == "1 month":
-            coupons = coupons.filter(created_at__gte=now - timedelta(days=30))
+            coupons = coupons.filter(created_at__gte=now - datetime.timedelta(days=30))
         elif date_range == "1 year":
-            coupons = coupons.filter(created_at__gte=now - timedelta(days=365))
+            coupons = coupons.filter(created_at__gte=now - datetime.timedelta(days=365))
         elif start_date_str and end_date_str:
             try:
                 start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
-                end_date = datetime.strptime(end_date_str, "%Y-%m-%d") + timedelta(days=1)
+                end_date = datetime.strptime(end_date_str, "%Y-%m-%d") + datetime.timedelta(days=1)
                 coupons = coupons.filter(created_at__range=(start_date, end_date))
             except ValueError:
                 return JsonResponse({"html": "", "error": "Invalid date format."})
@@ -205,7 +210,7 @@ def ajax_filtered_points(request):
 @dashboard_login_required
 def filter_points(request):
     user = request.user_obj
-    today = now().date()
+    today = timezone.now().date()
 
     search_query = request.GET.get('search', '').strip().lower()
     date_filter = request.GET.get('date_filter', '')
@@ -327,11 +332,11 @@ def get_claimed_coupons(request):
             today = timezone.now().date()
 
             if date_range == "1 week":
-                claimed_qs = claimed_qs.filter(date_claimed__date__gte=today - timedelta(weeks=1))
+                claimed_qs = claimed_qs.filter(date_claimed__date__gte=today - datetime.timedelta(weeks=1))
             elif date_range == "1 month":
-                claimed_qs = claimed_qs.filter(date_claimed__date__gte=today - timedelta(days=30))
+                claimed_qs = claimed_qs.filter(date_claimed__date__gte=today - datetime.datetime.timedelta(days=30))
             elif date_range == "1 year":
-                claimed_qs = claimed_qs.filter(date_claimed__date__gte=today - timedelta(days=365))
+                claimed_qs = claimed_qs.filter(date_claimed__date__gte=today - datetime.timedelta(days=365))
 
 
         # Start Date Filter

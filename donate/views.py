@@ -1,27 +1,21 @@
+import uuid
+from decimal import Decimal
 from django.shortcuts import render
 from dashboard.utils import dashboard_login_required
-from ngopost.models import NGOPost
-from registration.models import NGOProfile, User, AdvertiserProfile, ClientProfile, MedicalProviderProfile
-from django.http import JsonResponse
-from django.utils import timezone
-import uuid
-from donate.models import Donation
-from registration.views import validate_and_save_file
-from settings.views import validate_and_save_file
-from decimal import Decimal
 from points.models import PointsActionType, PointsHistory
-import logging
-from datetime import date, timedelta, datetime
-from django.shortcuts import render
+from ngopost.models import NGOPost
+from donate.models import Donation
+from registration.models import NGOProfile, User, AdvertiserProfile, ClientProfile, MedicalProviderProfile, ContactPerson
 from django.db.models import Q
-from django.core.paginator import Paginator
-from django.template.loader import render_to_string
-import csv
-from django.http import HttpResponse
-from django.utils.encoding import smart_str
-from registration.models import ContactPerson, User
+from registration.views import validate_and_save_file
 from dashboard.views import get_common_context
 from django.views.decorators.http import require_POST, require_GET
+from django.http import JsonResponse
+from django.utils import timezone
+from datetime import date, timedelta, datetime
+from django.core.paginator import Paginator
+from django.template.loader import render_to_string
+import logging
 logger = logging.getLogger(__name__)
 
 @dashboard_login_required

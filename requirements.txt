@@ -8,3 +8,5 @@ pymongo>=3.3
 requests>=2.31
 whitenoise
 pillow
+pyotp
+aiosmtplib

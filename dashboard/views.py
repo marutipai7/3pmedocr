@@ -1,30 +1,23 @@
-from django.shortcuts import render, redirect
-from django.urls import reverse
-from django.db.models import Sum, Count, DecimalField, Q
-from django.utils import timezone
-from .utils import dashboard_login_required, get_common_context, get_theme_colors
-from .models import SettingMenu, CouponPerformance,  CalendarEvent
-from registration.models import MedicalProviderProfile, NGOProfile, ClientProfile, AdvertiserProfile
-from ngopost.models import NGOPost
-from .models import TrendingCoupon
-from donate.models import Donation
-from django.shortcuts import render
-from django.http import JsonResponse, Http404
+import os
 import json
+import random
+from .utils import dashboard_login_required, get_common_context, get_theme_colors
+from .models import SettingMenu, CouponPerformance,  CalendarEvent, TrendingCoupon
+from registration.models import MedicalProviderProfile, NGOProfile, ClientProfile, AdvertiserProfile, ContactPerson
+from ngopost.models import NGOPost
+from donate.models import Donation
+from coupon.models import Coupon
+from datetime import date, datetime, timedelta
+from django.db.models import Sum, Count, Q
+from django.db.models.functions import TruncDate
+from django.shortcuts import render, redirect
+from django.utils import timezone
+from django.http import JsonResponse
 from django.template.loader import render_to_string
-from datetime import datetime, timedelta
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
-from registration.models import ContactPerson
-from django.db.models.functions import TruncDate
-import random
-from datetime import date
-from coupon.utils import get_saved_coupons_for_user
 from django.core.paginator import Paginator
-from coupon.models import Coupon
 import logging
-import os
-from django.shortcuts import get_object_or_404
 logger = logging.getLogger(__name__)
 
 @dashboard_login_required

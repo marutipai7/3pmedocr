@@ -1,5 +1,21 @@
 $(document).ready(function () {
 
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
     let uploadConfirmShown = false;
     // Country code js
    $('.code-dropdown').each(function() {
@@ -96,14 +112,26 @@ $(document).ready(function () {
     //otp message
     $(".send-otp").click(function(){
         $(this).addClass("!bg-Dark-Cornflower-Blue");
-        $(this).closest('.otp-div').find('.otp-message').html(`
-            <div class="flex items-center gap-2 text-bright-green cursor-pointer">
-                <div class="h-4 w-4 flex items-center justify-center bg-bright-green rounded">
-                    <span class="material-symbols-outlined text-white !text-sm">check</span>
-                </div>
-              <p>Verified</p>
-            </div>
-          `);
+        let email = $('input[name="email"]').val();
+        if (!email) {
+            toastr.error("Please enter your email address.");
+            return;
+        }
+
+        $.ajax({
+        url: "/user/otp/send",
+        type: "POST",
+        headers: { 'X-CSRFToken': csrftoken },
+        data: {"email": email},
+        success: function (response) {
+            toastr.success(response.message);
+            $(".otp-input").val(response.token);
+        },
+        error: function (response) {
+            console.error("Failed to send OTP:", response);
+            toastr.error(response.responseJSON.message);
+        }
+    });
     })
     //Permission Access
     $('.uploadTrigger').on('click', function () {

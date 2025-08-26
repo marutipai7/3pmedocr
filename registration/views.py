@@ -1,19 +1,22 @@
 import os
 import re
+import asyncio
+import uuid
+from .models import *
+from .email_otp import send_otp as mail_otp
+from .email_otp import verify_otp as otp_verify
+from django.http import JsonResponse
 from django.conf import settings
 from django.urls import reverse
 from django.shortcuts import render
+from django.core.cache import cache
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.core.files.storage import default_storage
 from django.views.decorators.csrf import csrf_protect
-from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.hashers import make_password, check_password
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
-from .models import *
-from registration.utils import send_custom_email  
 from django.utils import timezone
-from django.http import JsonResponse
 import logging
 
 logger = logging.getLogger(__name__)
@@ -26,6 +29,57 @@ ROLE_TO_TEMPLATE = {
     "client": "registration/client_register.html",
     "advertiser": "registration/advertiser_register.html",
 }
+
+@require_POST
+def send_otp(request):
+    email = request.POST.get("email")
+    if not email:
+        return JsonResponse({"success": False, "message": "Please enter email"}, status=400)
+    else:
+        try:
+            validate_email(email)
+        except:
+            return JsonResponse({"success": False, "message": "Invalid email address"}, status=400)
+        if User.objects.filter(email=email).exists():
+            return JsonResponse({"success": False, "message": "This email is already registered."}, status=400)
+
+    # Generate and send OTP
+    token_data = asyncio.run(mail_otp(type("obj", (object,), {"email": email})))
+    otp_secret = token_data["otp_token"]
+
+    # Create unique token for frontend
+    bearer_token = str(uuid.uuid4())
+
+    # Cache data for 5 minutes for security
+    cache.set(f"otp:{bearer_token}", {
+        "email": email,
+        "secret": otp_secret,
+        "created_at": timezone.now().isoformat()
+    }, timeout=300)
+
+    return JsonResponse({"success": True, "token": bearer_token, "message": "OTP sent successfully"})
+
+def verify_otp(email: str, otp: str, token: str, errors: dict) -> dict:
+    if not email:
+        return {"success": False, "message": "Email is required."}
+    if not otp:
+        return {"success": False, "message": "OTP is required."}
+    if not token:
+        return {"success": False, "message": "Token is required."}
+
+    cache_data = cache.get(f"otp:{token}")
+    if not cache_data:
+        return {"success": False, "message": "Token expired or invalid."}
+
+    if cache_data["email"] != email:
+        return {"success": False, "message": "Email mismatch."}
+
+    if otp_verify(cache_data["secret"], otp):
+        cache.delete(f"otp:{token}")
+        cache.set(f"otp_verified:{email}", True, timeout=600)  # mark verified for 10 mins
+        return {"success": True, "message": "OTP verified successfully."}
+
+    return {"success": False, "message": "Invalid or expired OTP."}
 
 def welcome(request):
     return render(request, 'registration/welcome.html')
@@ -134,6 +188,12 @@ def save_user(request):
             errors["email"] = "Enter a valid email address."
         if User.objects.filter(email=email).exists():
             errors["email"] = "This email is already registered."
+            
+    otp_token = data.get("otp_token")
+    email_otp = data.get("otp1")  # from HTML field "otp1"
+    otp_verification = verify_otp(email, email_otp, otp_token)
+    if not otp_verification["success"]:
+        errors["otp1"] = otp_verification["message"]
 
     # Password
     password = data.get("password")
@@ -177,7 +237,6 @@ def save_user(request):
         errors["country"] = "Country is required."
 
     referral_code = data.get("referral_code")
-    otp = data.get("otp1")
     phone_country_code = data.get("phone_country_code", "+91")
 
     # If any errors, return as JSON
@@ -203,7 +262,7 @@ def save_user(request):
         pincode=pincode,
         country=country,
         referral_code=referral_code,
-        otp=otp,
+        otp=email_otp,
     )
     return JsonResponse({"success": True, "message": "User registered successfully."})
 
@@ -233,7 +292,13 @@ def save_ngo(request):
         errors["password"] = "Password is required (min 8 chars)."
     elif password != confirm_password:
         errors["confirm_password"] = "Passwords do not match."
-
+        
+    otp_token = data.get("otp_token")
+    email_otp = data.get("otp1")  # from HTML field "otp1"
+    otp_verification = verify_otp(email, email_otp, otp_token)
+    if not otp_verification["success"]:
+        errors["otp1"] = otp_verification["message"]
+    
     # Phone and country code
     phone_country_code = "+91"  # default; 
     phone_number = data.get("phone_number1")
@@ -337,7 +402,6 @@ def save_ngo(request):
         errors["brand_image"] = err
 
     brand_description = data.get("brand_description")
-    email_otp = data.get("otp1")  # from HTML field "otp1"
     referral_code = data.get("referral_code")
     contact_person_name = data.get("contact_person_name")
     contact_person_phone = data.get("contact_person_phone")
@@ -444,6 +508,12 @@ def save_advertiser(request):
         errors["password"] = "Password must be at least 8 characters."
     elif password != confirm_password:
         errors["confirm_password"] = "Passwords do not match."
+        
+    otp_token = data.get("otp_token")
+    email_otp = data.get("otp1")  # from HTML field "otp1"
+    otp_verification = verify_otp(email, email_otp, otp_token)
+    if not otp_verification["success"]:
+        errors["otp1"] = otp_verification["message"]
 
     # Phone
     phone_country_code = "+91"
@@ -542,7 +612,6 @@ def save_advertiser(request):
 
     # Description and OTP
     brand_description = data.get("brand_description")
-    email_otp = data.get("otp1")
     referral_code = data.get("referral_code")
 
     # Contact Person
@@ -646,6 +715,12 @@ def save_client(request):
             errors["email"] = "Enter a valid email address."
         if User.objects.filter(email=email).exists():
             errors["email"] = "This email is already registered."
+            
+    otp_token = data.get("otp_token")
+    email_otp = data.get("otp1")  # from HTML field "otp1"
+    otp_verification = verify_otp(email, email_otp, otp_token)
+    if not otp_verification["success"]:
+        errors["otp1"] = otp_verification["message"]
 
     # Password
     if not password or len(password) < 8:
@@ -746,7 +821,6 @@ def save_client(request):
         errors["selfie"] = "Selfie is required."
 
     # OTP & Referral
-    email_otp = data.get("otp1")
     referral_code = data.get("referral_code")
     
     # Contact Person
@@ -841,6 +915,12 @@ def save_medical_provider(request):
         if User.objects.filter(email=email).exists():
             errors["email"] = "This email is already registered."
             logger.warning("Email already exists in database")
+            
+    otp_token = data.get("otp_token")
+    email_otp = data.get("otp1")  # from HTML field "otp1"
+    otp_verification = verify_otp(email, email_otp, otp_token)
+    if not otp_verification["success"]:
+        errors["otp1"] = otp_verification["message"]
 
     # Password
     password = data.get("password")
@@ -976,7 +1056,6 @@ def save_medical_provider(request):
         errors["store_front"] = err
 
     # Description and OTP
-    email_otp = data.get("otp1")
     referral_code = data.get("referral_code")
 
     # Contact Person
