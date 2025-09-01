@@ -92,7 +92,7 @@ cards.forEach((card) => {
   const readMoreBtn = card.querySelector(".read-more-btn");
   const expandedPara = card.querySelector(".expanded-para");
 
-  readMoreBtn?.addEventListener("click", (e) => {
+$(document).on("click", readMoreBtn, function(e) {
     e.preventDefault();
     console.log("Read More clicked");
     expandedPara?.classList.remove("hidden");
@@ -583,3 +583,77 @@ $(document).on('click', '.donate-bookmark-toggle', function() {
             }
         });
     });
+
+function loadOrganizations(page = 1, $container = $('#organizationSectionId')) {
+    const query = $('input[name="organization_query"]').val();
+    const startDate = $container.data("start-date") || "";
+    const endDate = $container.data("end-date") || "";
+    const dateRange = $container.data("range-label") || "";
+
+    $.ajax({
+        url: "/donate/get-organization-posts/",
+        type: "GET",
+        data: {
+            query: query,
+            page: page,
+            start_date: startDate,
+            end_date: endDate,
+            daterange: dateRange,
+        },
+        success: function (response) {
+            $container.html(response.html);
+            renderPagination(response.current_page, response.total_pages, $container);
+        },
+        error: function () {
+            toastr.error("Failed to load organizations.");
+        }
+    });
+}
+
+// Initial load when clicking Organizations tab
+$('[data-tab="organization"]').on('click', function () {
+    loadOrganizations(1, $('#organizationSectionId'));
+});
+
+
+// Search input
+$(document).on('input', 'input[name="organization_query"]', function () {
+    loadOrganizations(1, $('#organizationSectionId'));
+});
+
+// Pagination
+$(document).on('click', '.organization-pagination-btn', function () {
+    const page = $(this).data('page');
+    const $container = $(this).closest('.postDiv');
+    loadOrganizations(page, $container);
+});
+
+// Date range
+$(document).on("click", ".organization-daterange", function () {
+    $(".organization-daterange").removeClass("font-bold");
+    $(this).addClass("font-bold");
+
+    const rangeLabel = $(this).data("range");
+    const { start, end } = calculateDateRange(rangeLabel);
+
+    const $tabDiv = $(this).closest(".postDiv");
+    $tabDiv.data("start-date", start);
+    $tabDiv.data("end-date", end);
+    $tabDiv.data("range-label", rangeLabel.toLowerCase());
+
+    loadOrganizations(1, $tabDiv);
+});
+
+function loadExpandedView(postId) {
+  fetch(`/expanded/${postId}/`)
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById("expandedViewContent").innerHTML = html;
+      document.getElementById("expandedViewModal").classList.remove("hidden");
+    });
+}
+
+function closeExpandedView() {
+  document.getElementById("expandedViewModal").classList.add("hidden");
+  document.getElementById("expandedViewContent").innerHTML = "";
+}

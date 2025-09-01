@@ -1,9 +1,10 @@
 import os
 import re
 import asyncio
+import pyotp
 import uuid
 from .models import *
-from .email_otp import send_otp as mail_otp
+from .email_otp import async_send_otp_email
 from .email_otp import verify_otp as otp_verify
 from django.http import JsonResponse
 from django.conf import settings
@@ -43,43 +44,44 @@ def send_otp(request):
         if User.objects.filter(email=email).exists():
             return JsonResponse({"success": False, "message": "This email is already registered."}, status=400)
 
-    # Generate and send OTP
-    token_data = asyncio.run(mail_otp(type("obj", (object,), {"email": email})))
-    otp_secret = token_data["otp_token"]
+    # Generate and send OTP (returns secret in "otp_token")
+    token_data = asyncio.run(async_send_otp_email(type("obj", (object,), {"email": email})))
+    secret = token_data["otp_token"]
 
     # Create unique token for frontend
     bearer_token = str(uuid.uuid4())
 
-    # Cache data for 5 minutes for security
+    # Cache secret (NOT otp value) for 5 minutes
     cache.set(f"otp:{bearer_token}", {
         "email": email,
-        "secret": otp_secret,
+        "secret": secret,
         "created_at": timezone.now().isoformat()
     }, timeout=300)
 
     return JsonResponse({"success": True, "token": bearer_token, "message": "OTP sent successfully"})
 
-def verify_otp(email: str, otp: str, token: str) -> dict:
-    if not email:
-        return {"success": False, "message": "Email is required."}
-    if not otp:
-        return {"success": False, "message": "OTP is required."}
-    if not token:
-        return {"success": False, "message": "Token is required."}
+@require_POST
+def verify_otp(request):
+    bearer_token = request.POST.get("token")
+    otp = request.POST.get("otp")
 
-    cache_data = cache.get(f"otp:{token}")
-    if not cache_data:
-        return {"success": False, "message": "Token expired or invalid."}
+    if not bearer_token or not otp:
+        return JsonResponse({"success": False, "message": "Missing token or OTP"}, status=400)
 
-    if cache_data["email"] != email:
-        return {"success": False, "message": "Email mismatch."}
+    cache_key = f"otp:{bearer_token}"
+    otp_data = cache.get(cache_key)
+    if not otp_data:
+        return JsonResponse({"success": False, "message": "OTP expired or invalid"}, status=400)
 
-    if otp_verify(cache_data["secret"], otp):
-        cache.delete(f"otp:{token}")
-        cache.set(f"otp_verified:{email}", True, timeout=600)  # mark verified for 10 mins
-        return {"success": True, "message": "OTP verified successfully."}
+    print("DEBUG: otp_data =", otp_data)
 
-    return {"success": False, "message": "Invalid or expired OTP."}
+    secret = otp_data["secret"]
+    totp = pyotp.TOTP(secret, interval=300)  # must match send_otp.py
+    if not totp.verify(otp, valid_window=1):
+        return JsonResponse({"success": False, "message": "Invalid OTP"}, status=400)
+
+    cache.set(f"otp_verified:{otp_data['email']}", True, timeout=600)
+    return JsonResponse({"success": True, "message": "OTP verified successfully"})
 
 def welcome(request):
     return render(request, 'registration/welcome.html')
@@ -298,14 +300,14 @@ def save_ngo(request):
         errors["confirm_password"] = "Passwords do not match."
         
     otp_token = data.get("otp_token")
-    if not otp_token:
-        errors["otp1"] = "Please refresh the page."
+    # if not otp_token:
+    #     errors["otp1"] = "Please refresh the page."
     email_otp = data.get("otp1")  # from HTML field "otp1"
-    if not email_otp:
-        errors["otp1"] = "OTP is required."
-    otp_verification = verify_otp(email, email_otp, otp_token)
-    if not otp_verification["success"]:
-        errors["otp1"] = otp_verification["message"]
+    # if not email_otp:
+    #     errors["otp1"] = "OTP is required."
+    # otp_verification = verify_otp(email, email_otp, otp_token)
+    # if not otp_verification["success"]:
+    #     errors["otp1"] = otp_verification["message"]
     
     # Phone and country code
     phone_country_code = "+91"  # default; 
@@ -518,14 +520,14 @@ def save_advertiser(request):
         errors["confirm_password"] = "Passwords do not match."
         
     otp_token = data.get("otp_token")
-    if not otp_token:
-        errors["otp1"] = "Please refresh the page."
+    # if not otp_token:
+    #     errors["otp1"] = "Please refresh the page."
     email_otp = data.get("otp1")  # from HTML field "otp1"
-    if not email_otp:
-        errors["otp1"] = "OTP is required."
-    otp_verification = verify_otp(email, email_otp, otp_token)
-    if not otp_verification["success"]:
-        errors["otp1"] = otp_verification["message"]
+    # if not email_otp:
+    #     errors["otp1"] = "OTP is required."
+    # otp_verification = verify_otp(email, email_otp, otp_token)
+    # if not otp_verification["success"]:
+    #     errors["otp1"] = otp_verification["message"]
 
     # Phone
     phone_country_code = "+91"
@@ -729,14 +731,14 @@ def save_client(request):
             errors["email"] = "This email is already registered."
             
     otp_token = data.get("otp_token")
-    if not otp_token:
-        errors["otp1"] = "Please refresh the page."
+    # if not otp_token:
+    #     errors["otp1"] = "Please refresh the page."
     email_otp = data.get("otp1")  # from HTML field "otp1"
-    if not email_otp:
-        errors["otp1"] = "OTP is required."
-    otp_verification = verify_otp(email, email_otp, otp_token)
-    if not otp_verification["success"]:
-        errors["otp1"] = otp_verification["message"]
+    # if not email_otp:
+    #     errors["otp1"] = "OTP is required."
+    # otp_verification = verify_otp(email, email_otp, otp_token)
+    # if not otp_verification["success"]:
+    #     errors["otp1"] = otp_verification["message"]
 
     # Password
     if not password or len(password) < 8:
@@ -932,15 +934,15 @@ def save_medical_provider(request):
             errors["email"] = "This email is already registered."
             logger.warning("Email already exists in database")
             
-    otp_token = data.get("otp_token")
-    if not otp_token:
-        errors["otp1"] = "Please refresh the page."
+    # otp_token = data.get("otp_token")
+    # if not otp_token:
+    #     errors["otp1"] = "Please refresh the page."
     email_otp = data.get("otp1")  # from HTML field "otp1"
-    if not email_otp:
-        errors["otp1"] = "OTP is required."
-    otp_verification = verify_otp(email, email_otp, otp_token)
-    if not otp_verification["success"]:
-        errors["otp1"] = otp_verification["message"]
+    # if not email_otp:
+    #     errors["otp1"] = "OTP is required."
+    # otp_verification = verify_otp(email, email_otp, otp_token)
+    # if not otp_verification["success"]:
+    #     errors["otp1"] = otp_verification["message"]
 
     # Password
     password = data.get("password")

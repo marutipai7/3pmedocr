@@ -37,7 +37,7 @@
           <span class="selected-code countryCode-selected mr-2">+91</span>
         </div>
         <div class="dropdown-option code-option absolute left-0 mt-0.5 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-20 max-h-44 overflow-y-auto scroll"></div>
-        <input type="hidden" name="country-code" id=country-code">
+        <input type="hidden" name="country-code" id="country-code"/>
       </div>
       <input type="text" name="phone" placeholder="9876543210"
              class="w-full border border-primary-color p-3 rounded-md" />
@@ -278,6 +278,10 @@
     <input type="text" name="otp1" placeholder="123456" maxlength="6" 
       oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);"
       class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+    <div
+      class="bg-primary-color cursor-pointer verify-otp rounded-md p-[0.95rem] w-full text-white text-center mt-4">
+      Verify OTP
+    </div>
   </div>
 </div>
 

@@ -1,6 +1,6 @@
 import uuid
 from decimal import Decimal
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from dashboard.utils import dashboard_login_required
 from points.models import PointsActionType, PointsHistory
 from ngopost.models import NGOPost
@@ -19,6 +19,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 @dashboard_login_required
+@require_GET
 def donate_view(request):
     user = request.user_obj
     if user.user_type == 'advertiser':
@@ -28,31 +29,31 @@ def donate_view(request):
     elif user.user_type == 'provider':
         user_profile = MedicalProviderProfile.objects.filter(user=user).first()
 
-    org_query = request.GET.get('org_query', '').strip().lower()
+    # org_query = request.GET.get('org_query', '').strip().lower()
     donation_query = request.GET.get('donation_query', '').strip().lower()
 
-    # Get Ongoing posts
-    ngo_posts = NGOPost.objects.filter(status=NGOPost.Status.ONGOING).select_related('user').order_by('-created_at')
+    # # Get Ongoing posts
+    # ngo_posts = NGOPost.objects.filter(status=NGOPost.Status.ONGOING).select_related('user').order_by('-created_at')
 
     # Map user_id to profile
-    user_ids = [post.user_id for post in ngo_posts]
-    profiles = NGOProfile.objects.filter(user_id__in=user_ids)
-    profile_map = {profile.user_id: profile for profile in profiles}
+    # user_ids = [post.user_id for post in ngo_posts]
+    # profiles = NGOProfile.objects.filter(user_id__in=user_ids)
+    # profile_map = {profile.user_id: profile for profile in profiles}
 
-    # Attach profile info
-    for post in ngo_posts:
-        profile = profile_map.get(post.user_id)
-        post.ngo_name = profile.ngo_name if profile else "NGO Name Not Found"
-        post.website_url = profile.website_url if profile else ""
+    # # Attach profile info
+    # for post in ngo_posts:
+    #     profile = profile_map.get(post.user_id)
+    #     post.ngo_name = profile.ngo_name if profile else "NGO Name Not Found"
+    #     post.website_url = profile.website_url if profile else ""
 
-    # Filter ngo_posts by org_query
-    if org_query:
-        ngo_posts = [post for post in ngo_posts if
-                     org_query in post.post_type.lower() or
-                     org_query in post.ngo_name.lower()]
+    # # Filter ngo_posts by org_query
+    # if org_query:
+    #     ngo_posts = [post for post in ngo_posts if
+    #                  org_query in post.post_type.lower() or
+    #                  org_query in post.ngo_name.lower()]
 
-    # Limit the number of posts shown (fixed limit of 50)
-    ngo_posts = ngo_posts[:50]
+    # # Limit the number of posts shown (fixed limit of 50)
+    # ngo_posts = ngo_posts[:50]
 
     # Filter donations by donation_query
     donations = Donation.objects.filter(user=request.user_obj).select_related('ngopost', 'ngopost__user', 'ngopost__user__ngoprofile', 'ngopost__post_type')
@@ -62,13 +63,69 @@ def donate_view(request):
                      donation_query in (d.ngopost.user.ngoprofile.ngo_name.lower() if d.ngopost and d.ngopost.user and hasattr(d.ngopost.user, 'ngoprofile') and d.ngopost.user.ngoprofile.ngo_name else '')]
     context = get_common_context(request, request.user_obj)
     context.update({
-        "ngo_posts": ngo_posts,
         "donations": donations,
-        "org_query": org_query,
         "donation_query": donation_query,
         'user_display_name': user_profile.company_name,
     })
     return render(request, "advertiser/donate.html", context)
+
+def get_organization_posts(request):
+    query = request.GET.get("query", "")
+    start_date = request.GET.get("start_date")
+    end_date = request.GET.get("end_date")
+    daterange = request.GET.get("daterange")
+
+    posts = NGOPost.objects.all().select_related("user")  # preload user for efficiency
+
+    if query:
+        posts = posts.filter(
+            Q(header__icontains=query) |
+            Q(city__name__icontains=query) |
+            Q(state__name__icontains=query) |
+            Q(country__name__icontains=query) |
+            Q(post_type__name__icontains=query) |
+            Q(user__ngoprofile__ngo_name__icontains=query)
+        )
+
+    if start_date and end_date:
+        posts = posts.filter(created_at__date__range=[start_date, end_date])
+    elif daterange == "1 week":
+        posts = posts.filter(created_at__gte=timezone.now() - timedelta(days=7))
+    elif daterange == "1 month":
+        posts = posts.filter(created_at__gte=timezone.now() - timedelta(days=30))
+    elif daterange == "1 year":
+        posts = posts.filter(created_at__gte=timezone.now() - timedelta(days=365))
+
+    paginator = Paginator(posts.order_by("-created_at"), 6)
+    page = request.GET.get("page", 1)
+    posts_page = paginator.get_page(page)
+
+    # Attached NGO profile info here
+    user_ids = [post.user_id for post in posts_page]
+    profiles = NGOProfile.objects.filter(user_id__in=user_ids)
+    profile_map = {profile.user_id: profile for profile in profiles}
+
+    for post in posts_page:
+        profile = profile_map.get(post.user_id)
+        post.ngo_name = profile.ngo_name if profile else "NGO Name Not Found"
+        post.website_url = profile.website_url if profile else ""
+
+    html = render_to_string(
+        "advertiser/partials/organization-cards.html",
+        {"ngo_posts": posts_page},
+        request=request
+    )
+
+    return JsonResponse({
+        "html": html,
+        "current_page": posts_page.number,
+        "total_pages": paginator.num_pages,
+    })
+
+@dashboard_login_required
+def ngo_expanded_view(request, post_id):
+    post = get_object_or_404(NGOPost, id=post_id)
+    return render(request, "ngo_expanded.html", {"post": post})
 
 @dashboard_login_required
 def donate_pay_view(request, post_id=None):

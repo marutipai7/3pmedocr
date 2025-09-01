@@ -40,7 +40,7 @@ async def send_email(recipient: str, subject: str, body: str):
         print("EMAIL SEND ERROR:", e)
         return False
     
-async def send_otp(user):
+async def async_send_otp_email(user):
     otp_secret = generate_otp_secret()
     otp = generate_otp(otp_secret)
     email_sent = await send_email(user.email, "Your OTP Code", f"Your OTP is: {otp}")
