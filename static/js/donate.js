@@ -585,7 +585,7 @@ $(document).on('click', '.donate-bookmark-toggle', function() {
     });
 
 function loadOrganizations(page = 1, $container = $('#organizationSectionId')) {
-    const query = $('input[name="organization_query"]').val();
+    const query = $('input[name="organization_query"]').val() || "";
     const startDate = $container.data("start-date") || "";
     const endDate = $container.data("end-date") || "";
     const dateRange = $container.data("range-label") || "";
@@ -610,40 +610,84 @@ function loadOrganizations(page = 1, $container = $('#organizationSectionId')) {
     });
 }
 
-// Initial load when clicking Organizations tab
-$('[data-tab="organization"]').on('click', function () {
-    loadOrganizations(1, $('#organizationSectionId'));
+// Initial load
+$(document).on("click", '[data-tab="organization"]', function () {
+    const $tabDiv = $('#organizationSectionId'); 
+    loadOrganizations(1, $tabDiv);
 });
-
 
 // Search input
 $(document).on('input', 'input[name="organization_query"]', function () {
-    loadOrganizations(1, $('#organizationSectionId'));
+    const $tabDiv = $('#organizationSectionId');
+    loadOrganizations(1, $tabDiv);
 });
+// ----------------------------
+// Pagination buttons
+// ----------------------------
+// $(document).on('click', '.organization-pagination-btn', function () {
+//     const page = $(this).data('page');
+//     const $container = $(this).closest('.postDiv');
+//     loadOrganizations(page, $container);
+// });
 
-// Pagination
-$(document).on('click', '.organization-pagination-btn', function () {
-    const page = $(this).data('page');
-    const $container = $(this).closest('.postDiv');
-    loadOrganizations(page, $container);
-});
-
-// Date range
+// ----------------------------
+// Date range filter buttons
+// ----------------------------
 $(document).on("click", ".organization-daterange", function () {
     $(".organization-daterange").removeClass("font-bold");
     $(this).addClass("font-bold");
 
     const rangeLabel = $(this).data("range");
+    const $tabDiv = $('#organizationSectionId');
+
     const { start, end } = calculateDateRange(rangeLabel);
 
-    const $tabDiv = $(this).closest(".postDiv");
+    // ✅ Store range on container
     $tabDiv.data("start-date", start);
     $tabDiv.data("end-date", end);
-    $tabDiv.data("range-label", rangeLabel.toLowerCase());
+    $tabDiv.data("range-label", rangeLabel);
 
+    // ✅ Pass the same container back (not hardcoded)
     loadOrganizations(1, $tabDiv);
+
+    console.log("Loading organizations with range:", rangeLabel, start, end);
 });
 
+function changePage(page) {
+    const $container = $("#organizationSectionId"); // scope to your section
+    loadOrganizations(page, $container);
+}
+
+// ----------------------------
+// Helper: calculate start & end dates
+// ----------------------------
+function calculateDateRange(rangeLabel) {
+    const today = new Date();
+    let start = "";
+    let end = today.toISOString().split("T")[0]; // yyyy-mm-dd
+
+    if (rangeLabel === "1 week") {
+        const past = new Date();
+        past.setDate(today.getDate() - 7);
+        start = past.toISOString().split("T")[0];
+    } else if (rangeLabel === "1 month") {
+        const past = new Date();
+        past.setMonth(today.getMonth() - 1);
+        start = past.toISOString().split("T")[0];
+    } else if (rangeLabel === "1 year") {
+        const past = new Date();
+        past.setFullYear(today.getFullYear() - 1);
+        start = past.toISOString().split("T")[0];
+    } else if (rangeLabel === "custom") {
+        start = $("#customStartDate").val();
+        end = $("#customEndDate").val();
+    }
+
+    return { start, end };
+}
+
+
+// Expanded view
 function loadExpandedView(postId) {
   fetch(`/expanded/${postId}/`)
     .then(response => response.text())

@@ -10,5 +10,4 @@ urlpatterns = [
     path('get-platform-bill/<int:donation_id>/', views.get_platform_bill, name='get-platform-bill'),
     path('toggle-saved/', views.toggle_saved_donation, name='toggle_saved_donation'),
     path('get-organization-posts/', views.get_organization_posts, name='get-organization-posts'),
-    path("expanded/<int:post_id>/", views.ngo_expanded_view, name="ngo_expanded"),
     ] 

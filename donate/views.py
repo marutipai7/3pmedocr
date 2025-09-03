@@ -16,6 +16,7 @@ from datetime import date, timedelta, datetime
 from django.core.paginator import Paginator
 from django.template.loader import render_to_string
 import logging
+from django.utils.dateparse import parse_date
 logger = logging.getLogger(__name__)
 
 @dashboard_login_required
@@ -69,16 +70,19 @@ def donate_view(request):
     })
     return render(request, "advertiser/donate.html", context)
 
+@require_GET
 def get_organization_posts(request):
-    query = request.GET.get("query", "")
-    start_date = request.GET.get("start_date")
-    end_date = request.GET.get("end_date")
-    daterange = request.GET.get("daterange")
+    query = request.GET.get("query", "").strip()
+    start = request.GET.get("start_date", "").strip()
+    end = request.GET.get("end_date", "").strip()
+    daterange = request.GET.get("daterange", "").strip().lower()
+    page = int(request.GET.get("page", 1))
 
-    posts = NGOPost.objects.all().select_related("user")  # preload user for efficiency
+    filters = Q(end_date__gte=timezone.now().date())
 
+    # 🔍 Search filter
     if query:
-        posts = posts.filter(
+        filters &= (
             Q(header__icontains=query) |
             Q(city__name__icontains=query) |
             Q(state__name__icontains=query) |
@@ -87,23 +91,45 @@ def get_organization_posts(request):
             Q(user__ngoprofile__ngo_name__icontains=query)
         )
 
-    if start_date and end_date:
-        posts = posts.filter(created_at__date__range=[start_date, end_date])
-    elif daterange == "1 week":
-        posts = posts.filter(created_at__gte=timezone.now() - timedelta(days=7))
-    elif daterange == "1 month":
-        posts = posts.filter(created_at__gte=timezone.now() - timedelta(days=30))
-    elif daterange == "1 year":
-        posts = posts.filter(created_at__gte=timezone.now() - timedelta(days=365))
+    # 📅 Date filter
+    now = timezone.now()
+    applied_date_filter = None
 
-    paginator = Paginator(posts.order_by("-created_at"), 6)
-    page = request.GET.get("page", 1)
+    if daterange == "1 week":
+        filters &= Q(created_at__date__gte=now.date() - timedelta(days=7))
+        applied_date_filter = "Last 1 Week"
+
+    elif daterange == "1 month":
+        filters &= Q(created_at__date__gte=now.date() - timedelta(days=30))
+        applied_date_filter = "Last 1 Month"
+
+    elif daterange == "1 year":
+        filters &= Q(created_at__date__gte=now.date() - timedelta(days=365))
+        applied_date_filter = "Last 1 Year"
+
+    # ✅ Always respect explicit start/end (from JS) — not only "custom"
+    if start and end:
+        start_date = parse_date(start)
+        end_date = parse_date(end)
+        if start_date and end_date:
+            filters &= Q(created_at__date__range=(start_date, end_date))
+            applied_date_filter = f"Explicit Range: {start_date} → {end_date}"
+
+    # 🔎 Apply filters
+    posts = NGOPost.objects.filter(filters).select_related("user").order_by("-created_at")
+    total_count = posts.count()
+
+    logger.info(
+        f"[NGO Posts] Search='{query or 'None'}', Date Filter='{applied_date_filter or 'None'}', "
+        f"Results Found={total_count}"
+    )
+
+    paginator = Paginator(posts, 6)
     posts_page = paginator.get_page(page)
 
-    # Attached NGO profile info here
     user_ids = [post.user_id for post in posts_page]
     profiles = NGOProfile.objects.filter(user_id__in=user_ids)
-    profile_map = {profile.user_id: profile for profile in profiles}
+    profile_map = {p.user_id: p for p in profiles}
 
     for post in posts_page:
         profile = profile_map.get(post.user_id)
@@ -121,11 +147,6 @@ def get_organization_posts(request):
         "current_page": posts_page.number,
         "total_pages": paginator.num_pages,
     })
-
-@dashboard_login_required
-def ngo_expanded_view(request, post_id):
-    post = get_object_or_404(NGOPost, id=post_id)
-    return render(request, "ngo_expanded.html", {"post": post})
 
 @dashboard_login_required
 def donate_pay_view(request, post_id=None):
