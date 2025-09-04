@@ -4,12 +4,12 @@
       <img src="{{ post.creative1.url }}" alt="Donation Banner" class="children-banner w-full rounded-md" />
       <div class="top-section flex justify-between items-start mt-2">
         <div class="heading-area w-full">
-            <p class="default-heading text-base font-bold cursor-pointer"
+            <p class="default-heading text-base font-bold cursor-pointer toggle-expand"
                 onclick="toggleExpand(this)">
                 {{ post.ngo_name }}
             </p>
 
-            <div class="flex items-center justify-start mt-1 w-full">
+            <div class="flex items-center justify-start mt-1 w-full toggle-expand">
                 <p class="expanded-heading text-sm font-semibold">
                 {{ post.city }}, {{ post.state }}
                 </p>

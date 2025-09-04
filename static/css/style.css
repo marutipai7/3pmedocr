@@ -7,10 +7,12 @@
     --color-light-sea-green1: #E5FFFE;
     --color-light-sea-green-opacity: #3AAFA926;
     --color-light-sea-green-opacity-1: #3AAFA980;
+    --color-light-sea-green-opacity-2: #3AAFA908;
     --color-mist-teal: #3AAFA90A;
     --color-teal-veil: #3AAFA91A;
     --color-teal-shadow:#3AAFA94D;
     --color-teal-tropical:#3AAFA9E5;
+    --color-teal-medium:#3AAFA912;
     --color-soft-teal: #DCEFEF;
     --color-frosted-cloud: #F8FAFC;
     --color-powder-cyan: #F7FFFF;
@@ -77,6 +79,7 @@
     --color-slate-blue:#5182E3;
     --color-slate-white:#F8F9FA;
     --color-star-yellow:#FFDB1E;
+    --color-star-orange:#FF9B31;
     --color-sunset-orange:#F79E1B4D;
     --color-sea-green:#3AAFA90D;
     --color-light-apricot:#FDE2BB;
@@ -87,6 +90,7 @@
     --color-living-coral-border:#FF6F614D;
     --color-transparent-living-coral:#FF6F6126;
     --color-light-living-coral:#FF6F6159;
+     --color-light-transparent-living-coral:#FF6F6108;
     --color-saffron:#F79E1B59;
     --color-seashell:#FFF8EE;
     --color-cream: #FFF7EC;
@@ -100,7 +104,7 @@
     --color-pale-lavender: #F1F1F9D9;
     --color-cream-blush:#FFF9F0; 
     --color-bright-orange:#F69601; 
-    --color-pinkish-peach:#FFEFEDD9;
+    --color-pinkish-peach:#F7E9E8;
     --color-frosted-sky:#DAE7FAD9;
     --color-soft-gray:#DADADA;
     --color-orange-yellow:#F79E1B0A;
@@ -108,10 +112,12 @@
     --color-bright-orange:#F79E1B99;
     --color-soft-peach:#FFF5E7;
     --color-light-cloud:#F6F5F5;
+     --color-light-gray4:#12345608;
     --color-transparent-dark-gray:#4848484D;
     --color-soft-coral:#F3CBCC;
     --color-transparent-violet-sky:#6B79F533;
     --color-very-transparent-violet-sky:#6B79F50D;
+    --color-very-light-transparent-violet-sky:#5182E308;
     --color-pastel-violet-sky:#E5ECFB;
     --color-light-violet-sky:#6B79F54D;
     --color-indigo-blue:#1E4D9205;
@@ -132,7 +138,34 @@
     --color-soft-light-gray1:#A1A1A1;
     --color-jet-black-opacity:#1F1F1F99;
     --color-smoke-gray:#3C3C434D;
+    --color-light-cyan:#F0FFFF;
+    --color-pale-aqua:#BCFFFF;
+    --color-bright-cyan:#1BBCBF;
+    --color-cream-white:#FFFAF1;
+    --color-peach-cream:#FAE6C1;
+    --color-soft-aqua:#C7F2FF;
+    --color-frost-blue:#EEFBFF;
+    --color-aqua-glow:#04CAFF;
+    --color-cloud-violet:#F1F3FF;
+    --color-lavender-blue:#C3CCFD;
+    --color-Royal-indigo:#3245D4;
+    --color-mint-ice:#B8F8F8;
+    --color-deep-navy:#1C2B52;
+    --color-rose-cloud:#FFEEF2;
+    --color-rosy-glow:#FFA9BD;
+    --color-vivid-coral:#F1315A;
     --color-soft-light-teal:#E1F3F2;
+    --color-blush-petal:#FFE9E7;
+    --color-soft-pastel-blue:#BBDDFF;
+    --color-inactive-blue:#D3D7FC;
+    --color-inactive-orange:#FFD4D0;
+    --color-white-opacity:#FFFFFF80;
+    --color-platinum:#E4E4E4;
+    --color-mist-blue:#E7EBEE;
+    --color-icy-fog:#E4E5E7;
+    --color-steel-gray:#7E818C;
+    --color-light-grayish-orange:#F5EFE9;
+    --color-inactive-dark-blue:#1234564D;
     --box-shadow-1: 4px 4px 10px 4px #3AAFA926;
     --box-shadow-2: 0px 4px 4px 0px #00000040;
     --box-shadow-3: 4px 4px 10px 4px #00000033;
@@ -140,6 +173,9 @@
     --box-shadow-5: 2px 4px 8px 0px #0000000D;
     --box-shadow-6: 4px 4px 10px 0px #00000026;
     --box-shadow-7: 0px 4px 4px 0px #6060600D;
+    --box-shadow-8: 4px 4px 10px 4px #00000033;
+    --box-shadow-9: 4px 4px 10px 2px #00000026;
+    --box-shadow-10: 1px 1px 8px 0px #00000024 inset;
     --radio-border-color: teal;
     --radio-fill-color: teal;
 
@@ -177,6 +213,51 @@
     --text-18-b: 1rem;
     --text-18-b--font-weight: 700;
     --text-18-b--line-height: 120%;
+
+    --text-14-normal: 0.875rem;
+    --text-14-normal--font-weight: 400;
+    --text-14-normal--line-height: normal;
+    --text-14-normal--font-style: normal;
+
+    --text-14-semibold: 0.875rem;
+    --text-14-semibold--font-weight: 600;
+    --text-14-semibold--line-height: normal;
+    --text-14-semibold--font-style: normal;
+
+    --text-16-normal: 1rem;
+    --text-16-normal--font-weight: 400;
+    --text-16-normal--line-height: 120%;
+    --text-16-normal--font-style: normal;
+
+    --text-16-semibold: 1rem;
+    --text-16-semibold--font-weight: 600;
+    --text-16-semibold--line-height: 120%;
+    --text-16-semibold--font-style: normal;
+
+    --text-18-normal:1.125rem;
+    --text-18-normal--font-weight:400;
+    --text-18-normal--line-height:normal;
+    --text-18-normal--font-style:normal;
+
+    --text-18-semibold: 1.125rem;
+    --text-18-semibold--font-weight: 600;
+    --text-18-semibold--line-height: normal;
+    --text-18-semibold--font-style: normal;
+
+    --text-20-normal: 1.25rem;
+    --text-20-normal--font-weight: 400;
+    --text-20-normal--line-height: 120%;
+    --text-20-normal--font-style: normal;
+
+    --text-20-semibold: 1.25rem;
+    --text-20-semibold--font-weight: 600;
+    --text-20-semibold--line-height: normal;
+    --text-20-semibold--font-style: normal;
+
+    --text-24-semibold: 1.5rem;
+    --text-24-semibold--font-weight: 600;
+    --text-24-semibold--line-height: 120%;
+    --text-24-semibold--font-style: normal;
 }
 
 @font-face {
@@ -616,7 +697,10 @@ body {
   display: block;
 }
 
-
+/** share pharmacy css */
+.share-tabs-button-pharmacy {
+    @apply flex items-center justify-center gap-2 w-[180px] h-[40px] rounded-[18px] border border-light-sea-green text-[10px] sm:text-[11px] lg:text-xs xl:text-14-fs font-semibold cursor-pointer;
+}
 
 
  

@@ -188,16 +188,37 @@ $(document).ready(function () {
         });
     });
     //Permission Access
-    $('.uploadTrigger').on('click', function () {
-        if (!uploadConfirmShown) {
-            if (confirm("This site wants to access your files to upload an image. Do you allow?")) {
-                uploadConfirmShown = true;
-                $(this).closest('.upload-section').find('.uploadInput').trigger('click');
-            }
-        } else {
-            $(this).closest('.upload-section').find('.uploadInput').trigger('click');
-        }
+    // Show popup on upload trigger click
+    let lastClickedTrigger = null;
+
+    // Show popup on upload trigger click
+    document.querySelectorAll(".uploadTrigger").forEach((trigger) => {
+        trigger.addEventListener("click", function () {
+        lastClickedTrigger = this; // store the clicked trigger
+        document.querySelector(".file-access-popup").classList.remove("hidden");
+        });
     });
+
+    // Hide popup on "No" click
+    document.querySelector(".deny-access").addEventListener("click", function () {
+        document.querySelector(".file-access-popup").classList.add("hidden");
+        lastClickedTrigger = null; // reset
+    });
+
+    // Allow file access and trigger file input on "Yes" click
+    document
+        .querySelector(".allow-access")
+        .addEventListener("click", function () {
+        document.querySelector(".file-access-popup").classList.add("hidden");
+
+        if (lastClickedTrigger) {
+            const uploadSection = lastClickedTrigger.closest(".upload-section");
+            const input = uploadSection.querySelector(".uploadInput");
+            input.click();
+        }
+
+        lastClickedTrigger = null;
+        });
 
     $('.uploadInput').on('change', function () {
         const file = this.files[0];

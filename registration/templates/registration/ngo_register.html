@@ -380,6 +380,19 @@
       <div class="bg-golden-orange w-9 h-9 rounded-full mb-24"></div>
     </div>
   </div>
+
+  <!--File Access Confirmation Popup-->
+  <div class="file-access-popup hidden fixed inset-0 bg-black/30 bg-opacity-70 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 max-w-sm w-full border border-primary-color shadow-lg">
+      <p class="mb-4">This site wants to access your files to upload an image. Do you allow?</p>
+      <div class="flex justify-end space-x-3">
+        <div class="deny-access px-4 py-2 border border-primary-color text-black rounded-md cursor-pointer">
+          No</div>
+        <div class="allow-access px-4 py-2 bg-primary-color text-white rounded-md cursor-pointer">Yes</div>
+      </div>
+    </div>
+  </div>
+
   {% endblock %}
 
 
