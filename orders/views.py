@@ -1,7 +1,9 @@
 from django.shortcuts import render
-from dashboard.utils import dashboard_login_required
+from dashboard.utils import dashboard_login_required, get_common_context
 # Create your views here.
 
 @dashboard_login_required
 def orders(request):
-    return render(request, 'orders.html')
+    user = request.user_obj
+    context = get_common_context(request, user)
+    return render(request, 'orders.html', context)

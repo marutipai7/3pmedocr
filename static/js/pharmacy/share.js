@@ -73,9 +73,16 @@ $('.upload-input').on('change', function () {
             if (area.closest('.upload-database').length > 0) {
                 $('.upload-database .get-btn').removeClass('hidden');
             } else if (area.closest('.prescription').length > 0) {
-                $('.prescription .prescription-form-section').removeClass('hidden');
+                // $('.prescription .prescription-form-section').removeClass('hidden');
+                console.log('Prescription Uploaded');
+                toastr.success('Processing the prescription, please wait...', 'Processing');
+                uploadPrescriptionToOCR(file);
             } else if (area.closest('.bills').length > 0) {
-                $('.bills .bill-form-section').removeClass('hidden');
+                console.log('Bill Uploaded');
+                toastr.success('Processing the bill, please wait...', 'Processing');
+                uploadBillToOCR(file);
+                // $('.bills .bill-form-section').removeClass('hidden');
+                
             }
         };
         reader.readAsDataURL(file);
@@ -839,3 +846,190 @@ $(".dropdown-input").on('click', function () {
 $('.saved-icon').on('click', function () {
     $(this).toggleClass('material-filled text-light-sea-green');
 });
+
+function getCSRFToken() {
+    return document.cookie.split(';')
+        .map(c => c.trim())
+        .filter(c => c.startsWith('csrftoken='))
+        .map(c => c.split('=')[1])[0];
+}
+
+async function uploadBillToOCR(file) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+        const response = await fetch("/shared/ocr/", {
+            method: "POST",
+            headers: { "X-CSRFToken": getCSRFToken() },
+            body: formData,
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to process OCR");
+        }
+
+        const data = await response.json();
+
+        // ✅ Only show the form after OCR completes
+        $('.bills .bill-form-section').removeClass('hidden');
+
+        // ✅ Close previous toast & show success
+        if (typeof toastr !== 'undefined') {
+            toastr.clear(); // remove "processing" toast
+            toastr.success('OCR Completed', 'Done');
+        }
+
+        // ✅ Fill patient/store details at top of form
+        if (data.store_details) {
+            $("#patient_name").val(data.store_details.patient_name || "");
+            $("#doctor_name").val(data.store_details.doctor_name || "");
+            $("#prescription_date").val(data.store_details.prescription_id || "");
+            $("#address").val(data.store_details.address || "");
+            $("#hospital_name").val(data.store_details.hospital_name || "");
+            $("#phone_number").val(data.store_details.phone_number || "");
+            $("#patient_age").val(data.store_details.patient_age || "");
+        }
+
+        // ✅ Fill medicines table
+        if (data.table_data && data.table_data.length > 0) {
+            const tbody = $("#medicine-table tbody");
+            tbody.empty();
+
+            data.table_data.forEach((row, i) => {
+                const buildOptions = (arr, selectedVal = "") => {
+                    let opts = `<option value="">--</option>`;
+                    arr.forEach(v => {
+                        const sel = v.toLowerCase() === (selectedVal || "").toLowerCase() ? "selected" : "";
+                        opts += `<option value="${v}" ${sel}>${v}</option>`;
+                    });
+                    return opts;
+                };
+
+                const tdStyle = `style="padding:10px; min-width:120px; text-align:center;"`;
+                const inputStyle = `style="width:100%; height:35px; padding:5px; border:1px solid #1abc9c; border-radius:6px;"`;
+                const selectStyle = `style="width:100%; height:35px; padding:5px; border:1px solid #1abc9c; border-radius:6px;"`;
+
+                const tr = $(`
+                    <tr data-row="${i + 1}">
+                        <td ${tdStyle}>${i + 1}</td>
+                        <td ${tdStyle}><input type="text" name="medicine" value="${row.medicine_name || ''}" ${inputStyle}></td>
+                        <td ${tdStyle}><input type="text" name="dosage" value="${row.dosage || ''}" ${inputStyle}></td>
+                        <td ${tdStyle}>
+                            <select name="frequency" ${selectStyle}>
+                                ${buildOptions(dropdownData.medicineFrequency, row.frequency)}
+                            </select>
+                        </td>
+                        <td ${tdStyle}><input type="text" name="duration" value="${row.duration || ''}" ${inputStyle}></td>
+                        <td ${tdStyle}>
+                            <select name="method" ${selectStyle}>
+                                ${buildOptions(dropdownData.method, row.method)}
+                            </select>
+                        </td>
+                        <td ${tdStyle}>
+                            <select name="instructions" ${selectStyle}>
+                                ${buildOptions(dropdownData.instruction, row.instructions)}
+                            </select>
+                        </td>
+                    </tr>
+                `);
+
+                tbody.append(tr);
+            });
+        }
+
+    } catch (err) {
+        console.error("OCR error:", err);
+        alert("Error extracting text from bill.");
+    }
+}
+
+async function uploadPrescriptionToOCR(file) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+        const response = await fetch("/shared/ocr/", {
+            method: "POST",
+            headers: { "X-CSRFToken": getCSRFToken() },
+            body: formData,
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to process OCR");
+        }
+
+        const data = await response.json();
+
+        // ✅ Only show the form after OCR completes
+        $('.prescription .prescription-form-section').removeClass('hidden');
+
+        // ✅ Close previous toast & show success
+        if (typeof toastr !== 'undefined') {
+            toastr.clear(); // remove "processing" toast
+            toastr.success('OCR Completed', 'Done');
+        }
+
+        // ✅ Fill patient/store details at top of form
+        if (data.store_details) {
+            $("#prescription_patient_name").val(data.store_details.patient_name || "");
+            $("#prescription_doctor_name").val(data.store_details.doctor_name || "");
+            $("#presc_prescription_date").val(data.store_details.prescription_id || "");
+            $("#prescription_address").val(data.store_details.address || "");
+            $("#prescription_hospital_name").val(data.store_details.hospital_name || "");
+            $("#prescription_phone_number").val(data.store_details.phone_number || "");
+            $("#prescription_patient_age").val(data.store_details.patient_age || "");
+        }
+
+        // ✅ Fill medicines table
+        if (data.table_data && data.table_data.length > 0) {
+            const tbody = $("#prescription-medicine-table tbody");
+            tbody.empty();
+
+            data.table_data.forEach((row, i) => {
+                const buildOptions = (arr, selectedVal = "") => {
+                    let opts = `<option value="">--</option>`;
+                    arr.forEach(v => {
+                        const sel = v.toLowerCase() === (selectedVal || "").toLowerCase() ? "selected" : "";
+                        opts += `<option value="${v}" ${sel}>${v}</option>`;
+                    });
+                    return opts;
+                };
+
+                const tdStyle = `style="padding:10px; min-width:120px; text-align:center;"`;
+                const inputStyle = `style="width:100%; height:35px; padding:5px; border:1px solid #1abc9c; border-radius:6px;"`;
+                const selectStyle = `style="width:100%; height:35px; padding:5px; border:1px solid #1abc9c; border-radius:6px;"`;
+
+                const tr = $(`
+                    <tr data-row="${i + 1}">
+                        <td ${tdStyle}>${i + 1}</td>
+                        <td ${tdStyle}><input type="text" name="medicine" value="${row.medicine_name || ''}" ${inputStyle}></td>
+                        <td ${tdStyle}><input type="text" name="dosage" value="${row.dosage || ''}" ${inputStyle}></td>
+                        <td ${tdStyle}>
+                            <select name="frequency" ${selectStyle}>
+                                ${buildOptions(dropdownData.medicineFrequency, row.frequency)}
+                            </select>
+                        </td>
+                        <td ${tdStyle}><input type="text" name="duration" value="${row.duration || ''}" ${inputStyle}></td>
+                        <td ${tdStyle}>
+                            <select name="method" ${selectStyle}>
+                                ${buildOptions(dropdownData.method, row.method)}
+                            </select>
+                        </td>
+                        <td ${tdStyle}>
+                            <select name="instructions" ${selectStyle}>
+                                ${buildOptions(dropdownData.instruction, row.instructions)}
+                            </select>
+                        </td>
+                    </tr>
+                `);
+
+                tbody.append(tr);
+            });
+        }
+
+    } catch (err) {
+        console.error("OCR error:", err);
+        alert("Error extracting text from bill.");
+    }
+}

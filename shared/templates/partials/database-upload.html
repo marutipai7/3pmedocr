@@ -1,0 +1,269 @@
+{% load static %}
+
+<div class="upload-database tab-sub-content hidden pt-3 space-y-4">
+
+    <!-- Selection -->
+    <div class="w-full flex items-center justify-center gap-10">
+    <!-- limit width to half -->
+    <div class="w-1/2 space-y-2">
+        <h1 class="text-14-nr">Select File Type</h1>
+        <div class="relative w-full">
+        <div
+            class="flex whitespace-nowrap min-h-10 border-none rounded-[16px] p-1 cursor-text items-center justify-between gap-2 w-full shadow-(--box-shadow-10) bg-light-grayish-orange"
+            id="file-type-container"
+        >
+            <input
+            id="file-input"
+            type="text"
+            readonly 
+            class="flex-1 border-none px-2 py-2.5 focus:!outline-none focus:!ring-0 text-dark-gray text-14-nr placeholder:text-dark-gray bg-transparent"
+            />
+            <div id="file-dropdown-toggle" class="cursor-pointer flex items-center text-dark-gray px-2 py-2.5 w-10">
+            <span class="material-symbols-outlined">
+                keyboard_arrow_down
+            </span>
+            </div>
+        </div>
+        <div id="file-dropdown" class="absolute z-50 mt-1 w-full rounded-[16px] shadow-(--box-shadow-9) bg-white max-h-44 overflow-auto hidden no-scrollbar">
+            <!-- doctor list items get injected here -->
+        </div>
+        </div>
+    </div>
+    <div class="w-1/2 space-y-2">
+        <h1 class="text-14-nr">Select no. of records</h1>
+        <div class="relative w-full">
+        <div
+            class="flex overflow-x-auto whitespace-nowrap min-h-10 border-none rounded-[16px] p-1 cursor-text items-center justify-between gap-2 w-full shadow-(--box-shadow-10) no-scrollbar bg-light-grayish-orange"
+            id="records-input-container"
+        >
+            <input
+            id="records-input"
+            type="text"
+            readonly 
+            class="flex-1 border-none px-2 py-2.5 focus:!outline-none focus:!ring-0 text-jet-black text-14-fs placeholder:text-dark-gray bg-transparent "
+            />
+            <div id="records-dropdown-toggle" class="cursor-pointer flex items-center text-dark-gray px-2 py-2.5 w-10">
+            <span class="material-symbols-outlined">
+                keyboard_arrow_down
+            </span>
+            </div>
+        </div>
+        <div id="records-dropdown" class="absolute z-50 mt-1 w-full rounded-[16px] shadow-(--box-shadow-9) bg-white max-h-44 overflow-auto hidden no-scrollbar">
+            <!-- doctor list items get injected here -->
+        </div>
+        </div>
+    </div>
+    </div>
+
+    <label
+    class="block text-[12px] sm:text-[14px] font-semibold"
+    >Upload data</label
+    >
+
+    <div class="upload-part mt-5 space-y-4">
+    <div
+        class="flex flex-col sm:flex-row items-center gap-8 w-full"
+    >
+        <div class="w-full space-y-4">
+        <div
+            class="upload-area relative border-2 border-dashed border-light-sea-green rounded-md h-[312px] flex items-center justify-center"
+        >
+            <input type="file" class="hidden upload-input" />
+            <div
+            class="upload-placeholder flex flex-col items-center space-y-2 cursor-pointer"
+            >
+            <img
+                src="/static/images/cloud-upload.svg"
+                alt="Cloud"
+                loading="lazy"
+            />
+            <p class="text-xs sm:text-base text-center">
+                Click or upload
+            </p>
+            </div>
+            <div
+            class="upload-preview hidden relative w-full items-center justify-center h-60"
+            >
+            <button
+                type="button"
+                class="cancel-upload absolute -top-8 sm:-top-2 right-2"
+            >
+                <span
+                class="material-symbols-outlined cursor-pointer"
+                >
+                close
+                </span>
+            </button>
+            <img
+                src=""
+                alt="Preview"
+                class="uploaded-img mx-auto max-h-60 object-contain"
+            />
+            </div>
+        </div>
+        </div>
+    </div>
+    <div class="flex items-center justify-between">
+        <p class="text-[8px] sm:text-xs py-1 text-dark-gray">
+        Accepted formats: CSV,Excel and PDF , Max File size 20 MB
+        </p>
+        <!-- Container -->
+        <div class="flex items-center gap-3 virus-scan">
+        <span class=" text-bright-green text-16-normal">Virus scan</span>
+        <div
+            class=" w-5 h-5 rounded flex items-center justify-center bg-bright-green cursor-pointer text-white"
+        >
+            <span class=" material-symbols-outlined mini-icon">check</span>
+        </div>
+        </div>
+    </div>
+    <div class="flex items-center justify-end mt-3">
+        <button
+        class="get-btn hidden bg-light-sea-green text-white w-[145px] h-[48px] p-2.5 rounded-md text-16-semibold cursor-pointer"
+        >
+        Submit
+        </button>
+    </div>
+    </div>
+    <!-- Edit Section of Medicine -->
+    <div class="upload-form-section hidden">
+    <label
+        class="block text-[14px] sm:text-[16px] font-semibold mb-4"
+        >Check and Submit</label
+    >
+    <form class="file-share-form">
+        <div class="flex flex-col gap-3">
+        <div class="w-full flex items-center gap-8">
+            <fieldset class="input-fieldset">
+            <legend class="text-xs text-dark-gray px-1">
+                Name
+            </legend>
+            <input
+                type="text"
+                class="py-[10px] w-full h-full border-none focus:outline-none focus:ring-0 focus:border-transparent text-dark-gray px-1"
+            />
+            </fieldset>
+            <fieldset class="input-fieldset">
+            <legend class="text-xs text-dark-gray px-1">
+                Product Price
+            </legend>
+            <input
+                type="text"
+                class="py-[10px] w-full h-full border-none focus:outline-none focus:ring-0 focus:border-transparent text-dark-gray px-1"
+            />
+            </fieldset>
+        </div>
+        <div class="w-full flex items-center gap-8">
+            <fieldset class="input-fieldset">
+            <legend class="text-xs text-dark-gray px-1">
+                Manufacturer
+            </legend>
+            <input
+                type="text"
+                class="py-[10px] w-full h-full border-none focus:outline-none focus:ring-0 focus:border-transparent text-dark-gray px-1"
+            />
+            </fieldset>
+            <fieldset class="input-fieldset">
+            <legend class="text-xs text-dark-gray px-1">
+                Batch No
+            </legend>
+            <input
+                type="text"
+                class="py-[10px] w-full h-full border-none focus:outline-none focus:ring-0 focus:border-transparent text-dark-gray px-1"
+            />
+            </fieldset>
+        </div>
+        <div class="w-full flex items-center gap-8">
+            <fieldset class="input-fieldset">
+            <legend class="text-xs text-dark-gray px-1">
+                Manufacturing Date
+            </legend>
+            <input
+                type="text"
+                class="py-[10px] w-full h-full border-none focus:outline-none focus:ring-0 focus:border-transparent text-dark-gray px-1"
+            />
+            </fieldset>
+            <fieldset class="input-fieldset">
+            <legend class="text-xs text-dark-gray px-1">
+                Expiry Date
+            </legend>
+            <input
+                type="text"
+                class="py-[10px] w-full h-full border-none focus:outline-none focus:ring-0 focus:border-transparent text-dark-gray px-1"
+            />
+            </fieldset>
+        </div>
+        </div>
+        <div
+        class="flex flex-col sm:flex-row gap-2 items-center justify-between pt-8"
+        >
+        <p class="text-sm text-light-gray1 font-normal">
+            Congratulation! You will earn
+            <span class="text-light-sea-green font-semibold"
+            >2.8</span
+            >
+            Points on this sharing subject to terms.*
+        </p>
+        <div class="flex items-center gap-3">
+            <button
+            class="upload-cancel px-8 py-2 text-sm border border-light-sea-green text-light-sea-green rounded cursor-pointer"
+            >
+            Cancel
+            </button>
+            <button
+            class="file-share-btn px-10 py-2 text-sm bg-light-sea-green text-white rounded cursor-pointer"
+            >
+            Share
+            </button>
+        </div>
+        </div>
+    </form>
+    </div>
+
+    <!-- Successfull Modal -->
+    <div
+    class="share-success-modal fixed inset-0 items-center justify-center bg-black/40 px-3 z-50 hidden"
+    >
+    <div
+        class="bg-white px-4 py-3 rounded-[10px] shadow-lg max-w-[800px] max-h-[400px] w-full h-full bg-[url('/static/images/success-share-img.png')] bg-contain bg-center space-y-4"
+    >
+        <div class="flex items-center justify-end">
+        <span
+            class="material-symbols-outlined modal-close cursor-pointer"
+        >
+            close
+        </span>
+        </div>
+        <div
+        class="flex flex-col gap-2 items-center justify-center"
+        >
+        <img
+            src="/static/images/trophy.svg"
+            alt="trophy"
+            loading="lazy"
+            class="w-32"
+        />
+        <span class="font-semibold text-base"
+            >File Shared successfully :)</span
+        >
+        </div>
+        <div class="flex items-center justify-center pt-5">
+        <p class="text-sm text-light-gray1 font-normal">
+            Congratulation! You will earn
+            <span class="text-light-sea-green font-semibold"
+            >2.8</span
+            >
+            Points on this sharing subject to terms.*
+        </p>
+        </div>
+        <!-- Buttons -->
+        <div class="mt-10 flex items-center justify-center">
+        <button
+            class="w-full max-w-[160px] py-3.5 rounded-[6px] font-semibold cursor-pointer text-xs sm:text-sm text-white bg-light-sea-green"
+        >
+            Share History
+        </button>
+        </div>
+    </div>
+    </div>
+</div>

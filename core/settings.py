@@ -135,6 +135,8 @@ MONGO_COLLECTIONS = {
     "lab":      MONGO_DB["Labs"]
 }
 PLACES_COORDINATES = MONGO_DB["places"]
+STORE_VALIDATION = MONGO_DB["store_detail_validation"]
+TABLE_VALIDATION = MONGO_DB["table_validation"]
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
