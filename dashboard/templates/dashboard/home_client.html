@@ -1,0 +1,1013 @@
+{% extends "dashboard/layout.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+      <!-- Main Content -->
+      <div
+        class="relative transition-all duration-300 main-content bg-slate-white h-full flex-1 flex flex-col gap-8 p-6 overflow-y-auto scroll">
+        <div
+          class="show-sidebar-toggle hidden fixed top-18 left-0 z-50 h-10 w-10 bg-transparent-dark-blue items-center justify-center rounded-r-md cursor-pointer">
+          <span class="material-symbols-outlined bold-weight text-dark-blue">
+            arrow_forward_ios
+          </span>
+        </div>
+        <div class="bg-white shadow-(--box-shadow-5) rounded-[10px] px-2 sm:px-4 py-4">
+          <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center">
+            <div class="flex-col gap-y-3">
+              <p class="font-semibold text-2xl text-jet-black">
+                Welcome back, PharmaCorp!
+              </p>
+              <p class="font-normal text-base text-jet-black">
+                Here’s what’s happening with your business today
+              </p>
+            </div>
+            <div class="flex flex-col gap-y-2.5">
+              <div id="location"
+                class="font-normal text-base flex items-end lg:justify-end sm:text-xs pt-4 lg:pt-0 lg:pl-10 gap-2.5">
+                <span class="material-symbols-outlined !text-base"> location_on </span>
+                <span id="location-text">Fetching location...</span>
+              </div>
+              <div class="flex flex-col mt-2 gap-1 lg:items-end">
+                <p class="font-semibold text-base text-dark-gray">Subscription Plan : Standard (3 Users per month)</p>
+                <p class="font-normal text-sm text-jet-black">Expiry Date : 23rd March 2025 <span
+                    class="text-strong-red">(5 days left)</span> </p>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 pt-[1.69rem] gap-5">
+            <div class="border border-light-gray2 rounded-lg p-3 w-full h-[7rem] shadow-md relative">
+              <div class="flex flex-col gap-1">
+                <p class="font-semibold text-base text-jet-black">
+                  Reports Downloaded This Month
+                </p>
+                <p class="text-2xl font-semibold text-jet-black">8</p>
+                <p class="text-sm font-normal">+2 from last month</p>
+              </div>
+              <div
+                class="rounded-full absolute right-4 top-4 bg-light-sky-blue py-[0.532rem] pr-[0.563rem] pl-[0.5rem] flex items-center justify-center">
+                <span class="material-symbols-outlined cursor-pointer  text-dark-blue w-6 h-6">
+                  download
+                </span>
+              </div>
+            </div>
+
+            <div class="border border-light-gray2 rounded-lg p-3 h-[7rem] w-full shadow-md relative">
+              <div class="flex flex-col gap-2">
+                <p class="font-semibold text-base text-jet-black">
+                  Total Report Accessed
+                </p>
+                <p class="text-2xl font-semibold text-jet-black">42</p>
+                <p class="text-sm font-normal">Since Account Creation</p>
+              </div>
+              <div
+                class="rounded-full absolute right-4 top-4 bg-light-sky-blue py-[0.532rem] pr-[0.563rem] pl-[0.5rem] flex items-center justify-center">
+                <span class="material-symbols-outlined cursor-pointer  text-dark-blue w-6 h-6">
+                  analytics
+                </span>
+
+              </div>
+            </div>
+            <div class="border border-light-gray2 rounded-lg p-3 h-[7rem] w-full shadow-md relative">
+              <div class="flex flex-col gap-2">
+                <p class="font-semibold text-base text-jet-black">
+                  Top Accessed Dataset
+                </p>
+                <p class="text-2xl font-semibold text-jet-black">
+                  Monthly OTC Sales- Maharashtra
+                </p>
+                <p class="text-sm font-normal">Last accessed 3 days ago</p>
+              </div>
+              <div
+                class="rounded-full absolute right-4 top-4 bg-light-sky-blue py-[0.532rem] pr-[0.563rem] pl-[0.5rem] flex items-center justify-center">
+                <span class="material-symbols-outlined cursor-pointer  text-dark-blue w-6 h-6">
+                  document_scanner
+                </span>
+
+              </div>
+            </div>
+            <div class="border border-light-gray2 rounded-lg p-3 h-[7rem] w-full shadow-md relative">
+              <div class="flex flex-col gap-2">
+                <p class="font-semibold text-base text-jet-black">
+                  Custom Reports Created
+                </p>
+                <p class="text-2xl font-semibold text-jet-black">
+                  15
+                </p>
+                <p class="text-sm font-normal">Since Account Creation</p>
+              </div>
+              <div
+                class="rounded-full absolute right-4 top-4 bg-light-sky-blue py-[0.532rem] pr-[0.563rem] pl-[0.5rem] flex items-center justify-center">
+                <span class="material-symbols-outlined cursor-pointer  text-dark-blue w-6 h-6">
+                  cached
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col lg:flex-row gap-5 pt-[1.875rem]">
+            <div class="calendar-container rounded-xl lg:w-1/2 h-[26rem] border border-dark-blue relative"
+              data-color="dark-blue">
+              <div class="flex justify-between items-center p-1 rounded-t-xl bg-dark-blue">
+                <div id="monthYearDropdown" class="relative cursor-pointer">
+                  <div class="px-2 py-1 flex items-center gap-2 text-white text-lg">
+                    <span id="monthYearLabel">Loading...</span>
+                    <span class="material-symbols-outlined">
+                      keyboard_arrow_down
+                    </span>
+                  </div>
+                  <div id="dropdownContent"
+                    class="absolute left-0 mt-1 bg-white border border-dark-blue rounded shadow-lg hidden max-h-60 overflow-y-auto scroll w-44">
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button id="prevMonth" class="text-white h-8 w-8 flex items-center justify-center cursor-pointer">
+                    <span class="material-symbols-outlined">chevron_left</span>
+                  </button>
+                  <button id="nextMonth" class="text-white h-8 w-8 flex items-center justify-center cursor-pointer">
+                    <span class="material-symbols-outlined">chevron_right</span>
+                  </button>
+                  <button
+                    class="bg-white rounded-full w-8 h-8 flex items-center justify-center cursor-pointer add-event-btn"><span
+                      class="material-symbols-outlined  text-dark-gray">add</span></button>
+                </div>
+              </div>
+
+              <div id="calendarDays" class="grid grid-cols-7  gap-2 text-left text-jet-black mx-4"></div>
+
+              <div class="m-1 flex flex-col gap-3"></div>
+              <div class=" flex flex-wrap gap-6 text-sm px-4">
+                <div class="flex items-center gap-2">
+                  <span class="w-3 h-3 bg-slate-blue rounded-full"></span> PF
+                  Deposit
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="w-3 h-3 bg-strong-red rounded-full"></span> GST
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="w-3 h-3 bg-green rounded-full"></span> ESI
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="w-3 h-3 bg-vivid-orange rounded-full"></span>
+                  INCOME TAX
+                </div>
+              </div>
+              <!--Add Event Popup-->
+              <div class="event-calendar  flex justify-center items-center  hidden z-50 absolute inset-0" id="eventCal">
+                <div class="event-calendar-container rounded-xl w-[37rem]  h-[26rem] border border-dark-blue  bg-white"
+                  data-color="dark-blue">
+
+                  <div class="flex flex-col  p-1 rounded-t-xl">
+                    <div class="ml-2 mt-2 mr-2">
+                      <input type="text"
+                        class="w-full bg-slate-white border-none focus:ring-0 rounded-md placeholder:font-semibold placeholder:text-base placeholder:text-jet-black-opacity p-2"
+                        placeholder="Event name">
+                    </div>
+                    <div class="flex justify-between items-center px-6 pt-2">
+                      <div class="px-2 py-1 flex items-center gap-2  font-semibold text-base text-jet-black">
+                        <span id="monthYearLabel">Loading...</span>
+
+                      </div>
+
+                      <div class="flex items-center ">
+                        <button id="prevMonth" class="text-dark-blue   flex items-center justify-center cursor-pointer">
+                          <span class="material-symbols-outlined !text-4xl ">chevron_left</span>
+                        </button>
+                        <button id="nextMonth" class="text-dark-blue flex items-center justify-center cursor-pointer">
+                          <span class="material-symbols-outlined !text-4xl ">chevron_right</span>
+                        </button>
+
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <div id="calendarDays" class="grid grid-cols-7 gap-0.5 text-left text-jet-black mx-4"></div>
+
+                  <div class="m-1 flex flex-col gap-3"></div>
+                  <div class="flex items-center justify-between px-6">
+                    <p class="font-normal text-[17px] text-jet-black">Time</p>
+                    <div class="relative w-full sm:w-40">
+                      <input type="time" id="start-time"
+                        class=" border rounded px-3 py-2 w-full pr-10 text-gray-700 focus:outline-none focus:ring-2 focus:ring-light-sea-green"
+                        min="09:00" max="18:00" value="09:00" required />
+                      <span data-target="start-time"
+                        class="trigger-time material-symbols-outlined absolute right-2 top-5 transform -translate-y-1/2 text-gray-500 cursor-pointer">
+                        timer
+                      </span>
+                    </div>
+
+                  </div>
+                  <div class="flex items-center gap-2 pt-1 px-6">
+                    <button
+                      class="bg-dark-blue text-white rounded-md py-2 px-6 cursor-pointer addEventButton">Add</button>
+                    <button
+                      class="border border-dark-blue text-dark-blue cursor-pointer cancelEvent-btn py-2 px-4 rounded-md">Cancel</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="rounded-xl lg:w-1/2 h-[26rem] border border-dark-blue">
+              <div class="flex justify-between items-center p-1 rounded-t-xl bg-dark-blue">
+                <p class="font-semibold text-lg px-5 py-1 text-white">
+                  Top-selling Medicines
+                </p>
+                <div class="flex items-center gap-2">
+                  <p class="font-normal text-base text-white">This Month</p>
+                  <div class="relative dropdown">
+                    <button class="filterToggle  flex items-center  text-white mr-5 cursor-pointer">
+                      <span class="material-symbols-outlined flex justify-center items-center">tune</span>
+                    </button>
+                    <div
+                      class="filterDropdown absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10">
+                      <div
+                        class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-dark-blue hover:text-white rounded">
+                        Custom date
+                        <span class="material-symbols-outlined calendar-icon">calendar_today</span>
+                      </div>
+                      <div class="p-2 pl-4 hover:bg-dark-blue hover:text-white rounded cursor-pointer">1 Week</div>
+                      <div class="p-2 pl-4 hover:bg-dark-blue hover:text-white rounded cursor-pointer">1 Month</div>
+                      <div class="p-2 pl-4 hover:bg-dark-blue hover:text-white rounded cursor-pointer">1 Year</div>
+                    </div>
+
+                    <div
+                      class="datepicker-container hidden px-4 pb-3 absolute top-full right-0 lg:right-[180px] z-50 bg-white shadow-md rounded">
+                      <div class="datepicker-inline"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <hr class="text-soft-gray mt-3 mx-5" />
+              <div class="bg-gray-color rounded-4xl mx-5 mt-2.5 p-3.5">
+                <div class="flex justify-between items-center">
+                  <div class="flex items-center gap-4">
+                    <div class="bg-dark-blue rounded-full w-[1.375rem] h-[1.375rem]"></div>
+                    <p class="font-semibold text-base text-dark-blue">
+                      Lisinopril
+                    </p>
+                  </div>
+                  <p class="font-semibold text-base text-dark-blue">
+                    &#8377;24000
+                  </p>
+                </div>
+              </div>
+              <hr class="text-soft-gray mt-2.5 mx-5" />
+              <div class="bg-gray-color rounded-4xl mx-5 my-2.5 p-3.5">
+                <div class="flex justify-between items-center">
+                  <div class="flex items-center gap-4">
+                    <div class="bg-dark-blue rounded-full w-[1.375rem] h-[1.375rem]"></div>
+                    <p class="font-semibold text-base text-dark-blue">
+                      Lisinopril
+                    </p>
+                  </div>
+                  <p class="font-semibold text-base text-dark-blue">
+                    &#8377;24000
+                  </p>
+                </div>
+              </div>
+              <hr class="text-soft-gray mt-2.5 mx-5" />
+              <div class="bg-gray-color rounded-4xl mx-5 my-2.5 p-3.5">
+                <div class="flex justify-between items-center">
+                  <div class="flex items-center gap-4">
+                    <div class="bg-dark-blue rounded-full w-[1.375rem] h-[1.375rem]"></div>
+                    <p class="font-semibold text-base text-dark-blue">
+                      Lisinopril
+                    </p>
+                  </div>
+                  <p class="font-semibold text-base text-dark-blue">
+                    &#8377;24000
+                  </p>
+                </div>
+              </div>
+              <hr class="text-soft-gray mt-2.5 mx-5" />
+              <div class="bg-gray-color rounded-4xl mx-5 my-2.5 p-3.5">
+                <div class="flex justify-between items-center">
+                  <div class="flex items-center gap-4">
+                    <div class="bg-dark-blue rounded-full w-[1.375rem] h-[1.375rem]"></div>
+                    <p class="font-semibold text-base text-dark-blue">
+                      Lisinopril
+                    </p>
+                  </div>
+                  <p class="font-semibold text-base text-dark-blue">
+                    &#8377;24000
+                  </p>
+                </div>
+              </div>
+              <hr class="text-soft-gray mt-2.5 mx-5" />
+              <div class="bg-gray-color rounded-4xl mx-5 my-2.5 p-3.5">
+                <div class="flex justify-between items-center">
+                  <div class="flex items-center gap-4">
+                    <div class="bg-dark-blue rounded-full w-[1.375rem] h-[1.375rem]"></div>
+                    <p class="font-semibold text-base text-dark-blue">
+                      Lisinopril
+                    </p>
+                  </div>
+                  <p class="font-semibold text-base text-dark-blue">
+                    &#8377;24000
+                  </p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-6 gap-2 lg:gap-0">
+            <p class="font-semibold text-lg text-jet-black text-nowrap">Data Trends</p>
+            <div class="flex gap-5 lg:gap-4 items-center">
+              <div class=" lg:w-[13.125rem] h-8 relative section-dropdown-container">
+                <input type="text"
+                  class="section-dropdown-input rounded-md w-full border h-8 focus:ring-0 focus:outline-none focus:ring-offset-0 py-1 px-3 section-dropdown-toggle cursor-pointer"
+                  placeholder="Reports Downloaded" readonly />
+                <span
+                  class="material-symbols-outlined absolute right-2 top-1 cursor-pointer section-dropdown-toggle ">keyboard_arrow_down</span>
+                <!-- Dropdown Options -->
+                <div
+                  class="section-dropdown-menu hidden border absolute top-9 left-0 w-full bg-white rounded-md shadow-[0px_4px_14px_#00000026] z-10">
+                  <div class="section-dropdown-option px-4 py-2 cursor-pointer hover:bg-dark-blue hover:text-white">
+                    Reports Downloaded
+                  </div>
+                  <div class="section-dropdown-option px-4 py-2 cursor-pointer hover:bg-dark-blue hover:text-white">
+                    Categories Accessed
+                  </div>
+                  <div class="section-dropdown-option px-4 py-2 cursor-pointer hover:bg-dark-blue hover:text-white">
+                    Login Instances
+                  </div>
+                </div>
+              </div>
+              <div class="relative dropdown">
+                <button
+                  class="filterToggle  flex items-center border gap-2 border-slate-gray rounded-md p-1 cursor-pointer">
+                  <span class="material-symbols-outlined flex justify-center items-center">tune</span>
+                </button>
+                <div
+                  class="filterDropdown absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10">
+                  <div
+                    class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-dark-blue hover:text-white rounded">
+                    Custom date
+                    <span class="material-symbols-outlined calendar-icon">calendar_today</span>
+                  </div>
+                  <div class="p-2 pl-4 hover:bg-dark-blue hover:text-white rounded cursor-pointer">1 Week</div>
+                  <div class="p-2 pl-4 hover:bg-dark-blue hover:text-white rounded cursor-pointer">1 Month</div>
+                  <div class="p-2 pl-4 hover:bg-dark-blue hover:text-white rounded cursor-pointer">1 Year</div>
+                </div>
+
+                <div
+                  class="datepicker-container hidden px-4 pb-3 absolute top-full right-0 lg:right-[180px] z-50 bg-white shadow-md rounded">
+                  <div class="datepicker-inline"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="w-full h-[22.5rem] pt-4">
+            <canvas id="dataTrendsChart"></canvas>
+          </div>
+
+          <div class="flex justify-between items-center pt-6">
+            <p class="font-semibold text-lg text-dark-gray">
+              Latest Reports Downloaded
+            </p>
+            <div class="relative dropdown">
+              <button
+                class="filterToggle  flex items-center border border-slate-gray rounded-md p-1  w-8 h-8 cursor-pointer">
+                <span class="material-symbols-outlined flex justify-center items-center">tune</span>
+              </button>
+              <div
+                class="filterDropdown absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10">
+
+                <div
+                  class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-dark-blue hover:text-white rounded">
+                  Custom date<span class="material-symbols-outlined calendar-icon">calendar_today</span>
+
+                </div>
+                <div class="p-2 pl-4 hover:bg-dark-blue hover:text-white rounded cursor-pointer">1 Week</div>
+                <div class="p-2 pl-4 hover:bg-dark-blue hover:text-white rounded cursor-pointer">1 Month</div>
+                <div class="p-2 pl-4 hover:bg-dark-blue hover:text-white rounded cursor-pointer">1 Year</div>
+
+              </div>
+
+              <div
+                class="datepicker-container hidden px-4 pb-3 absolute top-full right-0 lg:right-[180px] z-50 bg-white shadow-md rounded">
+                <div class="datepicker-inline"></div>
+              </div>
+            </div>
+          </div>
+          <!--Table-->
+          <div class="overflow-x-auto pt-4 tab-content">
+            <table class="min-w-full table-auto whitespace-nowrap docTable">
+              <thead class="bg-dark-blue text-white text-sm sm:text-18-b">
+                <tr>
+                  <th class="text-center px-4 py-5 border-r border-white">
+                    Section
+                  </th>
+                  <th class="text-center px-4 py-5 border-r border-white">
+                    Type
+                  </th>
+                  <th class="text-center px-4 py-5 border-r border-white">
+                    Code
+                  </th>
+                  <th class="text-center px-4 py-5 border-r border-white">
+                    Name
+                  </th>
+                  <th class="text-center px-4 py-5 border-r border-white">
+                    Key Metrics
+                  </th>
+                  <th class="text-center px-4 py-5 border-r border-white">
+                    Period
+                  </th>
+                  <th class="text-center px-4 py-5 border-r border-white">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-snow-gray text-dark-gray text-16-fs">
+                <tr>
+                  <td class="px-4 py-4.5 text-left">
+                    Pharma Metrics
+                  </td>
+                  <td class="px-4 py-4.5 text-left">
+                    Standard
+                  </td>
+                  <td class="px-4 py-4.5 text-left">0001</td>
+                  <td class="px-4 py-4.5 text-left">
+                    Salt Usage Trends
+                  </td>
+                  <td class="px-4 py-4.5">
+                    <span>MRP,Offer Price,Historical</span>
+                    <br><span>Price Trends</span>
+                  </td>
+                  <td class="px-4 py-4.5 text-left">
+                    Historical
+                  </td>
+                  <td class="px-4 py-4.5">
+                    <div class="flex items-center justify-between">
+                      <span title="bookmark"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white transition-all p-1">bookmark</span>
+                      <span title="View"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">visibility</span>
+                      <span title="Download"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">download</span>
+                      <span title="Share"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1 popup-btn"
+                        data-popup="reportSchedulerPopup">calendar_clock</span>
+
+
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-4.5 text-left">
+                    Activity Reports
+                  </td>
+                  <td class="px-4 py-4.5 text-left">
+                    Custom
+                  </td>
+                  <td class="px-4 py-4.5 text-left">0002</td>
+                  <td class="px-4 py-4.5 text-left">
+                    Order History Log
+                  </td>
+                  <td class="px-4 py-4.5">
+                    <span>Stock In/Out Quantity,Current</span>
+                    <br><span>Qty,Low Stock Alerts</span>
+                  </td>
+                  <td class="px-4 py-4.5 text-left">
+                    Real Time
+                  </td>
+                  <td class="px-4 py-4.5">
+                    <div class="flex items-center justify-between">
+                      <span title="bookmark"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white transition-all p-1">bookmark</span>
+                      <span title="View"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">visibility</span>
+                      <span title="Download"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">download</span>
+                      <span title="Share"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">calendar_clock</span>
+
+
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-4.5 text-left">
+                    Pharma Metrics
+                  </td>
+                  <td class="px-4 py-4.5 text-left">
+                    Standard
+                  </td>
+                  <td class="px-4 py-4.5 text-left">0001</td>
+                  <td class="px-4 py-4.5 text-left">
+                    Salt Usage Trends
+                  </td>
+                  <td class="px-4 py-4.5">
+                    <span>MRP,Offer Price,Historical</span>
+                    <br><span>Price Trends</span>
+                  </td>
+                  <td class="px-4 py-4.5 text-left">
+                    Historical
+                  </td>
+                  <td class="px-4 py-4.5">
+                    <div class="flex items-center justify-between">
+                      <span title="bookmark"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white transition-all p-1">bookmark</span>
+                      <span title="View"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">visibility</span>
+                      <span title="Download"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">download</span>
+                      <span title="Share"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">calendar_clock</span>
+
+
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-4.5 text-left">
+                    Platform Reports
+                  </td>
+                  <td class="px-4 py-4.5 text-left">
+                    Standard
+                  </td>
+                  <td class="px-4 py-4.5 text-left">0003</td>
+                  <td class="px-4 py-4.5 text-left">
+                    Navigation Journey Log
+                  </td>
+                  <td class="px-4 py-4.5">
+                    <span>Pages Visited,Time Per Page</span>
+                    <br><span>Drop-off Pages</span>
+                  </td>
+                  <td class="px-4 py-4.5 text-left">
+                    Real Time
+                  </td>
+                  <td class="px-4 py-4.5">
+                    <div class="flex items-center justify-between">
+                      <span title="bookmark"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white transition-all p-1">bookmark</span>
+                      <span title="View"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">visibility</span>
+                      <span title="Download"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">download</span>
+                      <span title="Share"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">calendar_clock</span>
+
+
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-4.5 text-left">
+                    Pharma Metrics
+                  </td>
+                  <td class="px-4 py-4.5 text-left">
+                    Standard
+                  </td>
+                  <td class="px-4 py-4.5 text-left">0001</td>
+                  <td class="px-4 py-4.5 text-left">
+                    Salt Usage Trends
+                  </td>
+                  <td class="px-4 py-4.5">
+                    <span>MRP,Offer Price,Historical</span>
+                    <br><span>Price Trends</span>
+                  </td>
+                  <td class="px-4 py-4.5 text-left">
+                    Historical
+                  </td>
+                  <td class="px-4 py-4.5">
+                    <div class="flex items-center justify-between">
+                      <span title="bookmark"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white transition-all p-1">bookmark</span>
+                      <span title="View"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">visibility</span>
+                      <span title="Download"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">download</span>
+                      <span title="Share"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">calendar_clock</span>
+
+
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-4.5 text-left">
+                    Activity Reports
+                  </td>
+                  <td class="px-4 py-4.5 text-left">
+                    Custom
+                  </td>
+                  <td class="px-4 py-4.5 text-left">0002</td>
+                  <td class="px-4 py-4.5 text-left">
+                    Order History Log
+                  </td>
+                  <td class="px-4 py-4.5">
+                    <span>Stock In/Out Quantity,Current</span>
+                    <br><span>Qty,Low Stock Alerts</span>
+                  </td>
+                  <td class="px-4 py-4.5 text-left">
+                    Real Time
+                  </td>
+                  <td class="px-4 py-4.5">
+                    <div class="flex items-center justify-between">
+                      <span title="bookmark"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white transition-all p-1">bookmark</span>
+                      <span title="View"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">visibility</span>
+                      <span title="Download"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">download</span>
+                      <span title="Share"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">calendar_clock</span>
+
+
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-4.5 text-left">
+                    Pharma Metrics
+                  </td>
+                  <td class="px-4 py-4.5 text-left">
+                    Standard
+                  </td>
+                  <td class="px-4 py-4.5 text-left">0001</td>
+                  <td class="px-4 py-4.5 text-left">
+                    Salt Usage Trends
+                  </td>
+                  <td class="px-4 py-4.5">
+                    <span>MRP,Offer Price,Historical</span>
+                    <br><span>Price Trends</span>
+                  </td>
+                  <td class="px-4 py-4.5 text-left">
+                    Historical
+                  </td>
+                  <td class="px-4 py-4.5">
+                    <div class="flex items-center justify-between">
+                      <span title="bookmark"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white transition-all p-1">bookmark</span>
+                      <span title="View"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">visibility</span>
+                      <span title="Download"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">download</span>
+                      <span title="Share"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">calendar_clock</span>
+
+
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-4.5 text-left">
+                    Platform Reports
+                  </td>
+                  <td class="px-4 py-4.5 text-left">
+                    Standard
+                  </td>
+                  <td class="px-4 py-4.5 text-left">0003</td>
+                  <td class="px-4 py-4.5 text-left">
+                    Navigation Journey Log
+                  </td>
+                  <td class="px-4 py-4.5">
+                    <span>Pages Visited,Time Per Page</span>
+                    <br><span>Drop-off Pages</span>
+                  </td>
+                  <td class="px-4 py-4.5 text-left">
+                    Real Time
+                  </td>
+                  <td class="px-4 py-4.5">
+                    <div class="flex items-center justify-between">
+                      <span title="bookmark"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white transition-all p-1">bookmark</span>
+                      <span title="View"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">visibility</span>
+                      <span title="Download"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">download</span>
+                      <span title="Share"
+                        class="material-symbols-outlined cursor-pointer hover:bg-dark-blue rounded-full hover:text-white p-1">calendar_clock</span>
+
+
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!--Report Scheduler Popup-->
+      <div
+        class="fixed inset-0 bg-semi-transparent-black z-50 hidden reportSchedulerPopup flex items-center justify-center">
+        <div class="bg-white rounded-md w-[49.438rem] max-h-[43rem]">
+          <div class="flex justify-between items-center pt-6 px-5">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-dark-blue">calendar_clock</span>
+              <p class="font-semibold text-2xl text-dark-blue">
+                Report Scheduler
+              </p>
+            </div>
+
+            <button class="cursor-pointer close-popup" data-popup="reportSchedulerPopup">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <div class="grid grid-cols-4 gap-5 px-5 pt-[1.875rem]">
+            <div class="dropdown-wrapper flex flex-col gap-3 relative" data-placeholder="Select Section">
+              <label class="dropdown-label font-normal text-base text-jet-black">Section</label>
+              <div
+                class="border-[2.5px] rounded-lg border-soft-pastel-blue [box-shadow:inset_-2px_-2px_10px_#00000024,inset_2px_2px_10px_#00000024]">
+                <div
+                  class="dropdown-display border border-dark-blue p-2 flex items-center justify-between flex-wrap gap-2 rounded-md h-10 shadow-(--box-shadow-6)">
+                  <span class="dropdown-placeholder text-dark-gray text-xs font-semibold">Select Section</span>
+                </div>
+              </div>
+              <span
+                class="material-symbols-outlined absolute right-2 top-12 cursor-pointer dropdown-toggle">keyboard_arrow_down</span>
+
+              <div
+                class="dropdown-menu hidden bg-white top-20 w-full  border rounded-md shadow-[0px_4px_14px_#00000026] p-3 absolute z-100">
+                <p
+                  class="dropdown-option flex items-center gap-2 font-normal text-base text-dark-gray py-2 cursor-pointer">
+
+                  Pharma Metrics
+                </p>
+                <p class="dropdown-option font-normal text-base text-dark-gray py-2 cursor-pointer">
+                  Activity
+                </p>
+                <p class="dropdown-option font-normal text-base text-dark-gray py-2 cursor-pointer">
+                  Platform
+                </p>
+
+              </div>
+            </div>
+            <div class="dropdown-wrapper flex flex-col gap-3 relative" data-placeholder="Select  Type">
+              <label class="dropdown-label font-normal text-base text-jet-black"> Type</label>
+              <div
+                class="border-[2.5px] rounded-lg border-soft-pastel-blue [box-shadow:inset_-2px_-2px_10px_#00000024,inset_2px_2px_10px_#00000024]">
+                <div
+                  class="dropdown-display border border-dark-blue p-2 flex items-center justify-between flex-wrap gap-2 rounded-md h-10 shadow-(--box-shadow-6)">
+                  <span class="dropdown-placeholder text-dark-gray text-xs font-semibold">Select Type</span>
+                </div>
+              </div>
+              <span
+                class="material-symbols-outlined absolute right-2 top-12 cursor-pointer dropdown-toggle">keyboard_arrow_down</span>
+
+              <div
+                class="dropdown-menu hidden bg-white top-20 w-full  border rounded-md shadow-[0px_4px_14px_#00000026] p-3 absolute z-100">
+                <p
+                  class="dropdown-option flex items-center gap-2 font-normal text-base text-dark-gray py-2 cursor-pointer">
+
+                  Standard
+                </p>
+                <p class="dropdown-option font-normal text-base text-dark-gray py-2 cursor-pointer">
+                  Custom
+                </p>
+
+              </div>
+            </div>
+            <div class="dropdown-wrapper flex flex-col gap-3 relative" data-placeholder="Name">
+              <label class="dropdown-label font-normal text-base text-jet-black">Name</label>
+              <div
+                class="border-[2.5px] rounded-lg border-soft-pastel-blue [box-shadow:inset_-2px_-2px_10px_#00000024,inset_2px_2px_10px_#00000024]">
+                <div
+                  class="dropdown-display border border-dark-blue p-2 flex items-center justify-between flex-wrap gap-2 rounded-md h-10 shadow-(--box-shadow-6)">
+                  <span class="dropdown-placeholder text-dark-gray text-xs font-semibold">Name</span>
+                </div>
+              </div>
+              <span
+                class="material-symbols-outlined absolute right-2 top-12 cursor-pointer dropdown-toggle">keyboard_arrow_down</span>
+
+              <div
+                class="dropdown-menu hidden bg-white top-20 w-full border rounded-md shadow-[0px_4px_14px_#00000026] p-3 absolute z-100">
+                <p
+                  class="dropdown-option flex items-center gap-2 font-normal text-base text-dark-gray py-2 cursor-pointer">
+
+                  Salt Usage Trends
+                </p>
+                <p class="dropdown-option font-normal text-base text-dark-gray py-2 cursor-pointer">
+                  Order History Log
+                </p>
+
+
+                <p class="dropdown-option font-normal text-base text-dark-gray py-2 cursor-pointer">
+                  Navigation Log
+                </p>
+              </div>
+            </div>
+            <div class="dropdown-wrapper flex flex-col gap-3 relative" data-placeholder="Code">
+              <label class="dropdown-label font-normal text-base text-jet-black">Code</label>
+              <div
+                class="border-[2.5px] rounded-lg border-soft-pastel-blue [box-shadow:inset_-2px_-2px_10px_#00000024,inset_2px_2px_10px_#00000024]">
+                <div
+                  class="dropdown-display border border-dark-blue p-2 flex items-center justify-between flex-wrap gap-2 rounded-md h-10 shadow-(--box-shadow-6)">
+                  <span class="dropdown-placeholder text-dark-gray text-xs font-semibold">Code</span>
+                </div>
+              </div>
+              <span
+                class="material-symbols-outlined absolute right-2 top-12 cursor-pointer dropdown-toggle">keyboard_arrow_down</span>
+
+              <div
+                class="dropdown-menu hidden bg-white top-20 w-full  border rounded-md shadow-[0px_4px_14px_#00000026] p-3 absolute z-100">
+                <p
+                  class="dropdown-option flex items-center gap-2 font-normal text-base text-dark-gray py-2 cursor-pointer">
+
+                  S001
+                </p>
+                <p class="dropdown-option font-normal text-base text-dark-gray py-2 cursor-pointer">
+                  S002
+                </p>
+                <p class="dropdown-option font-normal text-base text-dark-gray py-2 cursor-pointer">
+                  S003
+                </p>
+                <p class="dropdown-option font-normal text-base text-dark-gray py-2 cursor-pointer">
+                  S004
+                </p>
+
+              </div>
+            </div>
+
+
+          </div>
+          <div class="grid grid-cols-2 gap-5 px-5 pt-7">
+            <div class="relative calendar-wrapper w-full flex flex-col gap-2">
+              <label class="font-semibold text-base text-dark-gray">Start Date</label>
+              <div
+                class="w-full h-10 border border-dark-gray rounded-[6px] py-2.5 px-4 cursor-pointer flex items-center justify-between custom-date-trigger">
+                <span class="selected-date text-16-nr text-dark-gray">DD/MM/YY</span>
+                <span class="material-symbols-outlined text-dark-gray">calendar_month</span>
+              </div>
+              <input type="text" class="start-date-range custom-date-range" style="
+                      position: absolute;
+                      left: 0;
+                      top: 0;
+                      opacity: 0;
+                      pointer-events: none;
+                    " />
+            </div>
+            <div class="flex items-center gap-10 pt-6 pl-6">
+              <div class="flex items-center gap-[0.938rem]">
+                <input type="checkbox"
+                  class="border-2 border-dark-gray rounded-xs cursor-pointer text-dark-blue focus:ring-0 focus:ring-offset-0 w-5 h-5 accent-dark-blue" />
+                <p>Run Once</p>
+              </div>
+              <div class="flex items-center gap-[0.938rem]">
+                <input type="checkbox"
+                  class="border-2 border-dark-gray rounded-xs cursor-pointer text-dark-blue focus:ring-0 focus:ring-offset-0 w-5 h-5 accent-dark-blue" />
+                <p>Recurring</p>
+              </div>
+            </div>
+            <div class="w-92 relative section-dropdown-container flex flex-col gap-2">
+              <label class="font-semibold text-base text-dark-gray">Repeat</label>
+              <input type="text"
+                class="section-dropdown-input pl-3 rounded-md h-10 w-full focus:ring-0 focus:outline-none border border-dark-gray"
+                placeholder="Select Repeat Interval" readonly />
+              <span
+                class="material-symbols-outlined absolute right-3 top-10 cursor-pointer section-dropdown-toggle">keyboard_arrow_down</span>
+              <!-- Dropdown Options -->
+              <div
+                class="section-dropdown-menu hidden absolute top-19 left-0 w-full bg-white border rounded-md shadow-[0px_4px_14px_#00000026] z-10">
+                <div class="section-dropdown-option px-4 py-2 cursor-pointer hover:bg-dark-blue hover:text-white">
+                  Hourly
+                </div>
+                <div class="section-dropdown-option px-4 py-2 cursor-pointer hover:bg-dark-blue hover:text-white">
+                  Weekly
+                </div>
+                <div class="section-dropdown-option px-4 py-2 cursor-pointer hover:bg-dark-blue hover:text-white">
+                  Monthly
+                </div>
+                <div class="section-dropdown-option px-4 py-2 cursor-pointer hover:bg-dark-blue hover:text-white">
+                  Yearly
+                </div>
+              </div>
+            </div>
+            <div class="w-92 relative section-dropdown-container flex flex-col gap-2">
+              <label class="font-semibold text-base text-dark-gray">Repeat Every</label>
+              <input type="text"
+                class="section-dropdown-input rounded-md h-10 w-full pl-3 focus:ring-0 focus:outline-none text-left border border-dark-gray"
+                placeholder="Repeat every?" readonly />
+              <span
+                class="material-symbols-outlined absolute right-3 top-10 cursor-pointer section-dropdown-toggle">keyboard_arrow_down</span>
+              <!-- Dropdown Options -->
+              <div
+                class="section-dropdown-menu hidden absolute top-19 left-0 w-full bg-white border rounded-md shadow-[0px_4px_14px_#00000026] z-10">
+                <div class="section-dropdown-option px-4 py-2 cursor-pointer hover:bg-dark-blue hover:text-white">
+                  Hour
+                </div>
+                <div class="section-dropdown-option px-4 py-2 cursor-pointer hover:bg-dark-blue hover:text-white">
+                  Week
+                </div>
+                <div class="section-dropdown-option px-4 py-2 cursor-pointer hover:bg-dark-blue hover:text-white">
+                  Month
+                </div>
+                <div class="section-dropdown-option px-4 py-2 cursor-pointer hover:bg-dark-blue hover:text-white">
+                  Year
+                </div>
+              </div>
+            </div>
+
+            <div class="relative calendar-wrapper w-full flex flex-col gap-2">
+              <label class="font-semibold text-base text-dark-gray">End On</label>
+              <div
+                class="w-full h-10 border border-dark-gray rounded-[6px] py-2.5 px-4 cursor-pointer flex items-center justify-between custom-date-trigger">
+                <span class="selected-date text-16-nr text-dark-gray">DD/MM/YY</span>
+                <span class="material-symbols-outlined text-dark-gray">calendar_month</span>
+              </div>
+              <input type="text" class="start-date-range custom-date-range" style="
+                      position: absolute;
+                      left: 0;
+                      top: 0;
+                      opacity: 0;
+                      pointer-events: none;
+                    " />
+            </div>
+            <div class="flex items-center gap-10 pt-6 pl-6">
+              <div class="flex items-center gap-[0.938rem]">
+                <input type="checkbox"
+                  class="border-2 border-dark-gray rounded-xs cursor-pointer  focus:ring-0 focus:ring-offset-0 w-5 h-5 accent-dark-blue" />
+                <p>Never</p>
+              </div>
+              <div class="flex items-center gap-[0.938rem]">
+                <input type="checkbox"
+                  class="border-2 border-dark-gray rounded-xs cursor-pointer text-dark-blue focus:ring-0 focus:ring-offset-0 w-5 h-5 accent-dark-blue" />
+
+                <div class="flex items-center gap-2">
+                  <p>After</p>
+                  <input type="number"
+                    class="w-8 h-8 rounded-md p-2.5 no-spinner text-center focus:ring-0 focus:ring-offset-0 focus:outline-none bg-light-white border border-dark-blue" />
+                  <p>Occurence's</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-2 relative px-5 pt-5" id="tag-input-container">
+            <label class="font-semibold text-base text-dark-gray">Add Recipients</label>
+            <div class="flex flex-wrap items-center gap-2 border border-dark-gray rounded-md p-2" id="tag-box">
+              <input type="text" id="tag-input"
+                class="flex-1 appearance-none outline-none text-base border-none focus:ring-0 focus:ring-offset-0"
+                placeholder="Add Recipients" />
+            </div>
+            <div id="tag-suggestions"
+              class="absolute left-5 right-5 mt-19 z-10 bg-white border border-gray-300 rounded-md shadow-md max-h-40 overflow-y-auto invisible">
+            </div>
+            <div class="absolute right-7 top-15">
+              <span class="material-symbols-outlined">search</span>
+            </div>
+          </div>
+          <div class="flex justify-between items-start flex-wrap gap-y-2 mt-1">
+            <div id="tag-suggestions" class="flex flex-wrap gap-2 w-1/2 pl-5 pt-2"></div>
+          </div>
+          <div class="flex justify-end items-center pt-[1.875rem] pb-2 px-5 gap-2.5">
+            <button
+              class="w-[7.5rem] h-[2.625rem] border border-dark-blue text-dark-blue  py-2 rounded-md font-semibold text-base cursor-pointer remove-schedule-btn">
+              Remove
+            </button>
+            <button
+              class="w-[7.5rem] h-[2.625rem] bg-dark-blue text-white  py-2 rounded-md font-semibold text-base cursor-pointer save-schedule-btn">
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+       <!--Success Popup-->
+      <div class="fixed inset-0 bg-semi-transparent-black hidden successPopup flex  justify-center z-50">
+        <div class="bg-dark-blue text-white p-2 rounded-md h-10">
+          <div class="flex items-center gap-2">
+            <p>Saved Successfully</p>
+            <span class="material-symbols-outlined close-success-popup cursor-pointer">close</span>
+          </div>
+        </div>
+      </div>
+      <div class="fixed bottom-6 right-8 z-50">
+        <button
+          class="chatTrigger cursor-pointer w-16 h-16 bg-dark-blue text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
+          <img src="/static/images/avatar.svg" alt="avatar" class="w-full h-full object-contain" />
+        </button>
+
+      </div>
+
+      <div class="relative ">
+        <div class="avatar fixed bottom-6 right-8 hidden  z-100">
+          <img src="/static/images/avatar.svg" alt="avatar">
+          <img src="/static/images/avatar-chatbox.svg" alt="chatbox" class="absolute bottom-0 right-50">
+          <button class="absolute cursor-pointer bottom-65 right-0 close-avatar-btn rounded-full bg-white shadow-[3.93px_5.24px_5.24px_0px_#00000040]
+">
+            <span
+              class="material-symbols-outlined flex items-center justify-center p-[0.35rem] text-dark-gray">close</span>
+          </button>
+          <button class="absolute cursor-pointer bottom-6 right-18 bg-dark-blue text-white p-2 rounded-md">
+            Talk
+          </button>
+        </div>
+      </div>
+      <!--Add Event Success Popup-->
+      <div class="fixed inset-0 bg-semi-transparent-black hidden eventsuccessPopup flex  justify-center z-50">
+        <div class="bg-dark-blue text-white p-2 rounded-md h-10">
+          <div class="flex items-center gap-2">
+            <p>Event Added Successfully</p>
+            <span class="material-symbols-outlined close-eventsuccess-popup cursor-pointer">close</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+{% endblock %}
+{% block extra_js %} 
+{% endblock %} 

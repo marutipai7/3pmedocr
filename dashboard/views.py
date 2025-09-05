@@ -67,7 +67,7 @@ def dashboard_home(request):
                 'user': user,
                 # Add relevant client data if any, e.g. campaigns
             })
-            return render(request, "dashboard/home.html", context)
+            return render(request, "dashboard/home_client.html", context)
 
         elif user_type == 'advertiser':
             advertiser_profile = AdvertiserProfile.objects.get(user=user)
@@ -282,6 +282,7 @@ def saved(request):
         })
         # Normal page render
         return render(request, "dashboard/saved_advertiser.html", context)
+    
     elif user.user_type == 'provider':
         provider_profile = MedicalProviderProfile.objects.get(user=user)
         context.update({
@@ -291,6 +292,16 @@ def saved(request):
             'user': user
         })
         return render(request, "dashboard/saved_provider.html", context)
+    
+    elif user.user_type == 'client':
+        client_profile = ClientProfile.objects.get(user=user)
+        context.update({
+            'client_profile': client_profile,
+            'user_display_name': client_profile.company_name,
+            'user_profile': user,
+            'user': user
+        })
+        return render(request, "dashboard/saved_client.html", context)
 
 
 ## FOR Advertiser Saved Coupon In Saved Section ##

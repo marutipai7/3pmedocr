@@ -156,7 +156,9 @@ def settings_page(request):
         profile = ClientProfile.objects.filter(user=user).first()
         context["all_types"] = ClientType.objects.filter(is_active=True)
         context["all_services"] = ClientService.objects.filter(is_active=True)
-        profile_id = profile.id
+
+        profile_id = profile.id if profile else None
+
         if profile:
             context.update({
                 'company_name': profile.company_name,
@@ -168,26 +170,37 @@ def settings_page(request):
                 'state': profile.state,
                 'country': profile.country,
                 'pincode': profile.pincode,
-                'referral_code': profile.referral_code if profile.referral_code else "",
+                'referral_code': profile.referral_code or "",
                 'incorporation_number': profile.incorporation_number,
-                'incorporation_doc_path': os.path.basename(profile.incorporation_doc_path),
+                'incorporation_doc_path': os.path.basename(profile.incorporation_doc_path) if profile.incorporation_doc_path else "",
                 'gst_number': profile.gst_number,
-                'gst_doc_path': os.path.basename(profile.gst_doc_path),
+                'gst_doc_path': os.path.basename(profile.gst_doc_path) if profile.gst_doc_path else "",
                 'pan_number': profile.pan_number,
-                'pan_doc_path': os.path.basename(profile.pan_doc_path),
+                'pan_doc_path': os.path.basename(profile.pan_doc_path) if profile.pan_doc_path else "",
                 'tan_number': profile.tan_number,
-                'tan_doc_path': os.path.basename(profile.tan_doc_path),
+                'tan_doc_path': os.path.basename(profile.tan_doc_path) if profile.tan_doc_path else "",
             })
+
         contact_persons = ContactPerson.objects.filter(
             profile_type=user.user_type,
             profile_id=profile_id
-        ).first()
-        context.update({
-            'contact_name': contact_persons.name,
-            'contact_phone_country_code': contact_persons.phone_country_code,
-            'contact_phone_number': contact_persons.phone_number,
-            'contact_role': contact_persons.role,
-        })
+        ).first() if profile_id else None
+
+        if contact_persons:
+            context.update({
+                'contact_name': contact_persons.name,
+                'contact_phone_country_code': contact_persons.phone_country_code,
+                'contact_phone_number': contact_persons.phone_number,
+                'contact_role': contact_persons.role,
+            })
+        else:
+            context.update({
+                'contact_name': 'N/A',
+                'contact_phone_country_code': '',
+                'contact_phone_number': '',
+                'contact_role': '',
+            })
+
         return render(request, 'settings/setting_page_client.html', context)
     
     elif user.user_type == 'ngo':
@@ -195,6 +208,7 @@ def settings_page(request):
         context["all_services"] = NGOService.objects.filter(is_active=True)
         profile_id = profile.id
         if profile:
+            profile_id = profile.id
             context.update({
                 'ngo_name': profile.ngo_name,
                 'ngo_services': profile.ngo_services,
@@ -224,6 +238,7 @@ def settings_page(request):
             profile_type=user.user_type,
             profile_id=profile_id
         ).first()
+
         context.update({
             'contact_name': contact_persons.name,
             'contact_phone_country_code': contact_persons.phone_country_code,
