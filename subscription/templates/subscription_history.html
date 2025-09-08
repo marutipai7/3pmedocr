@@ -1,0 +1,275 @@
+{% load static %}
+
+          <div class="flex items-center gap-5 mt-6 justify-between">
+            <h1 class="font-semibold text-lg ">Subscription History</h1>
+            <span class="flex items-center gap-1">
+              <span class="text-base font-bold text-dark-blue">View all history</span>
+              <span class="material-symbols-outlined text-dark-blue">chevron_right</span>
+            </span>
+
+          </div>
+
+          <div class="relative overflow-x-auto mt-5  ">
+            <table class=" min-w-full text-sm text-dark-gray whitespace-nowrap">
+              <thead class="bg-dark-blue  text-white">
+                <tr>
+                  <th class="text-center px-4 py-4 border-r border-white font-bold text-sm">
+                    Payment<br>
+                    <span class="block font-bold text-sm">Date &amp; Time</span>
+                  </th>
+                  <th class="text-center px-4 py-4 border-r font-bold text-sm border-white ">
+                    Plan<br>
+                    <span class="block font-bold text-sm">Name</span>
+                  </th>
+                  <th class="text-center px-4 py-4 border-r font-bold text-sm border-white">
+                    Package<br>
+                    <span class="block font-bold text-sm">Type</span>
+                  </th>
+
+
+                  <th class="text-center px-4 py-4 border-r font-bold text-sm border-white">Start Date</th>
+                  <th class="text-center px-4 py-4 border-r font-bold text-sm border-white">End Date</th>
+                  <th class="text-center px-4 py-4 border-r font-bold text-sm border-white">
+                    No. of<br>
+                    <span class="block font-bold text-sm">Licenses</span>
+                  </th>
+                  <th class="text-center px-4 py-4 border-r font-bold text-sm border-white">Amount</th>
+                  <th class="text-center px-4 py-4 border-r font-bold text-sm border-white">Actions</th>
+
+                </tr>
+              </thead>
+              <tbody class="bg-snow-gray ">
+                <tr class="text-sm font-semibold text-black">
+                  <td class="px-4 py-2.5 text-center">
+                    20/03/25,14:30
+                  </td>
+                  <td class="px-4 py-2.5 text-center">Standard</td>
+
+                  <td class="px-4 py-2.5 text-center">Monthly</td>
+                  <td class="px-4 py-2.5 text-center">13/08/2022</td>
+                  <td class="px-4 py-2.5 text-center">13/08/2023</td>
+                  <td class="px-4 py-2.5 text-center">3</td>
+                  <td class="px-4 py-2.5 text-center">₹1499</td>
+                  <td class="px-4 py-2.5 text-center">
+                    <div class="flex items-center justify-center ">
+                      <span
+                        class="material-symbols-outlined viewPopupTrigger cursor-pointer hover:bg-transparent-dark-blue rounded-full p-2 transition-all mr-2">visibility</span>
+                      <span
+                        class="material-symbols-outlined  cursor-pointer hover:bg-transparent-dark-blue rounded-full p-2 transition-all mr-2">download</span>
+                    </div>
+                  </td>
+
+
+
+                </tr>
+                <tr class="text-sm font-semibold text-black">
+                  <td class="px-4 py-2.5 text-center">
+                    20/03/25,14:30
+                  </td>
+                  <td class="px-4 py-2.5 text-center">Standard</td>
+
+                  <td class="px-4 py-2.5 text-center">Quarterly (10% Disc.)</td>
+                  <td class="px-4 py-2.5 text-center">13/08/2022</td>
+                  <td class="px-4 py-2.5 text-center">13/08/2023</td>
+                  <td class="px-4 py-2.5 text-center">3</td>
+                  <td class="px-4 py-2.5 text-center">₹1499</td>
+                  <td class="px-4 py-2.5 text-center">
+                    <div class="flex items-center justify-center ">
+                      <span
+                        class="material-symbols-outlined viewPopupTrigger cursor-pointer hover:bg-transparent-dark-blue rounded-full p-2 transition-all mr-2">visibility</span>
+                      <span
+                        class="material-symbols-outlined  cursor-pointer hover:bg-transparent-dark-blue rounded-full p-2 transition-all mr-2">download</span>
+                    </div>
+                  </td>
+
+
+
+                </tr>
+                <tr class="text-sm font-semibold text-black">
+                  <td class="px-4 py-2.5 text-center">
+                    20/03/25,14:30
+                  </td>
+                  <td class="px-4 py-2.5 text-center">Premium</td>
+
+                  <td class="px-4 py-2.5 text-center">Yearly (20% Disc.)</td>
+                  <td class="px-4 py-2.5 text-center">26/06/2024</td>
+                  <td class="px-4 py-2.5 text-center">26/06/2024</td>
+                  <td class="px-4 py-2.5 text-center">10</td>
+                  <td class="px-4 py-2.5 text-center">₹1499</td>
+                  <td class="px-4 py-2.5 text-center">
+                    <div class="flex items-center justify-center ">
+                      <span
+                        class="material-symbols-outlined viewPopupTrigger cursor-pointer hover:bg-transparent-dark-blue rounded-full p-2 transition-all mr-2">visibility</span>
+                      <span
+                        class="material-symbols-outlined  cursor-pointer hover:bg-transparent-dark-blue rounded-full p-2 transition-all mr-2">download</span>
+                    </div>
+                  </td>
+
+
+
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+          <div class="viewPopup fixed inset-0 bg-opacity-70 bg-black/30 flex items-center justify-center z-50 hidden ">
+            <div class="bg-white w-[90%] max-w-5xl rounded-lg shadow-lg">
+              <!-- Header -->
+              <div class="flex items-center justify-between text-white h-10 bg-dark-blue px-3">
+                <div class="flex items-center gap-4">
+                  <span class="material-symbols-outlined cursor-pointer">
+                    share
+                  </span>
+                  <span class="material-symbols-outlined cursor-pointer">
+                    download
+                  </span>
+                </div>
+                <span class="font-medium">Subscription History</span>
+                <span class="material-symbols-outlined cursor-pointer close-popup">
+                  close
+                </span>
+
+              </div>
+              <div class="mt-6 text-lg font-semibold text-dark-blue p-4">Current Plan Summary</div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-10 text-jet-black px-4 ">
+                <div class="text-14-nr flex items-center  sm:justify-start gap-1">
+                  <div class="flex items-center  w-1/2">
+                    <span class="text-16-fs font-normal">Status</span>
+                    <span class="text-green ml-32">:</span>
+                  </div>
+                  <span class="text-green text-16-fs font-semibold ml-7">Active</span>
+                </div>
+                <div class="text-14-nr flex items-center ml-10">
+                  <span class="text-14-fs font-normal">Current Plan</span>
+                  <span class="ml-6">:</span>
+                  <span class="text-16-fs font-semibold ml-3">Standard Plan</span>
+                </div>
+                <div class="text-14-nr flex items-center sm:justify-start gap-3">
+                  <span class="text-14-fs font-normal">No. of Licenses</span>
+                  <span class="ml-1">:
+                    <span class="text-16-fs font-semibold ml-2">3</span>
+                  </span>
+                </div>
+                <div class="text-14-nr flex items-center  sm:justify-start gap-1">
+                  <div class="flex items-center justify-between w-1/2">
+                    <span class="text-14-fs font-normal whitespace-nowrap">Payment Date & Time</span>
+                    <span class="ml-8">:</span>
+                  </div>
+                  <span class=" text-16-fs font-semibold ml-7"> 20/03/25,14:30 </span>
+                </div>
+                <div class="text-14-nr flex items-center ml-10">
+                  <span class="text-14-fs font-normal">Start Date</span>
+                  <span class="ml-10">:</span>
+                  <span class="text-16-fs font-semibold ml-3">20/03/2025</span>
+                </div>
+
+                <div class="text-14-nr flex items-center  sm:justify-start gap-3">
+                  <div class="flex items-center  w-1/2">
+                    <span class="text-14-fs font-normal whitespace-nowrap">End Date</span>
+                    <span class="ml-14">:</span>
+                  </div>
+                  <p class="text-16-fs font-semibold"> 20/03/2026
+                  <p class="text-xs font-normal">(295 days left to go)</p>
+                  </p>
+                </div>
+                <div class="text-14-nr flex items-center  sm:justify-start gap-1">
+                  <div class="flex items-center  w-1/2">
+                    <span class="text-14-fs font-normal whitespace-nowrap">Package Type</span>
+                    <span class="ml-21">:</span>
+                  </div>
+                  <p class="whitespace-nowrap text-16-fs font-semibold ml-7">Yearly (20% Disc.)</p>
+                </div>
+                <div class="text-14-nr flex items-center sm:justify-start gap-3 ml-10">
+                  <div class="flex items-center">
+                    <span class="text-14-fs font-normal">Amount</span>
+                    <span class="ml-14">:</span>
+                    <span class="text-16-fs font-semibold ml-3">₹25,000</span>
+                  </div>
+                </div>
+
+              </div>
+
+              <hr class="my-4 border-t border-dark-blue mt-7.5" />
+
+              <div class="mt-3 text-lg font-semibold text-dark-blue p-4">Subscription History</div>
+
+              <div class="relative overflow-x-auto mt-1 no-scrollbar">
+                <table class=" min-w-full text-sm text-dark-gray whitespace-nowrap">
+                  <thead class="bg-dark-blue  text-white">
+                    <tr>
+                      <th class="text-center px-4 py-4 border-r border-white font-bold text-sm">
+                        Payment<br>
+                        <span class="block font-bold text-sm">Date &amp; Time</span>
+                      </th>
+                      <th class="text-center px-4 py-4 border-r font-bold text-sm border-white font-bold text-sm">
+                        Plan<br>
+                        <span class="block font-bold text-sm">Name</span>
+                      </th>
+                      <th class="text-center px-4 py-4 border-r font-bold text-sm border-white">
+                        Package<br>
+                        <span class="block font-bold text-sm">Type</span>
+                      </th>
+
+
+                      <th class="text-center px-4 py-4 border-r font-bold text-sm border-white">Start Date</th>
+                      <th class="text-center px-4 py-4 border-r font-bold text-sm border-white">End Date</th>
+                      <th class="text-center px-4 py-4 border-r font-bold text-sm border-white">
+                        No. of<br>
+                        <span class="block font-bold text-sm">Licenses</span>
+                      </th>
+                      <th class="text-center px-4 py-4 border-r font-bold text-sm border-white">Amount</th>
+
+
+                    </tr>
+                  </thead>
+                  <tbody class="bg-snow-gray ">
+                    <tr class="text-sm font-semibold text-black">
+                      <td class="px-4 py-2.5 text-center">
+                        20/03/25,14:30
+                      </td>
+                      <td class="px-4 py-2.5 text-center">Standard</td>
+
+                      <td class="px-4 py-2.5 text-center">Monthly</td>
+                      <td class="px-4 py-2.5 text-center">13/08/2022</td>
+                      <td class="px-4 py-2.5 text-center">13/08/2023</td>
+                      <td class="px-4 py-2.5 text-center">3</td>
+                      <td class="px-4 py-2.5 text-center">₹1499</td>
+
+                    </tr>
+                    <tr class="text-sm font-semibold text-black">
+                      <td class="px-4 py-2.5 text-center">
+                        20/03/25,14:30
+                      </td>
+                      <td class="px-4 py-2.5 text-center">Standard</td>
+
+                      <td class="px-4 py-2.5 text-center">Quarterly (10% Disc.)</td>
+                      <td class="px-4 py-2.5 text-center">13/08/2022</td>
+                      <td class="px-4 py-2.5 text-center">13/08/2023</td>
+                      <td class="px-4 py-2.5 text-center">3</td>
+                      <td class="px-4 py-2.5 text-center">₹1499</td>
+
+                    </tr>
+                    <tr class="text-sm font-semibold text-black">
+                      <td class="px-4 py-2.5 text-center">
+                        20/03/25,14:30
+                      </td>
+                      <td class="px-4 py-2.5 text-center">Premium</td>
+
+                      <td class="px-4 py-2.5 text-center">Yearly (20% Disc.)</td>
+                      <td class="px-4 py-2.5 text-center">26/06/2024</td>
+                      <td class="px-4 py-2.5 text-center">26/06/2024</td>
+                      <td class="px-4 py-2.5 text-center">10</td>
+                      <td class="px-4 py-2.5 text-center">₹1499</td>
+
+                    </tr>
+
+                  </tbody>
+
+                </table>
+
+              </div>
+            </div>
+          </div>

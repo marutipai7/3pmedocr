@@ -270,7 +270,7 @@ def saved(request):
             'limit': str(limit),  # To retain limit select
         })
 
-        return render(request, "dashboard/saved_ngo.html", context)
+        return render(request, "saved/saved_ngo.html", context)
     
     elif user.user_type == 'advertiser':
         advertiser_profile = AdvertiserProfile.objects.get(user=user)
@@ -281,7 +281,7 @@ def saved(request):
             'user': user
         })
         # Normal page render
-        return render(request, "dashboard/saved_advertiser.html", context)
+        return render(request, "saved/saved_advertiser.html", context)
     
     elif user.user_type == 'provider':
         provider_profile = MedicalProviderProfile.objects.get(user=user)
@@ -291,7 +291,7 @@ def saved(request):
             'user_profile': user,
             'user': user
         })
-        return render(request, "dashboard/saved_provider.html", context)
+        return render(request, "saved/saved_provider.html", context)
     
     elif user.user_type == 'client':
         client_profile = ClientProfile.objects.get(user=user)
@@ -301,7 +301,7 @@ def saved(request):
             'user_profile': user,
             'user': user
         })
-        return render(request, "dashboard/saved_client.html", context)
+        return render(request, "saved/saved_client.html", context)
 
 
 ## FOR Advertiser Saved Coupon In Saved Section ##
@@ -715,7 +715,7 @@ def advertiser_advance(request):
             'user': user
         })
         # Normal page render
-        return render(request, "dashboard/advertiser_advance.html", context)
+        return render(request, "advertiser/advertiser_advance.html", context)
     elif user.user_type == 'ngo':
         provider_profile = NGOProfile.objects.get(user=user)
         context.update({
@@ -724,7 +724,7 @@ def advertiser_advance(request):
             'user_profile': user,
             'user':user
         })
-        return render(request, "dashboard/advertiser_advance.html", context)
+        return render(request, "advertiser/advertiser_advance.html", context)
     elif user.user_type == 'provider':
         provider_profile = MedicalProviderProfile.objects.get(user=user)
         context.update({
@@ -733,7 +733,7 @@ def advertiser_advance(request):
             'user_profile': user,
             'user':user
         })
-        return render(request, "dashboard/advertiser_advance.html", context)
+        return render(request, "advertiser/advertiser_advance.html", context)
 
 
 @dashboard_login_required

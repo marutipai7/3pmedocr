@@ -10,3 +10,4 @@ whitenoise
 pillow
 pyotp
 aiosmtplib
+docling

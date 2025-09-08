@@ -1264,7 +1264,7 @@ $(document).ready(function () {
   let selectedDate = null;
 
   // Function to save event
-  function saveEvent() {
+  window.saveEvent = function(){
     const eventName = document.getElementById('event-name').value.trim();
     const eventTime = document.getElementById('start-time').value;
     
@@ -1693,7 +1693,7 @@ async function fetchChartData(startDate = null, endDate = null) {
 async function initDynamicNGOChart(startDate = null, endDate = null) {
   const ctx = document.getElementById("ngoChart")?.getContext("2d");
   if (!ctx) {
-    console.error("Chart canvas not found!");
+    // console.error("Chart canvas not found!");
     return;
   }
 
