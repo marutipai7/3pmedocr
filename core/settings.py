@@ -95,7 +95,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 if DJANGO_ENV == 'production':
-    STATICFILES_DIRS = []
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 else:
     STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
