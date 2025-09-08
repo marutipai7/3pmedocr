@@ -82,7 +82,7 @@
           Saved
         </div>
       </a>
-      {% if user.user_type == 'advertiser' %}
+      {% if user.user_type == 'advertiser' or user.user_type == 'provider' %}
       <a href="{% url 'advertiser-advance' %}" class="relative">
         <img src="{% static 'images/walleticon.svg' %}" alt="star" class="cursor-pointer has-tooltip" />
         <div
@@ -91,7 +91,7 @@
         </div>
       </a>
       {% endif %}
-      {% if user.user_type == 'ngo' or user.user_type == 'provider' %}
+      {% if user.user_type == 'ngo' %}
       <a href="{% url 'cart' %}" class="relative">
         <img src="{% static 'images/cart.svg' %}" alt="star" title="Cart" class="cursor-pointer has-tooltip" />
          <div

@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const subdirMap = {
             ngo_registration_doc: 'registration',
-            incorporation_doc:     'registration',
+            incorporation_doc:     'incorporation',
             gst_doc:               'gst',
             pan_doc:               'pan',
             tan_doc:               'tan',
@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
             doc_12a:               'doc_12a',
             brand_image:           'brand_image',
             medical_license_doc:   'medical_license',
-            storefront_image:      'storefront_image',
+            storefront_image:      'store_front',
         };
 
         const baseFolder = docFolder[userType];   
@@ -116,7 +116,16 @@ document.addEventListener("DOMContentLoaded", () => {
     fileInput && fileInput.addEventListener("change", () => {
         newFile = fileInput.files[0];
         saveBtn.disabled = !newFile;
+        previewImage(newFile);
     });
+    const previewImage = (file) => {
+    $("#modalImg").empty();
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      $("#modalImg").attr('src', e.target.result);
+    };
+    reader.readAsDataURL(file);
+    };
     // 4) Save → upload via AJAX
     saveBtn && saveBtn.addEventListener("click", () => {
         if (!newFile || !currentDocType) return;
@@ -135,6 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(json => {
         if (json.success) {
             location.reload();
+            toastr.success("Document updated successfully");
         } else {
             alert(json.error || JSON.stringify(json.errors));
         }
@@ -147,166 +157,171 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 document.querySelectorAll('[data-field]').forEach(input => {
     const csrftoken = getCookie("csrftoken");
+
     input.addEventListener('change', () => {
         const field = input.dataset.field;
         let value;
 
         if (input.type === "checkbox") {
-        value = input.checked;
+            value = input.checked;
         } else {
-        value = input.value;
+            value = input.value;
         }
 
         fetch("update-notification-field/", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": csrftoken
-        },
-        body: JSON.stringify({ field, value })
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+            body: JSON.stringify({ field, value })
         })
         .then(res => {
-        if (!res.ok) throw new Error("Failed to update");
+            if (!res.ok) throw new Error("Failed to update");
+            toastr.success("Updated notification settings");  // ✅ success toast
         })
-        .catch(err => console.error("Error:", err));
+        .catch(err => {
+            console.error("Error:", err);
+            toastr.error("Failed to update notification settings");  // ❌ error toast only on failure
+        });
     });
 });
 
 // ngo settings
-document.addEventListener("DOMContentLoaded", () => {
-    // Grab modal elements
-    const viewModal   = document.getElementById("negoViewModal");
-    const modalTitle  = viewModal.querySelector("p.font-semibold");
-    const modalImg    = viewModal.querySelector("#modalContent img");
-    const modalEmbed  = viewModal.querySelector("#modalContent embed");
-    const virusCheck  = viewModal.querySelector("input[type=checkbox]");
-    const replaceBtn  = document.getElementById("replaceBtn");
-    const saveBtn     = document.getElementById("saveBtn");
-    const fileInput   = document.getElementById("replaceInput");
-    const userType    = document.getElementById("userTypeHolder")?.dataset.userType;
+// document.addEventListener("DOMContentLoaded", () => {
+//     // Grab modal elements
+//     const viewModal   = document.getElementById("negoViewModal");
+//     // const modalTitle  = viewModal.querySelector("p.font-semibold");
+//     const modalImg    = viewModal.querySelector("#modalContent img");
+//     const modalEmbed  = viewModal.querySelector("#modalContent embed");
+//     const virusCheck  = viewModal.querySelector("input[type=checkbox]");
+//     const replaceBtn  = document.getElementById("replaceBtn");
+//     const saveBtn     = document.getElementById("saveBtn");
+//     const fileInput   = document.getElementById("replaceInput");
+//     const userType    = document.getElementById("userTypeHolder")?.dataset.userType;
 
-    let currentDocType = null;
-    let newFile        = null;
+//     let currentDocType = null;
+//     let newFile        = null;
 
-    const docFolder = {
-        ngo: "ngo_docs",
-        advertiser: "advertiser_docs",
-        client: "client_docs",
-        provider: "provider_docs",
-    };
-    // Mapping doc_type → human title
-    const titleMap = {
-        ngo_registration_doc: "NGO Registration Document",
-        incorporation_doc:     "Incorporation Certificate",
-        gst_doc:               "GST Certificate",
-        pan_doc:               "PAN Document",
-        tan_doc:               "TAN Document",
-        section8_doc:          "Section 8 Certificate",
-        doc_12a:               "12A Certificate",
-        brand_image:           "Brand Image",
-        medical_license_doc:   "Medical License",
-        storefront_image:      "Storefront Image"
-    };
+//     const docFolder = {
+//         ngo: "ngo_docs",
+//         advertiser: "advertiser_docs",
+//         client: "client_docs",
+//         provider: "provider_docs",
+//     };
+//     // Mapping doc_type → human title
+//     const titleMap = {
+//         ngo_registration_doc: "NGO Registration Document",
+//         incorporation_doc:     "Incorporation Certificate",
+//         gst_doc:               "GST Certificate",
+//         pan_doc:               "PAN Document",
+//         tan_doc:               "TAN Document",
+//         section8_doc:          "Section 8 Certificate",
+//         doc_12a:               "12A Certificate",
+//         brand_image:           "Brand Image",
+//         medical_license_doc:   "Medical License",
+//         storefront_image:      "Storefront Image"
+//     };
 
-    // 1) View icons open the modal
-    document.querySelectorAll(".ngo-view-icon").forEach(icon => {
-        icon.addEventListener("click", () => {
-        currentDocType = icon.dataset.docType;
-        const path     = icon.dataset.docPath || "";
-        const ext      = path.split(".").pop().toLowerCase();
+//     // 1) View icons open the modal
+//     document.querySelectorAll(".ngo-view-icon").forEach(icon => {
+//         icon.addEventListener("click", () => {
+//         currentDocType = icon.dataset.docType;
+//         const path     = icon.dataset.docPath || "";
+//         const ext      = path.split(".").pop().toLowerCase();
 
-        const subdirMap = {
-            ngo_registration_doc: 'registration',
-            incorporation_doc:     'registration',
-            gst_doc:               'gst',
-            pan_doc:               'pan',
-            tan_doc:               'tan',
-            section8_doc:          'section8',
-            doc_12a:               'doc_12a',
-            brand_image:           'brand_image',
-            medical_license_doc:   'medical_license',
-            storefront_image:      'storefront_image',
-        };
+//         const subdirMap = {
+//             ngo_registration_doc: 'registration',
+//             incorporation_doc:     'incorporation',
+//             gst_doc:               'gst',
+//             pan_doc:               'pan',
+//             tan_doc:               'tan',
+//             section8_doc:          'section8',
+//             doc_12a:               'doc_12a',
+//             brand_image:           'brand_image',
+//             medical_license_doc:   'medical_license',
+//             storefront_image:      'store_front',
+//         };
 
-        const baseFolder = docFolder[userType];   
-        console.log("Basefolder:", baseFolder)           // e.g. "ngo_docs"
-        const subfolder  = subdirMap[currentDocType];  
-        console.log("docType =", currentDocType, "subfolder =", subfolder);      // e.g. "pan"
-        const fullPath   = `${baseFolder}/${subfolder}/${path}`;  // e.g. "ngo_docs/pan/abc.pdf"
-        const previewURL = `/document/${fullPath}`; 
+//         const baseFolder = docFolder[userType];   
+//         console.log("Basefolder:", baseFolder)           // e.g. "ngo_docs"
+//         const subfolder  = subdirMap[currentDocType];  
+//         console.log("docType =", currentDocType, "subfolder =", subfolder);      // e.g. "pan"
+//         const fullPath   = `${baseFolder}/${subfolder}/${path}`;  // e.g. "ngo_docs/pan/abc.pdf"
+//         const previewURL = `/document/${fullPath}`; 
 
-        // Set title
-        modalTitle.innerHTML = `<span class="material-symbols-outlined">document_scanner</span> ${titleMap[currentDocType] || "Document Preview"}`;
+//         // Set title
+//         // modalTitle.innerHTML = `<span class="material-symbols-outlined">document_scanner</span> ${titleMap[currentDocType] || "Document Preview"}`;
 
-        // Reset previews
-        [modalImg, modalEmbed].forEach(el => el.classList.add("hidden"));
+//         // Reset previews
+//         [modalImg, modalEmbed].forEach(el => el.classList.add("hidden"));
 
-        // Show correct preview
-        if (["jpg","jpeg","png","webp"].includes(ext)) {
-            viewModal.classList.remove("hidden");
-            modalImg.src    = previewURL;
-            modalImg.classList.remove("hidden");
-        } else {
-            window.open(previewURL, '_blank');
-        }
-        // else if (ext === "pdf") {
-        //     modalEmbed.src    = previewURL;
-        //     modalEmbed.classList.remove("hidden");
-        // }
+//         // Show correct preview
+//         if (["jpg","jpeg","png","webp"].includes(ext)) {
+//             viewModal.classList.remove("hidden");
+//             modalImg.src    = previewURL;
+//             modalImg.classList.remove("hidden");
+//         } else {
+//             window.open(previewURL, '_blank');
+//         }
+//         // else if (ext === "pdf") {
+//         //     modalEmbed.src    = previewURL;
+//         //     modalEmbed.classList.remove("hidden");
+//         // }
         
-        // Virus scan status
-        const approved = !!icon.closest("div").querySelector("span.material-filled.text-bright-green");
-        virusCheck.checked = approved;
+//         // Virus scan status
+//         const approved = !!icon.closest("div").querySelector("span.material-filled.text-bright-green");
+//         virusCheck.checked = approved;
 
-        // Reset replace/save
-        newFile = null;
-        replaceBtn && (replaceBtn.disabled = false);
-        saveBtn    && (saveBtn.disabled    = true);
+//         // Reset replace/save
+//         newFile = null;
+//         replaceBtn && (replaceBtn.disabled = false);
+//         saveBtn    && (saveBtn.disabled    = true);
 
-        // viewModal.classList.remove("hidden");
-        });
-    });
+//         // viewModal.classList.remove("hidden");
+//         });
+//     });
 
-    // 2) Close modal
-    viewModal.querySelector("#closeModal")
-        .addEventListener("click", () => viewModal.classList.add("hidden"));
+//     // 2) Close modal
+//     viewModal.querySelector("#closeModal")
+//         .addEventListener("click", () => viewModal.classList.add("hidden"));
 
-    // 3) Replace → file picker
-    replaceBtn && replaceBtn.addEventListener("click", () => {
-        fileInput.click();
-    });
-    fileInput && fileInput.addEventListener("change", () => {
-        newFile = fileInput.files[0];
-        saveBtn.disabled = !newFile;
-    });
-    // 4) Save → upload via AJAX
-    saveBtn && saveBtn.addEventListener("click", () => {
-        if (!newFile || !currentDocType) return;
+//     // 3) Replace → file picker
+//     replaceBtn && replaceBtn.addEventListener("click", () => {
+//         fileInput.click();
+//     });
+//     fileInput && fileInput.addEventListener("change", () => {
+//         newFile = fileInput.files[0];
+//         saveBtn.disabled = !newFile;
+//     });
+//     // 4) Save → upload via AJAX
+//     saveBtn && saveBtn.addEventListener("click", () => {
+//         if (!newFile || !currentDocType) return;
 
-        const fd = new FormData();
-        fd.append("doc_type", currentDocType);
-        fd.append("document", newFile);
+//         const fd = new FormData();
+//         fd.append("doc_type", currentDocType);
+//         fd.append("document", newFile);
 
-        const csrftoken = getCookie("csrftoken");
-        fetch("update-document/", {
-        method: "POST",
-        headers: { "X-CSRFToken": csrftoken },
-        body: fd
-        })
-        .then(r => r.json())
-        .then(json => {
-        if (json.success) {
-            location.reload();
-        } else {
-            alert(json.error || JSON.stringify(json.errors));
-        }
-        })
-        .catch(e => {
-        console.error(e);
-        alert("Upload failed.");
-        });
-    });
-});
+//         const csrftoken = getCookie("csrftoken");
+//         fetch("update-document/", {
+//         method: "POST",
+//         headers: { "X-CSRFToken": csrftoken },
+//         body: fd
+//         })
+//         .then(r => r.json())
+//         .then(json => {
+//         if (json.success) {
+//             location.reload();
+//         } else {
+//             alert(json.error || JSON.stringify(json.errors));
+//         }
+//         })
+//         .catch(e => {
+//         console.error(e);
+//         alert("Upload failed.");
+//         });
+//     });
+// });
 $("button[data-tab=account-details]").on("click", function (e) {
     getAccountDetails();
 });
@@ -319,23 +334,62 @@ $(document).on("click", ".cancel-btn", function(){
     $('#edit-account-details-render').html('');
     getAccountDetails();
 });
+function bindEditFormAjax() {
+    $("#editForm").on("submit", function (e) {
+        e.preventDefault();
+
+        let form = $(this);
+        let actionUrl = form.attr("action");
+        let formData = form.serialize();
+
+        $.ajax({
+            type: "POST",
+            url: actionUrl,
+            data: formData,
+            success: function (response) {
+                if (response.success) {
+                    toastr.success(response.message || "Profile updated successfully!");
+
+                    // optional: reload account details view after success
+                    location.reload();
+                } else {
+                    toastr.error(response.message || "Something went wrong.");
+                }
+            },
+            error: function (xhr) {
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    $.each(xhr.responseJSON.errors, function (field, msg) {
+                        toastr.error(msg);
+                        $("." + field + "Error").text(msg).removeClass("hidden");
+                    });
+                } else {
+                    toastr.error("Server error. Please try again later.");
+                }
+            }
+        });
+    });
+}
 
 $(".editIcon").on("click", function (e) {
     $.ajax({
         url: "account-details/?type=edit",
         type: "GET",
-        beforesend:function(){
+        beforeSend: function () {
             $("#edit-account-details-render").html(`<h3>Loading....</h3>`);
         },
         success: function (response) {
             if (response.success) {
                 $("#edit-account-details-render").html(response.html);
+
+                // ⚡ Bind AJAX submit after form is loaded
+                bindEditFormAjax();
             } else {
-                toastr.error(responses.messsage || 'Error Occured!');
+                toastr.error(response.message || 'Error occurred!');
             }
         },
         error: function () {
             console.error("Failed to load account details.");
+            toastr.error("Could not load account details.");
         }
     });
 });
@@ -351,7 +405,7 @@ function getAccountDetails(){
             if (response.success) {
                 $("#account-details-render").html(response.html);
             } else {
-                toastr.error(responses.messsage || 'Error Occured!');
+                toastr.error(response.messsage || 'Error Occured!');
             }
         },
         error: function () {
@@ -360,5 +414,139 @@ function getAccountDetails(){
     });
 }
 
+// Toggle dropdowns
+$(
+  ".issue-type-wrapper .issue-type-input, .issue-type-wrapper .material-symbols-outlined"
+).on("click", function () {
+    console.log("clicked");
+  $(".issue-type-dropdown").toggleClass("hidden");
+});
+$(
+  ".select-issue-wrapper .select-issue-input, .select-issue-wrapper .material-symbols-outlined"
+).on("click", function () {
+  $(".select-issue-dropdown").toggleClass("hidden");
+});
+// Close dropdowns when clicking outside
+$(document).on("click", function (e) {
+  if (!$(e.target).closest(".issue-type-wrapper").length) {
+    $(".issue-type-dropdown").addClass("hidden");
+  }
+  if (!$(e.target).closest(".select-issue-wrapper").length) {
+    $(".select-issue-dropdown").addClass("hidden");
+  }
+});
 
+function clearSavedData() {
+    const csrftoken = getCookie("csrftoken");
 
+    fetch("clear-saved-data/", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrftoken,
+            "Content-Type": "application/json"
+        }
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Failed to clear data");
+        return res.json();
+    })
+    .then(data => {
+        toastr.success(data.status);  // ✅ success message
+        closePopup('savedDataPopup'); // close popup
+    })
+    .catch(err => {
+        console.error(err);
+        toastr.error("Something went wrong while clearing saved data");
+    });
+}
+
+$(document).on("click",".issue-type-wrapper" ,function (e) {
+    console.log("initialized")
+    e.stopPropagation();
+    $(".issue-type-dropdown").not($(this).find(".issue-type-dropdown")).hide();
+    $(this).find(".issue-type-dropdown").toggle();
+  });
+
+  // Single-select logic
+  $(document).on("change",".issue-checkbox", function () {
+    const $wrapper = $(this).closest(".issue-type-wrapper");
+    const $input = $wrapper.find(".issue-type-input");
+
+    // Uncheck other checkboxes in this dropdown
+    if ($(this).is(":checked")) {
+      $wrapper.find(".issue-checkbox").not(this).prop("checked", false);
+    }
+
+    // Get the selected label
+    const selected = $wrapper
+      .find(".issue-checkbox:checked")
+      .map(function () {
+        return $(this).closest("li").find("span").text();
+      })
+      .get()
+      .join(", ");
+
+    $input.val(selected);
+  });
+
+  // Custom input typing logic (if you're using "Type..." input)
+  $(document).on("click", ".custom-type-input",function () {
+    const $wrapper = $(this).closest(".issue-type-wrapper");
+    const $input = $wrapper.find(".issue-type-input");
+
+    // 1. Uncheck all checkboxes
+    $wrapper.find(".issue-checkbox").prop("checked", false);
+
+    // 2. Clear the input value
+    $input.val("");
+
+    // 3. Make input editable and focus it
+    $input.prop("readonly", false).focus();
+
+    // 4. Optional: make it readonly again on blur
+    $input.on("blur", function () {
+      $(this).prop("readonly", true);
+    });
+  });
+
+  // Close on outside click
+  $(document).on("click", function () {
+    $(".issue-type-dropdown").hide();
+  });
+
+// document.getElementById("editChangePassword").addEventListener("submit", function (e) {
+//     e.preventDefault();
+
+//     const form = e.target;
+//     const csrftoken = getCookie("csrftoken");
+//     const formData = new FormData(form);
+
+//     fetch(form.action, {
+//         method: "POST",
+//         headers: { "X-CSRFToken": csrftoken },
+//         body: formData
+//     })
+//     .then(res => res.json())
+//     .then(data => {
+//         if (data.success) {
+//             toastr.success(data.message);
+//             form.reset();
+//         } else {
+//             toastr.error(data.message);
+
+//             // optional: show field errors under inputs
+//             Object.keys(data.errors).forEach(field => {
+//                 const input = form.querySelector(`[name="${field}"]`);
+//                 const errorSpan = input?.nextElementSibling;
+//                 if (errorSpan) {
+//                     errorSpan.textContent = data.errors[field];
+//                     errorSpan.classList.remove("hidden");
+//                 }
+//             });
+//         }
+//     })
+//     .catch(err => {
+//         console.error("Error:", err);
+//         toastr.error("Something went wrong. Try again later.");
+//     });
+// });

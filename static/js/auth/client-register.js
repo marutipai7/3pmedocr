@@ -1,5 +1,21 @@
 $(document).ready(function () {
 
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
     let uploadConfirmShown = false;
     // Country code js
    $('.code-dropdown').each(function() {
@@ -93,29 +109,116 @@ $(document).ready(function () {
             }
         }, 1000);
     });
-    //otp message
-    $(".send-otp").click(function(){
+    // Send OTP
+    $(".send-otp").click(function () {
         $(this).addClass("!bg-Dark-Cornflower-Blue");
-        $(this).closest('.otp-div').find('.otp-message').html(`
-            <div class="flex items-center gap-2 text-bright-green cursor-pointer">
-                <div class="h-4 w-4 flex items-center justify-center bg-bright-green rounded">
-                    <span class="material-symbols-outlined text-white !text-sm">check</span>
-                </div>
-              <p>Verified</p>
-            </div>
-          `);
-    })
-    //Permission Access
-    $('.uploadTrigger').on('click', function () {
-        if (!uploadConfirmShown) {
-            if (confirm("This site wants to access your files to upload an image. Do you allow?")) {
-                uploadConfirmShown = true;
-                $(this).closest('.upload-section').find('.uploadInput').trigger('click');
-            }
-        } else {
-            $(this).closest('.upload-section').find('.uploadInput').trigger('click');
+        let email = $('input[name="email"]').val();
+
+        if (!email) {
+            toastr.error("Please enter your email address.");
+            return;
         }
+
+        $.ajax({
+            url: "/user/otp/send",
+            type: "POST",
+            headers: { 'X-CSRFToken': csrftoken },
+            data: { "email": email },
+            success: function (response) {
+                toastr.success(response.message);
+
+                // Store token in hidden field
+                if ($("#otp_token").length === 0) {
+                    $("form").append('<input type="hidden" id="otp_token" value="' + response.token + '">');
+                } else {
+                    $("#otp_token").val(response.token);
+                }
+
+                // ✅ Make email readonly immediately after OTP is sent
+                $('input[name="email"]').prop("readonly", true);
+            },
+            error: function (response) {
+                console.error("Failed to send OTP:", response);
+                if (response.responseJSON && response.responseJSON.message) {
+                    toastr.error(response.responseJSON.message);
+                } else {
+                    toastr.error("Something went wrong while sending OTP.");
+                }
+            }
+        });
     });
+    // Verify OTP button
+    $(".verify-otp").click(function () {
+        let otp = $('input[name="otp1"]').val();
+        let token = $("#otp_token").val(); // ✅ Correct bearer token
+        let email = $('input[name="email"]').val();
+
+        if (!otp) {
+            toastr.error("Please enter the OTP.");
+            return;
+        }
+
+        if (!token) {
+            toastr.error("OTP token missing. Please request OTP again.");
+            return;
+        }
+
+        $.ajax({
+            url: "/user/otp/verify",
+            type: "POST",
+            headers: { 'X-CSRFToken': csrftoken },
+            data: {
+                "otp": otp,
+                "token": token
+            },
+            success: function (response) {
+                toastr.success(response.message);
+
+                // Disable verify button to avoid re-clicks
+                $(".verify-otp").prop("disabled", true).addClass("opacity-50 cursor-not-allowed");
+            },
+            error: function (response) {
+                console.error("OTP verification failed:", response);
+                if (response.responseJSON && response.responseJSON.message) {
+                    toastr.error(response.responseJSON.message);
+                } else {
+                    toastr.error("Something went wrong while verifying OTP.");
+                }
+            }
+        });
+    });
+    //Permission Access
+    // Show popup on upload trigger click
+    let lastClickedTrigger = null;
+
+    // Show popup on upload trigger click
+    document.querySelectorAll(".uploadTrigger").forEach((trigger) => {
+        trigger.addEventListener("click", function () {
+        lastClickedTrigger = this; // store the clicked trigger
+        document.querySelector(".file-access-popup").classList.remove("hidden");
+        });
+    });
+
+    // Hide popup on "No" click
+    document.querySelector(".deny-access").addEventListener("click", function () {
+        document.querySelector(".file-access-popup").classList.add("hidden");
+        lastClickedTrigger = null; // reset
+    });
+
+    // Allow file access and trigger file input on "Yes" click
+    document
+        .querySelector(".allow-access")
+        .addEventListener("click", function () {
+        document.querySelector(".file-access-popup").classList.add("hidden");
+
+        if (lastClickedTrigger) {
+            const uploadSection = lastClickedTrigger.closest(".upload-section");
+            const input = uploadSection.querySelector(".uploadInput");
+            input.click();
+        }
+
+        lastClickedTrigger = null;
+        });
 
     $('.uploadInput').on('change', function () {
         const file = this.files[0];

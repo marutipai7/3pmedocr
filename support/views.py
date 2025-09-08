@@ -1,19 +1,15 @@
-from multiprocessing import context
-from django.views.decorators.http import require_http_methods, require_GET, require_POST
-from django.shortcuts import render, redirect
-from django.db.models import Q
-from django.http import JsonResponse
-from django.core.serializers.json import DjangoJSONEncoder
-from .models import IssueType, IssueOption, SupportTicket, FAQ
-from dashboard.utils import dashboard_login_required, get_common_context
-from django.core.exceptions import ValidationError
-from rest_framework import serializers
-from registration.models import User
-from .models import ChatOptionGroup, CHATBOT_USER_TYPE_CHOICES
-import logging
 import json
+from datetime import datetime
 from .utils import send_custom_email
-from datetime import datetime, time
+from dashboard.utils import dashboard_login_required, get_common_context
+from .models import IssueType, IssueOption, SupportTicket, FAQ, ChatOptionGroup, CHATBOT_USER_TYPE_CHOICES
+from django.db.models import Q
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods, require_GET, require_POST
+from django.core.serializers.json import DjangoJSONEncoder
+from rest_framework import serializers
+import logging
 logger = logging.getLogger(__name__) #for debugging purposes
 
 @dashboard_login_required

@@ -1,0 +1,2885 @@
+{% extends "dashboard/layout.html" %}
+{% load static %}
+{% block title %}Orders{% endblock %}
+
+{% block content %}
+<!-- Main Content -->
+      <div
+        class=" relative transition-all duration-300 main-content h-full flex-1 flex flex-col gap-8 overflow-y-auto scroll p-5">
+       <div class="show-sidebar-toggle hidden fixed top-[100px] left-12 z-50 h-10 w-10 bg-transparent-light-sea-green items-center justify-center rounded-r-md cursor-pointer">
+          <span class="material-symbols-outlined bold-weight text-light-sea-green">
+              arrow_forward_ios
+          </span>
+        </div>
+        <div
+          class="absolute w-full h-[80vh] hidden items-center justify-center bg-translucent-white backdrop-blur-[20px] text-black">
+          <div class="text-center">
+            <h2 class="text-2xl font-semibold mb-4">Your Profile Is Under Verification</h2>
+            <p class="mb-6 text-sm">
+              To access this feature, your registration documents must be reviewed and approved by our team.
+            </p>
+
+            <div class="mb-4">
+              <p class="font-semibold text-lg mb-2">
+                📄 Status: Pending Verification
+              </p>
+              <p class=" text-sm">
+                ⏳ This usually takes up to 24–48 hours after submission.
+              </p>
+              <p class="text-sm mt-3">
+                ✅ You will be notified as soon as your profile is verified.
+              </p>
+            </div>
+
+            <div class="mt-6 text-md font-semibold">
+              Need help?
+              <a href="#" class="text-living-coral underline"> Contact Support </a>
+              or
+              <a href="#" class="text-living-coral underline"> Check Document Status Profile </a>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white shadow-(--box-shadow-5) rounded-[10px] px-2 sm:px-4 py-4">
+          <div class="flex items-center justify-between text-jet-black">
+            <div class="space-y-1.5">
+              <p class="flex items-center gap-3 text-xl font-medium">
+                <span class="material-symbols-outlined"> gavel </span>Bidding's
+              </p>
+              <p class="text-18-nr">
+                Bid, Buy and Save—It’s Time to Get Happy with the Best Price ever!
+              </p>
+            </div>
+          </div>
+
+          <!-- Tabs -->
+          <div class="flex gap-6 sm:gap-10 whitespace-nowrap mt-8 overflow-x-auto no-scrollbar">
+            <button class="tab-btn-pharmacy active-tab-pharmacy text-sm sm:text-18-nr px-4 py-1.5 font-semibold cursor-pointer text-light-gray1"
+              data-tab="enquiry">
+              Enquiry Submission
+            </button>
+            <button class="tab-btn-pharmacy text-sm sm:text-18-nr px-4 py-1.5 font-medium cursor-pointer text-light-gray1" data-tab="order">
+              Order Discussions
+            </button>
+            <button class="tab-btn-pharmacy text-sm sm:text-18-nr px-4 py-1.5 font-medium cursor-pointer text-light-gray1"
+              data-tab="history">
+              Order History
+            </button>
+          </div>
+
+          <!-- Enquiry content -->
+          <div class="enquiry tab-content pt-6">
+            <div
+              class="bg-light-sea-green p-1.5 flex flex-col sm:flex-row items-start justify-between sm:items-center gap-1 sm:gap-4">
+              <p class="text-white font-bold text-base sm:text-lg pl-2 sm:pl-4">
+                Customer Communications
+                <span class="text-white text-sm sm:text-base font-normal">
+                  (4 Unread)
+                </span>
+              </p>
+              <div class="inline-block relative">
+                <button class="status-btn border border-white  rounded-md cursor-pointer">
+                  <span class="material-symbols-outlined text-white p-1">
+                    swap_vert
+                  </span>
+                </button>
+                <!-- Dropdown -->
+                <div
+                  class="status-dropdown w-32 absolute right-0 bg-white shadow-[4px_4px_10px_2px_#00000026] rounded-lg z-10 hidden">
+                  <a href="#" class="block px-4 py-3 text-sm rounded-t-lg hover:bg-light-sea-green-opacity">
+                    Open
+                  </a>
+                  <a href="#" class="block px-4 py-3 text-sm hover:bg-light-sea-green-opacity">
+                    Closed
+                  </a>
+                  <a href="#" class="block px-4 py-3 text-sm hover:bg-light-sea-green-opacity">
+                    Pending
+                  </a>
+                  <a href="#" class="block px-4 py-3 text-sm rounded-b-lg hover:bg-light-sea-green-opacity">
+                    Escalated
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="hidden">
+              <div class="ticket-list hidden lg:flex flex-col gap-4 bg-white lg:w-1/3">
+                <div class="w-full lg:w-100 rounded-[6px] bg-slate-white mb-2 flex items-center px-2">
+                  <span class="material-symbols-outlined ">
+                    search
+                  </span>
+                  <input type="text" placeholder="Search by name or categories"
+                    class="w-full py-2.5 focus:outline-none focus:ring-0 placeholder:text-medium-gray placeholder:underline border-none bg-transparent">
+                </div>
+                <p class="h-full flex justify-center items-center ">🕵️‍♂️ No Enquiries YetLooks like no one's reached
+                  out... yet</p>
+              </div>
+              <div class="provider flex justify-center items-center flex-col gap-4 py-6 bg-slate-white w-full h-full">
+                <span class="material-symbols-outlined text-strong-red !text-[10rem]">
+                  calendar_month
+                </span>
+                <p class="font-semibold text-xl text-strong-red">
+                  25
+                  <span class="text-base text-jet-black">days remaining to get Unlocked</span>
+                </p>
+                <div class="flex flex-col gap-2 items-center justify-center">
+                  <div class="flex items-center gap-2">
+                    <img src="/static/images/bell.svg" class="w-7 h-7">
+                    <p class="font-semibold text-xl">Notice</p>
+                  </div>
+                  <p class="font-normal text-base text-center pt-4">
+                    Dear provider you have cancelled
+                    <span class="font-semibold text-xl">01</span> out of
+                    <span class="font-semibold text-xl">03</span> allowed
+                    cancellations per month.<br>
+                    After allowed
+                    <span class="font-semibold text-xl">03</span> cancellations.
+                    Your account will be blocked for 30 days.
+                  </p>
+                  <p class="font-normal text-xs ">17-Dec-2025</p>
+                </div>
+                <div class="flex flex-col gap-2 items-center justify-center">
+                  <div class="flex items-center gap-2">
+                    <img src="/static/images/bell.svg" class="w-7 h-7">
+                    <p class="font-semibold text-xl">Notice</p>
+                  </div>
+                  <p class="font-normal text-base text-center">
+                    Dear provider you have cancelled
+                    <span class="font-semibold text-xl">03</span> out of
+                    <span class="font-semibold text-xl">03</span> allowed
+                    cancellations per month.<br>
+                    After allowed
+                    <span class="font-semibold text-xl">03</span> cancellations.
+                    Your account will be blocked for 30 days.
+                  </p>
+                  <p class="font-normal text-xs ">25-Jan-2025</p>
+                </div>
+              </div>
+              <div class="customer hidden justify-center items-center flex-col gap-4 py-6 bg-slate-white w-full h-full">
+                <span class="material-symbols-outlined text-light-sea-green !text-[10rem]">
+                  gavel
+                </span>
+                <div class="flex flex-col gap-2 items-center justify-center">
+                  <div class="flex items-center gap-2">
+                    <img src="/static/images/bell.svg" class="w-7 h-7">
+                    <p class="font-semibold text-xl">Notice</p>
+                  </div>
+                  <p class="font-normal text-base text-center pt-4">
+                    Dear customer you have cancelled
+                    <span class="font-semibold text-xl">01</span> out of
+                    <span class="font-semibold text-xl">03</span> allowed
+                    cancellations per month.<br>
+                    After allowed
+                    <span class="font-semibold text-xl">03</span> cancellations.
+                    Your account will be blocked for 30 days.
+                  </p>
+                  <p class="font-normal text-xs ">17-Dec-2025</p>
+                </div>
+                <div class="flex flex-col gap-2 items-center justify-center">
+                  <div class="flex items-center gap-2">
+                    <img src="/static/images/bell.svg" class="w-7 h-7">
+                    <p class="font-semibold text-xl">Notice</p>
+                  </div>
+                  <p class="font-normal text-base text-center">
+                    Dear customer you have cancelled
+                    <span class="font-semibold text-xl">03</span> out of
+                    <span class="font-semibold text-xl">03</span> allowed
+                    cancellations per month.<br>
+                    After allowed
+                    <span class="font-semibold text-xl">03</span> cancellations.
+                    Your account will be blocked for 30 days.
+                  </p>
+                  <p class="font-normal text-xs ">25-Jan-2025</p>
+                </div>
+                <p class="font-semibold text-xl text-strong-red">
+                  25
+                  <span class="text-base text-jet-black">days remaining to get Unlocked</span>
+                </p>
+              </div>
+            </div>
+            <div class="flex">
+              <div class="ticket-list hidden lg:flex flex-col lg:w-1/3 overflow-y-auto scroll"
+                style="max-height: calc(100vh - 24rem)">
+                <div class="w-full lg:w-100 rounded-[6px] bg-slate-white mb-2 flex items-center gap-2 px-2">
+                  <span class="material-symbols-outlined ">
+                    search
+                  </span>
+                  <input type="text" placeholder="Search by name or categories"
+                    class="w-full py-2.5 focus:outline-none focus:ring-0 placeholder:text-medium-gray placeholder:underline border-none bg-transparent">
+                </div>
+                <div class="issue-item flex flex-col bg-teal-veil hover:bg-teal-veil py-2 px-4 cursor-pointer"
+                  data-chat-id="1">
+                  <div class="flex justify-between">
+                    <p class="font-semibold text-lg ">
+                      Monika Singh
+                    </p>
+                    <p class="font-normal text-xs pt-2 lg:pt-0 ">12:30 PM</p>
+                  </div>
+                  <p class="text-jet-black">Do you offer delivery for this ?</p>
+                </div>
+                <div class="issue-item flex flex-col hover:bg-teal-veil py-2 px-4 cursor-pointer" data-chat-id="2">
+                  <div class="flex justify-between">
+                    <p class="font-semibold text-lg ">
+                      Monika Singh
+                    </p>
+                    <p class="font-normal text-xs pt-2 lg:pt-0 ">12:30 PM</p>
+                  </div>
+                  <p class="text-jet-black">Do you offer delivery for this ?</p>
+                </div>
+                <div class="issue-item flex flex-col hover:bg-teal-veil py-2 px-4 cursor-pointer" data-chat-id="3">
+                  <div class="flex justify-between">
+                    <p class="font-semibold text-lg ">
+                      Monika Singh
+                    </p>
+                    <p class="font-normal text-xs pt-2 lg:pt-0 ">12:30 PM</p>
+                  </div>
+                  <p class="text-jet-black">Do you offer delivery for this ?</p>
+                </div>
+                <div class="issue-item flex flex-col hover:bg-teal-veil py-2 px-4 cursor-pointer" data-chat-id="4">
+                  <div class="flex justify-between">
+                    <p class="font-semibold text-lg ">
+                      Monika Singh
+                    </p>
+                    <p class="font-normal text-xs pt-2 lg:pt-0 ">12:30 PM</p>
+                  </div>
+                  <div class="flex justify-between">
+                    <p class="text-jet-black">Do you offer delivery for this ?</p>
+                    <div
+                      class="h-6 w-6 bg-light-sea-green rounded-full flex items-center justify-center text-white text-sm">
+                      1
+                    </div>
+                  </div>
+                </div>
+
+                <div class="issue-item flex flex-col hover:bg-teal-veil py-2 px-4 cursor-pointer" data-chat-id="5">
+                  <div class="flex justify-between">
+                    <p class="font-semibold text-lg ">
+                      Monika Singh
+                    </p>
+                    <p class="font-normal text-xs pt-2 lg:pt-0 ">12:30 PM</p>
+                  </div>
+                  <div class="flex justify-between">
+                    <p class="text-jet-black">Do you offer delivery for this ?</p>
+                    <div
+                      class="h-6 w-6 bg-light-sea-green rounded-full flex items-center justify-center text-white text-sm">
+                      1
+                    </div>
+                  </div>
+                </div>
+                <div class="issue-item flex flex-col hover:bg-teal-veil py-2 px-4 cursor-pointer" data-chat-id="6">
+                  <div class="flex justify-between">
+                    <p class="font-semibold text-lg ">
+                      Monika Singh
+                    </p>
+                    <p class="font-normal text-xs pt-2 lg:pt-0 ">12:30 PM</p>
+                  </div>
+                  <p class="text-jet-black">Do you offer delivery for this ?</p>
+                </div>
+              </div>
+              <!-- Waiting for orders-->
+              <div class="w-full lg:w-3/4 chat-profile overflow-y-auto scroll" style="max-height: calc(100vh - 24rem)"
+                data-id="1">
+                <div class="bg-mist-teal p-6 sm:w-60 lg:w-full border-b border-mist-black">
+                  <button class="lg:hidden cursor-pointer ticket-menu">
+                    <span class="material-symbols-outlined"> menu </span>
+                  </button>
+                  <div class="flex justify-between lg:items-center flex-col lg:flex-row ">
+                    <div class="flex items-center gap-4">
+                      <div
+                        class="bg-transparent-light-sea-green rounded-full w-10 h-10 flex justify-center items-center font-semibold text-base ">
+                        MS
+                      </div>
+                      <div class="flex flex-col gap-1">
+                        <p class="font-bold text-base ">
+                          Monika Singh
+                        </p>
+                        <p class="font-normal text-base ">
+                          MediCore Pharmacy
+                        </p>
+                        <div class="flex gap-2 items-center">
+                          <p class="font-normal text-sm ">
+                            4.3
+                          </p>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1 pt-4 lg:pt-0">
+                      <p class="font-semibold text-base text-light-sea-green">
+                        6 km away
+                      </p>
+                      <div class="flex items-center justify-center gap-0.5">
+                        <span class="material-symbols-outlined -ml-1">timer</span>
+                        <p class="font-normal text-base">
+                          30 Mins
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex justify-between lg:items-center pt-4 flex-col lg:flex-row">
+                    <div class="flex flex-col gap-1">
+                      <p class="font-semibold text-base ">
+                        Date &amp; Time:
+                        <span class="font-normal text-base">12/05/2025 14:40</span>
+                      </p>
+                      <p class="font-normal text-base ">
+                        Order no.: #3454645
+                      </p>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <p class="font-semibold text-base ">
+                        Doctor:
+                        <span class="font-normal text-base">Dr Neha</span>
+                      </p>
+                      <p class="font-semibold text-base lg:text-right">
+                        Patient:
+                        <span class="font-normal text-base">Ravi</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="bg-frosted-cloud p-5">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-1/2 p-2 rounded-2xl rounded-br-none">
+                    <p class="text-center">
+                      Hi there! I’m looking for the below medicines, please let me knowif you have them.
+                    </p>
+                    <p class="font-semibold text-sm text-medium-gray text-right pt-2">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 bg-white rounded-lg flex flex-col gap-4">
+                  <!-- Header -->
+                  <div class="flex justify-between items-center">
+                    <h2 class="text-lg text-jet-black">Purchase Summary</h2>
+                    <span class="material-symbols-outlined">close</span>
+                  </div>
+
+                  <!-- Table -->
+                  <div class="overflow-auto scroll">
+                    <table class="min-w-full text-left text-sm">
+                      <thead class="bg-teal-tropical text-white">
+                        <tr>
+                          <th class="px-3 py-2">Product Name</th>
+                          <th class="px-3 py-2">Manufacturer</th>
+                          <th class="px-3 py-2">Packaging</th>
+                          <th class="px-3 py-2">Qty</th>
+                          <th class="px-3 py-2">Rate</th>
+                          <th class="px-3 py-2">Discount</th>
+                          <th class="px-3 py-2">Total</th>
+                          <th class="px-3 py-2">GST(%)</th>
+                          <th class="px-3 py-2">View & approve prescription</th>
+                        </tr>
+                      </thead>
+                      <tbody class=" text-dark-blue">
+                        <tr>
+                          <td class="p-3"><input value="Sinopril" class="w-24 product-input" /></td>
+                          <td class="p-3"><input value="Cipla" class="w-24 product-input" /></td>
+                          <td class="p-3">Bottle</td>
+                          <td class="p-3"><input value="2" class="w-11 product-input" /></td>
+                          <td class="p-3"><input value="2" class="w-11 product-input" /></td>
+                          <td class="p-3"><input value="200%" class="w-18 product-input" /></td>
+                          <td class="p-3">₹200</td>
+                          <td class="p-3"><input value="10%" class="w-16 product-input" /></td>
+                          <td class="p-3 text-center">
+                            <button class="cursor-pointer"><span class="material-symbols-outlined popup-btn"
+                                data-popup="prescriptionPopup">visibility</span></button>
+                            <span class="material-symbols-outlined ml-4">check_box_outline_blank</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="p-3"><input value="Morvastatin" class="w-24 product-input" /></td>
+                          <td class="p-3"><input value="Morvastatin" class="w-24 product-input" /></td>
+                          <td class="p-3">Strip</td>
+                          <td class="p-3"><input value="1" class="w-11 product-input" /></td>
+                          <td class="p-3"><input value="2" class="w-11 product-input" /></td>
+                          <td class="p-3"><input value="200%" class="w-18 product-input" /></td>
+                          <td class="p-3">₹200</td>
+                          <td class="p-3"><input value="12%" class="w-16 product-input" /></td>
+                          <td class="p-3 text-center">
+                            <button class="cursor-pointer"><span
+                                class="material-symbols-outlined">visibility</span></button>
+                            <span
+                              class="material-symbols-outlined ml-4 material-filled text-strong-red">disabled_by_default</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="p-3"><input value="Gmlodipine" class="w-24 product-input" /></td>
+                          <td class="p-3"><input value="Cipla" class="w-24 product-input" /></td>
+                          <td class="p-3">Strip</td>
+                          <td class="p-3"><input value="2" class="w-11 product-input" /></td>
+                          <td class="p-3"><input value="2" class="w-11 product-input" /></td>
+                          <td class="p-3"><input value="234%" class="w-18 product-input" /></td>
+                          <td class="p-3">₹200</td>
+                          <td class="p-3"><input value="18%" class="w-16 product-input" /></td>
+                          <td class="p-3 text-center">
+                            <button class="cursor-pointer"><span
+                                class="material-symbols-outlined">visibility</span></button>
+                            <span class="material-symbols-outlined ml-4 material-filled text-green">check_box</span>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <!-- Delivery Address -->
+                  <div class="flex gap-2 items-center">
+                    <div class="pt-2 text-jet-black bg-white-card w-3/4">
+                      <p class="font-semibold">Delivery address</p>
+                      <p class="text-sm ">xxxxx</p>
+                    </div>
+                    <div class="flex items-center gap-2 border border-vivid-blue rounded-lg p-2 py-5">
+                      <img src="/static/images/upi.svg" class="w-12 h-6 object-contain" alt="UPI Payment" />
+                      <span class="font-semibold text-xl text-jet-black">UPI Payment</span>
+                    </div>
+                  </div>
+
+                  <!-- Order Summary -->
+                  <p class="font-semibold">Order Summary</p>
+                  <div class=" flex flex-col gap-1">
+                    <div class="flex justify-between">
+                      <span>Medicine Subtotal</span><span class="font-semibold text-lg">₹660</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span>Order GST</span><span class="font-semibold text-lg">₹79.2</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span>Platform Fee (Std. 10%)</span><span class="font-semibold text-lg">₹66</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="flex items-center gap-1"><span class="text-light-sea-green">6% </span> Platform Fee
+                        Discount Unlocked for <span class="inline-flex items-center text-light-sea-green"><img
+                            src="/static/images/diamond-badge.svg" class="w-8 h-8 inline" /> Diamond user</span></span>
+                      <span class="font-semibold text-lg text-strong-red">- ₹10</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span>Platform Fee GST (18%)</span><span class="font-semibold text-lg text-strong-red">-
+                        ₹10</span>
+                    </div>
+                    <div class="flex justify-between font-semibold text-xl py-2">
+                      <span>Total cost with GST</span><span>₹720</span>
+                    </div>
+                    <p class="text-sm text-center">Congratulation! You will earn <span
+                        class="text-light-sea-green font-medium">2.8</span> Points on the order completion</p>
+                  </div>
+
+                  <!-- Points -->
+                  <div
+                    class="bg-white shadow-[4px_4px_10px_4px_#00000033] p-3 rounded-xl flex justify-between items-center">
+                    <span class="font-semibold flex gap-1 items-center">Your Point Balance<span
+                        class="material-symbols-outlined">info</span></span>
+                    <span class="text-light-sea-green font-bold">4352 <a href="#"
+                        class="underline text-sm font-normal ml-1 text-skywave-blue">View points history</a></span>
+                  </div>
+                </div>
+                <div class="bg-frosted-cloud p-5 flex justify-end">
+                  <div class="flex flex-col gap-2">
+                    <!-- Actions -->
+                    <div class="flex justify-end items-center pt-2">
+                      <div class="flex gap-2">
+                        <button
+                          class="border border-light-sea-green px-4 py-2 rounded-lg cursor-pointer flex items-center gap-1"><span
+                            class="material-symbols-outlined">replay</span>Reset</button>
+                        <button
+                          class="bg-strong-red text-white px-4 py-2 rounded-lg cursor-pointer order-decline">Decline</button>
+                        <button class="bg-green text-white px-4 py-2 rounded-lg cursor-pointer popup-btn"
+                          data-popup="submitPopup">Submit</button>
+                      </div>
+                    </div>
+                    <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                      <p class="font-semibold text-base  text-center">
+                        Current Status:
+                        <span class="font-normal">Waiting for order</span>
+                      </p>
+                      <div class="flex justify-center pt-2">
+                        <button data-status="Waiting for order" data-color="green"
+                          class="font-semibold text-base text-white bg-light-sea-green p-2 rounded-md flex items-center gap-2 cursor-pointer order-tracking-btn">
+                          <span class="material-symbols-outlined">delivery_truck_speed</span>Order Tracking
+                        </button>
+                      </div>
+                      <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                        12:31 PM
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Order content -->
+          <div class="order tab-content pt-6 pb-3 space-y-2 hidden">
+            <div
+              class="bg-light-sea-green p-1.5 flex flex-col sm:flex-row items-start justify-between sm:items-center gap-1 sm:gap-4">
+              <p class="text-white font-bold text-base sm:text-lg pl-2 sm:pl-4">
+                Customer Communications
+                <span class="text-white text-sm sm:text-base font-normal">
+                  (4 Unread)
+                </span>
+              </p>
+              <div class="inline-block relative">
+                <button class="status-btn border border-white  rounded-md cursor-pointer">
+                  <span class="material-symbols-outlined text-white p-1">
+                    swap_vert
+                  </span>
+                </button>
+                <!-- Dropdown -->
+                <div
+                  class="status-dropdown w-32 absolute right-0 bg-white shadow-[4px_4px_10px_2px_#00000026] rounded-lg z-10 hidden">
+                  <a href="#" class="block px-4 py-3 text-sm rounded-t-lg hover:bg-light-sea-green-opacity">
+                    Open
+                  </a>
+                  <a href="#" class="block px-4 py-3 text-sm hover:bg-light-sea-green-opacity">
+                    Closed
+                  </a>
+                  <a href="#" class="block px-4 py-3 text-sm hover:bg-light-sea-green-opacity">
+                    Pending
+                  </a>
+                  <a href="#" class="block px-4 py-3 text-sm rounded-b-lg hover:bg-light-sea-green-opacity">
+                    Escalated
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="flex">
+              <div class="ticket-list hidden lg:flex flex-col lg:w-1/3 overflow-y-auto scroll"
+                style="max-height: calc(100vh - 24rem)">
+                <div class="w-full lg:w-100 rounded-[6px] bg-slate-white mb-2 flex items-center gap-2 px-2">
+                  <span class="material-symbols-outlined ">
+                    search
+                  </span>
+                  <input type="text" placeholder="Search by name or categories"
+                    class="w-full py-2.5 focus:outline-none focus:ring-0 placeholder:text-medium-gray placeholder:underline border-none bg-transparent">
+                </div>
+                <div class="issue-item flex flex-col bg-teal-veil hover:bg-teal-veil py-2 px-4 cursor-pointer"
+                  data-chat-id="2">
+                  <div class="flex justify-between">
+                    <p class="font-semibold text-lg ">
+                      Monika Singh
+                    </p>
+                    <p class="font-normal text-xs pt-2 lg:pt-0 ">12:30 PM</p>
+                  </div>
+                  <p class="text-jet-black">Do you offer delivery for this ?</p>
+                </div>
+                <div class="issue-item flex flex-col hover:bg-teal-veil py-2 px-4 cursor-pointer" data-chat-id="3">
+                  <div class="flex justify-between">
+                    <p class="font-semibold text-lg ">
+                      Monika Singh
+                    </p>
+                    <p class="font-normal text-xs pt-2 lg:pt-0 ">12:30 PM</p>
+                  </div>
+                  <p class="text-jet-black">Do you offer delivery for this ?</p>
+                </div>
+                <div class="issue-item flex flex-col hover:bg-teal-veil py-2 px-4 cursor-pointer" data-chat-id="4">
+                  <div class="flex justify-between">
+                    <p class="font-semibold text-lg ">
+                      Monika Singh
+                    </p>
+                    <p class="font-normal text-xs pt-2 lg:pt-0 ">12:30 PM</p>
+                  </div>
+                  <p class="text-jet-black">Do you offer delivery for this ?</p>
+                </div>
+                <div class="issue-item flex flex-col hover:bg-teal-veil py-2 px-4 cursor-pointer" data-chat-id="5">
+                  <div class="flex justify-between">
+                    <p class="font-semibold text-lg ">
+                      Monika Singh
+                    </p>
+                    <p class="font-normal text-xs pt-2 lg:pt-0 ">12:30 PM</p>
+                  </div>
+                  <div class="flex justify-between">
+                    <p class="text-jet-black">Do you offer delivery for this ?</p>
+                    <div
+                      class="h-6 w-6 bg-light-sea-green rounded-full flex items-center justify-center text-white text-sm">
+                      1
+                    </div>
+                  </div>
+                </div>
+
+                <div class="issue-item flex flex-col hover:bg-teal-veil py-2 px-4 cursor-pointer" data-chat-id="6">
+                  <div class="flex justify-between">
+                    <p class="font-semibold text-lg ">
+                      Monika Singh
+                    </p>
+                    <p class="font-normal text-xs pt-2 lg:pt-0 ">12:30 PM</p>
+                  </div>
+                  <div class="flex justify-between">
+                    <p class="text-jet-black">Do you offer delivery for this ?</p>
+                    <div
+                      class="h-6 w-6 bg-light-sea-green rounded-full flex items-center justify-center text-white text-sm">
+                      1
+                    </div>
+                  </div>
+                </div>
+                <div class="issue-item flex flex-col hover:bg-teal-veil py-2 px-4 cursor-pointer" data-chat-id="7">
+                  <div class="flex justify-between">
+                    <p class="font-semibold text-lg ">
+                      Monika Singh
+                    </p>
+                    <p class="font-normal text-xs pt-2 lg:pt-0 ">12:30 PM</p>
+                  </div>
+                  <p class="text-jet-black">Do you offer delivery for this ?</p>
+                </div>
+              </div>
+              <!-- Order Declined-->
+              <div class="w-full lg:w-3/4 chat-profile overflow-y-auto scroll hidden"
+                style="max-height: calc(100vh - 24rem)" data-id="2">
+                <div class="bg-mist-teal p-6 sm:w-60 lg:w-full border-b border-mist-black">
+                  <button class="lg:hidden cursor-pointer ticket-menu">
+                    <span class="material-symbols-outlined"> menu </span>
+                  </button>
+                  <div class="flex justify-between lg:items-center flex-col lg:flex-row">
+                    <div class="flex items-center gap-4">
+                      <div
+                        class="bg-transparent-light-sea-green rounded-full w-10 h-10 flex justify-center items-center font-semibold text-base ">
+                        MS
+                      </div>
+                      <div class="flex flex-col gap-1">
+                        <p class="font-bold text-base ">
+                          Monika Singh
+                        </p>
+                        <p class="font-normal text-base ">
+                          MediCore Pharmacy
+                        </p>
+                        <div class="flex gap-2 items-center">
+                          <p class="font-normal text-sm ">
+                            4.3
+                          </p>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1 pt-4 lg:pt-0">
+                      <p class="font-semibold text-base text-light-sea-green">
+                        6 km away
+                      </p>
+                      <div class="flex items-center justify-center gap-0.5">
+                        <span class="material-symbols-outlined -ml-1">timer</span>
+                        <p class="font-normal text-base">
+                          30 Mins
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex justify-between lg:items-center pt-4 flex-col lg:flex-row">
+                    <div class="flex flex-col gap-1">
+                      <p class="font-semibold text-base ">
+                        Date &amp; Time:
+                        <span class="font-normal text-base">12/05/2025 14:40</span>
+                      </p>
+                      <p class="font-normal text-base ">
+                        Order no.: #3454645
+                      </p>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <p class="font-semibold text-base ">
+                        Doctor:
+                        <span class="font-normal text-base">Dr Neha</span>
+                      </p>
+                      <p class="font-semibold text-base lg:text-right">
+                        Patient:
+                        <span class="font-normal text-base">Ravi</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-5">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-1/2 p-2 rounded-2xl rounded-tl-none">
+                    <p class="text-center">
+                      Hi there! I’m looking for the below medicines, please let me knowif you have them.
+                    </p>
+                    <p class="font-semibold text-sm text-medium-gray text-right pt-2">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div
+                  class="p-5 m-5 bg-white border border-teal-shadow rounded-2xl rounded-tl-none flex flex-col gap-4 w-3/4">
+                  <!-- Header -->
+                  <div class="flex justify-between items-center">
+                    <h2 class="text-lg text-jet-black">Purchase Summary</h2>
+                    <span class="material-symbols-outlined">close</span>
+                  </div>
+
+                  <!-- Table -->
+                  <div class="overflow-auto scroll">
+                    <table
+                      class="min-w-full text-center text-sm rounded-xl border border-teal-shadow border-separate overflow-hidden [border-spacing:0]">
+                      <thead class="bg-teal-tropical text-white">
+                        <tr>
+                          <th class="px-3 py-2 text-nowrap border-r">Product Name</th>
+                          <th class="px-3 py-2 border-r">Manufacturer</th>
+                          <th class="px-3 py-2 text-nowrap border-r">Packaging Type</th>
+                          <th class="px-3 py-2 border-r">Quantity</th>
+                          <th class="px-3 py-2">Cost</th>
+                        </tr>
+                      </thead>
+                      <tbody class=" text-dark-blue">
+                        <tr>
+                          <td class="p-3">Sinopril</td>
+                          <td class="p-3">Cipla</td>
+                          <td class="p-3">Bottle</td>
+                          <td class="p-3">2</td>
+                          <td class="p-3">₹200</td>
+                        </tr>
+                        <tr>
+                          <td class="p-3">Sinopril</td>
+                          <td class="p-3">Cipla</td>
+                          <td class="p-3">Bottle</td>
+                          <td class="p-3">2</td>
+                          <td class="p-3">₹200</td>
+                        </tr>
+                        <tr>
+                          <td class="p-3">Sinopril</td>
+                          <td class="p-3">Cipla</td>
+                          <td class="p-3">Bottle</td>
+                          <td class="p-3">2</td>
+                          <td class="p-3">₹200</td>
+                        </tr>
+                        <tr>
+                          <td class="p-3">Sinopril</td>
+                          <td class="p-3">Cipla</td>
+                          <td class="p-3">Bottle</td>
+                          <td class="p-3">2</td>
+                          <td class="p-3">₹200</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <!-- Delivery Address -->
+                  <div class="flex gap-2 items-center justify-between">
+                    <div class="pt-2 text-jet-black bg-white-card w-3/4">
+                      <p class="font-semibold">Delivery address</p>
+                      <p class="text-sm ">xxxxx</p>
+                    </div>
+                    <div class="flex items-center gap-2 border border-vivid-blue rounded-lg p-2 py-5 w-52">
+                      <img src="/static/images/upi.svg" class="w-12 h-6 object-contain" alt="UPI Payment" />
+                      <span class="font-semibold text-xl text-jet-black text-nowrap">UPI Payment</span>
+                    </div>
+                  </div>
+
+                  <!-- Order Summary -->
+                  <div class=" flex flex-col gap-1">
+                    <div class="flex justify-between">
+                      <span>Estimated medicine cost</span><span class="font-semibold text-lg">₹256.5</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span>GST on medicine (12%)</span><span class="font-semibold text-lg">₹30.78</span>
+                    </div>
+                    <div class="flex justify-between font-semibold text-xl py-2">
+                      <span>Total estimated cost + GST</span><span>₹287.28</span>
+                    </div>
+                    <p class="text-center">Congratulation! You will earn <span
+                        class="text-light-sea-green font-medium">2.8</span> Points on the order completion</p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <p class="font-semibold text-base  text-center">
+                      Last Status:
+                      <span class="font-normal">Waiting for order</span>
+                    </p>
+                    <div class="flex justify-center pt-2">
+                      <button data-status="Waiting for order" data-color="green"
+                        class="font-semibold text-base text-white bg-light-sea-green p-2 rounded-md flex items-center gap-2 cursor-pointer order-tracking-btn">
+                        <span class="material-symbols-outlined">delivery_truck_speed</span>Order Tracking
+                      </button>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <p class="font-semibold text-base  text-center">
+                      Current Status:
+                      <span class="font-normal">Order Declined</span>
+                    </p>
+                    <div class="flex justify-center pt-2">
+                      <button data-status="Order Declined" data-color="strong-red"
+                        class="font-semibold text-base text-white bg-light-sea-green p-2 rounded-md flex items-center gap-2 cursor-pointer order-tracking-btn">
+                        <span class="material-symbols-outlined">delivery_truck_speed</span>Order Tracking
+                      </button>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Order Confirmed-->
+              <div class="w-full lg:w-3/4 chat-profile overflow-y-auto scroll hidden"
+                style="max-height: calc(100vh - 24rem)" data-id="3">
+                <div class="bg-mist-teal p-6 sm:w-60 lg:w-full border-b border-mist-black">
+                  <button class="lg:hidden cursor-pointer ticket-menu">
+                    <span class="material-symbols-outlined"> menu </span>
+                  </button>
+                  <div class="flex justify-between lg:items-center flex-col lg:flex-row">
+                    <div class="flex items-center gap-4">
+                      <div
+                        class="bg-transparent-light-sea-green rounded-full w-10 h-10 flex justify-center items-center font-semibold text-base ">
+                        MS
+                      </div>
+                      <div class="flex flex-col gap-1">
+                        <p class="font-bold text-base ">
+                          Monika Singh
+                        </p>
+                        <p class="font-normal text-base ">
+                          MediCore Pharmacy
+                        </p>
+                        <div class="flex gap-2 items-center">
+                          <p class="font-normal text-sm ">
+                            4.3
+                          </p>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1 pt-4 lg:pt-0">
+                      <p class="font-semibold text-base text-light-sea-green">
+                        6 km away
+                      </p>
+                      <div class="flex items-center justify-center gap-0.5">
+                        <span class="material-symbols-outlined -ml-1">timer</span>
+                        <p class="font-normal text-base">
+                          30 Mins
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex justify-between lg:items-center pt-4 flex-col lg:flex-row">
+                    <div class="flex flex-col gap-1">
+                      <p class="font-semibold text-base ">
+                        Date &amp; Time:
+                        <span class="font-normal text-base">12/05/2025 14:40</span>
+                      </p>
+                      <p class="font-normal text-base ">
+                        Order no.: #3454645
+                      </p>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <p class="font-semibold text-base ">
+                        Doctor:
+                        <span class="font-normal text-base">Dr Neha</span>
+                      </p>
+                      <p class="font-semibold text-base lg:text-right">
+                        Patient:
+                        <span class="font-normal text-base">Ravi</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-5">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-1/2 p-2 rounded-2xl rounded-tl-none">
+                    <p class="text-center">
+                      Hi there! I’m looking for the below medicines, please let me knowif you have them.
+                    </p>
+                    <p class="font-semibold text-sm text-medium-gray text-right pt-2">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <p class="font-semibold text-base  text-center">
+                      Last Status:
+                      <span class="font-normal">Waiting for order</span>
+                    </p>
+                    <div class="flex justify-center pt-2">
+                      <button data-status="Waiting for order" data-color="green"
+                        class="font-semibold text-base text-white bg-light-sea-green p-2 rounded-md flex items-center gap-2 cursor-pointer order-tracking-btn">
+                        <span class="material-symbols-outlined">delivery_truck_speed</span>Order Tracking
+                      </button>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <p class="font-semibold text-base  text-center">
+                      Last Status:
+                      <span class="font-normal">Order Confirmed</span>
+                    </p>
+                    <div class="flex justify-center pt-2">
+                      <button data-status="Order Confirmed" data-color="green"
+                        class="font-semibold text-base text-white bg-light-sea-green p-2 rounded-md flex items-center gap-2 cursor-pointer order-tracking-btn">
+                        <span class="material-symbols-outlined">delivery_truck_speed</span>Order Tracking
+                      </button>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <p>Bill Amount: <span class="text-light-sea-green">₹2,425</span></p>
+                    <div class="flex gap-4 mt-2">
+                      <div class="flex flex-col gap-2">
+                        <div class="relative">
+                          <img src="/static/images/bill.jpg" class="h-40 w-32" />
+                          <div
+                            class="absolute h-full w-full bg-smoky-black p-2 text-white top-0 flex flex-col justify-center items-center">
+                            <button class="cursor-pointer popup-btn" data-popup="medicineBillPopup"><span
+                                class="material-symbols-outlined">visibility</span></button>
+                            <span class="text-center">View Sample Bill</span>
+                          </div>
+                        </div>
+                        <button class="underline text-sm font-normal ml-1 cursor-pointer text-skywave-blue">View Bill
+                          Details</button>
+                      </div>
+                      <div class="flex flex-col gap-2">
+                        <div class="relative">
+                          <img src="/static/images/bill.jpg" class="h-40 w-32" />
+                          <div
+                            class="absolute h-full w-full bg-smoky-black p-2 text-white top-0 flex flex-col justify-center items-center">
+                            <button class="cursor-pointer popup-btn" data-popup="platformBillPopup"><span
+                                class="material-symbols-outlined">visibility</span></button>
+                            <span class="text-center">View Sample Bill</span>
+                          </div>
+                        </div>
+                        <button class="underline text-sm font-normal ml-1 cursor-pointer text-skywave-blue">View
+                          Platform Bill</button>
+                      </div>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <!-- Status Dropdown -->
+                    <div class="w-full flex justify-end mb-2 relative">
+                      <div class="inline-block">
+                        <button
+                          class="status-btn py-2 px-4 flex gap-2 items-center justify-end text-light-sea-green border border-light-sea-green rounded-xl cursor-pointer">
+                          Update Status
+                          <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                        </button>
+                        <!-- Dropdown -->
+                        <div
+                          class="status-dropdown w-42 absolute right-0 bg-white shadow-[4px_4px_10px_2px_#00000026] rounded-lg z-10">
+                          <a href="#" class="block px-4 py-3 text-sm rounded-t-lg hover:bg-light-sea-green-opacity">
+                            In-Packaging
+                          </a>
+                          <a href="#" class="block px-4 py-3 text-sm hover:bg-light-sea-green-opacity">
+                            Out for Delivery
+                          </a>
+                          <a href="#" class="block px-4 py-3 text-sm hover:bg-light-sea-green-opacity">
+                            Completed
+                          </a>
+                          <a href="#" class="block px-4 py-3 text-sm rounded-b-lg hover:bg-light-sea-green-opacity">
+                            Cancel
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                    <p class="font-semibold text-base  text-center">
+                      Current Status:
+                      <span class="font-normal">_____________</span>
+                    </p>
+                    <div class="flex justify-center pt-2">
+                      <button data-popup="confirmPopup"
+                        class="font-semibold text-base text-white bg-light-sea-green p-2 rounded-md flex items-center gap-2 cursor-pointer popup-btn">
+                        <span class="material-symbols-outlined">delivery_truck_speed</span>Order Tracking
+                      </button>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Order Delivered-->
+              <div class="w-full lg:w-3/4 chat-profile overflow-y-auto scroll hidden"
+                style="max-height: calc(100vh - 24rem)" data-id="4">
+                <div class="bg-mist-teal p-6 sm:w-60 lg:w-full border-b border-mist-black">
+                  <button class="lg:hidden cursor-pointer ticket-menu">
+                    <span class="material-symbols-outlined"> menu </span>
+                  </button>
+                  <div class="flex justify-between lg:items-center flex-col lg:flex-row">
+                    <div class="flex items-center gap-4">
+                      <div
+                        class="bg-transparent-light-sea-green rounded-full w-10 h-10 flex justify-center items-center font-semibold text-base ">
+                        MS
+                      </div>
+                      <div class="flex flex-col gap-1">
+                        <p class="font-bold text-base ">
+                          Monika Singh
+                        </p>
+                        <p class="font-normal text-base ">
+                          MediCore Pharmacy
+                        </p>
+                        <div class="flex gap-2 items-center">
+                          <p class="font-normal text-sm ">
+                            4.3
+                          </p>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1 pt-4 lg:pt-0">
+                      <p class="font-semibold text-base text-light-sea-green">
+                        6 km away
+                      </p>
+                      <div class="flex items-center justify-center gap-0.5">
+                        <span class="material-symbols-outlined -ml-1">timer</span>
+                        <p class="font-normal text-base">
+                          30 Mins
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex justify-between lg:items-center pt-4 flex-col lg:flex-row">
+                    <div class="flex flex-col gap-1">
+                      <p class="font-semibold text-base ">
+                        Date &amp; Time:
+                        <span class="font-normal text-base">12/05/2025 14:40</span>
+                      </p>
+                      <p class="font-normal text-base ">
+                        Order no.: #3454645
+                      </p>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <p class="font-semibold text-base ">
+                        Doctor:
+                        <span class="font-normal text-base">Dr Neha</span>
+                      </p>
+                      <p class="font-semibold text-base lg:text-right">
+                        Patient:
+                        <span class="font-normal text-base">Ravi</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-5">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-1/2 p-2 rounded-2xl rounded-tl-none">
+                    <p class="text-center">
+                      Hi there! I’m looking for the below medicines, please let me knowif you have them.
+                    </p>
+                    <p class="font-semibold text-sm text-medium-gray text-right pt-2">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <p class="font-semibold text-base  text-center">
+                      Last Status:
+                      <span class="font-normal">Waiting for order</span>
+                    </p>
+                    <div class="flex justify-center pt-2">
+                      <button data-status="Waiting for order" data-color="green"
+                        class="font-semibold text-base text-white bg-light-sea-green p-2 rounded-md flex items-center gap-2 cursor-pointer order-tracking-btn">
+                        <span class="material-symbols-outlined">delivery_truck_speed</span>Order Tracking
+                      </button>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <p class="font-semibold text-base  text-center">
+                      Last Status:
+                      <span class="font-normal">Order Confirmed</span>
+                    </p>
+                    <div class="flex justify-center pt-2">
+                      <button data-status="Order Confirmed" data-color="green"
+                        class="font-semibold text-base text-white bg-light-sea-green p-2 rounded-md flex items-center gap-2 cursor-pointer order-tracking-btn">
+                        <span class="material-symbols-outlined">delivery_truck_speed</span>Order Tracking
+                      </button>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <p>Bill Amount: <span class="text-light-sea-green">₹2,425</span></p>
+                    <div class="flex gap-4 mt-2">
+                      <div class="flex flex-col gap-2">
+                        <div class="relative">
+                          <img src="/static/images/bill.jpg" class="h-40 w-32" />
+                          <div
+                            class="absolute h-full w-full bg-smoky-black p-2 text-white top-0 flex flex-col justify-center items-center">
+                            <button class="cursor-pointer popup-btn" data-popup="medicineBillPopup"><span
+                                class="material-symbols-outlined">visibility</span></button>
+                            <span class="text-center">View Sample Bill</span>
+                          </div>
+                        </div>
+                        <button class="underline text-sm font-normal ml-1 cursor-pointer text-skywave-blue">View Bill
+                          Details</button>
+                      </div>
+                      <div class="flex flex-col gap-2">
+                        <div class="relative">
+                          <img src="/static/images/bill.jpg" class="h-40 w-32" />
+                          <div
+                            class="absolute h-full w-full bg-smoky-black p-2 text-white top-0 flex flex-col justify-center items-center">
+                            <button class="cursor-pointer popup-btn" data-popup="platformBillPopup"><span
+                                class="material-symbols-outlined">visibility</span></button>
+                            <span class="text-center">View Sample Bill</span>
+                          </div>
+                        </div>
+                        <button class="underline text-sm font-normal ml-1 cursor-pointer text-skywave-blue">View
+                          Platform Bill</button>
+                      </div>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <!-- Status Dropdown -->
+                    <div class="w-full flex justify-end mb-2 relative">
+                      <div class="inline-block">
+                        <button
+                          class="status-btn py-2 px-4 flex gap-2 items-center justify-end text-light-sea-green border border-light-sea-green rounded-xl cursor-pointer">
+                          Update Status
+                          <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                        </button>
+                        <!-- Dropdown -->
+                        <div
+                          class="status-dropdown w-42 absolute right-0 bg-white shadow-[4px_4px_10px_2px_#00000026] rounded-lg z-10">
+                          <a href="#" class="block px-4 py-3 text-sm rounded-t-lg hover:bg-light-sea-green-opacity">
+                            In-Packaging
+                          </a>
+                          <a href="#" class="block px-4 py-3 text-sm hover:bg-light-sea-green-opacity">
+                            Out for Delivery
+                          </a>
+                          <a href="#" class="block px-4 py-3 text-sm hover:bg-light-sea-green-opacity">
+                            Completed
+                          </a>
+                          <a href="#" class="block px-4 py-3 text-sm rounded-b-lg hover:bg-light-sea-green-opacity">
+                            Cancel
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                    <p class="text-center">
+                      Last Status:
+                      <span class="font-semibold">In-Packaging/Out for Delivery</span>
+                    </p>
+                    <div class="flex justify-center pt-2">
+                      <button data-status="In-Packaging/Out for Delivery" data-color="green"
+                        class="font-semibold text-base text-white bg-light-sea-green p-2 rounded-md flex items-center gap-2 cursor-pointer order-tracking-btn">
+                        <span class="material-symbols-outlined">delivery_truck_speed</span>Order Tracking
+                      </button>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5">
+                  <div class="border border-teal-shadow bg-white mt-4 sm:w-60 lg:w-3/4 p-2 rounded-2xl rounded-tl-none">
+                    <p class="font-semibold text-base  text-center p-4">
+                      Order Confirmation
+                      <span class="font-normal">Scan the QR or give OTP to confirm delivery</span>
+                    </p>
+
+                    <div class="flex lg:gap-6 pl-4 flex-col lg:flex-row">
+                      <div class="relative p-6">
+                        <div class="openQrModal cursor-pointer relative">
+                          <img src="/static/images/sample-qr.png" alt="qr" class="w-40 h-40 rounded">
+                          <!-- Dark Overlay -->
+                          <div class="absolute inset-0 bg-black opacity-60 rounded"></div>
+                          <!-- Text -->
+                          <div class="absolute inset-0 flex items-center justify-center">
+                            <p class="text-white text-sm font-medium text-center popup-btn" data-popup="scanPopup">
+                              Scan QR for Delivery
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- OTP Section -->
+                      <div class="pt-10 flex flex-col items-center">
+                        <div class="flex gap-3 font-bold text-xl text-jet-black">
+                          <input value="4" class="w-12 product-input !bg-white" />
+                          <input value="6" class="w-12 product-input !bg-white" />
+                          <input value="5" class="w-12 product-input !bg-white" />
+                          <input value="3" class="w-12 product-input !bg-white" />
+                        </div>
+                        <p class="text-xs pt-4">
+                          Do not give OTP over the phone.
+                        </p>
+                        <p class="text-xs">
+                          Only Scan the QR or give OTP after the delivery is
+                          received
+                        </p>
+                        <p class="text-xs">at your given address</p>
+                        <button class="bg-light-sea-green py-2 px-8 text-white mt-4 rounded-md">Verify</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <p class="font-semibold text-base  text-center">
+                      Last Status:
+                      <span class="font-normal">Order Delivered</span>
+                    </p>
+                    <div class="flex justify-center pt-2">
+                      <button data-status="Order Delivered" data-color="green"
+                        class="font-semibold text-base text-white bg-light-sea-green p-2 rounded-md flex items-center gap-2 cursor-pointer order-tracking-btn">
+                        <span class="material-symbols-outlined">delivery_truck_speed</span>Order Tracking
+                      </button>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end text-jet-black">
+                  <div
+                    class="border border-teal-shadow bg-white mt-4 sm:w-60 lg:w-75 p-2 px-4 rounded-2xl rounded-tr-none">
+                    <p class="pl-4 pt-4 font-semibold">
+                      Your ratings and feedback.
+                    </p>
+                    <img src="" />
+                    <div class="flex items-center justify-center flex-col mt-1">
+                      <div class="flex text-base gap-4" id="starRating">
+                        <span
+                          class="material-symbols-outlined cursor-pointer material-filled text-star-yellow">kid_star</span>
+                        <span
+                          class="material-symbols-outlined cursor-pointer material-filled text-star-yellow">kid_star</span>
+                        <span
+                          class="material-symbols-outlined cursor-pointer material-filled text-star-yellow">kid_star</span>
+                        <span class="material-symbols-outlined cursor-pointer">kid_star</span>
+                        <span class="material-symbols-outlined cursor-pointer">kid_star</span>
+                      </div>
+                    </div>
+                    <div class="flex gap-4 my-4">
+                      <div
+                        class="border-2 border-dashed border-light-sea-green bg-soft-teal p-2 flex items-center justify-center gap-2 rounded cursor-pointer">
+                        <span class="material-symbols-outlined text-light-sea-green !text-4xl">photo_camera</span>
+                        <div class="flex flex-col">
+                          <p class="font-semibold">Add Images</p>
+                          <p class="text-dark-gray text-sm">(Add upto 4 photos)</p>
+                        </div>
+                      </div>
+                      <label
+                        class="border-2 border-dashed border-light-sea-green bg-soft-teal p-2 rounded cursor-pointer relative">
+                        <span class="material-symbols-outlined text-light-sea-green !text-4xl">photo_camera</span>
+                        <input id="image-upload" type="file" accept="image/*" multiple class="hidden">
+                        <span
+                          class="material-symbols-outlined cursor-pointer material-filled text-jet-black absolute right-0 -mt-5 -mr-3">add_circle</span>
+                      </label>
+                    </div>
+
+                    <!-- Preview Area -->
+                    <div id="preview" class="flex gap-2 flex-wrap"></div>
+
+                    <!-- Feedback Textarea -->
+                    <textarea placeholder="Add your Feedback" rows="4"
+                      class="w-full border p-2 rounded mb-2 resize-none"></textarea>
+
+                    <!-- Submit Button -->
+                    <div class="flex justify-end">
+                      <button class="bg-teal-500 text-white py-2 px-4 rounded">Submit</button>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end text-jet-black">
+                  <div class="border border-teal-shadow bg-white mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <p class="pl-4 pt-4">
+                      Your ratings and feedback.
+                    </p>
+                    <div class="flex justify-center">
+                      <img src="/static/images/Hospital.svg" class="w-16 h-16 rounded-lg object-cover my-4" alt="">
+                    </div>
+                    <div class="flex items-center justify-center flex-col mt-1">
+                      <div class="flex text-base gap-4" id="starRating">
+                        <span
+                          class="material-symbols-outlined cursor-pointer material-filled text-star-yellow">kid_star</span>
+                        <span
+                          class="material-symbols-outlined cursor-pointer material-filled text-star-yellow">kid_star</span>
+                        <span
+                          class="material-symbols-outlined cursor-pointer material-filled text-star-yellow">kid_star</span>
+                        <span class="material-symbols-outlined cursor-pointer">kid_star</span>
+                        <span class="material-symbols-outlined cursor-pointer">kid_star</span>
+                      </div>
+                      <p class="text-center p-2">
+                        Product packaging was good but not satisfied with
+                        delivery time
+                      </p>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Seller Cancelled-->
+              <div class="w-full lg:w-3/4 chat-profile overflow-y-auto scroll hidden"
+                style="max-height: calc(100vh - 24rem)" data-id="5">
+                <div class="bg-mist-teal p-6 sm:w-60 lg:w-full border-b border-mist-black">
+                  <button class="lg:hidden cursor-pointer ticket-menu">
+                    <span class="material-symbols-outlined"> menu </span>
+                  </button>
+                  <div class="flex justify-between lg:items-center flex-col lg:flex-row">
+                    <div class="flex items-center gap-4">
+                      <div
+                        class="bg-transparent-light-sea-green rounded-full w-10 h-10 flex justify-center items-center font-semibold text-base ">
+                        MS
+                      </div>
+                      <div class="flex flex-col gap-1">
+                        <p class="font-bold text-base ">
+                          Monika Singh
+                        </p>
+                        <p class="font-normal text-base ">
+                          MediCore Pharmacy
+                        </p>
+                        <div class="flex gap-2 items-center">
+                          <p class="font-normal text-sm ">
+                            4.3
+                          </p>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1 pt-4 lg:pt-0">
+                      <p class="font-semibold text-base text-light-sea-green">
+                        6 km away
+                      </p>
+                      <div class="flex items-center justify-center gap-0.5">
+                        <span class="material-symbols-outlined -ml-1">timer</span>
+                        <p class="font-normal text-base">
+                          30 Mins
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex justify-between lg:items-center pt-4 flex-col lg:flex-row">
+                    <div class="flex flex-col gap-1">
+                      <p class="font-semibold text-base ">
+                        Date &amp; Time:
+                        <span class="font-normal text-base">12/05/2025 14:40</span>
+                      </p>
+                      <p class="font-normal text-base ">
+                        Order no.: #3454645
+                      </p>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <p class="font-semibold text-base ">
+                        Doctor:
+                        <span class="font-normal text-base">Dr Neha</span>
+                      </p>
+                      <p class="font-semibold text-base lg:text-right">
+                        Patient:
+                        <span class="font-normal text-base">Ravi</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-5">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-1/2 p-2 rounded-2xl rounded-tl-none">
+                    <p class="text-center">
+                      Hi there! I’m looking for the below medicines, please let me knowif you have them.
+                    </p>
+                    <p class="font-semibold text-sm text-medium-gray text-right pt-2">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <p class="font-semibold text-base  text-center">
+                      Last Status:
+                      <span class="font-normal">Waiting for order</span>
+                    </p>
+                    <div class="flex justify-center pt-2">
+                      <button data-status="Waiting for order" data-color="green"
+                        class="font-semibold text-base text-white bg-light-sea-green p-2 rounded-md flex items-center gap-2 cursor-pointer order-tracking-btn">
+                        <span class="material-symbols-outlined">delivery_truck_speed</span>Order Tracking
+                      </button>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <p class="font-semibold text-base  text-center">
+                      Last Status:
+                      <span class="font-normal">Order Confirmed</span>
+                    </p>
+                    <div class="flex justify-center pt-2">
+                      <button data-status="Order Confirmed" data-color="green"
+                        class="font-semibold text-base text-white bg-light-sea-green p-2 rounded-md flex items-center gap-2 cursor-pointer order-tracking-btn">
+                        <span class="material-symbols-outlined">delivery_truck_speed</span>Order Tracking
+                      </button>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <p>Bill Amount: <span class="text-light-sea-green">₹2,425</span></p>
+                    <div class="flex gap-4 mt-2">
+                      <div class="flex flex-col gap-2">
+                        <div class="relative">
+                          <img src="/static/images/bill.jpg" class="h-40 w-32" />
+                          <div
+                            class="absolute h-full w-full bg-smoky-black p-2 text-white top-0 flex flex-col justify-center items-center">
+                            <button class="cursor-pointer popup-btn" data-popup="medicineBillPopup"><span
+                                class="material-symbols-outlined">visibility</span></button>
+                            <span class="text-center">View Sample Bill</span>
+                          </div>
+                        </div>
+                        <button class="underline text-sm font-normal ml-1 cursor-pointer text-skywave-blue">View Bill
+                          Details</button>
+                      </div>
+                      <div class="flex flex-col gap-2">
+                        <div class="relative">
+                          <img src="/static/images/bill.jpg" class="h-40 w-32" />
+                          <div
+                            class="absolute h-full w-full bg-smoky-black p-2 text-white top-0 flex flex-col justify-center items-center">
+                            <button class="cursor-pointer popup-btn" data-popup="platformBillPopup"><span
+                                class="material-symbols-outlined">visibility</span></button>
+                            <span class="text-center">View Sample Bill</span>
+                          </div>
+                        </div>
+                        <button class="underline text-sm font-normal ml-1 cursor-pointer text-skywave-blue">View
+                          Platform Bill</button>
+                      </div>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <!-- Status Dropdown -->
+                    <div class="w-full flex justify-end mb-2 relative">
+                      <div class="inline-block">
+                        <button
+                          class="status-btn py-2 px-4 flex gap-2 items-center justify-end text-light-sea-green border border-light-sea-green rounded-xl cursor-pointer">
+                          Update Status
+                          <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                        </button>
+                        <!-- Dropdown -->
+                        <div
+                          class="status-dropdown w-42 absolute right-0 bg-white shadow-[4px_4px_10px_2px_#00000026] rounded-lg z-10">
+                          <a href="#" class="block px-4 py-3 text-sm rounded-t-lg hover:bg-light-sea-green-opacity">
+                            In-Packaging
+                          </a>
+                          <a href="#" class="block px-4 py-3 text-sm hover:bg-light-sea-green-opacity">
+                            Out for Delivery
+                          </a>
+                          <a href="#" class="block px-4 py-3 text-sm hover:bg-light-sea-green-opacity">
+                            Completed
+                          </a>
+                          <a href="#" class="block px-4 py-3 text-sm rounded-b-lg hover:bg-light-sea-green-opacity">
+                            Seller Cancelled
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                    <p class="text-center">
+                      Last Status:
+                      <span class="font-semibold">In-Packaging/Out for Delivery</span>
+                    </p>
+                    <div class="flex justify-center pt-2">
+                      <button data-status="In-Packaging/Out for Delivery" data-color="green"
+                        class="font-semibold text-base text-white bg-light-sea-green p-2 rounded-md flex items-center gap-2 cursor-pointer order-tracking-btn">
+                        <span class="material-symbols-outlined">delivery_truck_speed</span>Order Tracking
+                      </button>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5">
+                  <div class="border border-teal-shadow bg-white mt-4 sm:w-60 lg:w-3/4 p-2 rounded-2xl rounded-tl-none">
+                    <p class="font-semibold text-base  text-center p-4">
+                      Order Confirmation
+                      <span class="font-normal">Scan the QR or give OTP to confirm delivery</span>
+                    </p>
+
+                    <div class="flex lg:gap-6 pl-4 flex-col lg:flex-row">
+                      <div class="relative p-6">
+                        <div class="openQrModal cursor-pointer relative">
+                          <img src="/static/images/sample-qr.png" alt="qr" class="w-40 h-40 rounded">
+                          <!-- Dark Overlay -->
+                          <div class="absolute inset-0 bg-black opacity-60 rounded"></div>
+                          <!-- Text -->
+                          <div class="absolute inset-0 flex items-center justify-center">
+                            <p class="text-white text-sm font-medium text-center popup-btn" data-popup="scanPopup">
+                              Scan QR for Delivery
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- OTP Section -->
+                      <div class="pt-10 flex flex-col items-center">
+                        <div class="flex gap-3 font-bold text-xl text-jet-black">
+                          <input value="4" class="w-12 product-input !bg-white" />
+                          <input value="6" class="w-12 product-input !bg-white" />
+                          <input value="5" class="w-12 product-input !bg-white" />
+                          <input value="3" class="w-12 product-input !bg-white" />
+                        </div>
+                        <p class="text-xs pt-4">
+                          Do not give OTP over the phone.
+                        </p>
+                        <p class="text-xs">
+                          Only Scan the QR or give OTP after the delivery is
+                          received
+                        </p>
+                        <p class="text-xs">at your given address</p>
+                        <button class="bg-light-sea-green py-2 px-8 text-white mt-4 rounded-md">Verify</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-center">
+                  <div class="flex flex-col gap-3 items-center">
+                    <button class="bg-strong-red text-white rounded-md p-2 cursor-pointer popup-btn"
+                      data-popup="cancelPopup">
+                      Cancel Order 01/03
+                    </button>
+                    <p class="font-semibold text-base text-left">
+                      Dear provider you have canceled 01 out 03 allowed cancellations per month.
+                      <br>
+                      After allowed 03 cancellations. Your account will be unblocked after 30 days.
+                    </p>
+                    <p class="font-semibold text-base text-left">
+                      Dear provider you have canceled 03 out 03 allowed cancellations per month.
+                      <br>
+                      Your account will be unblocked after 30 days.
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="border border-teal-shadow bg-white mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <p class="font-semibold text-base  text-center">
+                      Current Status:
+                      <span class="font-normal text-strong-red">Seller Cancelled</span>
+                    </p>
+                    <div class="flex justify-center pt-2">
+                      <button data-status="Seller Cancelled" data-color="strong-red"
+                        class="font-semibold text-base text-white bg-light-sea-green p-2 rounded-md flex items-center gap-2 cursor-pointer order-tracking-btn">
+                        <span class="material-symbols-outlined">delivery_truck_speed</span>Order Tracking
+                      </button>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Buyers Cancelled-->
+              <div class="w-full lg:w-3/4 chat-profile overflow-y-auto scroll hidden"
+                style="max-height: calc(100vh - 24rem)" data-id="6">
+                <div class="bg-mist-teal p-6 sm:w-60 lg:w-full border-b border-mist-black">
+                  <button class="lg:hidden cursor-pointer ticket-menu">
+                    <span class="material-symbols-outlined"> menu </span>
+                  </button>
+                  <div class="flex justify-between lg:items-center flex-col lg:flex-row">
+                    <div class="flex items-center gap-4">
+                      <div
+                        class="bg-transparent-light-sea-green rounded-full w-10 h-10 flex justify-center items-center font-semibold text-base ">
+                        MS
+                      </div>
+                      <div class="flex flex-col gap-1">
+                        <p class="font-bold text-base ">
+                          Monika Singh
+                        </p>
+                        <p class="font-normal text-base ">
+                          MediCore Pharmacy
+                        </p>
+                        <div class="flex gap-2 items-center">
+                          <p class="font-normal text-sm ">
+                            4.3
+                          </p>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                          <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1 pt-4 lg:pt-0">
+                      <p class="font-semibold text-base text-light-sea-green">
+                        6 km away
+                      </p>
+                      <div class="flex items-center justify-center gap-0.5">
+                        <span class="material-symbols-outlined -ml-1">timer</span>
+                        <p class="font-normal text-base">
+                          30 Mins
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex justify-between lg:items-center pt-4 flex-col lg:flex-row">
+                    <div class="flex flex-col gap-1">
+                      <p class="font-semibold text-base ">
+                        Date &amp; Time:
+                        <span class="font-normal text-base">12/05/2025 14:40</span>
+                      </p>
+                      <p class="font-normal text-base ">
+                        Order no.: #3454645
+                      </p>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <p class="font-semibold text-base ">
+                        Doctor:
+                        <span class="font-normal text-base">Dr Neha</span>
+                      </p>
+                      <p class="font-semibold text-base lg:text-right">
+                        Patient:
+                        <span class="font-normal text-base">Ravi</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-5">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-1/2 p-2 rounded-2xl rounded-tl-none">
+                    <p class="text-center">
+                      Hi there! I’m looking for the below medicines, please let me knowif you have them.
+                    </p>
+                    <p class="font-semibold text-sm text-medium-gray text-right pt-2">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <p class="font-semibold text-base  text-center">
+                      Last Status:
+                      <span class="font-normal">Waiting for order</span>
+                    </p>
+                    <div class="flex justify-center pt-2">
+                      <button data-status="Waiting for order" data-color="green"
+                        class="font-semibold text-base text-white bg-light-sea-green p-2 rounded-md flex items-center gap-2 cursor-pointer order-tracking-btn">
+                        <span class="material-symbols-outlined">delivery_truck_speed</span>Order Tracking
+                      </button>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <p class="font-semibold text-base  text-center">
+                      Last Status:
+                      <span class="font-normal">Order Confirmed</span>
+                    </p>
+                    <div class="flex justify-center pt-2">
+                      <button data-status="Order Confirmed" data-color="green"
+                        class="font-semibold text-base text-white bg-light-sea-green p-2 rounded-md flex items-center gap-2 cursor-pointer order-tracking-btn">
+                        <span class="material-symbols-outlined">delivery_truck_speed</span>Order Tracking
+                      </button>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <p>Bill Amount: <span class="text-light-sea-green">₹2,425</span></p>
+                    <div class="flex gap-4 mt-2">
+                      <div class="flex flex-col gap-2">
+                        <div class="relative">
+                          <img src="/static/images/bill.jpg" class="h-40 w-32" />
+                          <div
+                            class="absolute h-full w-full bg-smoky-black p-2 text-white top-0 flex flex-col justify-center items-center">
+                            <button class="cursor-pointer popup-btn" data-popup="medicineBillPopup"><span
+                                class="material-symbols-outlined">visibility</span></button>
+                            <span class="text-center">View Sample Bill</span>
+                          </div>
+                        </div>
+                        <button class="underline text-sm font-normal ml-1 cursor-pointer text-skywave-blue">View Bill
+                          Details</button>
+                      </div>
+                      <div class="flex flex-col gap-2">
+                        <div class="relative">
+                          <img src="/static/images/bill.jpg" class="h-40 w-32" />
+                          <div
+                            class="absolute h-full w-full bg-smoky-black p-2 text-white top-0 flex flex-col justify-center items-center">
+                            <button class="cursor-pointer popup-btn" data-popup="platformBillPopup"><span
+                                class="material-symbols-outlined">visibility</span></button>
+                            <span class="text-center">View Sample Bill</span>
+                          </div>
+                        </div>
+                        <button class="underline text-sm font-normal ml-1 cursor-pointer text-skywave-blue">View
+                          Platform Bill</button>
+                      </div>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <!-- Status Dropdown -->
+                    <div class="w-full flex justify-end mb-2 relative">
+                      <div class="inline-block">
+                        <button
+                          class="status-btn py-2 px-4 flex gap-2 items-center justify-end text-light-sea-green border border-light-sea-green rounded-xl cursor-pointer">
+                          Update Status
+                          <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                        </button>
+                        <!-- Dropdown -->
+                        <div
+                          class="status-dropdown w-42 absolute right-0 bg-white shadow-[4px_4px_10px_2px_#00000026] rounded-lg z-10">
+                          <a href="#" class="block px-4 py-3 text-sm rounded-t-lg hover:bg-light-sea-green-opacity">
+                            In-Packaging
+                          </a>
+                          <a href="#" class="block px-4 py-3 text-sm hover:bg-light-sea-green-opacity">
+                            Out for Delivery
+                          </a>
+                          <a href="#" class="block px-4 py-3 text-sm hover:bg-light-sea-green-opacity">
+                            Completed
+                          </a>
+                          <a href="#" class="block px-4 py-3 text-sm rounded-b-lg hover:bg-light-sea-green-opacity">
+                            Seller Cancelled
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                    <p class="text-center">
+                      Last Status:
+                      <span class="font-semibold">In-Packaging/Out for Delivery</span>
+                    </p>
+                    <div class="flex justify-center pt-2">
+                      <button data-status="In-Packaging/Out for Delivery" data-color="green"
+                        class="font-semibold text-base text-white bg-light-sea-green p-2 rounded-md flex items-center gap-2 cursor-pointer order-tracking-btn">
+                        <span class="material-symbols-outlined">delivery_truck_speed</span>Order Tracking
+                      </button>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5">
+                  <div class="border border-teal-shadow bg-white mt-4 sm:w-60 lg:w-3/4 p-2 rounded-2xl rounded-tl-none">
+                    <p class="font-semibold text-base  text-center p-4">
+                      Order Confirmation
+                      <span class="font-normal">Scan the QR or give OTP to confirm delivery</span>
+                    </p>
+
+                    <div class="flex lg:gap-6 pl-4 flex-col lg:flex-row">
+                      <div class="relative p-6">
+                        <div class="openQrModal cursor-pointer relative">
+                          <img src="/static/images/sample-qr.png" alt="qr" class="w-40 h-40 rounded">
+                          <!-- Dark Overlay -->
+                          <div class="absolute inset-0 bg-black opacity-60 rounded"></div>
+                          <!-- Text -->
+                          <div class="absolute inset-0 flex items-center justify-center">
+                            <p class="text-white text-sm font-medium text-center popup-btn" data-popup="scanPopup">
+                              Scan QR for Delivery
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- OTP Section -->
+                      <div class="pt-10 flex flex-col items-center">
+                        <div class="flex gap-3 font-bold text-xl text-jet-black">
+                          <input value="4" class="w-12 product-input !bg-white" />
+                          <input value="6" class="w-12 product-input !bg-white" />
+                          <input value="5" class="w-12 product-input !bg-white" />
+                          <input value="3" class="w-12 product-input !bg-white" />
+                        </div>
+                        <p class="text-xs pt-4">
+                          Do not give OTP over the phone.
+                        </p>
+                        <p class="text-xs">
+                          Only Scan the QR or give OTP after the delivery is
+                          received
+                        </p>
+                        <p class="text-xs">at your given address</p>
+                        <button class="bg-light-sea-green py-2 px-8 text-white mt-4 rounded-md">Verify</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <p class="font-semibold text-base  text-center">
+                      Current Status:
+                      <span class="font-normal text-strong-red">Buyers Cancelled</span>
+                    </p>
+                    <div class="flex justify-center pt-2">
+                      <button data-status="Buyers Cancelled" data-color="strong-red"
+                        class="font-semibold text-base text-white bg-light-sea-green p-2 rounded-md flex items-center gap-2 cursor-pointer order-tracking-btn">
+                        <span class="material-symbols-outlined">delivery_truck_speed</span>Order Tracking
+                      </button>
+                    </div>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <p class="font-semibold text-base  text-center">
+                      Current Status:
+                      <span class="font-normal">Checking Refund</span>
+                    </p>
+                    <div class="flex justify-center pt-2">
+                      <button data-status="Checking Refund" data-color="green"
+                        class="font-semibold text-base text-white bg-light-sea-green p-2 rounded-md flex items-center gap-2 cursor-pointer order-tracking-btn">
+                        <span class="material-symbols-outlined">delivery_truck_speed</span>Order Tracking
+                      </button>
+                    </div>
+                    <p class="text-center pt-2">Refund checking time 7 workdays</p>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+                <div class="p-5 flex justify-end">
+                  <div class="bg-teal-shadow mt-4 sm:w-60 lg:w-72 p-2 rounded-2xl rounded-tr-none">
+                    <p class="font-semibold text-base  text-center">
+                      Current Status:
+                      <span class="font-normal">Refund Credited</span>
+                    </p>
+                    <div class="flex justify-center pt-2">
+                      <button data-status="Refund Credited" data-color="green"
+                        class="font-semibold text-base text-white bg-light-sea-green p-2 rounded-md flex items-center gap-2 cursor-pointer order-tracking-btn">
+                        <span class="material-symbols-outlined">delivery_truck_speed</span>Order Tracking
+                      </button>
+                    </div>
+                    <p class="text-center pt-2">Refund credited to seller balance</p>
+                    <p class="font-semibold text-sm text-medium-gray pt-2 text-end">
+                      12:31 PM
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- History content -->
+          <div class="history tab-content pt-6 pb-3 space-y-2 hidden">
+            <div class="pt-8 flex justify-between flex-col lg:flex-row">
+              <p class="font-semibold text-base pt-4 lg:pt-0 pb-4 lg:pb-0 pl-4">
+                Order History
+              </p>
+              <div class="flex gap-4 flex-col lg:flex-row">
+                <div class="lg:w-110 w-full rounded-[6px] bg-light-white flex items-center gap-2 px-2">
+                  <span class="material-symbols-outlined text-dark-gray">
+                    search
+                  </span>
+                  <input type="text" placeholder="Search by medicine name or categories"
+                    class="w-full py-2.5 focus:ring-0 placeholder:text-medium-gray border-none bg-transparent" />
+                </div>
+                <div class="flex gap-2">
+                  <div class="inline-block relative">
+                    <button
+                      class="status-btn py-2 px-4 flex gap-2 items-center justify-end text-light-sea-green border border-light-sea-green rounded-xl cursor-pointer hover:bg-light-sea-green hover:text-white">
+                      <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                      Filter
+                    </button>
+                    <!-- Dropdown -->
+                    <div
+                      class="status-dropdown w-36 absolute left-0 bg-white shadow-[4px_4px_10px_2px_#00000026] rounded-lg z-10">
+                      <a href="#" class="block px-4 py-3 text-sm rounded-t-lg hover:bg-light-sea-green hover:text-white">
+                        Processing
+                      </a>
+                      <a href="#" class="block px-4 py-3 text-sm hover:bg-light-sea-green hover:text-white">
+                        Out for Delivery
+                      </a>
+                      <a href="#" class="block px-4 py-3 text-sm hover:bg-light-sea-green hover:text-white">
+                        Completed
+                      </a>
+                      <a href="#" class="block px-4 py-3 text-sm rounded-b-lg hover:bg-light-sea-green hover:text-white">
+                        Cancel
+                      </a>
+                    </div>
+                  </div>
+                  <button
+                    class="popup-btn activity-buttons w-full max-w-[90px] p-2 h-[40px] border border-light-sea-green rounded-[10px] text-light-sea-green flex items-center justify-center gap-1 cursor-pointer group hover:bg-light-sea-green hover:text-white"
+                    data-popup="historyPopup">
+                    <span class="material-symbols-outlined text-light-sea-green group-hover:text-white">
+                      file_export
+                    </span>
+                    Export
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-y-auto max-h-[40vh] scroll">
+              <!-- Table -->
+              <div class="overflow-y-auto max-h-[40vh] scroll">
+                <table class="min-w-full table-auto whitespace-nowrap docTable">
+                  <thead class="bg-light-sea-green text-white text-sm sm:text-18-b">
+                    <tr>
+                      <th class="text-center p-4 border-r border-white">
+                        <div class="flex items-center justify-center gap-2">
+                          Date & Time
+                          
+                        </div>
+                      </th>
+                      <th class="text-center p-4 border-r border-white">
+                        Customer
+                      </th>
+                      <th class="text-center p-4 border-r border-white">Customer Type</th>
+                      <th class="text-center p-4 border-r border-white">Platform Discount</th>
+                      <th class="text-center p-4 border-r border-white">
+                        Payment Received
+                      </th>
+                      <th class="text-center p-4 border-r border-white">Points</th>
+                      <th class="text-center p-4 border-r border-white">
+                        <div class="flex items-center justify-center gap-2">
+                          Status
+                          <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
+                        </div>
+                      </th>
+                      <th class="text-center p-4">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white text-dark-gray text-16-fs">
+                    <tr>
+                      <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
+                      <td class="px-4 py-4.5 text-center">Monika</td>
+                      <td class="px-4 py-4.5 text-center">Gold</td>
+                      <td class="px-4 py-4.5 text-center">-10</td>
+                      <td class="px-4 py-4.5 text-center">980</td>
+                      <td class="px-4 py-4.5 text-center">2580</td>
+                      <td class="px-6 py-4.5 text-center">
+                        <div class="bg-mint-cream text-green py-2 rounded-md border-none">
+                          Completed
+                        </div>
+                      </td>
+                      <td class="px-4 py-4.5 flex gap-4 justify-center items-center">
+                        <span title="Saved"
+                          class="material-symbols-outlined cursor-pointer material-filled text-light-sea-green hover:bg-transparent-light-sea-green rounded-full transition-all">
+                          bookmark
+                        </span>
+                        <div class="relative pt-1 cursor-pointer popup-btn" title="Download Platform Bill"
+                          data-popup="platformBillPopup">
+                          <span class="material-symbols-outlined">
+                            content_paste
+                          </span>
+                          <span class="absolute top-2 left-2 text-xs">
+                            P
+                          </span>
+                        </div>
+                        <div class="relative cursor-pointer popup-btn" title="Download Medicine Bill"
+                          data-popup="medicineBillPopup">
+                          <span class="material-symbols-outlined ">
+                            calendar_today
+                          </span>
+                          <span class="absolute top-[6.5px] left-2 text-[10px]">
+                            M
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
+                      <td class="px-4 py-4.5 text-center">Monika</td>
+                      <td class="px-4 py-4.5 text-center">Silver</td>
+                      <td class="px-4 py-4.5 text-center">-20</td>
+                      <td class="px-4 py-4.5 text-center">980</td>
+                      <td class="px-4 py-4.5 text-center">2580</td>
+                      <td class="px-6 py-4.5 text-center">
+                        <div class="bg-peach text-burnt-orange py-2 rounded-md border-none">
+                          Processing
+                        </div>
+                      </td>
+                      <td class="px-4 py-4.5 flex gap-4 justify-center items-center">
+                        <span title="Saved"
+                          class="material-symbols-outlined cursor-pointer material-filled text-light-sea-green hover:bg-transparent-light-sea-green rounded-full transition-all">
+                          bookmark
+                        </span>
+                        <div class="relative pt-1 cursor-pointer popup-btn" title="Download Platform Bill"
+                          data-popup="platformBillPopup">
+                          <span class="material-symbols-outlined">
+                            content_paste
+                          </span>
+                          <span class="absolute top-2 left-2 text-xs">
+                            P
+                          </span>
+                        </div>
+                        <div class="relative cursor-pointer popup-btn" title="Download Medicine Bill"
+                          data-popup="medicineBillPopup">
+                          <span class="material-symbols-outlined ">
+                            calendar_today
+                          </span>
+                          <span class="absolute top-[6.5px] left-2 text-[10px]">
+                            M
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
+                      <td class="px-4 py-4.5 text-center">Monika</td>
+                      <td class="px-4 py-4.5 text-center">Diamond</td>
+                      <td class="px-4 py-4.5 text-center">-10</td>
+                      <td class="px-4 py-4.5 text-center">980</td>
+                      <td class="px-4 py-4.5 text-center">2580</td>
+                      <td class="px-6 py-4.5 text-center">
+                        <div class="bg-mint-cream text-green py-2 rounded-md border-none">
+                          Completed
+                        </div>
+                      </td>
+                      <td class="px-4 py-4.5 flex gap-4 justify-center items-center">
+                        <span title="Saved"
+                          class="material-symbols-outlined cursor-pointer material-filled text-light-sea-green hover:bg-transparent-light-sea-green rounded-full transition-all">
+                          bookmark
+                        </span>
+                        <div class="relative pt-1 cursor-pointer popup-btn" title="Download Platform Bill"
+                          data-popup="platformBillPopup">
+                          <span class="material-symbols-outlined">
+                            content_paste
+                          </span>
+                          <span class="absolute top-2 left-2 text-xs">
+                            P
+                          </span>
+                        </div>
+                        <div class="relative cursor-pointer popup-btn" title="Download Medicine Bill"
+                          data-popup="medicineBillPopup">
+                          <span class="material-symbols-outlined ">
+                            calendar_today
+                          </span>
+                          <span class="absolute top-[6.5px] left-2 text-[10px]">
+                            M
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
+                      <td class="px-4 py-4.5 text-center">Monika</td>
+                      <td class="px-4 py-4.5 text-center">Gold</td>
+                      <td class="px-4 py-4.5 text-center">-20</td>
+                      <td class="px-4 py-4.5 text-center">980</td>
+                      <td class="px-4 py-4.5 text-center">2580</td>
+                      <td class="px-6 py-4.5 text-center">
+                        <div class="bg-mint-cream text-green py-2 rounded-md border-none">
+                          Completed
+                        </div>
+                      </td>
+                      <td class="px-4 py-4.5 flex gap-4 justify-center items-center">
+                        <span title="Saved"
+                          class="material-symbols-outlined cursor-pointer material-filled text-light-sea-green hover:bg-transparent-light-sea-green rounded-full transition-all">
+                          bookmark
+                        </span>
+                        <div class="relative pt-1 cursor-pointer popup-btn" title="Download Platform Bill"
+                          data-popup="platformBillPopup">
+                          <span class="material-symbols-outlined">
+                            content_paste
+                          </span>
+                          <span class="absolute top-2 left-2 text-xs">
+                            P
+                          </span>
+                        </div>
+                        <div class="relative cursor-pointer popup-btn" title="Download Medicine Bill"
+                          data-popup="medicineBillPopup">
+                          <span class="material-symbols-outlined ">
+                            calendar_today
+                          </span>
+                          <span class="absolute top-[6.5px] left-2 text-[10px]">
+                            M
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
+                      <td class="px-4 py-4.5 text-center">Monika</td>
+                      <td class="px-4 py-4.5 text-center">Silver</td>
+                      <td class="px-4 py-4.5 text-center">-30</td>
+                      <td class="px-4 py-4.5 text-center">980</td>
+                      <td class="px-4 py-4.5 text-center">2580</td>
+                      <td class="px-6 py-4.5 text-center">
+                        <div class="bg-mint-cream text-green py-2 rounded-md border-none">
+                          Completed
+                        </div>
+                      </td>
+                      <td class="px-4 py-4.5 flex gap-4 justify-center items-center">
+                        <span title="Saved"
+                          class="material-symbols-outlined cursor-pointer material-filled text-light-sea-green hover:bg-transparent-light-sea-green rounded-full transition-all">
+                          bookmark
+                        </span>
+                        <div class="relative pt-1 cursor-pointer popup-btn" title="Download Platform Bill"
+                          data-popup="platformBillPopup">
+                          <span class="material-symbols-outlined">
+                            content_paste
+                          </span>
+                          <span class="absolute top-2 left-2 text-xs">
+                            P
+                          </span>
+                        </div>
+                        <div class="relative cursor-pointer popup-btn" title="Download Medicine Bill"
+                          data-popup="medicineBillPopup">
+                          <span class="material-symbols-outlined ">
+                            calendar_today
+                          </span>
+                          <span class="absolute top-[6.5px] left-2 text-[10px]">
+                            M
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
+                      <td class="px-4 py-4.5 text-center">Monika</td>
+                      <td class="px-4 py-4.5 text-center">Gold</td>
+                      <td class="px-4 py-4.5 text-center">-20</td>
+                      <td class="px-4 py-4.5 text-center">980</td>
+                      <td class="px-4 py-4.5 text-center">2580</td>
+                      <td class="px-6 py-4.5 text-center">
+                        <div class="bg-mint-cream text-green py-2 rounded-md border-none">
+                          Completed
+                        </div>
+                      </td>
+                      <td class="px-4 py-4.5 flex gap-4 justify-center items-center">
+                        <span title="Saved"
+                          class="material-symbols-outlined cursor-pointer material-filled text-light-sea-green hover:bg-transparent-light-sea-green rounded-full transition-all">
+                          bookmark
+                        </span>
+                        <div class="relative pt-1 cursor-pointer popup-btn" title="Download Platform Bill"
+                          data-popup="platformBillPopup">
+                          <span class="material-symbols-outlined">
+                            content_paste
+                          </span>
+                          <span class="absolute top-2 left-2 text-xs">
+                            P
+                          </span>
+                        </div>
+                        <div class="relative cursor-pointer popup-btn" title="Download Medicine Bill"
+                          data-popup="medicineBillPopup">
+                          <span class="material-symbols-outlined ">
+                            calendar_today
+                          </span>
+                          <span class="absolute top-[6.5px] left-2 text-[10px]">
+                            M
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
+                      <td class="px-4 py-4.5 text-center">Monika</td>
+                      <td class="px-4 py-4.5 text-center">Diamond</td>
+                      <td class="px-4 py-4.5 text-center">-10</td>
+                      <td class="px-4 py-4.5 text-center">980</td>
+                      <td class="px-4 py-4.5 text-center">2580</td>
+                      <td class="px-6 py-4.5 text-center">
+                        <div class="bg-mint-cream text-green py-2 rounded-md border-none">
+                          Completed
+                        </div>
+                      </td>
+                      <td class="px-4 py-4.5 flex gap-4 justify-center items-center">
+                        <span title="Saved"
+                          class="material-symbols-outlined cursor-pointer material-filled text-light-sea-green hover:bg-transparent-light-sea-green rounded-full transition-all">
+                          bookmark
+                        </span>
+                        <div class="relative pt-1 cursor-pointer popup-btn" title="Download Platform Bill"
+                          data-popup="platformBillPopup">
+                          <span class="material-symbols-outlined">
+                            content_paste
+                          </span>
+                          <span class="absolute top-2 left-2 text-xs">
+                            P
+                          </span>
+                        </div>
+                        <div class="relative cursor-pointer popup-btn" title="Download Medicine Bill"
+                          data-popup="medicineBillPopup">
+                          <span class="material-symbols-outlined ">
+                            calendar_today
+                          </span>
+                          <span class="absolute top-[6.5px] left-2 text-[10px]">
+                            M
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
+                      <td class="px-4 py-4.5 text-center">Monika</td>
+                      <td class="px-4 py-4.5 text-center">Gold</td>
+                      <td class="px-4 py-4.5 text-center">-10</td>
+                      <td class="px-4 py-4.5 text-center">980</td>
+                      <td class="px-4 py-4.5 text-center">2580</td>
+                      <td class="px-6 py-4.5 text-center">
+                        <div class="bg-mint-cream text-green py-2 rounded-md border-none">
+                          Completed
+                        </div>
+                      </td>
+                      <td class="px-4 py-4.5 flex gap-4 justify-center items-center">
+                        <span title="Saved"
+                          class="material-symbols-outlined cursor-pointer material-filled text-light-sea-green hover:bg-transparent-light-sea-green rounded-full transition-all">
+                          bookmark
+                        </span>
+                        <div class="relative pt-1 cursor-pointer popup-btn" title="Download Platform Bill"
+                          data-popup="platformBillPopup">
+                          <span class="material-symbols-outlined">
+                            content_paste
+                          </span>
+                          <span class="absolute top-2 left-2 text-xs">
+                            P
+                          </span>
+                        </div>
+                        <div class="relative cursor-pointer popup-btn" title="Download Medicine Bill"
+                          data-popup="medicineBillPopup">
+                          <span class="material-symbols-outlined ">
+                            calendar_today
+                          </span>
+                          <span class="absolute top-[6.5px] left-2 text-[10px]">
+                            M
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
+                      <td class="px-4 py-4.5 text-center">Monika</td>
+                      <td class="px-4 py-4.5 text-center">Gold</td>
+                      <td class="px-4 py-4.5 text-center">-10</td>
+                      <td class="px-4 py-4.5 text-center">980</td>
+                      <td class="px-4 py-4.5 text-center">2580</td>
+                      <td class="px-6 py-4.5 text-center">
+                        <div class="bg-mint-cream text-green py-2 rounded-md border-none">
+                          Completed
+                        </div>
+                      </td>
+                      <td class="px-4 py-4.5 flex gap-4 justify-center items-center">
+                        <span title="Saved"
+                          class="material-symbols-outlined cursor-pointer material-filled text-light-sea-green hover:bg-transparent-light-sea-green rounded-full transition-all">
+                          bookmark
+                        </span>
+                        <div class="relative pt-1 cursor-pointer popup-btn" title="Download Platform Bill"
+                          data-popup="platformBillPopup">
+                          <span class="material-symbols-outlined">
+                            content_paste
+                          </span>
+                          <span class="absolute top-2 left-2 text-xs">
+                            P
+                          </span>
+                        </div>
+                        <div class="relative cursor-pointer popup-btn" title="Download Medicine Bill"
+                          data-popup="medicineBillPopup">
+                          <span class="material-symbols-outlined ">
+                            calendar_today
+                          </span>
+                          <span class="absolute top-[6.5px] left-2 text-[10px]">
+                            M
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Orders tracking popup -->
+      <div
+        class="fixed inset-0 bg-semi-transparent-black hidden items-center justify-center z-50 trackingPopup px-4 sm:px-6 md:px-8">
+        <div class="bg-white w-full max-w-[90%] sm:max-w-[80%] md:max-w-[600px] lg:max-w-[640px] rounded-lg p-4 sm:p-6">
+          <!-- Header -->
+          <div class="flex justify-between items-center">
+            <p class="font-bold text-lg sm:text-xl">
+              Order Tracking
+            </p>
+            <span class="material-symbols-outlined close-popup cursor-pointer" data-popup="trackingPopup">close</span>
+          </div>
+          <!-- User Info -->
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-6 gap-4 sm:gap-0">
+            <div class="flex items-center gap-4">
+              <div
+                class="bg-transparent-light-sea-green rounded-full w-10 h-10 flex justify-center items-center font-semibold text-base ">
+                MS
+              </div>
+              <div class="flex flex-col gap-1">
+                <p class="font-bold text-base ">
+                  Monika Singh
+                </p>
+                <p class="font-normal text-base ">
+                  No Pharmacy Selected
+                </p>
+                <div class="flex gap-2 items-center">
+                  <p class="font-normal text-sm ">
+                    4.3
+                  </p>
+                  <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                  <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                  <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                  <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                  <span class="material-symbols-outlined material-filled text-star-yellow">star</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-col gap-1 pt-4 lg:pt-0">
+              <p class="font-semibold text-base text-light-sea-green">
+                6 km away
+              </p>
+              <div class="flex items-center justify-center gap-0.5">
+                <span class="material-symbols-outlined -ml-1">timer</span>
+                <p class="font-normal text-base">
+                  30 Mins
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <hr class="text-light-sea-green mt-4">
+          <div class="overflow-y-auto max-h-96 scroll">
+            <!-- Order Info -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-4 gap-4 sm:gap-0">
+              <div class="flex flex-col gap-1">
+                <p class="font-semibold text-base ">
+                  Doctor: <span class="font-normal">Dr Neha</span>
+                </p>
+                <p class="font-semibold text-base">
+                  Patient: <span class="font-normal">Ravi</span>
+                </p>
+                <p class="font-semibold text-base ">
+                  Status <span class="font-normal text-lg">:</span>
+                </p>
+              </div>
+              <div class="flex flex-col gap-1 sm:text-right">
+                <p class="font-semibold text-base ">
+                  Order no.:
+                  <span class="font-normal">#3454645</span>
+                </p>
+                <p class="font-semibold text-base ">
+                  Date &amp; Time:
+                  <span class="font-normal text-base">12/05/2025 14:40</span>
+                </p>
+                <p class="font-semibold text-base order-current-status">
+                  Order Expired
+                </p>
+              </div>
+            </div>
+
+            <!-- Address & Bill -->
+            <div class="bg-slate-white border border-light-sea-green p-4 mt-4 rounded-md">
+              <div class="flex flex-col gap-3">
+                <p class="font-semibold text-base text-jet-black">
+                  Delivery address :
+                </p>
+                <p class="font-normal text-xs text-jet-black">
+                  RKL Anand phase 1, Runwal Skylark,704, Floor 7th
+                  RKL Anand Apartment, Pimpri Chinchwad,
+                  Maharashtra, India , 41104.
+                </p>
+              </div>
+              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-4">
+                <p class="font-semibold text-base text-jet-black">
+                  Bill Details
+                </p>
+                <div class="flex items-center gap-3 mt-2 sm:mt-0">
+                  <img src="/static/images/upi.svg" alt="upi logo" class="h-6 w-6">
+                  <p class="font-semibold text-base text-jet-black">
+                    UPI Payment
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-center justify-between pt-2">
+                <p class="font-normal text-sm ">
+                  Total Medicine cost
+                </p>
+                <p class="font-semibold text-base ">
+                  ₹256.5
+                </p>
+              </div>
+              <div class="flex items-center justify-between pt-2">
+                <p class="font-normal text-sm ">
+                  GST on medicine (12%)
+                </p>
+                <p class="font-semibold text-base ">
+                  ₹30.78
+                </p>
+              </div>
+              <div class="flex items-center justify-between pt-2">
+                <p class="font-semibold text-base ">
+                  Total cost + GST
+                </p>
+                <p class="font-semibold text-base ">
+                  ₹287.28
+                </p>
+              </div>
+            </div>
+
+          <!-- Status Tracker -->
+          <div class="flex justify-between items-center pt-4">
+            <p class="font-semibold text-base ">
+              Status
+            </p>
+            <p class="font-semibold text-base ">
+              Date &amp; Time
+            </p>
+          </div>
+          <div id="statusTracker"
+            class="flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between pt-2">
+            <div class="flex gap-2 items-start sm:items-center">
+              <div id="statusDots" class="flex flex-col">
+                <!-- Dots go here -->
+              </div>
+              <div id="statusLabels" class="flex flex-col gap-4">
+                <!-- Status labels go here -->
+              </div>
+            </div>
+            <div id="statusTimes" class="flex flex-col gap-4 sm:text-right">
+              <!-- Timestamps go here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Bid submit popup -->
+    <div
+      class="fixed inset-0 bg-semi-transparent-black hidden items-center justify-center z-50 submitPopup px-4 sm:px-6 md:px-8">
+      <div class="bg-white w-full max-w-[90%] sm:max-w-[80%] md:max-w-[600px] lg:max-w-[640px] rounded-lg p-4 sm:p-6">
+        <!-- Header -->
+        <div class="flex justify-end">
+          <span class="material-symbols-outlined close-popup cursor-pointer" data-popup="submitPopup">close</span>
+        </div>
+        <div class="flex flex-col items-center justify-center gap-4">
+          <span class="material-symbols-outlined text-light-sea-green !text-[10rem]">gavel</span>
+          <p class="font-semibold text-jet-black">Your Bid is Submiitted</p>
+          <p class="text-sm text-center">Congratulation! You will earn <span
+              class="text-light-sea-green font-medium">2.8</span> Points on this order</p>
+          <button class="bg-light-sea-green text-white py-2 px-8 rounded-md cursor-pointer">Track Request</button>
+        </div>
+      </div>
+    </div>
+    <!-- Prescription popup -->
+    <div
+      class="fixed inset-0 bg-semi-transparent-black hidden items-center justify-center z-50 prescriptionPopup px-4 sm:px-6 md:px-8">
+      <div class="bg-white w-full max-w-[90%] sm:max-w-[80%] md:max-w-[600px] lg:max-w-[640px] rounded-lg p-4 sm:p-6">
+        <!-- Header -->
+        <div class="flex justify-between items-center">
+          <p class="font-bold text-lg sm:text-xl">
+            Prescription
+          </p>
+          <span class="material-symbols-outlined close-popup cursor-pointer" data-popup="prescriptionPopup">close</span>
+        </div>
+        <img src="/static/images/prescription.jpg" alt="Sample Bill" class="max-w-full mx-auto max-h-[80vh] rounded p-4">
+        <div class="flex justify-end items-center">
+          <span class="material-symbols-outlined ml-4 material-filled text-strong-red">disabled_by_default</span>
+          <span class="material-symbols-outlined ml-4 material-filled text-green">check_box</span>
+        </div>
+      </div>
+    </div>
+    <!-- Order confirm popup -->
+    <div
+      class="fixed inset-0 bg-semi-transparent-black hidden items-center justify-center z-50 confirmPopup px-4 sm:px-6 md:px-8">
+      <div class="bg-white w-full max-w-[90%] sm:max-w-[80%] md:max-w-[600px] lg:max-w-[640px] rounded-lg p-4 sm:p-6">
+        <!-- Header -->
+        <div class="flex justify-end">
+          <span class="material-symbols-outlined close-popup cursor-pointer" data-popup="confirmPopup">close</span>
+        </div>
+        <div class="flex flex-col gap-4 text-dark-gray">
+          <!-- Trophy Illustration -->
+          <div class="flex justify-center">
+            <img src="/static/images/order-trophy.svg" alt="Trophy" class="w-32 h-32">
+          </div>
+
+            <!-- Confirmation Message -->
+            <h2 class="text-xl font-semibold text-center text-jet-black">Congratulations! Order Confirmed.</h2>
+
+            <!-- Monica Info -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <img src="/static/images/user.svg" alt="Monica" class="w-10 h-10 rounded-full">
+                <div class="text-left">
+                  <p class="font-medium">Monica</p>
+                  <div class="flex items-center text-light-sea-green gap-1">
+                    <span>4.3</span>
+                    <span class="material-symbols-outlined material-filled">star</span>
+                    <span class="material-symbols-outlined material-filled">star</span>
+                    <span class="material-symbols-outlined material-filled">star</span>
+                    <span class="material-symbols-outlined material-filled">star</span>
+                    <span class="material-symbols-outlined material-filled">star</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-1">
+                <div class="flex items-center justify-center gap-0.5">
+                  <span class="material-symbols-outlined -ml-1">timer</span>
+                  <p class="font-normal text-base">
+                    30 Mins
+                  </p>
+                </div>
+                <p class="font-semibold text-base text-light-sea-green">
+                  6 km away
+                </p>
+              </div>
+            </div>
+
+            <!-- Bill Summary -->
+            <div class="bg-soft-teal p-4 rounded-md flex justify-between items-start">
+              <div>
+                <p><strong>Bill Amount :</strong> <span class="text-light-sea-green font-semibold">₹2,425</span></p>
+                <a href="#" class="text-skywave-blue underline text-xs">View Bill Details</a>
+              </div>
+              <div class="text-right">
+                <p><strong>Platfom Amount :</strong> <span class="text-light-sea-green font-semibold">₹242.5</span></p>
+                <a href="#" class="text-skywave-blue underline text-xs">View Platform Bill</a>
+              </div>
+            </div>
+
+            <!-- Balances -->
+            <div class="flex justify-between text-sm font-semibold">
+              <p>Your Platform Balance is <span class="text-light-sea-green">₹4234</span></p>
+              <p>Your Point Balance is <span class="text-light-sea-green">34231</span></p>
+            </div>
+
+            <!-- Earned Points -->
+            <p class="text-sm text-center">Congratulation! You have earned <span
+                class="text-light-sea-green font-bold">2.8</span> Points on the order completion</p>
+
+            <!-- Buttons -->
+            <div class="flex justify-center gap-3">
+              <button
+                class="flex items-center space-x-1 border border-light-sea-green text-light-sea-green px-4 py-2 rounded-md ">
+                <span class="material-symbols-outlined">communication</span>
+                <span>Order Discussion</span>
+              </button>
+              <button class="flex items-center space-x-1 bg-light-sea-green text-white px-4 py-2 rounded-md">
+                <span class="material-symbols-outlined">delivery_truck_speed</span>
+                <span>Order Tracking</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Scan popup -->
+      <div
+        class="fixed inset-0 bg-semi-transparent-black hidden items-center justify-center z-50 scanPopup px-4 sm:px-6 md:px-8">
+        <div
+          class="bg-white text-dark-gray w-full max-w-[90%] sm:max-w-[80%] md:max-w-[600px] lg:max-w-[640px] rounded-lg p-4 sm:p-6">
+          <!-- Header -->
+          <div class="flex justify-end">
+            <span class="material-symbols-outlined close-popup cursor-pointer" data-popup="scanPopup">close</span>
+          </div>
+          <div class="flex flex-col">
+            <p class="font-bold text-lg  text-center">
+              Scan QR for Delivery
+            </p>
+            <p class="font-semibold text-base  text-center">
+              Order Confirmation
+              <span class="font-normal">Scan the QR or give OTP to confirm
+                delivery</span>
+            </p>
+          </div>
+          <div class="flex justify-center pt-2">
+            <img src="/static/images/sample-qr.png" alt="QR Code" class="w-64 h-64 object-contain">
+          </div>
+          <div class="flex flex-col items-center justify-center mt-2">
+            <p class="font-bold text-2xl text-jet-black tracking-[1em]">
+              3353
+            </p>
+            <p class="text-xs pt-4">
+              Do not give OTP over the phone.
+            </p>
+            <p class="text-xs">
+              Only Scan the QR or give OTP after the delivery is
+              received
+            </p>
+            <p class="text-xs">at your given address</p>
+          </div>
+        </div>
+      </div>
+      <!-- Order cancel popup -->
+      <div
+        class="fixed inset-0 bg-semi-transparent-black hidden items-center justify-center z-50 cancelPopup px-4 sm:px-6 md:px-8">
+        <div
+          class="bg-white text-jet-black w-full max-w-[90%] sm:max-w-[80%] md:max-w-[600px] lg:max-w-[640px] rounded-lg p-4 sm:p-6">
+          <!-- Header -->
+          <div class="flex justify-end">
+            <span class="material-symbols-outlined close-popup cursor-pointer" data-popup="cancelPopup">close</span>
+          </div>
+          <p class="font-semibold">Are you sure ?</p>
+          <p>System will be unable to refund the Platform fee if you cancel this order.</p>
+          <div class="flex justify-end items-center gap-4 mt-5">
+            <button class="px-10 py-2 rounded-xl border border-dark-gray text-dark-gray cursor-pointer">No</button>
+            <button class="px-10 py-2 rounded-xl bg-strong-red text-white cursor-pointer">yes</button>
+          </div>
+        </div>
+      </div>
+      <!-- Refund popup -->
+      <div
+        class="fixed inset-0 bg-semi-transparent-black hidden items-center justify-center z-50 refundPopup px-4 sm:px-6 md:px-8">
+        <div
+          class="bg-white text-jet-black w-full max-w-[90%] sm:max-w-[80%] md:max-w-[600px] lg:max-w-[640px] rounded-lg p-4 sm:p-6">
+          <!-- Header -->
+          <div class="flex justify-end">
+            <span class="material-symbols-outlined close-popup cursor-pointer" data-popup="cancelPopup">close</span>
+          </div>
+          <p class="font-semibold">Ohh Unfortunately,</p>
+          <p>The Buyer canceled the order, System will check and credit refund in 7 workdays if all ok.</p>
+          <p class="mt-2">Your Ticket No. : 23546453</p>
+          <div class="flex justify-end items-center mt-5">
+            <button class="px-10 py-2 rounded-xl bg-light-sea-green text-white cursor-pointer">Ok</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order History popup -->
+      <div
+        class="fixed inset-0 bg-semi-transparent-black hidden items-center justify-center z-50 historyPopup px-4 sm:px-6 md:px-8">
+        <div class="bg-white w-full max-w-[90%] sm:max-w-[80%] md:max-w-[60%] rounded-lg">
+          <!-- Header -->
+          <div class="flex justify-between items-center bg-light-sea-green rounded-t-lg text-white p-2">
+            <div class="flex gap-2">
+              <span class="material-symbols-outlined">share</span>
+              <span class="material-symbols-outlined">download</span>
+            </div>
+            <p class="text-lg sm:text-xl">
+              Order History
+            </p>
+            <span class="material-symbols-outlined close-popup cursor-pointer" data-popup="historyPopup">close</span>
+          </div>
+          <div class="flex justify-between p-4">
+            <p class="font-semibold">Mr. Ravi Gupta</p>
+            <p>Last 7 days (14/05/2025 to 21/05/2025)</p>
+          </div>
+          <!-- Table -->
+          <div class="overflow-y-auto max-h-[50vh] scroll px-4">
+            <table class="min-w-full table-auto whitespace-nowrap docTable">
+              <thead class="bg-light-sea-green text-white text-sm sm:text-18-b">
+                <tr>
+                  <th class="text-center px-4 py-6 border-r border-white">
+                    <div class="flex items-center justify-center gap-2">
+                      Date & Time
+                      <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
+                    </div>
+                  </th>
+                  <th class="text-center px-4 py-6 border-r border-white">
+                    Customer
+                  </th>
+                  <th class="text-center px-4 py-6 border-r border-white">Customer Type</th>
+                  <th class="text-center px-4 py-6 border-r border-white">Platform Discount</th>
+                  <th class="text-center px-4 py-6 border-r border-white">
+                    Payment Received
+                  </th>
+                  <th class="text-center px-4 py-6 border-r border-white">Points</th>
+                  <th class="text-center px-4 py-6 border-r border-white">
+                    <div class="flex items-center justify-center gap-2">
+                      Status
+                      <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy" />
+                    </div>
+                  </th>
+              </thead>
+              <tbody class="bg-white text-dark-gray text-16-fs">
+                <tr>
+                  <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
+                  <td class="px-4 py-4.5 text-center">Monika</td>
+                  <td class="px-4 py-4.5 text-center">Gold</td>
+                  <td class="px-4 py-4.5 text-center">-10</td>
+                  <td class="px-4 py-4.5 text-center">980</td>
+                  <td class="px-4 py-4.5 text-center">2580</td>
+                  <td class="px-6 py-4.5 text-center">
+                    <div class="bg-mint-cream text-green py-2 rounded-md border-none">
+                      Completed
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
+                  <td class="px-4 py-4.5 text-center">Monika</td>
+                  <td class="px-4 py-4.5 text-center">Silver</td>
+                  <td class="px-4 py-4.5 text-center">-20</td>
+                  <td class="px-4 py-4.5 text-center">980</td>
+                  <td class="px-4 py-4.5 text-center">2580</td>
+                  <td class="px-6 py-4.5 text-center">
+                    <div class="bg-peach text-burnt-orange py-2 rounded-md border-none">
+                      Processing
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
+                  <td class="px-4 py-4.5 text-center">Monika</td>
+                  <td class="px-4 py-4.5 text-center">Diamond</td>
+                  <td class="px-4 py-4.5 text-center">-10</td>
+                  <td class="px-4 py-4.5 text-center">980</td>
+                  <td class="px-4 py-4.5 text-center">2580</td>
+                  <td class="px-6 py-4.5 text-center">
+                    <div class="bg-mint-cream text-green py-2 rounded-md border-none">
+                      Completed
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
+                  <td class="px-4 py-4.5 text-center">Monika</td>
+                  <td class="px-4 py-4.5 text-center">Gold</td>
+                  <td class="px-4 py-4.5 text-center">-20</td>
+                  <td class="px-4 py-4.5 text-center">980</td>
+                  <td class="px-4 py-4.5 text-center">2580</td>
+                  <td class="px-6 py-4.5 text-center">
+                    <div class="bg-mint-cream text-green py-2 rounded-md border-none">
+                      Completed
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
+                  <td class="px-4 py-4.5 text-center">Monika</td>
+                  <td class="px-4 py-4.5 text-center">Silver</td>
+                  <td class="px-4 py-4.5 text-center">-30</td>
+                  <td class="px-4 py-4.5 text-center">980</td>
+                  <td class="px-4 py-4.5 text-center">2580</td>
+                  <td class="px-6 py-4.5 text-center">
+                    <div class="bg-mint-cream text-green py-2 rounded-md border-none">
+                      Completed
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-4.5 text-center">20/03/25,14:30</td>
+                  <td class="px-4 py-4.5 text-center">Monika</td>
+                  <td class="px-4 py-4.5 text-center">Gold</td>
+                  <td class="px-4 py-4.5 text-center">-20</td>
+                  <td class="px-4 py-4.5 text-center">980</td>
+                  <td class="px-4 py-4.5 text-center">2580</td>
+                  <td class="px-6 py-4.5 text-center">
+                    <div class="bg-mint-cream text-green py-2 rounded-md border-none">
+                      Completed
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bid popup -->
+      <div
+        class="fixed inset-0 bg-semi-transparent-black hidden items-center justify-center z-50 bidPopup px-4 sm:px-6 md:px-8">
+        <div
+          class="bg-white text-jet-black w-full max-w-[90%] sm:max-w-[80%] md:max-w-[600px] lg:max-w-[640px] rounded-lg p-4 sm:p-6 text-center">
+          <!-- Header -->
+          <div class="flex justify-end">
+            <span class="material-symbols-outlined close-popup cursor-pointer" data-popup="bidPopup">close</span>
+          </div>
+          <img src="/static/images/walleticon.svg" alt="wallet" class="w-full h-40 flex justify-center">
+          <p class="text-lg font-semibold">Your have insufficient Advance </p>
+          <button class="px-10 py-2 rounded-xl bg-light-sea-green text-white cursor-pointer mt-4">Submit
+            Advance</button>
+          <br><br>
+          <a href="/src/pharmacy/advance.html" class="underline text-azure-blue">Advance History</a>
+        </div>
+      </div>
+
+      <!--Medicine Bill Popup-->
+      <div
+        class="fixed inset-0 bg-semi-transparent-black hidden items-center justify-center z-50 medicineBillPopup px-4 sm:px-6 md:px-8">
+        <div
+          class="bg-white text-jet-black max-w-md w-full h-[80vh] overflow-y-auto scroll rounded-lg p-2  text-center">
+          <!-- Header -->
+          <div class="flex justify-between items-center pb-2">
+            <div class="flex items-center gap-1">
+              <span
+                class="material-symbols-outlined text-white bg-light-sea-green rounded-md !text-base py-1 px-2">share</span>
+              <span
+                class="material-symbols-outlined text-white bg-light-sea-green rounded-md !text-base py-1 px-2">download</span>
+            </div>
+            <p class="text-light-sea-green font-semibold text-xl">Medicine Bill</p>
+            <span class="material-symbols-outlined close-popup cursor-pointer"
+              data-popup="medicineBillPopup">close</span>
+          </div>
+          <img src="/static/images/medicine-bill.svg" alt="wallet" class="w-full  flex justify-center">
+
+        </div>
+      </div>
+
+      <!--Platform Bill Popup-->
+      <div
+        class="fixed inset-0 bg-semi-transparent-black hidden items-center justify-center z-50 platformBillPopup px-4 sm:px-6 md:px-8">
+        <div
+          class="bg-white text-jet-black max-w-md w-full h-[80vh] overflow-y-auto scroll rounded-lg p-2  text-center">
+          <!-- Header -->
+          <div class="flex justify-between items-center pb-2">
+            <div class="flex items-center gap-1">
+              <span
+                class="material-symbols-outlined text-white bg-light-sea-green rounded-md !text-base py-1 px-2">share</span>
+              <span
+                class="material-symbols-outlined text-white bg-light-sea-green rounded-md !text-base py-1 px-2">download</span>
+            </div>
+            <p class="text-light-sea-green font-semibold text-xl">Platform Bill</p>
+            <span class="material-symbols-outlined close-popup cursor-pointer"
+              data-popup="platformBillPopup">close</span>
+          </div>
+          <img src="/static/images/platformbill-receipt.svg" alt="platformbill" class="w-full  flex justify-center">
+
+        </div>
+      </div>
+
+      <div class="fixed bottom-6 right-8 z-50">
+            <button
+              class="chatTrigger cursor-pointer w-16 h-16 bg-light-sea-green text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
+              <img src="/static/images/avatar.svg" alt="avatar" class="w-full h-full object-contain" />
+            </button>
+          </div>
+          <div class="relative ">
+            <div class="avatar fixed bottom-6 right-8 hidden  z-100">
+              <img src="/static/images/avatar.svg" alt="avatar">
+              <img src="/static/images/avatar-chatbox.svg" alt="chatbox" class="absolute bottom-0 right-50">
+              <button class="absolute cursor-pointer bottom-65 right-0 close-avatar-btn rounded-full bg-white shadow-[3.93px_5.24px_5.24px_0px_#00000040]
+    ">
+                <span
+                  class="material-symbols-outlined flex items-center justify-center p-[0.35rem] text-dark-gray">close</span>
+              </button>
+              <button class="absolute cursor-pointer bottom-6 right-18 bg-light-sea-green text-white p-2 rounded-md">
+                Talk
+              </button>
+            </div>
+          </div>
+
+{% endblock %}
+
+{% block extra_js %}
+      <script src="/static/js/tabs.js"></script>
+      <script src="/static/js/order.js"></script>
+      <script src="/static/js/table-pagination.js"></script>
+{% endblock %}

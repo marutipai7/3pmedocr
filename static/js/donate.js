@@ -1,85 +1,121 @@
-const cards = document.querySelectorAll(".donation-card");
-const closeBtn = document.querySelector(".close-expanded");
-const tabsSection = document.querySelector(".tabs-section");
-const searchFilterSection = document.querySelector(".search-filter-section");
-const paginationSections = document.querySelectorAll(".pagination-section");
+function setupCardListeners() {
+  const cards = document.querySelectorAll(".donation-card");
+  const closeBtn = document.querySelector(".close-expanded");
+  const tabsSection = document.querySelector(".tabs-section");
+  const searchFilterSection = document.querySelector(".search-filter-section");
+  const paginationSections = document.querySelectorAll(".pagination-section");
 
-// Handle card expand functionality
-cards.forEach((card) => {
-  const triggers = card.querySelectorAll(".toggle-expand");
+  // Handle card expand functionality
+  cards.forEach((card) => {
+    const triggers = card.querySelectorAll(".toggle-expand");
+    triggers.forEach((trigger) => {
+      trigger.addEventListener("click", () => {
+        // Hide other cards
+        cards.forEach((other) => {
+          if (other !== card) other.style.display = "none";
+        });
 
-  triggers.forEach((trigger) => {
-    trigger.addEventListener("click", () => {
-      // Hide other cards
-      cards.forEach((other) => {
-        if (other !== card) other.style.display = "none";
+        const cardContainer = document.querySelector(".card-container");
+
+        // Remove grid layout when expanding
+        cardContainer.classList.remove(
+          "grid",
+          "grid-cols-1",
+          "md:grid-cols-2",
+          "gap-4",
+          "justify-items-center"
+        );
+
+        // Elements to modify
+        const defaultHeading = card.querySelector(".default-heading");
+        const expandedHeading = card.querySelector(".expanded-heading");
+        const expandedPara = card.querySelector(".expanded-para");
+        const donateWrapper = card.querySelector(".donate-button-wrapper");
+        const topSection = card.querySelector(".top-section");
+        const locationLine = card.querySelector(".location-line");
+
+        // Get the specific elements we need to hide and show
+        const donationAmount = card.querySelector(".donation-amount");
+        const donateBtnContainer = card.querySelector(".donate-btn-container");
+        const expandedButtons = card.querySelector(".expanded-buttons");
+
+        // Show expanded content
+        defaultHeading.classList.add("hidden");
+        expandedHeading.classList.remove("hidden");
+        expandedPara.classList.remove("hidden");
+        closeBtn.classList.remove("hidden");
+
+        // Hide donation amount and donate button
+        donationAmount.classList.add("hidden");
+        donateBtnContainer.classList.add("hidden");
+
+        // Show visit website and pay buttons
+        expandedButtons.classList.remove("hidden");
+
+        // Adjust layout for expanded view
+        topSection.classList.remove("flex");
+        topSection.classList.add("block");
+
+        donateWrapper.classList.remove(
+          "ml-4",
+          "mt-0",
+          "flex-col",
+          "items-center"
+        );
+        donateWrapper.classList.add("mt-4", "w-full", "flex", "justify-end");
+
+        locationLine.classList.remove("mt-2");
+        locationLine.classList.add("mt-4");
+
+        // // Make card fullscreen for expanded view
+        // card.classList.add(
+        //   "fixed",
+        //   "inset-0",
+        //   "z-50",
+        //   "h-screen",
+        //   "w-screen",
+        //   "overflow-y-auto",
+        //   "rounded-none"
+        // );
+        card.classList.remove("m-4", "rounded-lg");
+
+        // Hide UI sections
+        tabsSection?.classList.add("hidden");
+        searchFilterSection?.classList.add("hidden");
+        paginationSections.forEach((pagination) =>
+          pagination.classList.add("hidden")
+        );
       });
+    });
 
-      const cardContainer = document.querySelector(".card-container");
+    // Handle "Read More"
+    const readMoreBtn = card.querySelector(".read-more-btn");
+    const expandedPara = card.querySelector(".expanded-para");
 
-      // Remove grid layout when expanding
-      cardContainer.classList.remove(
-        "grid",
-        "grid-cols-1",
-        "md:grid-cols-2",
-        "gap-4",
-        "justify-items-center"
-      );
-
-      // Elements to modify
-      const defaultHeading = card.querySelector(".default-heading");
-      const expandedHeading = card.querySelector(".expanded-heading");
-      const expandedPara = card.querySelector(".expanded-para");
-      const donateWrapper = card.querySelector(".donate-button-wrapper");
-      const topSection = card.querySelector(".top-section");
-      const locationLine = card.querySelector(".location-line");
+    readMoreBtn?.addEventListener("click", function(e) {
+      e.preventDefault();
+      expandedPara?.classList.remove("hidden");
+      readMoreBtn?.classList.add("hidden");
 
       // Get the specific elements we need to hide and show
       const donationAmount = card.querySelector(".donation-amount");
       const donateBtnContainer = card.querySelector(".donate-btn-container");
       const expandedButtons = card.querySelector(".expanded-buttons");
-
-      // Show expanded content
-      defaultHeading.classList.add("hidden");
-      expandedHeading.classList.remove("hidden");
-      expandedPara.classList.remove("hidden");
-      closeBtn.classList.remove("hidden");
+      const donateWrapper = card.querySelector(".donate-button-wrapper");
+      const donateLine = card.querySelector(".donation-line");
 
       // Hide donation amount and donate button
       donationAmount.classList.add("hidden");
       donateBtnContainer.classList.add("hidden");
+      donateLine.classList.remove("md:block");
 
       // Show visit website and pay buttons
       expandedButtons.classList.remove("hidden");
 
-      // Adjust layout for expanded view
-      topSection.classList.remove("flex");
-      topSection.classList.add("block");
-
-      donateWrapper.classList.remove(
-        "ml-4",
-        "mt-0",
-        "flex-col",
-        "items-center"
-      );
+      // Adjust donation wrapper layout
+      donateWrapper.classList.remove("ml-4", "mt-0", "flex-col", "items-center");
       donateWrapper.classList.add("mt-4", "w-full", "flex", "justify-end");
 
-      locationLine.classList.remove("mt-2");
-      locationLine.classList.add("mt-4");
-
-      // // Make card fullscreen for expanded view
-      // card.classList.add(
-      //   "fixed",
-      //   "inset-0",
-      //   "z-50",
-      //   "h-screen",
-      //   "w-screen",
-      //   "overflow-y-auto",
-      //   "rounded-none"
-      // );
-      card.classList.remove("m-4", "rounded-lg");
-
-      // Hide UI sections
       tabsSection?.classList.add("hidden");
       searchFilterSection?.classList.add("hidden");
       paginationSections.forEach((pagination) =>
@@ -87,45 +123,7 @@ cards.forEach((card) => {
       );
     });
   });
-
-  // Handle "Read More"
-  const readMoreBtn = card.querySelector(".read-more-btn");
-  const expandedPara = card.querySelector(".expanded-para");
-
-  readMoreBtn?.addEventListener("click", (e) => {
-    e.preventDefault();
-    console.log("Read More clicked");
-    expandedPara?.classList.remove("hidden");
-    readMoreBtn?.classList.add("hidden");
-
-    // Get the specific elements we need to hide and show
-    const donationAmount = card.querySelector(".donation-amount");
-    const donateBtnContainer = card.querySelector(".donate-btn-container");
-    const expandedButtons = card.querySelector(".expanded-buttons");
-    const donateWrapper = card.querySelector(".donate-button-wrapper");
-    const donateLine = card.querySelector(".donation-line");
-
-    // Hide donation amount and donate button
-    donationAmount.classList.add("hidden");
-    donateBtnContainer.classList.add("hidden");
-    donateLine.classList.remove("md:block");
-
-    // Show visit website and pay buttons
-    expandedButtons.classList.remove("hidden");
-
-    // Adjust donation wrapper layout
-    donateWrapper.classList.remove("ml-4", "mt-0", "flex-col", "items-center");
-    donateWrapper.classList.add("mt-4", "w-full", "flex", "justify-end");
-
-    tabsSection?.classList.add("hidden");
-    searchFilterSection?.classList.add("hidden");
-    paginationSections.forEach((pagination) =>
-      pagination.classList.add("hidden")
-    );
-  });
-});
-
-
+}
  
 function openPopup() {
   document.querySelector(".assignmentPopup").classList.remove("hidden");
@@ -286,7 +284,7 @@ function renderPagination(current, total, $container) {
     html += `<button onclick="changePage(${current - 1})" class="bg-white px-3 py-1 rounded text-light-gray1 text-sm" ${current === 1 ? "disabled" : ""}>Previous</button>`;
 
     function pageBtn(i) {
-      return `<button onclick="changePage(${i})" class="px-3 py-1.5 rounded-lg text-sm ${i === current ? "bg-dark-blue text-white" : "bg-pagination"}">${i}</button>`;
+      return `<button onclick="changePage(${i})" class="px-3 py-1.5 rounded-lg text-sm ${i === current ? "bg-living-coral text-white" : "bg-pagination"}">${i}</button>`;
     }
 
     if (total <= 5) {
@@ -583,3 +581,172 @@ $(document).on('click', '.donate-bookmark-toggle', function() {
             }
         });
     });
+
+function loadOrganizations(page = 1, $container = $('#organizationSectionId')) {
+    const query = $('input[name="organization_query"]').val() || "";
+    const startDate = $container.data("start-date") || "";
+    const endDate = $container.data("end-date") || "";
+    const dateRange = $container.data("range-label") || "";
+
+    $.ajax({
+        url: "/donate/get-organization-posts/",
+        type: "GET",
+        data: {
+            query: query,
+            page: page,
+            start_date: startDate,
+            end_date: endDate,
+            daterange: dateRange,
+        },
+        success: function (response) {
+            $container.html(response.html);
+            renderOrganizationPagination(response.current_page, response.total_pages);
+            setupCardListeners();
+        },
+        error: function () {
+            toastr.error("Failed to load organizations.");
+        }
+    });
+}
+
+function renderOrganizationPagination(current, total) {
+    let html = '';
+
+    html += `<button onclick="changePage(${current - 1})" class="bg-white px-3 py-1 rounded text-light-gray1 text-sm" ${current === 1 ? "disabled" : ""}>Previous</button>`;
+
+    function pageBtn(i) {
+      return `<button onclick="changePage(${i})" class="px-3 py-1.5 rounded-lg text-sm ${i === current ? "bg-living-coral text-white" : "bg-pagination"}">${i}</button>`;
+    }
+
+    if (total <= 5) {
+      // Show all pages if <= 5
+      for (let i = 1; i <= total; i++) {
+        html += pageBtn(i);
+      }
+    } else {
+      // Always show first page
+      html += pageBtn(1);
+
+      if (current <= 3) {
+        // Near start
+        for (let i = 2; i <= 4; i++) {
+          html += pageBtn(i);
+        }
+        html += `<span class="px-2">...</span>`;
+        html += pageBtn(total);
+      }
+      else if (current > 3 && current < total - 2) {
+        // Middle
+        html += `<span class="px-2">...</span>`;
+        for (let i = current - 1; i <= current + 1; i++) {
+          html += pageBtn(i);
+        }
+        html += `<span class="px-2">...</span>`;
+        html += pageBtn(total);
+      }
+      else {
+        // Near end
+        html += `<span class="px-2">...</span>`;
+        for (let i = total - 3; i <= total; i++) {
+          html += pageBtn(i);
+        }
+      }
+    }
+
+    html += `<button onclick="changePage(${current + 1})" class="bg-white px-3 py-1 rounded text-light-gray1 text-sm" ${current === total ? "disabled" : ""}>Next</button>`;
+
+    $('#pagination-container').html(html);
+}
+
+
+// Initial load
+$(document).on("click", '[data-tab="organization"]', function () {
+    const $tabDiv = $('#organizationSectionId'); 
+    loadOrganizations(1, $tabDiv);
+});
+
+// Search input
+$(document).on('input', 'input[name="organization_query"]', function () {
+    const $tabDiv = $('#organizationSectionId');
+    loadOrganizations(1, $tabDiv);
+});
+// ----------------------------
+// Pagination buttons
+// ----------------------------
+$(document).on('click', '.pagination-btn', function () {
+    const page = $(this).data('page');
+    const $container = $(this).closest('.postDiv');
+    loadOrganizations(page, $container);
+});
+
+// ----------------------------
+// Date range filter buttons
+// ----------------------------
+$(document).on("click", ".organization-daterange", function () {
+    $(".organization-daterange").removeClass("font-bold");
+    $(this).addClass("font-bold");
+
+    const rangeLabel = $(this).data("range");
+    const $tabDiv = $('#organizationSectionId');
+
+    const { start, end } = calculateDateRange(rangeLabel);
+
+    // ✅ Store range on container
+    $tabDiv.data("start-date", start);
+    $tabDiv.data("end-date", end);
+    $tabDiv.data("range-label", rangeLabel);
+
+    // ✅ Pass the same container back (not hardcoded)
+    loadOrganizations(1, $tabDiv);
+
+    console.log("Loading organizations with range:", rangeLabel, start, end);
+});
+
+function changePage(page) {
+    const $container = $("#organizationSectionId"); // scope to your section
+    loadOrganizations(page, $container);
+}
+
+// ----------------------------
+// Helper: calculate start & end dates
+// ----------------------------
+function calculateDateRange(rangeLabel) {
+    const today = new Date();
+    let start = "";
+    let end = today.toISOString().split("T")[0]; // yyyy-mm-dd
+
+    if (rangeLabel === "1 week") {
+        const past = new Date();
+        past.setDate(today.getDate() - 7);
+        start = past.toISOString().split("T")[0];
+    } else if (rangeLabel === "1 month") {
+        const past = new Date();
+        past.setMonth(today.getMonth() - 1);
+        start = past.toISOString().split("T")[0];
+    } else if (rangeLabel === "1 year") {
+        const past = new Date();
+        past.setFullYear(today.getFullYear() - 1);
+        start = past.toISOString().split("T")[0];
+    } else if (rangeLabel === "custom") {
+        start = $("#customStartDate").val();
+        end = $("#customEndDate").val();
+    }
+
+    return { start, end };
+}
+
+
+// Expanded view
+function loadExpandedView(postId) {
+  fetch(`/expanded/${postId}/`)
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById("expandedViewContent").innerHTML = html;
+      document.getElementById("expandedViewModal").classList.remove("hidden");
+    });
+}
+
+function closeExpandedView() {
+  document.getElementById("expandedViewModal").classList.add("hidden");
+  document.getElementById("expandedViewContent").innerHTML = "";
+}
