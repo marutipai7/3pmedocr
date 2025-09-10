@@ -86,6 +86,26 @@ class ChatOptionGroup(models.Model):
     def __str__(self):
         return f"Chat Content for {self.get_user_type_display()} (Active: {self.is_active})"
 
+class UserManagement(models.Model):
+    name = models.CharField(max_length=100, null=True, blank=True)
+    email = models.EmailField(unique=True, null=True, blank=True)
+    phone = models.CharField(max_length=20, null=True, blank=True)
+    
+    status = models.CharField(max_length=20, choices=[
+        ('1', 'Open'),
+        ('2', 'In Progress'),
+        ('3', 'On Hold'),
+        ('4', 'Resolved'),
+        ('5', 'Cancelled'),
+        ('6', 'Closed'),
+    ], default='1')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.get_status_display()}"
+    
 class TicketChatMessage(models.Model):
     ticket = models.ForeignKey(SupportTicket, on_delete=models.CASCADE, related_name='chat_messages')
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='sent_ticket_messages')
@@ -99,22 +119,3 @@ class TicketChatMessage(models.Model):
     def __str__(self):
         return f"Msg on Ticket {self.ticket.ticket_id()} by {self.sender_type} at {self.timestamp.strftime('%Y-%m-%d %H:%M')}"
     
-    class UserManagement(models.Model):
-        name = models.CharField(max_length=100, null=True, blank=True)
-        email = models.EmailField(unique=True, null=True, blank=True)
-        phone = models.CharField(max_length=20, null=True, blank=True)
-        
-        status = models.CharField(max_length=20, choices=[
-            ('1', 'Open'),
-            ('2', 'In Progress'),
-            ('3', 'On Hold'),
-            ('4', 'Resolved'),
-            ('5', 'Cancelled'),
-            ('6', 'Closed'),
-        ], default='1')
-
-        created_at = models.DateTimeField(auto_now_add=True)
-        updated_at = models.DateTimeField(auto_now=True)
-
-        def __str__(self):
-            return f"{self.name} - {self.get_status_display()}"

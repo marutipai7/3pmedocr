@@ -1,8 +1,7 @@
-import logging
-import sys
+import re
 import time
-import datetime
-import os
+import logging
+import pandas as pd
 from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import (
     AcceleratorDevice,
@@ -12,8 +11,6 @@ from docling.datamodel.pipeline_options import (
 from docling.datamodel.settings import settings
 from docling.document_converter import DocumentConverter, PdfFormatOption, WordFormatOption
 from docling.pipeline.simple_pipeline import SimplePipeline
-import re
-import pandas as pd
 from core.settings import TABLE_VALIDATION, STORE_VALIDATION
 
 logger = logging.getLogger(__name__)

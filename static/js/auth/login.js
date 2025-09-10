@@ -68,11 +68,40 @@ $(document).ready(function () {
   //forgot password
   $(document).on("click", "#forgotPassword-link", function (e) {
     e.preventDefault();
-    $("#forgot-password-action").html(`
-      <span class="text-xs text-black font-medium">
-        *Reset link sent to your registered email
-      </span>
-    `);
+    window.location.href = "/user/forgot-password";
+  });
+
+  $("#forgot-password-form").on("submit", function (e) {
+    e.preventDefault();
+
+    const payload = {
+      email: $("input[name=email]").val(),
+      csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+    };
+
+    $.ajax({
+      url: "/user/forgot-password",
+      type: "POST",
+      data: payload,
+      success: function (response) {
+        $("#forgot-password-action").html(`
+          <span class="text-xs text-green-600 font-medium">
+            Reset link sent to your registered email.
+          </span>
+        `);
+      },
+      error: function (xhr) {
+        let msg = "Something went wrong. Try again.";
+        if (xhr.responseJSON && xhr.responseJSON.errors) {
+          msg = Object.values(xhr.responseJSON.errors).join("<br>");
+        }
+        $("#forgot-password-action").html(`
+          <span class="text-xs text-red-600 font-medium">
+            ${msg}
+          </span>
+        `);
+      }
+    });
   });
 
   let selectedRole = null;

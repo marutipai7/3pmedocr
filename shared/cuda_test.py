@@ -3,14 +3,11 @@ import torch
 def test_pytorch_setup():
     print("---- PyTorch Environment Check ----")
     
-    # Check PyTorch version
     print(f"PyTorch version: {torch.__version__}")
 
-    # Check if PyTorch was built with CUDA
     print(f"Built with CUDA: {torch.version.cuda is not None}")
     print(f"CUDA version (PyTorch): {torch.version.cuda}")
 
-    # Check if GPU is available
     gpu_available = torch.cuda.is_available()
     print(f"CUDA available (GPU detected): {gpu_available}")
 

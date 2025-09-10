@@ -1,3 +1,5 @@
+import secrets
+from django.utils import timezone
 from datetime import time
 from django.db import models
 
@@ -233,3 +235,16 @@ class ContactPerson(models.Model):
     otp = models.CharField(max_length=16, blank=True, null=True)
     referral_code = models.CharField(max_length=64, blank=True, null=True)
     email_otp = models.CharField(max_length=16, blank=True, null=True)
+
+class PasswordResetToken(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    token = models.CharField(max_length=128, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    @staticmethod
+    def create_token(user):
+        token = secrets.token_urlsafe(32)
+        return PasswordResetToken.objects.create(user=user, token=token)
+    
+    def is_valid(self):
+        return (timezone.now() - self.created_at).total_seconds() < 1800

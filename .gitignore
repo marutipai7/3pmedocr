@@ -8,10 +8,9 @@ __pycache__/
 venv/
 myenv/
 document\*
+env/
 *.ipynb_checkpoints
 *.ipynb
-env/
-.env
 staticfiles/
 */migrations
 # Node.js

@@ -1,13 +1,12 @@
 $(document).ready(function () {
     const $selectElement = $(".countryCodes");
 
-    // Fetch the JSON data
     $.getJSON("/static/data/countryCodes.json")
     .done(function (data) {
     if ($selectElement.length) {
         $selectElement.each(function () {
             const $thisSelect = $(this);
-            $thisSelect.empty(); // Optional: clear any old options
+            $thisSelect.empty();
 
             $.each(data, function (index, country) {
                 const $option = $("<option>")
@@ -15,7 +14,7 @@ $(document).ready(function () {
                     .text(country.name)
                     .attr("data-dial-code", country.dial_code);
 
-                const selectedDialCode = $thisSelect.data("selected");  // ← the value from Django
+                const selectedDialCode = $thisSelect.data("selected");
 
                 if (country.dial_code === selectedDialCode) {
                     $option.prop("selected", true);

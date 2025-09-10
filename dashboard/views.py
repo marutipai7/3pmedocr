@@ -84,8 +84,6 @@ def dashboard_home(request):
                 'events': events,
                 'user': user,
             })
-
-            print("DEBUG PERFORMANCE:", performance)
             return render(request, "dashboard/home_advertiser.html", context)
 
         elif user_type == 'provider':
@@ -606,7 +604,6 @@ def export_donation_history(request):
 @dashboard_login_required
 def get_ngo_graph_data(request):
     user = request.user_obj
-    # print("Request User ID:", user)
     today = timezone.now().date()
 
     # Parse date input
