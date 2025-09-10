@@ -1264,7 +1264,7 @@ $(document).ready(function () {
   let selectedDate = null;
 
   // Function to save event
-  window.saveEvent = function(){
+  function saveEvent(){
     const eventName = document.getElementById('event-name').value.trim();
     const eventTime = document.getElementById('start-time').value;
     
