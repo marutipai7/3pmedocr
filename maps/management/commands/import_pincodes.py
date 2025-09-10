@@ -49,8 +49,3 @@ class Command(BaseCommand):
 
         PincodeLocation.objects.bulk_create(objs, batch_size=500, ignore_conflicts=True)
         self.stdout.write(self.style.SUCCESS(f"✅ Imported {len(objs)} entries."))
-
-        if dropped:
-            print("\n⚠️ Dropped entries:")
-            for d in dropped:
-                print(f"Row {d[0]} → pincode={d[1]}, lat={d[2]}, lon={d[3]} ❌ Reason: {d[4]}")

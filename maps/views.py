@@ -52,8 +52,6 @@ def get_routes(request):
         mode = body.get('mode', 'auto')
     except Exception as e:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
-
-    print(f"Received route request: {start_lat}, {start_lng} to {end_lat}, {end_lng} via {mode}")
     if not all([start_lat, start_lng, end_lat, end_lng]):
         return JsonResponse({'error': 'Missing coordinates'}, status=400)
     urls = [
@@ -105,11 +103,9 @@ def get_routes(request):
                     'duration': summary.get('time'),
                     'steps': steps
                 })
-            # print(f"Coordinates decoded from {valhalla_url} — {len(routes)} route(s) found")
             return JsonResponse({'routes': routes})
 
         except requests.exceptions.RequestException as e:
-            print(f"Failed to fetch from {valhalla_url}: {e}")
             last_exception = e
             continue
 
@@ -524,11 +520,11 @@ def reverse_geocode(request):
         body = json.loads(request.body)
 
         # Extract input
-        city = body.get("profile_city", "").strip()
-        pincode = body.get("profile_pincode", "").strip()
-        if not city or pincode:
-            return JsonResponse({"error": "City name is required"}, status=400)
-        
+        city = body.get("profile_city").strip()
+        pincode = body.get("profile_pincode").strip()
+        if not city or not pincode:
+            return JsonResponse({"error": "City name and pincode are required"}, status=400)
+
         if pincode:
             pincode_match = PincodeLocation.objects.filter(pincode=pincode).first()
             if pincode_match:

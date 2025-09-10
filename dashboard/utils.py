@@ -26,8 +26,6 @@ def dashboard_login_required(view_func):
 def get_common_context(request,user):
     user = request.user_obj
     user_type = user.user_type
-
-    # Sidebar menu
     menu_items = SettingMenu.objects.filter(
         is_active=True, user_types__contains=[user_type]
     ).order_by('order')
@@ -63,7 +61,6 @@ def get_common_context(request,user):
         Q(max_points__gte=total_points) | Q(max_points__isnull=True)
     ).order_by('min_points').first()
 
-    # Handle display name based on user type
     if user_type == 'ngo':
         user_display_name = user_profile.ngo_name if user_profile else 'Unknown'
     else:

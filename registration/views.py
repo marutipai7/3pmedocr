@@ -2,14 +2,13 @@ import os
 import re
 import asyncio
 import pyotp
-import uuid
 from .models import *
-from .email_otp import async_send_otp_email
-from .email_otp import verify_otp as otp_verify
+from .email_otp import async_send_otp_email, send_forgot_password_email
+from asgiref.sync import async_to_sync
 from django.http import JsonResponse
 from django.conf import settings
 from django.urls import reverse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -36,29 +35,25 @@ def send_otp(request):
     email = request.POST.get("email")
     if not email:
         return JsonResponse({"success": False, "message": "Please enter email"}, status=400)
-    else:
-        try:
-            validate_email(email)
-        except:
-            return JsonResponse({"success": False, "message": "Invalid email address"}, status=400)
-        if User.objects.filter(email=email).exists():
-            return JsonResponse({"success": False, "message": "This email is already registered."}, status=400)
+    try:
+        validate_email(email)
+    except:
+        return JsonResponse({"success": False, "message": "Invalid email address"}, status=400)
+    if User.objects.filter(email=email).exists():
+        return JsonResponse({"success": False, "message": "This email is already registered."}, status=400)
 
-    # Generate and send OTP (returns secret in "otp_token")
+    # Generate secret + OTP
     token_data = asyncio.run(async_send_otp_email(type("obj", (object,), {"email": email})))
     secret = token_data["otp_token"]
 
-    # Create unique token for frontend
-    bearer_token = str(uuid.uuid4())
-
     # Cache secret (NOT otp value) for 5 minutes
-    cache.set(f"otp:{bearer_token}", {
+    cache.set(f"otp:{secret}", {
         "email": email,
         "secret": secret,
         "created_at": timezone.now().isoformat()
     }, timeout=300)
 
-    return JsonResponse({"success": True, "token": bearer_token, "message": "OTP sent successfully"})
+    return JsonResponse({"success": True, "token": secret, "message": "OTP sent successfully"})
 
 @require_POST
 def verify_otp(request):
@@ -72,15 +67,15 @@ def verify_otp(request):
     otp_data = cache.get(cache_key)
     if not otp_data:
         return JsonResponse({"success": False, "message": "OTP expired or invalid"}, status=400)
-
-    print("DEBUG: otp_data =", otp_data)
+    
+    if bearer_token != otp_data.get("secret"):
+        return JsonResponse({"success": False, "message": "Invalid or forged token"}, status=400)
 
     secret = otp_data["secret"]
     totp = pyotp.TOTP(secret, interval=300)  # must match send_otp.py
     if not totp.verify(otp, valid_window=1):
         return JsonResponse({"success": False, "message": "Invalid OTP"}, status=400)
 
-    cache.set(f"otp_verified:{otp_data['email']}", True, timeout=600)
     return JsonResponse({"success": True, "message": "OTP verified successfully"})
 
 def welcome(request):
@@ -108,7 +103,6 @@ def register_by_role(request, role):
         context["medical_provider_types"] = MedicalProviderType.objects.filter(is_active=True)
         context["medical_provider_services"] = MedicalProviderServices.objects.filter(is_active=True)
         context["medical_provider_workingdays"] = MedicalProviderWorkingDays.objects.filter(is_active=True)
-    print(context)
     return render(request, tpl, context)
 
 ALLOWED_EXTENSIONS = {'.pdf', '.jpg', '.jpeg', '.png'}
@@ -278,7 +272,6 @@ def save_ngo(request):
     data = request.POST
     files = request.FILES
     errors = {}
-    print(data)
 
     # --- Validation ---
     email = data.get("email")
@@ -300,9 +293,7 @@ def save_ngo(request):
         errors["confirm_password"] = "Passwords do not match."
         
     otp_token = data.get("otp_token")
-    # if not otp_token:
-    #     errors["otp1"] = "Please refresh the page."
-    email_otp = data.get("otp1")  # from HTML field "otp1"
+    email_otp = data.get("otp1")
     # if not email_otp:
     #     errors["otp1"] = "OTP is required."
     # otp_verification = verify_otp(email, email_otp, otp_token)
@@ -426,7 +417,6 @@ def save_ngo(request):
         errors["contact_person_role"] = "Contact person role is required."
 
     if errors:
-        print("Validation errors:", errors)
         return JsonResponse({"success": False, "errors": errors}, status=400)
 
     # --- Save User & NGOProfile ---
@@ -437,7 +427,6 @@ def save_ngo(request):
         password=make_password(password),
         user_type="ngo"
     )
-    print("NGO SErvice", ngo_service)
 
     ngo_profile = NGOProfile.objects.create(
         user=user,
@@ -479,7 +468,7 @@ def save_ngo(request):
         from .models import ContactPerson
         ContactPerson.objects.create(
             profile_type='ngo',
-            profile_id=ngo_profile.id,
+            profile_id=user.id,
             name=contact_person_name,
             phone_country_code=phone_country_code,
             phone_number=contact_person_phone,
@@ -497,7 +486,7 @@ def save_advertiser(request):
     data = request.POST
     files = request.FILES
     errors = {}
-    print(data)
+    
 
     # Email
     email = data.get("email")
@@ -554,7 +543,6 @@ def save_advertiser(request):
             ad_services = AdServiceReq.objects.get(name=ad_services_id)
         except Exception as e:
             errors["ad_service_req"] = "Invalid ad services selected."
-    print(advertiser_type, ad_services)    
     
     website = data.get("website")
     if not website:
@@ -578,7 +566,6 @@ def save_advertiser(request):
 
     # Incorporation Doc
     incorporation_number = data.get("incorporation_number")
-    print("Incorporation Number:", incorporation_number)
     if not incorporation_number:
         errors["incorporation_number"] = "Incorporation number is required."
     incorporation_doc_path, err = validate_and_save_file(files.get("incorporation_doc"), "incorporation", "Incorporation Document",user_type="advertiser")
@@ -589,7 +576,6 @@ def save_advertiser(request):
 
     # GST
     gst_number = data.get("gst_number")
-    print("GST Number:", gst_number)
     if not gst_number:
         errors["gst_number"] = "GST number is required."
     gst_doc_path, err = validate_and_save_file(files.get("gst_doc"), "gst", "GST Document",user_type="advertiser")
@@ -610,7 +596,6 @@ def save_advertiser(request):
 
     # TAN
     tan_number = data.get("tan_number")
-    print("TAN Number:", tan_number)
     if not tan_number:
         errors["tan_number"] = "TAN number is required."
     tan_doc_path, err = validate_and_save_file(files.get("tan_doc"), "tan", "TAN Document",user_type="advertiser")
@@ -712,7 +697,6 @@ def save_client(request):
     data = request.POST
     files = request.FILES
     errors = {}
-    print(data)
 
     # === BASIC VALIDATION ===
     email = data.get("email").strip()
@@ -915,7 +899,6 @@ def save_medical_provider(request):
     data = request.POST
     files = request.FILES
     errors = {}
-    print(data)
 
     # Email
     email = data.get("email")
@@ -1157,3 +1140,61 @@ def save_medical_provider(request):
         )
     logger.info("Medical provider registration completed successfully")
     return JsonResponse({"success": True, "message": "Medical provider registered successfully."})
+
+@csrf_protect
+def forgot_password(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        if not email:
+            return JsonResponse({"success": False, "errors": {"email": "Email is required"}}, status=400)
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return JsonResponse({"success": False, "errors": {"email": "User not found"}}, status=404)
+        
+        company_name = "Account"
+        if user.user_type == "advertiser":
+            company_name = user.advertiserprofile.company_name
+        elif user.user_type == "client":
+            company_name = user.clientprofile.company_name
+        elif user.user_type == "ngo":
+            company_name = user.ngoprofile.ngo_name
+        elif user.user_type == "provider":
+            company_name = user.medicalproviderprofile.company_name
+
+        result = async_to_sync(send_forgot_password_email)(user, company_name, "http://localhost:8002")
+        return JsonResponse(result)
+    return render(request, "login/forgot_password.html")
+
+@csrf_protect
+def reset_password(request, token):
+    try:
+        token_obj = PasswordResetToken.objects.get(token=token)
+    except PasswordResetToken.DoesNotExist:
+        return render(request, "not_found.html", {"error": "Invalid or expired reset link."}, status=404)
+
+    if not token_obj.is_valid():
+        token_obj.delete()
+        return render(request, "not_found.html", {"error": "This reset link has expired."}, status=400)
+
+    if request.method == "POST":
+        password = request.POST.get("NewPassword")
+        confirm_password = request.POST.get("ConfirmPassword")
+        errors = {}
+
+        if not password or password != confirm_password:
+            errors["confirm_password"] = "Passwords do not match."
+
+        if not password or len(password) < 8:
+            errors["password"] = "Password must be at least 8 characters."
+
+        if errors:
+            return render(request, "login/reset_password.html", {"token": token, "errors": errors})
+        
+        user = token_obj.user
+        user.password = make_password(password)
+        user.save()
+
+        token_obj.delete()
+        return redirect("login_page")
+    return render(request, "login/reset_password.html", {"token": token})

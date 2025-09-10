@@ -1,13 +1,15 @@
 import pyotp
-import asyncio
 import aiosmtplib
+from asgiref.sync import sync_to_async
 from email.message import EmailMessage
+from .models import PasswordResetToken
 
 SMTP_HOST = "mail.sizaf.com"
 SMTP_PORT = 465
 SMTP_USERNAME = "dotsdesktop@sizaf.com"
 SMTP_PASSWORD = "eri$45;e]H0K"
 SMTP_FROM = "dotsdesktop@sizaf.com"
+RESET_TOKEN_EXPIRY = 1800 
 
 def generate_otp_secret() -> str:
     return pyotp.random_base32()
@@ -48,3 +50,29 @@ async def async_send_otp_email(user):
         return {"success": False, "message": "Failed to send email."}
 
     return {"success": True, "otp_token": otp_secret}
+
+async def send_forgot_password_email(user, company_name: str, base_url: str):
+    token_obj = await sync_to_async(PasswordResetToken.create_token)(user)
+    reset_link = f"{base_url}/user/reset-password/{token_obj.token}/"
+    subject = f"Reset your {company_name} password"
+    body_text = f"""Hi {user.email},
+
+    We received a request to reset your password for your {company_name} account. 
+    If you made this request, click the link below to set a new password:
+
+    {reset_link}
+
+    If you didn’t request a password reset, you can safely ignore this email — your password will remain unchanged.
+
+    Thanks,
+    The {company_name} Team
+
+    Security Tip: Never share your password with anyone. This link will expire in 30 minutes for your protection."""
+
+    email_sent = await send_email(user.email, subject, body_text)
+    
+    if not email_sent:
+        return {"success": False, "message": "Failed to send email."}
+
+    return {"success": True, "message": "Password reset email sent."}
+

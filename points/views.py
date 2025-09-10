@@ -1,7 +1,7 @@
 import json
 import datetime
 from django.shortcuts import render
-from dashboard.utils import dashboard_login_required
+from dashboard.utils import dashboard_login_required, get_common_context
 from .models import (
     PointsHistory,
     PointsActionType,
@@ -31,7 +31,7 @@ import logging
 @dashboard_login_required
 def points_dashboard(request):
     user = request.user_obj
-    user_type = getattr(user, 'user_type', '').lower()
+    user_type = user.user_type
 
     if user_type == 'ngo':
         chart_action_types = ['Map', 'Referral', 'Post']
@@ -57,26 +57,18 @@ def points_dashboard(request):
     }
 
     total_points = sum(action_points.values())
-    user_points = total_points  # already calculated
-    
-    all_badges =PointsBadge.objects.all()
+    all_badges = PointsBadge.objects.all()
     badge = PointsBadge.objects.filter(
-    min_points__lte=user_points
+    min_points__lte=total_points
         ).filter(
-            Q(max_points__gte=user_points) | Q(max_points__isnull=True)
+            Q(max_points__gte=total_points) | Q(max_points__isnull=True)
         ).order_by('min_points').first()
 
-    badge_name='';
-    badge_image='';
-    if badge:
-        badge_name = badge.name
-        badge_image = badge.image_url if badge_image else '/static/images/default-badge.svg'
-        
+    # 🔍 Search & Filters - PREVIOUS DATA HERE OF filter_point
+    if user_type == 'ngo':
+        user_display_name = user_profile.ngo_name if user_profile else 'Unknown'
     else:
-        badge_name = "No Badge"
-        badge_image = "/static/images/default-badge.svg"
-
-
+        user_display_name = user_profile.company_name if user_profile else 'Unknown'
     # 📊 Chart data (last 7 days)
     chart_data = defaultdict(lambda: [0] * 7)
     today = datetime.date.today()
@@ -95,17 +87,11 @@ def points_dashboard(request):
 
     chart_labels = [d.strftime('%d/%m') for d in last_7_days]
 
-    # 🔍 Search & Filters - PREVIOUS DATA HERE OF filter_point
-    if user_type == 'ngo':
-        user_display_name = user_profile.ngo_name if user_profile else 'Unknown'
-    else:
-        user_display_name = user_profile.company_name if user_profile else 'Unknown'
     return render(request, 'ngo_points.html', {
         'total_points': total_points,
         'action_points': action_points,
         'chart_labels': chart_labels,
         'chart_data': dict(chart_data),
-        # 'history': history_data,
         'all_badges': all_badges,
         'badge': badge,
         'user':user,

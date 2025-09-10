@@ -71,251 +71,23 @@ def validate_email_phone(post_data, errors):
 def settings_page(request):
     user = request.user_obj
     context = get_common_context(request, user)
-    context.update({
-        'email': user.email,
-        'country_code': '+91',
-        'phone_no': user.phone_number or '',
-        'user_type': user.user_type,
-        'created_at': user.created_at,
-        'updated_at': user.updated_at,
-        "inapp_notifications": user.inapp_notifications,
-        "email_notifications": user.email_notifications,
-        "push_notifications": user.push_notifications,
-        "regulatory_alerts": user.regulatory_alerts,
-        "promotions_and_offers": user.promotions_and_offers,
-        "quite_mode": user.quite_mode,
-        "quite_mode_start_time": user.quite_mode_start_time,
-        "quite_mode_end_time": user.quite_mode_end_time,
-    })
-    # try:
-    #     user_profile = UserProfile.objects.get(user=user)
-    #     context.update({
-    #         'name': user_profile.name,
-    #         'date_of_birth': user_profile.dob,
-    #         'gender': user_profile.gender,
-    #         'address': user_profile.address,
-    #         'city': user_profile.city,
-    #         'state': user_profile.state,
-    #         'country': user_profile.country,
-    #         'pincode': user_profile.pincode,
-    #         'referral_code': user_profile.referral_code if user_profile.referral_code else "",
-    #     })
-    # except UserProfile.DoesNotExist:
-    #     pass
-
-    # Load profile-type-specific data (optional)
     if user.user_type == 'advertiser':
-        profile = AdvertiserProfile.objects.filter(user=user).first()
-        context["all_types"] = AdvertiserType.objects.filter(is_active=True)
-        context["all_services"] = AdServiceReq.objects.filter(is_active=True)
-        profile_id = profile.id
-        context.update({
-                'company_name': profile.company_name,
-                'advertiser_type': profile.advertiser_type,
-                'services_interested': profile.ad_services_required,
-                'website_url': profile.website_url,
-                'address': profile.address,
-                'city': profile.city,
-                'state': profile.state,
-                'country': profile.country,
-                'pincode': profile.pincode,
-                'description': profile.brand_description,
-                'brand_image_path': profile.brand_image_path,
-                'referral_code': profile.referral_code if profile.referral_code else "",
-                'incorporation_number': profile.incorporation_number,
-                'incorporation_doc_path': os.path.basename(profile.incorporation_doc_path),
-                'gst_number': profile.gst_number,
-                'gst_doc_path': os.path.basename(profile.gst_doc_path),
-                'pan_number': profile.pan_number,
-                'pan_doc_path': os.path.basename(profile.pan_doc_path),
-                'tan_number': profile.tan_number,
-                'tan_doc_path': os.path.basename(profile.tan_doc_path),
-                'brand_image_path': os.path.basename(profile.brand_image_path),
-            })
-        contact_persons = ContactPerson.objects.filter(
-            profile_type=user.user_type,
-            profile_id=profile_id
-        ).first()
-        if contact_persons:
-            context.update({
-                'contact_name': contact_persons.name,
-                'contact_phone_country_code': contact_persons.phone_country_code,
-                'contact_phone_number': contact_persons.phone_number,
-                'contact_role': contact_persons.role,
-            })
-        else:
-            context.update({
-                'contact_name': 'N/A',
-                'contact_phone_country_code': '',
-                'contact_phone_number': '',
-                'contact_role': '',
-            })
         return render(request, 'settings/setting_page_advertiser.html', context)
     
     elif user.user_type == 'client':
-        profile = ClientProfile.objects.filter(user=user).first()
-        context["all_types"] = ClientType.objects.filter(is_active=True)
-        context["all_services"] = ClientService.objects.filter(is_active=True)
-
-        profile_id = profile.id if profile else None
-
-        if profile:
-            context.update({
-                'company_name': profile.company_name,
-                'company_type': profile.company_type,
-                'services_interested': profile.services_interested,
-                'website_url': profile.website_url,
-                'address': profile.address,
-                'city': profile.city,
-                'state': profile.state,
-                'country': profile.country,
-                'pincode': profile.pincode,
-                'referral_code': profile.referral_code or "",
-                'incorporation_number': profile.incorporation_number,
-                'incorporation_doc_path': os.path.basename(profile.incorporation_doc_path) if profile.incorporation_doc_path else "",
-                'gst_number': profile.gst_number,
-                'gst_doc_path': os.path.basename(profile.gst_doc_path) if profile.gst_doc_path else "",
-                'pan_number': profile.pan_number,
-                'pan_doc_path': os.path.basename(profile.pan_doc_path) if profile.pan_doc_path else "",
-                'tan_number': profile.tan_number,
-                'tan_doc_path': os.path.basename(profile.tan_doc_path) if profile.tan_doc_path else "",
-            })
-
-        contact_persons = ContactPerson.objects.filter(
-            profile_type=user.user_type,
-            profile_id=profile_id
-        ).first() if profile_id else None
-
-        if contact_persons:
-            context.update({
-                'contact_name': contact_persons.name,
-                'contact_phone_country_code': contact_persons.phone_country_code,
-                'contact_phone_number': contact_persons.phone_number,
-                'contact_role': contact_persons.role,
-            })
-        else:
-            context.update({
-                'contact_name': 'N/A',
-                'contact_phone_country_code': '',
-                'contact_phone_number': '',
-                'contact_role': '',
-            })
-
         return render(request, 'settings/setting_page_client.html', context)
     
     elif user.user_type == 'ngo':
-        profile = NGOProfile.objects.filter(user=user).first()
-        context["all_services"] = NGOService.objects.filter(is_active=True)
-        profile_id = profile.id
-        if profile:
-            profile_id = profile.id
-            context.update({
-                'ngo_name': profile.ngo_name,
-                'ngo_services': profile.ngo_services,
-                'website_url': profile.website_url,
-                'address': profile.address,
-                'city': profile.city,
-                'state': profile.state,
-                'country': profile.country,
-                'pincode': profile.pincode,
-                'ngo_registration_number': profile.ngo_registration_number,
-                'ngo_registration_doc_path': os.path.basename(profile.ngo_registration_doc_path),
-                'pan_number': profile.pan_number,
-                'pan_doc_path': os.path.basename(profile.pan_doc_path),
-                'gst_number': profile.gst_number,
-                'gst_doc_path': os.path.basename(profile.gst_doc_path),
-                'tan_number': profile.tan_number,
-                'tan_doc_path': os.path.basename(profile.tan_doc_path),
-                'section8_number': profile.section8_number,
-                'section8_doc_path': os.path.basename(profile.section8_doc_path),
-                'doc_12a_number': profile.doc_12a_number,
-                'doc_12a_path': os.path.basename(profile.doc_12a_path),
-                'brand_description': profile.brand_description,
-                'brand_image_path': os.path.basename(profile.brand_image_path),
-                'referral_code': profile.referral_code if profile.referral_code else "",
-            })
-        contact_persons = ContactPerson.objects.filter(
-            profile_type=user.user_type,
-            profile_id=profile_id
-        ).first()
-
-        context.update({
-            'contact_name': contact_persons.name,
-            'contact_phone_country_code': contact_persons.phone_country_code,
-            'contact_phone_number': contact_persons.phone_number,
-            'contact_role': contact_persons.role,
-        })
         return render(request, 'settings/settings_page.html', context)
-    
-    elif user.user_type == 'provider':
-        profile = MedicalProviderProfile.objects.filter(user=user).first()
-        context["all_types"] = MedicalProviderType.objects.filter(is_active=True)
-        context["all_services"] = MedicalProviderServices.objects.filter(is_active=True)
-        context["all_workingdays"] = MedicalProviderWorkingDays.objects.filter(is_active=True)
-    
-        if profile:
-            profile_id = profile.id
-            context.update({
-                'company_name': profile.company_name,
-                'provider_type': profile.provider_type,  # Changed from provider_type to company_type for consistency
-                'services_offered': profile.services_offered,
-                'working_days': profile.working_days,
-                'website_url': profile.website_url,
-                'address': profile.address,
-                'city': profile.city,
-                'state': profile.state,
-                'country': profile.country,
-                'pincode': profile.pincode,
-                'referral_code': profile.referral_code if profile.referral_code else "",
-                'incorporation_number': profile.incorporation_number,
-                'incorporation_doc_path': os.path.basename(profile.incorporation_doc_path) if profile.incorporation_doc_path else "",
-                'gst_number': profile.gst_number,
-                'gst_doc_path': os.path.basename(profile.gst_doc_path) if profile.gst_doc_path else "",
-                'medical_license_number': profile.medical_license_number,
-                'medical_license_doc_path': os.path.basename(profile.medical_license_doc_path) if profile.medical_license_doc_path else "",
-                'pan_number': profile.pan_number,
-                'pan_doc_path': os.path.basename(profile.pan_doc_path) if profile.pan_doc_path else "",
-                'tan_number': profile.tan_number,
-                'tan_doc_path': os.path.basename(profile.tan_doc_path) if profile.tan_doc_path else "",
-                'storefront_image_path': os.path.basename(profile.storefront_image_path) if profile.storefront_image_path else "",
-            })
-            
-            # Get contact person details
-            contact_persons = ContactPerson.objects.filter(
-                profile_type=user.user_type,
-                profile_id=profile_id
-            ).first()
-            
-            if contact_persons:
-                context.update({
-                    'contact_name': contact_persons.name,
-                    'contact_phone_country_code': contact_persons.phone_country_code,
-                    'contact_phone_number': contact_persons.phone_number,
-                    'contact_role': contact_persons.role,
-                })
-            else:
-                context.update({
-                    'contact_name': 'N/A',
-                    'contact_phone_country_code': '',
-                    'contact_phone_number': '',
-                    'contact_role': '',
-                })
-        else:
-            # Handle case where profile doesn't exist
-            context.update({
-                'contact_name': 'N/A',
-                'contact_phone_country_code': '',
-                'contact_phone_number': '',
-                'contact_role': '',
-            })
         
+    elif user.user_type == 'provider':
         return render(request, 'settings/settings_page_provider.html', context)
 
 def get_base_context(user):
     context = {
         'email': user.email,
-        'country_code': '+91',
-        'phone_no': user.phone_number or '',
+        'country_code': user.phone_country_code,
+        'phone_no': user.phone_number,
         'user_type': user.user_type,
         'created_at': user.created_at,
         'updated_at': user.updated_at,
@@ -328,43 +100,27 @@ def get_base_context(user):
         'quite_mode_start_time': user.quite_mode_start_time,
         'quite_mode_end_time': user.quite_mode_end_time,
     }
-
-    # user_profile = UserProfile.objects.filter(user=user).first()
-    # if user_profile:
-    #     context.update({
-    #         'name': user_profile.name,
-    #         'date_of_birth': user_profile.dob,
-    #         'gender': user_profile.gender,
-    #         'address': user_profile.address,
-    #         'city': user_profile.city,
-    #         'state': user_profile.state,
-    #         'country': user_profile.country,
-    #         'pincode': user_profile.pincode,
-    #         'referral_code': user_profile.referral_code or '',
-    #     })
-
     return context
 
 def handle_contact_person(profile_type, profile_id):
     contact = ContactPerson.objects.filter(profile_type=profile_type, profile_id=profile_id).first()
     return {
-        'contact_name': contact.name if contact else 'N/A',
-        'contact_phone_country_code': getattr(contact, 'phone_country_code', ''),
-        'contact_phone_number': getattr(contact, 'phone_number', ''),
-        'contact_role': getattr(contact, 'role', ''),
+        'contact_name': contact.name,
+        'contact_phone_country_code': contact.phone_country_code,
+        'contact_phone_number': contact.phone_number,
+        'contact_role': contact.role
     }
 
 def handle_advertiser_profile(user):
     profile = AdvertiserProfile.objects.filter(user=user).first()
-    if not profile:
-        return {}
-
+    all_types = AdvertiserType.objects.filter(is_active=True)
+    all_services = AdServiceReq.objects.filter(is_active=True)
     data = {
         'company_name': profile.company_name,
         'advertiser_type': profile.advertiser_type,
-        'all_types': ['Brand', 'Agency', 'Influencer', 'Other'],
+        'all_types': all_types,
         'services_interested': profile.ad_services_required,
-        'all_services': [...],  # same list as before
+        'all_services': all_services,
         'website_url': profile.website_url,
         'address': profile.address,
         'city': profile.city,
@@ -373,7 +129,7 @@ def handle_advertiser_profile(user):
         'pincode': profile.pincode,
         'description': profile.brand_description,
         'brand_image_path': os.path.basename(profile.brand_image_path),
-        'referral_code': profile.referral_code or '',
+        'referral_code': profile.referral_code,
         'incorporation_number': profile.incorporation_number,
         'incorporation_doc_path': os.path.basename(profile.incorporation_doc_path),
         'gst_number': profile.gst_number,
@@ -383,26 +139,27 @@ def handle_advertiser_profile(user):
         'tan_number': profile.tan_number,
         'tan_doc_path': os.path.basename(profile.tan_doc_path),
     }
-    data.update(handle_contact_person(user.user_type, profile.id))
+    data.update(handle_contact_person(user.user_type, user.id))
     return data
 
 def handle_client_profile(user):
     profile = ClientProfile.objects.filter(user=user).first()
-    if not profile:
-        return {}
+    all_types = ClientType.objects.filter(is_active=True)
+    all_services = ClientService.objects.filter(is_active=True)
+
     data = {
         'company_name': profile.company_name,
         'company_type': profile.company_type,
-        'all_types': [...],  # company types
+        'all_types': all_types,
         'services_interested': profile.services_interested,
-        'all_services': [...],  # same service list
+        'all_services': all_services,
         'website_url': profile.website_url,
         'address': profile.address,
         'city': profile.city,
         'state': profile.state,
         'country': profile.country,
         'pincode': profile.pincode,
-        'referral_code': profile.referral_code or '',
+        'referral_code': profile.referral_code,
         'incorporation_number': profile.incorporation_number,
         'incorporation_doc_path': os.path.basename(profile.incorporation_doc_path),
         'gst_number': profile.gst_number,
@@ -412,17 +169,16 @@ def handle_client_profile(user):
         'tan_number': profile.tan_number,
         'tan_doc_path': os.path.basename(profile.tan_doc_path),
     }
-    data.update(handle_contact_person(user.user_type, profile.id))
+    data.update(handle_contact_person(user.user_type, user.id))
     return data
 
 def handle_ngo_profile(user):
     profile = NGOProfile.objects.filter(user=user).first()
-    if not profile:
-        return {}
+    all_services = NGOService.objects.filter(is_active=True)
     data = {
         'ngo_name': profile.ngo_name,
         'ngo_services': profile.ngo_services,
-        'all_services': [...],
+        'all_services': all_services,
         'website_url': profile.website_url,
         'address': profile.address,
         'city': profile.city,
@@ -443,24 +199,24 @@ def handle_ngo_profile(user):
         'doc_12a_path': os.path.basename(profile.doc_12a_path),
         'brand_description': profile.brand_description,
         'brand_image_path': os.path.basename(profile.brand_image_path),
-        'referral_code': profile.referral_code or '',
+        'referral_code': profile.referral_code,
     }
-    data.update(handle_contact_person(user.user_type, profile.id))
+    data.update(handle_contact_person(user.user_type, user.id))
     return data
 
 def handle_provider_profile(user):
     profile = MedicalProviderProfile.objects.filter(user=user).first()
-    if not profile:
-        return {}
-    
+    all_types = MedicalProviderType.objects.filter(is_active=True)
+    all_services = MedicalProviderServices.objects.filter(is_active=True)
+    all_workingdays = MedicalProviderWorkingDays.objects.filter(is_active=True)
     data = {
         'company_name': profile.company_name,
-        'company_type': profile.provider_type,
-        'all_types': MedicalProviderType.objects.filter(is_active=True),
+        'provider_type': profile.provider_type,
+        'all_types': all_types,
         'services_offered': profile.services_offered,
-        'all_services': MedicalProviderServices.objects.filter(is_active=True),
+        'all_services': all_services,
         'working_days': profile.working_days,
-        'all_workingdays': MedicalProviderWorkingDays.objects.filter(is_active=True),
+        'all_workingdays': all_workingdays,
         'website_url': profile.website_url,
         'address': profile.address,
         'city': profile.city,
@@ -480,41 +236,38 @@ def handle_provider_profile(user):
         'tan_doc_path': os.path.basename(profile.tan_doc_path) if profile.tan_doc_path else "",
         'storefront_image_path': os.path.basename(profile.storefront_image_path) if profile.storefront_image_path else "",
     }
-    data.update(handle_contact_person(user.user_type, profile.id))
+    data.update(handle_contact_person(user.user_type, user.id))
     return data
 
 @require_GET
 @dashboard_login_required
 def get_account_details(request):
-    try:
-        user = request.user_obj
-        context = get_base_context(user)
+    # try:
+    user = request.user_obj
+    context = get_base_context(user)
 
-        # Map user_type to its handler function
-        user_type_handlers = {
-            'ngo': handle_ngo_profile,
-            'client': handle_client_profile,
-            'advertiser': handle_advertiser_profile,
-            'provider': handle_provider_profile,
-        }
+    # Map user_type to its handler function
+    user_type_handlers = {
+        'ngo': handle_ngo_profile,
+        'client': handle_client_profile,
+        'advertiser': handle_advertiser_profile,
+        'provider': handle_provider_profile,
+    }
 
-        handler_func = user_type_handlers.get(user.user_type)
-        if handler_func:
-            context.update(handler_func(user))
-        type = request.GET.get('type', 'view')
-        # load_country_codes
-        context['country_codes'] = load_country_codes()
-        
-        if type == 'view':
-            # print(f"data is: {context}")
-            html = render_to_string('partials/account_details.html', context, request=request)
-        elif  type == 'edit':
-            print(f"edit data is: {context}")
-            html = render_to_string('partials/edit-account-details.html', context, request=request)
+    handler_func = user_type_handlers.get(user.user_type)
+    if handler_func:
+        context.update(handler_func(user))
+    type = request.GET.get('type', 'view')
+    context['country_codes'] = load_country_codes()
 
-        return JsonResponse({'success': True, 'html': html})
-    except Exception as e:
-        return JsonResponse({'success': False, 'message': f'Error loading account details: {str(e)}'})
+    if type == 'view':
+        html = render_to_string('partials/account_details.html', context, request=request)
+    elif  type == 'edit':
+        html = render_to_string('partials/edit-account-details.html', context, request=request)
+
+    return JsonResponse({'success': True, 'html': html})
+    # except Exception as e:
+    #     return JsonResponse({'success': False, 'message': f'Error loading account details: {str(e)}'})
 
 def logout_view(request):
     request.session.flush()  # clears all session data
@@ -622,7 +375,6 @@ def update_ngo_profile(request):
             errors[field] = f"{field.replace('_', ' ').capitalize()} is required."
     
     if errors:
-        print(f"Validation errors: {errors}")
         return JsonResponse({"success": False, "errors": errors}, status=400)
         
     with transaction.atomic():
@@ -788,9 +540,6 @@ def update_provider_profile(request):
             provider_profile.pincode = post_data.get("pincode")
             provider_profile.referral_code = post_data.get("referral_code")
 
-            # ✅ ForeignKey Fields (single selection)
-            
-            # Provider Type (ForeignKey) - expect ID or name
             provider_type_value = post_data.get("provider_type")
             if provider_type_value:
                 try:
@@ -846,17 +595,12 @@ def update_provider_profile(request):
     except Exception as e:
         return JsonResponse({"success": False, "message": str(e)}, status=500)
 
-
-
-
 @require_POST
 @dashboard_login_required
 def delete_account(request):
     user = request.user_obj
     data = json.loads(request.body)
     reason = data.get("reason", "No reason provided")
-
-    # Log the reason somewhere, like a model or file (optional)
     print(f"Deleted account {user.email}. Reason: {reason}")
 
     # Soft delete: deactivate user
@@ -902,7 +646,6 @@ def change_password(request):
         confirm_password = request.POST.get('confirm_password')
         errors={}
         error=''
-        print(f"Current Password: {current_password}, New Password: {new_password}, Confirm Password: {confirm_password}")
         if not current_password or len(current_password) <= 8:
             errors["new_password"] = "Password is required (min 8 chars)."
             error = "Password is required (min 8 chars)."
@@ -914,7 +657,6 @@ def change_password(request):
             error = "Passwords do not match."
             
         if errors:
-            # print("Validation errors:", errors)
             return JsonResponse({"success": False, "errors": errors, "message": error})
         
         user.password = make_password(new_password)
@@ -923,9 +665,9 @@ def change_password(request):
     except Exception as e:
         return JsonResponse({'success': False, 'errors': f'Error updating password: {str(e)}', "message" : ''})
 
-@require_GET
-@dashboard_login_required
-def get_user_theme_api(request):
+# @require_GET
+# @dashboard_login_required
+# def get_user_theme_api(request):
     user = request.user_obj
     user_type = None
 

@@ -150,7 +150,7 @@ $(document).ready(function () {
     // Verify OTP button
     $(".verify-otp").click(function () {
         let otp = $('input[name="otp1"]').val();
-        let token = $("#otp_token").val(); // ✅ Correct bearer token
+        let token = $("#otp_token").val();
         let email = $('input[name="email"]').val();
 
         if (!otp) {
