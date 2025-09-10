@@ -1,4 +1,5 @@
-{% if user_type == 'ngo' %}
+{% load static %}
+{% if user.user_type == 'ngo' %}
     <div class="grid sm:grid-cols-2 gap-x-6 sm:gap-x-10 lg:gap-x-20 gap-y-6">
         <!-- Email -->
         <div class="flex flex-col">
@@ -152,7 +153,7 @@
             </p>
         </div>
     </div>
-{% elif user_type == 'advertiser' %}
+{% elif user.user_type == 'advertiser' %}
     <div class="grid sm:grid-cols-2 gap-x-6 sm:gap-x-10 lg:gap-x-20 gap-y-6">
         <!-- Email -->
         <div class="flex flex-col">
@@ -314,7 +315,7 @@
         </p>
         </div>
     </div>
-{% elif user_type == 'client' %}
+{% elif user.user_type == 'client' %}
 <div class="grid sm:grid-cols-2 gap-x-6 sm:gap-x-10 lg:gap-x-20 gap-y-6">
     <!-- Email -->
     <div class="flex flex-col">
@@ -476,7 +477,7 @@
         </p>
     </div>
 </div>
-{% elif user_type == 'provider' %}
+{% elif user.user_type == 'provider' %}
 <div class="grid sm:grid-cols-2 gap-x-6 sm:gap-x-10 lg:gap-x-20 gap-y-6">
     <!-- Email -->
     <div class="flex flex-col">

@@ -71,17 +71,20 @@ def validate_email_phone(post_data, errors):
 def settings_page(request):
     user = request.user_obj
     context = get_common_context(request, user)
-    if user.user_type == 'advertiser':
-        return render(request, 'settings/setting_page_advertiser.html', context)
+    context.update(get_base_context(user))
     
-    elif user.user_type == 'client':
-        return render(request, 'settings/setting_page_client.html', context)
-    
-    elif user.user_type == 'ngo':
-        return render(request, 'settings/settings_page.html', context)
-        
-    elif user.user_type == 'provider':
-        return render(request, 'settings/settings_page_provider.html', context)
+    user_type_handlers = {
+        'ngo': handle_ngo_profile,
+        'client': handle_client_profile,
+        'advertiser': handle_advertiser_profile,
+        'provider': handle_provider_profile,
+    }
+    handler_func = user_type_handlers.get(user.user_type)
+    if handler_func:
+        context.update(handler_func(user))
+    context['country_codes'] = load_country_codes()
+    print(context)
+    return render(request, 'settings/settings_page.html', context)
 
 def get_base_context(user):
     context = {
@@ -238,36 +241,6 @@ def handle_provider_profile(user):
     }
     data.update(handle_contact_person(user.user_type, user.id))
     return data
-
-@require_GET
-@dashboard_login_required
-def get_account_details(request):
-    # try:
-    user = request.user_obj
-    context = get_base_context(user)
-
-    # Map user_type to its handler function
-    user_type_handlers = {
-        'ngo': handle_ngo_profile,
-        'client': handle_client_profile,
-        'advertiser': handle_advertiser_profile,
-        'provider': handle_provider_profile,
-    }
-
-    handler_func = user_type_handlers.get(user.user_type)
-    if handler_func:
-        context.update(handler_func(user))
-    type = request.GET.get('type', 'view')
-    context['country_codes'] = load_country_codes()
-
-    if type == 'view':
-        html = render_to_string('partials/account_details.html', context, request=request)
-    elif  type == 'edit':
-        html = render_to_string('partials/edit-account-details.html', context, request=request)
-
-    return JsonResponse({'success': True, 'html': html})
-    # except Exception as e:
-    #     return JsonResponse({'success': False, 'message': f'Error loading account details: {str(e)}'})
 
 def logout_view(request):
     request.session.flush()  # clears all session data

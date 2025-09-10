@@ -1,4 +1,5 @@
-{% if user_type == 'ngo' %}
+{% load static %}
+{% if user.user_type == 'ngo' %}
     <form id="editForm" method="POST" action="{% url 'update_ngo_profile' %}" class="submit-form grid grid-cols-1 gap-x-6 md:gap-x-12 gap-y-6 px-4 sm:px-6 pt-6 text-sm">
         {% csrf_token %}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm">
@@ -178,7 +179,7 @@
         </div>
         </div>
     </form>
-{% elif user_type == 'advertiser' %}
+{% elif user.user_type == 'advertiser' %}
     <form id="editForm" method="POST" action="{% url 'update_advertiser_profile' %}" class="submit-formgrid grid-cols-1 gap-x-6 md:gap-x-12 gap-y-6 px-4 sm:px-6 pt-6 text-sm">
         {% csrf_token %}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm mb-2">
@@ -379,7 +380,7 @@
             </div>
         </div>
     </form>
-{% elif user_type == 'provider' %}
+{% elif user.user_type == 'provider' %}
     <form id="editForm" method="POST" action="{% url 'update_provider_profile' %}" class="submit-formgrid grid-cols-1 gap-x-6 md:gap-x-12 gap-y-6 px-4 sm:px-6 pt-6 text-sm">
         {% csrf_token %}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm mb-2">
@@ -606,7 +607,7 @@
             </div>
         </div>
     </form>
-{% elif user_type == 'client' %}
+{% elif user.user_type == 'client' %}
     <form id="editForm" method="POST" action="{% url 'update_client_profile' %}" class="submit-form grid grid-cols-1 gap-x-6 md:gap-x-12 gap-y-6 px-4 sm:px-6 pt-6 text-sm">
         {% csrf_token %}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm">
