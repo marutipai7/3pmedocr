@@ -227,7 +227,7 @@ class ContactPerson(models.Model):
         ('provider', 'Medical Provider'),
     ]
     profile_type = models.CharField(max_length=32, choices=PROFILE_TYPE_CHOICES)
-    profile_id = models.IntegerField()
+    profile_id = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     phone_country_code = models.CharField(max_length=8, blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)

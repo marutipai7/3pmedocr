@@ -62,38 +62,49 @@ def get_common_context(request,user):
     ).order_by('min_points').first()
 
     if user_type == 'ngo':
-        user_display_name = user_profile.ngo_name if user_profile else 'Unknown'
+        user_display_name = user_profile.ngo_name
     else:
-        user_display_name = user_profile.company_name if user_profile else 'Unknown'
-    return {
+        user_display_name = user_profile.company_name
+    context = {
         'user_profile': user,
         'sidebar_menu': menu_items,
         'badge': badge,
         'user': user,
         'user_display_name': user_display_name,
     }
+    context.update(handle_theme_context(user_type))
+    return context
 
-def get_theme_colors(user_type: str) -> dict:
-    """
-    Fetch active theme colors for the given user_type.
-    Falls back to 'user' type if no match is found.
-    Returns a dict with '_' instead of '-' in keys.
-    """
-    def normalize_keys(color_data: dict) -> dict:
-        return {k.replace("-", "_"): v for k, v in color_data.items()}
-
+def handle_theme_context(user_type):
     try:
         color_scheme_obj = UserColorScheme.objects.get(user_type=user_type, is_active=True)
-        colors = normalize_keys(color_scheme_obj.color_data)
-        logger.info(f"[Theme Colors] Found active scheme for '{user_type}': {colors}")
-        return colors
-    except UserColorScheme.DoesNotExist:
-        logger.warning(f"[Theme Colors] No active scheme found for '{user_type}', falling back to 'user'")
-        try:
-            default_scheme = UserColorScheme.objects.get(user_type='user', is_active=True)
-            colors = normalize_keys(default_scheme.color_data)
-            logger.info(f"[Theme Colors] Using fallback 'user' scheme: {colors}")
-            return colors
-        except UserColorScheme.DoesNotExist:
-            logger.error("[Theme Colors] No active color scheme found for user or default")
-            return {}
+        return color_scheme_obj.color_data
+
+    except Exception as e:
+        logger.error(f"Error fetching color scheme for user type '{user_type}': {e}")    
+        return {}
+
+# def get_theme_colors(user_type: str) -> dict:
+#     """
+#     Fetch active theme colors for the given user_type.
+#     Falls back to 'user' type if no match is found.
+#     Returns a dict with '_' instead of '-' in keys.
+#     """
+#     def normalize_keys(color_data: dict) -> dict:
+#         return {k.replace("-", "_"): v for k, v in color_data.items()}
+
+#     try:
+#         color_scheme_obj = UserColorScheme.objects.get(user_type=user_type, is_active=True)
+#         colors = normalize_keys(color_scheme_obj.color_data)
+#         logger.info(f"[Theme Colors] Found active scheme for '{user_type}': {colors}")
+#         return colors
+#     except UserColorScheme.DoesNotExist:
+#         logger.warning(f"[Theme Colors] No active scheme found for '{user_type}', falling back to 'user'")
+#         try:
+#             default_scheme = UserColorScheme.objects.get(user_type='user', is_active=True)
+#             colors = normalize_keys(default_scheme.color_data)
+#             logger.info(f"[Theme Colors] Using fallback 'user' scheme: {colors}")
+#             return colors
+#         except UserColorScheme.DoesNotExist:
+#             logger.error("[Theme Colors] No active color scheme found for user or default")
+#             return {}

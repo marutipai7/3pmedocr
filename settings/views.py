@@ -9,7 +9,7 @@ from dashboard.utils import dashboard_login_required, get_common_context
 from registration.models import *
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.files.storage import default_storage
-from django.views.decorators.http import require_POST, require_GET
+from django.views.decorators.http import require_POST
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.template.loader import render_to_string
@@ -83,7 +83,7 @@ def settings_page(request):
     if handler_func:
         context.update(handler_func(user))
     context['country_codes'] = load_country_codes()
-    print(context)
+    # print(context)
     return render(request, 'settings/settings_page.html', context)
 
 def get_base_context(user):
@@ -142,7 +142,7 @@ def handle_advertiser_profile(user):
         'tan_number': profile.tan_number,
         'tan_doc_path': os.path.basename(profile.tan_doc_path),
     }
-    data.update(handle_contact_person(user.user_type, user.id))
+    data.update(handle_contact_person(user.user_type, user))
     return data
 
 def handle_client_profile(user):
@@ -172,7 +172,7 @@ def handle_client_profile(user):
         'tan_number': profile.tan_number,
         'tan_doc_path': os.path.basename(profile.tan_doc_path),
     }
-    data.update(handle_contact_person(user.user_type, user.id))
+    data.update(handle_contact_person(user.user_type, user))
     return data
 
 def handle_ngo_profile(user):
@@ -204,7 +204,7 @@ def handle_ngo_profile(user):
         'brand_image_path': os.path.basename(profile.brand_image_path),
         'referral_code': profile.referral_code,
     }
-    data.update(handle_contact_person(user.user_type, user.id))
+    data.update(handle_contact_person(user.user_type, user))
     return data
 
 def handle_provider_profile(user):
@@ -239,7 +239,7 @@ def handle_provider_profile(user):
         'tan_doc_path': os.path.basename(profile.tan_doc_path) if profile.tan_doc_path else "",
         'storefront_image_path': os.path.basename(profile.storefront_image_path) if profile.storefront_image_path else "",
     }
-    data.update(handle_contact_person(user.user_type, user.id))
+    data.update(handle_contact_person(user.user_type, user))
     return data
 
 def logout_view(request):
@@ -364,8 +364,7 @@ def update_ngo_profile(request):
                 setattr(ngo_profile, field, data.get(field))
             ngo_profile.ngo_services = data.getlist("services")
             ngo_profile.save()
-    # Update ContactPerson (if exists)
-        contact_person = ContactPerson.objects.filter(profile_type='ngo', profile_id=ngo_profile.id).first()
+        contact_person = ContactPerson.objects.filter(profile_type='ngo', profile_id=user).first()
 
         if contact_person:
             contact_person.name = request.POST.get('contact_name')
@@ -419,7 +418,7 @@ def update_advertiser_profile(request):
             if contact_name or contact_phone:
                 contact, _ = ContactPerson.objects.get_or_create(
                     profile_type="advertiser",
-                    profile_id=advertiser_profile.id
+                    profile_id=user
                 )
                 contact.name = contact_name
                 contact.role = post_data.get("contact_role")
@@ -555,7 +554,7 @@ def update_provider_profile(request):
             if contact_name or contact_phone:
                 contact, _ = ContactPerson.objects.get_or_create(
                     profile_type="provider",
-                    profile_id=provider_profile.id
+                    profile_id=user
                 )
                 contact.name = contact_name
                 contact.role = post_data.get("contact_role")

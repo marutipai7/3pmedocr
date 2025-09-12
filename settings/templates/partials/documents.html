@@ -1,6 +1,6 @@
 {% load static %}
 {% if user.user_type == 'ngo' %}
-    <div class="hidden tab-content" id="documents">
+    <div class="hidden tab-content documents">
         <div class="flex lg:items-center justify-between pt-4 flex-col lg:flex-row">
           <div class="flex flex-col gap-1">
             <p class="font-semibold text-lg text-jet-black">
@@ -504,7 +504,7 @@
     </div>
     </div>
 {% elif user.user_type == 'client' %}
-    <div class="hidden tab-content documents" id="">
+    <div class="hidden tab-content documents">
         <div
         class="flex lg:items-center justify-between pt-8 flex-col lg:flex-row"
         >
