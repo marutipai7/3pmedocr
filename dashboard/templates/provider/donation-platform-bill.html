@@ -1,0 +1,120 @@
+{% load static %}
+
+<div id="platformReceiptModal" 
+    class="platformReceiptPopup popup bg-opacity-70 bg-black/30 flex z-50 fixed inset-0 items-center justify-center hidden" style="padding-left: 0.75rem; padding-right: 0.75rem;">
+    <div class="bg-white rounded-lg max-w-[560px] h-[640px] w-full overflow-y-auto shadow-lg p-3 flex flex-col gap-4 mx-auto">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span
+            class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg">
+            share
+            </span>
+            <span
+            onclick="downloadPlatformPDF()"
+            class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg">
+            download
+            </span>
+        </div>
+        <p class="text-xl font-semibold text-dark-blue">
+            Platform Bill
+        </p>
+        <button
+            onclick="closePlatformPopup()"
+            class="close-platform-bill" style="background: none; border: none; padding: 0;">
+            <span
+            class="material-symbols-outlined"
+            style="cursor: pointer;">
+            close
+            </span>
+        </button>
+    </div>
+    <div class="download-container" style="font-family: 'Courier New', Courier, monospace; font-size: 14px; line-height: 1.6; max-width: 700px; max-height:700px; color: #000;">
+        <div id="platformReceiptContent">
+        <div style="text-align: center; font-weight: bold; font-size: 16px;">TAX INVOICE</div>
+        <hr style="border-top: 1px dashed #000; margin: 15px 0;">
+        <!-- Invoice Details -->
+        <table style="width: 100%; margin-bottom: 10px;">
+            <tr>
+                <td style="width: 30%;"><strong>Receipt No:</strong></td>
+                <td>INV/2025/<span id="receiptNoPlatform"></span></td>
+            </tr>
+            <tr>
+                <td><strong>Date:</strong></td>
+                <td id="paymentDatePlatform"></td>
+            </tr>
+            <tr>
+                <td><strong>Platform Name:</strong></td>
+                <td id="ngoNamePlatform"></td>
+            </tr>
+            
+            <tr>
+                <td><strong>Address:</strong></td>
+                <td id="addressPlatform"></td>
+            </tr>
+        </table>
+        <hr style="border-top: 1px dashed #000; margin: 15px 0;">
+        <!-- Billing Details -->
+        <table style="width: 100%; margin-bottom: 10px;">
+            <tr>
+                <td style="width: 30%;"><strong>Bill To:</strong></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><strong>Name:</strong></td>
+                <td id="namePlatform"></td>
+            </tr>
+            <tr>
+                <td><strong>Email:</strong></td>
+                <td id="emailPlatform"></td>
+            </tr>
+        </table>
+
+        <hr style="border-top: 1px dashed #000; margin: 15px 0;">
+        <!-- Billing Details -->
+            <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid #000;">
+                    <th style="text-align: left; padding: 8px;">Description</th>
+                    <th style="text-align: right; padding: 8px;">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding: 8px;">Donation facilitation fee</td>
+                    <td style="text-align: right; padding: 8px;" id="amountPlatform"></td>
+                </tr>
+            </tbody>
+        </table>
+        
+            <hr style="border-top: 1px dashed #000; margin: 15px 0;">
+        <!-- Totals -->
+        <table style="width: 100%; margin-top: 10px;">
+            <tr>
+                <td style="display: flex;justify-content: space-between;"><strong>Subtotal:</strong> 
+                    <span id="subTotalPlatform" style="text-align: right; padding: 8px;"></span></td>
+            </tr>
+            <tr>
+                <td style="display: flex;justify-content: space-between;"><span>Add:GST @ 18% (CGST 9% + SGST 9%):</span> <span id="gstPlatform" style="text-align: right; padding: 8px;"></span></td>
+            </tr>
+            <tr>
+                <td><hr style="border-top: 1px dashed #000; margin: 10px 0;"></td>
+            </tr>
+            <tr>
+                <td style="display: flex;justify-content: space-between;font-weight: bold;">Total Invoice Amount (INR): <span id="finalTotalPlatform" style="text-align: right; padding: 8px;"></span></td>
+            </tr>
+        </table>
+        
+        <div style="margin-top: 20px; font-style: italic; font-size: 13px;">
+            *This invoice is generated for the facilitation of the donation process.<br>
+            The actual donation amount of <span id="actualAmountPlatform"></span> was made directly to the NGO.*
+        </div>
+
+        <!-- Signature -->
+        <div style="margin-top: 30px;">
+            Authorized Signatory,<br><br>
+            [Signature]<br>
+            <strong id="signPlatform"></strong>
+        </div>
+        </div>
+    </div>
+    </div>
+</div>

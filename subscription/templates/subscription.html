@@ -28,14 +28,23 @@
 
           <div class="flex flex-col md:flex-row items-center justify-between  mt-4">
             <div class="text-base font-normal mb-2 md:mb-0">
-              Current Plan: Standard Plan
+              Current Plan: {{ current_plan }}
             </div>
             <div class="text-base font-normal  mb-2 md:mb-0 text-center">
-              Status: Active
+              Status: {{ status }}
             </div>
             <div class="text-base font-normal text-right">
-              Expiry Date: 20/03/2025
-              <span class="ml-2 text-lg text-strong-red">(5 days left to go)</span>
+              Expiry Date: 
+              {% if expiry_date %}
+                {{ expiry_date|date:"d/m/Y" }}
+                {% if status == "Active" %}
+                  <span class="ml-2 text-lg text-strong-red">
+                    ({{ expiry_date|timeuntil }} left to go)
+                  </span>
+                {% endif %}
+              {% else %}
+                None
+              {% endif %}
             </div>
           </div>
 
@@ -53,107 +62,23 @@
 
             </div>
           </div>
-
-          {% comment %} <div class="mt-1">
-            <h2 class="font-semibold text-lg">
-              Select Payment Method
-            </h2>
-
-            <div class="flex flex-wrap gap-4 p-4 bg-white shadow-[4px_4px_10px_4px_#00000033] rounded-md mt-2">
-              <!-- UPI -->
-              <div
-                class="flex items-center gap-3 border border-inactive-blue py-1 px-3 rounded-md flex-1 min-w-[250px]">
-                <img src="/static/images/upi.svg" alt="UPI" class="w-10 h-10 mr-2" />
-                <label for="upi" class="font-semibold text-base flex-1">
-                  UPI Payment
-                </label>
-
-                <label class="custom-radio-label-client">
-                  <input type="radio" name="payment-method" id="upi" />
-                  <span class="custom-radio-client"></span>
-                </label>
-              </div>
-
-              <!-- Credit/Debit Card -->
-              <div
-                class="flex items-center gap-3 border border-inactive-blue py-1 px-3 rounded-md flex-1 min-w-[250px]">
-                <label for="cod" class="font-semibold text-base w-full flex items-center gap-2">
-                  <span class="material-symbols-outlined align-middle text-2xl text-dark-gray">credit_card</span>
-                  <span class="align-middle">Credit Card or Debit Card</span>
-                </label>
-
-                <label class="custom-radio-label-client">
-                  <input type="radio" name="payment-method" id="cod" />
-                  <span class="custom-radio-client"></span>
-                </label>
-              </div>
-
-              <!-- Payment Gateway -->
-
-              <div
-                class="flex items-center gap-3 border border-inactive-blue py-1 px-3 rounded-md flex-1 min-w-[250px]">
-                <label for="net-banking" class="font-semibold text-base w-full flex items-center gap-2">
-                  <span class="material-symbols-outlined text-dark-gray text-2xl">currency_rupee</span>
-                  Payment Gateway
-                </label>
-
-                <label class="custom-radio-label-client">
-                  <input type="radio" name="payment-method" id="net-banking" />
-                  <span class="custom-radio-client"></span>
-                </label>
-              </div>
-            </div>
-
-
-          </div> {% endcomment %}
-
           <h3 class="text-xl font-semibold mt-6">Payment Details</h3>
-          <div class="flex flex-col md:flex-row items-center justify-between mt-6">
-            <div class="text-lg font-semibold mb-2 md:mb-0">
-              Plan - Standard Plan
 
-            </div>
-            <div class="text-lg font-semibold  mb-2 md:mb-0 text-center">
-              Start date - 20/03/2025 End date -
-              20/03/2026
-
-            </div>
-            <div class="text-lg font-semibold text-right">
-              Yearly (20% Discount)
-            </div>
+          <div id="payment-details" class="mt-6">
+            <!-- Will be replaced by AJAX response -->
+            <p class="text-gray-500">Select a plan to see payment details...</p>
           </div>
 
-          <div class="flex justify-between mt-4">
-            <p class="text-base font-semibold ">Total value before GST</p>
-            <p class="text-lg font-semibold text-dark-gray">₹6,000.00</p>
-          </div>
-
-          <div class="flex justify-between mt-4">
-            <p class="text-base font-normal text-light-gray1">Add: GST @ 18%</p>
-            <p class="text-lg font-semibold text-dark-gray">₹1,080.00</p>
-          </div>
-
-          <div class="flex justify-between mt-4">
-            <p class="text-base font-semibold ">Gross invoice amount</p>
-            <p class="text-lg font-semibold text-dark-gray">₹7,080.00</p>
-          </div>
-
-          <div class="flex justify-between mt-3">
-            <p class="text-lg font-semibold text-dark-gray">Net payable</p>
-            <p class="text-xl font-semibold text-dark-blue">₹6,980.00</p>
-          </div>
-
-          <div class="flex justify-end mt-10 gap-4">
+          <div class="flex justify-end mt-10 gap-4" id="payment-actions" style="display:none;">
             <a href="#"
               class="w-full max-w-[120px] py-2 rounded-[10px] border border-dark-blue text-dark-blue font-normal text-base transition text-center flex items-center justify-center">
               Cancel
             </a>
             <a href="#"
-              class="pay-button w-full max-w-[120px] py-2 rounded-[10px] bg-dark-blue text-white font-normal text-base transition text-center flex items-center justify-center">
+              class="pay-button w-full max-w-[120px] py-2 rounded-[10px] bg-dark-blue text-white font-normal text-base transition text-center flex items-center justify-center"
+              data-plan-id="" data-option="">
               Pay
             </a>
-
-
           </div>
 
           <hr class="my-4 border-t border-light-gray mt-6" />
@@ -162,164 +87,16 @@
 
 
           <!-- Subscription Popup -->
-          <div class="subscription-popup fixed inset-0 hidden flex items-center justify-center bg-black/50 z-50">
-            <!-- Popup Box -->
-            <div
-              class="popup-box bg-white text-black rounded-2xl max-w-[520px] w-full p-6 shadow-xl relative flex flex-col justify-between pointer-events-auto">
-
-              <!-- Close Button -->
-
-
-              <!-- Popup Content -->
-              <div>
-                <div class="flex justify-center mb-4 text-xl font-semibold">
-                  Payment Status
-                  </span>
-                </div>
-                <hr class="my-4 border-t border-dark-blue" />
-                <div class="flex justify-center">
-                  <img src="/static/images/successfull.gif" alt="Success" class="w-24 h-24" />
-                </div>
-                <h2 class="text-center text-2xl font-semibold mb-6 text-dark-gray">Donation Successful</h2>
-                <div>
-
-                  <p class="text-sm font-medium  mb-1">Transfer method</p>
-                  <div class="p-3 border border-gray-300 rounded-md flex items-center justify-between">
-                    <div>
-                      <p class="font-semibold text-base text-jet-black">Amazon pay ICICI bank credit card</p>
-                      <p class="text-xs text-gray-600 flex items-center gap-x-3">
-                        **3425
-                        <img src="/static/images/visa.svg" alt="Visa" class="w-6 h-6" />
-                        | Gaurav Yadav
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Order Info -->
-              <div class="mt-4 ">
-                <div class="flex justify-between mb-2">
-                  <span class="text-base font-normal text-medium-gray">Transfer ID</span>
-                  <span class="text-base font-semibold ">ID12345574324324</span>
-                </div>
-
-                <div class="flex justify-between mb-2">
-                  <span class="text-base font-normal text-medium-gray">Total Amount</span>
-                  <span class="text-2xl font-semibold ">₹1499</span>
-                </div>
-
-              </div>
-
-              <hr class="my-4 border-t border-dark-blue" />
-
-              <p class="text-center text-sm font-normal mb-3 mt-3">
-                Your invoice has been mailed to you over registered Email ID
-              </p>
-              <!-- Inside your subscription-popup -->
-              <div class="flex justify-center gap-6 mt-4 mb-6">
-                <button
-                  class="view-invoice-btn-in-popup border border-dark-blue text-dark-blue px-10 py-2 rounded-md font-semibold text-base cursor-pointer">
-                  View Invoice
-                </button>
-                <button
-                  class="close-popup-subscription bg-dark-blue text-white px-16 py-2 rounded-md font-semibold text-base cursor-pointer">
-                  Close
-                </button>
-
-              </div>
-
-            </div>
-          </div>
+          {% include 'partials/subscription-success-popup.html' %}
+          
 
           <!-- Subscription Popup with "fail" -->
-          <div class="subscription-popup-fail fixed inset-0 hidden flex items-center justify-center bg-black/50 z-50">
-            <!-- Popup Box -->
-            <div
-              class="popup-box bg-white text-black rounded-2xl max-w-[520px] w-full p-6 shadow-xl relative flex flex-col justify-between pointer-events-auto">
+           {% include 'partials/subscription-fail-popup.html' %}
 
-              <!-- Close Button -->
-              <button
-                class="close-popup absolute top-3 right-4 text-2xl font-bold text-gray-500 hover:text-black cursor-pointer">
-                &times;
-              </button>
-
-              <!-- Popup Content -->
-              <div>
-                <div class="flex justify-center mb-4 text-xl font-semibold">
-                  Payment Status
-                </div>
-                <hr class="my-4 border-t border-dark-blue" />
-                <div class="flex justify-center">
-                  <img src="/static/images/Payment Failed 1.svg" alt="Failed" class="w-24 h-24" />
-                </div>
-                <h2 class="text-center text-2xl font-semibold mb-6 text-dark-gray">Donation Failed</h2>
-                <div>
-                  <p class="text-sm font-medium mb-1">Transfer method</p>
-                  <div class="p-3 border border-gray-300 rounded-md flex items-center justify-between">
-                    <div>
-                      <p class="font-semibold text-base text-jet-black">Amazon pay ICICI bank credit card</p>
-                      <p class="text-xs text-gray-600 flex items-center gap-x-3">
-                        **3425
-                        <img src="/static/images/visa.svg" alt="Visa" class="w-6 h-6" />
-                        | Gaurav Yadav
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Order Info -->
-              <div class="mt-4">
-                <div class="flex justify-between mb-2">
-                  <span class="text-base font-normal text-medium-gray">Transfer ID</span>
-                  <span class="text-base font-semibold">ID12345574324324</span>
-                </div>
-                <div class="flex justify-between mb-2">
-                  <span class="text-base font-normal text-medium-gray">Total Amount</span>
-                  <span class="text-2xl font-semibold">₹1499</span>
-                </div>
-              </div>
-
-              <hr class="my-4 border-t border-dark-blue" />
-
-              <p class="text-center text-sm font-normal mb-3 mt-3">
-                Your invoice has been mailed to you over registered Email ID
-              </p>
-
-
-
-              <div class="flex justify-center gap-6 mt-4 mb-6">
-                <button class="bg-dark-blue text-white px-20 py-2 rounded-md font-semibold text-base close-popup">
-                  Retry
-                </button>
-              </div>
-            </div>
-          </div>
 
           <!-- Invoice Popup -->
-          <div class="subscriptionTaxPopupInvoice fixed inset-0 bg-opacity-70 bg-black/30 flex items-center justify-center z-50 hidden">
-            <div class="bg-white rounded-lg shadow-lg p-6 w-[520px] min-h-[620px] relative">
-              <button
-                class="close-popup-invoice absolute top-2 right-2 text-gray-500 hover:text-black text-2xl font-bold">
-                &times;
-              </button>
-
-              <div class="relative mb-4 h-10">
-                <div class="absolute left-0 top-0 flex items-center gap-3">
-                  <span
-                    class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg">share</span>
-                  <span
-                    class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg">download</span>
-                </div>
-                <h2 class="absolute inset-0 flex justify-center items-center text-xl font-semibold text-dark-blue">
-                  Platform Bill
-                </h2>
-              </div>
-
-              <img src="/static/images/Subscription-Tax-Invoice.svg" alt="Tax Bill" class="w-full rounded mb-4" />
-            </div>
-          </div>
+           {% include 'partials/invoice-popup.html' %}
+          
           
            <div class="fixed bottom-6 right-8 z-50">
           <button

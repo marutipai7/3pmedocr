@@ -1,0 +1,106 @@
+{% load static %}
+
+<div class="subscriptionTaxPopupInvoice fixed inset-0 bg-opacity-70 bg-black/30 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-lg shadow-lg p-6 w-[90%] max-w-[1000px] min-h-[600px] max-h-[90vh] overflow-y-auto">
+
+    <!-- Header -->
+    <div class="flex justify-center items-center relative mb-4">
+      <h2 class="text-2xl font-bold text-dark-blue">Invoice</h2>
+
+      <!-- Share/Download/Close -->
+      <div class="absolute right-0 flex gap-2">
+        <span class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg">share</span>
+        <span class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg">download</span>
+        <span class="material-symbols-outlined cursor-pointer text-white bg-dark-blue p-2 rounded-md text-lg close-popup-invoice">close</span>
+      </div>
+    </div>
+
+    <!-- Centered Title -->
+    <div class="text-center mb-4">
+      <h2 class="text-xl font-bold">TAX INVOICE</h2>
+      <p class="italic text-gray-600">(Subscription Services – SaaS Platform)</p>
+    </div>
+
+    <hr class="border-gray-400 my-2">
+
+    <!-- Invoice details -->
+    <div class="flex justify-between mb-4">
+      <div>
+        <p><strong>Invoice No:</strong> <span id="invoice_no">-</span></p>
+        <p><strong>Date:</strong> <span id="invoice_date">-</span></p>
+      </div>
+    </div>
+
+    <!-- Supplier -->
+    <div class="mb-4">
+      <p><strong>Supplier (Platform):</strong> <span id="supplier_name">MediConnect Tech Pvt. Ltd.</span></p>
+      <p><strong>GSTIN:</strong> <span id="supplier_gstin">-</span></p>
+      <p><strong>Address:</strong> <span id="supplier_address">-</span></p>
+      <p><strong>Contact:</strong> <span id="supplier_contact">-</span> | <span id="supplier_email">-</span></p>
+    </div>
+
+    <hr class="border-gray-400 my-2">
+
+    <!-- Client -->
+    <div class="mb-4">
+      <p><strong>Billed To (Client):</strong></p>
+      <p><strong>Company Name:</strong> <span id="client_name">-</span></p>
+      <p><strong>GSTIN:</strong> <span id="client_gstin">-</span></p>
+      <p><strong>Billing Address:</strong> <span id="client_address">-</span></p>
+      <p><strong>Contact Person:</strong> <span id="client_contact">-</span></p>
+      <p><strong>Email:</strong> <span id="client_email">-</span></p>
+    </div>
+
+    <hr class="border-gray-400 my-2">
+
+    <!-- Table -->
+    <table class="w-full border border-gray-400 mb-4">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="border border-gray-400 px-2 py-1 text-left">Description</th>
+          <th class="border border-gray-400 px-2 py-1">HSN Code</th>
+          <th class="border border-gray-400 px-2 py-1">Qty</th>
+          <th class="border border-gray-400 px-2 py-1">Rate</th>
+          <th class="border border-gray-400 px-2 py-1">GST %</th>
+          <th class="border border-gray-400 px-2 py-1">Amount (INR)</th>
+        </tr>
+      </thead>
+      <tbody id="invoice_items">
+        <!-- dynamically inserted rows -->
+      </tbody>
+    </table>
+
+    <!-- Amounts -->
+    <div class="mb-4">
+      <p><strong>Subtotal:</strong> <span class="invoice-subtotal">-</span></p>
+      <p><strong>Add: GST (18 %):</strong> <span class="invoice-gst">-</span></p>
+      <p class="font-bold mt-2">Total Invoice Amount (INR): <span class="invoice-total">-</span></p>
+    </div>
+
+    <hr class="border-gray-400 my-2">
+
+    <!-- Words + Payment -->
+    <div class="mb-4">
+      <p><strong>Amount in Words:</strong> <span id="amount_words">-</span></p>
+      <p><strong>Mode of Payment:</strong> <span id="payment_mode">-</span> (Txn ID: <span id="txn_id">-</span>)</p>
+    </div>
+
+    <hr class="border-gray-400 my-2">
+
+    <!-- Notes -->
+    <div class="text-xs text-gray-600 mb-4">
+      <p><strong>Note:</strong></p>
+      <ul class="list-disc ml-5">
+        <li>This is a tax invoice under GST rules for B2B SaaS services.</li>
+        <li>Access will be activated for the subscribed period post-payment confirmation.</li>
+        <li>For support: support@aibuzz.net</li>
+      </ul>
+    </div>
+
+    <!-- Signature -->
+    <div class="mt-6">
+      <p class="font-semibold">Authorized Signatory,</p>
+      <span id="signature_supplier_name">MediConnect Tech Pvt. Ltd.</span>
+    </div>
+  </div>
+</div>

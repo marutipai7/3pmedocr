@@ -326,7 +326,7 @@ function loadSavedCouponHistory(page = 1, range = '') {
 
         function pageBtn(i, current) {
             return `<button 
-            class="saved-coupon-pagination-btn px-3 py-1.5 rounded-lg text-sm ${i === current ? 'bg-violet-sky text-white' : 'bg-pagination'}"
+            class="saved-coupon-pagination-btn px-3 py-1.5 rounded-lg text-sm ${i === current ? 'bg-living-coral text-white' : 'bg-pagination'}"
             data-page="${i}">
             ${i}
         </button>`;
@@ -658,7 +658,7 @@ function renderPagination(current, total, $container) {
     }
 
     for (let i = 1; i <= total; i++) {
-        html += `<button class="pagination-btn rounded-[8px] px-3 py-1 border ${i === current ? 'bg-violet-sky text-white' : ''}" data-page="${i}">${i}</button>`;
+        html += `<button class="pagination-btn rounded-[8px] px-3 py-1 border ${i === current ? 'bg-living-coral text-white' : ''}" data-page="${i}">${i}</button>`;
     }
 
     if (current < total) {
@@ -852,3 +852,56 @@ function downloadPlatformPDF() {
 
   html2pdf().set(opt).from(element).save();
 }
+
+$(document).on('click', '.donate-bookmark-toggle', function() {
+        console.log('Bookmark clicked!');
+        var $icon = $(this);
+        var donationId = $icon.data('donation-id');
+        var isSaved = $icon.data('saved') === true || $icon.data('saved') === 'true';
+        var action = isSaved ? 'unsave' : 'save';
+    
+        $.ajax({
+            url: '/dashboard/toggle-saved/donation/',
+            type: 'POST',
+            data: {
+                donation_id: donationId,
+                action: action,
+                csrfmiddlewaretoken: getCookie('csrftoken')
+            },
+            success: function(response) {
+                if (response.success) {
+                    $icon.data('saved', response.saved);
+                    if (response.saved) {
+                        $icon.addClass('material-filled text-living-coral');
+                        // $icon.removeClass('text-living-coral');
+                    } else {
+                        $icon.removeClass('material-filled text-living-coral');
+                        // If in Saved Donation table, remove the row
+                        if ($icon.closest('.saved-donation').length || $icon.closest('table').closest('.saved-donation').length) {
+                            $icon.closest('tr').remove();
+                        }
+                    }
+                    // Use toastr if available, otherwise show alert
+                    if (typeof toastr !== 'undefined') {
+                        toastr.success(response.saved ? 'Donation saved!' : 'Donation unsaved!');
+                    } else {
+                        alert(response.saved ? 'Donation saved!' : 'Donation unsaved!');
+                    }
+                } else {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error(response.error || 'Could not update saved status.');
+                    } else {
+                        alert(response.error || 'Could not update saved status.');
+                    }
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', xhr.responseText);
+                if (typeof toastr !== 'undefined') {
+                    toastr.error('Could not update saved status.');
+                } else {
+                    alert('Could not update saved status.');
+                }
+            }
+        });
+    });

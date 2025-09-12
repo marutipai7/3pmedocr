@@ -249,14 +249,6 @@
                     <img src="/static/images/cloud-upload-ngo.svg" alt="Cloud" loading="lazy" />
                     <p class="text-xs sm:text-base text-center">Click or Upload</p>
                   </div>
-                  <!-- <div class="upload-preview hidden relative w-full h-60">
-                    <button type="button" class="cancel-upload absolute -top-8 sm:-top-2 right-2">
-                      <span class="material-symbols-outlined cursor-pointer">
-                        close
-                      </span>
-                    </button>
-                    <img src="" alt="Preview" class="uploaded-img mx-auto max-h-60 object-contain" />
-                  </div> -->
                   <div class="upload-preview hidden relative w-full h-60 flex items-center justify-center"></div>
                 </div>
                 <div class="flex items-center justify-between">
@@ -281,8 +273,6 @@
               </div>
             </div>
           </form>
-
-          
         </div>
 
         <!-- Download popup -->
@@ -297,13 +287,11 @@
 
       <!-- Export Saved Post Content -->
         {% include 'view-saved-post-history.html' %}
-    <!-- rest of your dashboard -->
 
 {% endblock %}
 
 {% block extra_js %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-{% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
 <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script src="{% static 'js/NGO/ngo-new-post.js' %}"></script>
