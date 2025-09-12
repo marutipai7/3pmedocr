@@ -1,0 +1,70 @@
+{% load static %}
+
+<div class="subscription-popup fixed inset-0 hidden flex items-center justify-center bg-black/50 z-50">
+    <!-- Popup Box -->
+    <div
+        class="popup-box bg-white text-black rounded-2xl max-w-[520px] w-full p-6 shadow-xl relative flex flex-col justify-between pointer-events-auto">
+
+        <!-- Close Button -->
+
+
+        <!-- Popup Content -->
+        <div>
+        <div class="flex justify-center mb-4 text-xl font-semibold">
+            Payment Status
+            </span>
+        </div>
+        <hr class="my-4 border-t border-dark-blue" />
+        <div class="flex justify-center">
+            <img src="/static/images/successfull.gif" alt="Success" class="w-24 h-24" />
+        </div>
+        <h2 class="text-center text-2xl font-semibold mb-6 text-dark-gray">Subscription Successful</h2>
+        <div>
+
+            <p class="text-sm font-medium  mb-1">Transfer method</p>
+            <div class="p-3 border border-gray-300 rounded-md flex items-center justify-between">
+            <div>
+                <p class="font-semibold text-base text-jet-black">Amazon pay ICICI bank credit card</p>
+                <p class="text-xs text-gray-600 flex items-center gap-x-3">
+                **3425
+                <img src="/static/images/visa.svg" alt="Visa" class="w-6 h-6" />
+                | <span class="company-name">--</span>
+                </p>
+            </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Order Info -->
+        <div class="mt-4 ">
+        <div class="flex justify-between mb-2">
+            <span class="text-base font-normal text-medium-gray">Transfer ID</span>
+            <span class="text-base font-semibold ">ID12345574324324</span>
+        </div>
+
+        <div class="flex justify-between mb-2">
+            <span class="text-base font-normal text-medium-gray">Total Amount</span>
+            <span class="text-2xl font-semibold amount">₹0</span>
+        </div>
+        </div>
+
+        <hr class="my-4 border-t border-dark-blue" />
+
+        <p class="text-center text-sm font-normal mb-3 mt-3">
+        Your invoice has been mailed to you over registered Email ID
+        </p>
+        <!-- Inside your subscription-popup -->
+        <div class="flex justify-center gap-6 mt-4 mb-6">
+        <button
+            class="invoice-btn border border-dark-blue text-dark-blue px-10 py-2 rounded-md font-semibold text-base cursor-pointer">
+            View Invoice
+        </button>
+        <button
+            class="close-popup-subscription bg-dark-blue text-white px-16 py-2 rounded-md font-semibold text-base cursor-pointer">
+            Close
+        </button>
+
+        </div>
+
+    </div>
+</div>

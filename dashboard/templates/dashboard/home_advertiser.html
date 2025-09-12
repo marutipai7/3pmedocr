@@ -92,7 +92,7 @@
                 </span>
               </div>
               <div class="flex justify-between items-center pt-2">
-                <h2> {{ performance.total_coupons }}</h2>
+                <h2> {{ total_coupons }}</h2>
                 <p class="text-sm font-normal">Last 30 days</p>
               </div>
             </div>
@@ -106,7 +106,7 @@
                 </span>
               </div>
               <div class="flex justify-between items-center pt-2">
-                <h2> {{ performance.total_redemptions }}</h2>
+                <h2> {{ total_redemptions }}</h2>
                 <p class="text-sm font-normal">Last 30 days</p>
               </div>
             </div>
@@ -119,8 +119,8 @@
                 </span>
               </div>
               <div class="flex justify-between items-center pt-2">
-                <h2> {{ performance.active_coupons }}</h2>
-                <p>{{ performance.days_remaining }} days remaining</p>
+                <h2> {{ total_active_coupons }}</h2>
+                <p>{{ max_days_left }} days remaining</p>
               </div>
             </div>
           </div>

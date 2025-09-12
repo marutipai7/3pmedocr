@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Collect values
             const amount = document.getElementById('donation-amount').value;
-            const panNumber = document.getElementById('pan-number') ? document.getElementById('pan-number').value : '';
+            const panNumber = document.getElementById('pan_number') ? document.getElementById('pan_number').value : '';
             const panDocument = document.getElementById('pan_document') ? document.getElementById('pan_document').files[0] : null;
 
             // Build FormData
@@ -170,6 +170,7 @@ document.addEventListener("DOMContentLoaded", function () {
         ) {
             popupClose.classList.remove("flex");
             popupClose.classList.add("hidden");
+            window.location.href = "/donate/";
         }
     });
 })

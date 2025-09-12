@@ -29,9 +29,20 @@
                 <span id="location-text">Fetching location...</span>
               </div>
               <div class="flex flex-col mt-2 gap-1 lg:items-end">
-                <p class="font-semibold text-base text-dark-gray">Subscription Plan : Standard (3 Users per month)</p>
-                <p class="font-normal text-sm text-jet-black">Expiry Date : 23rd March 2025 <span
-                    class="text-strong-red">(5 days left)</span> </p>
+                <p class="font-semibold text-base text-dark-gray">Subscription Plan : {{ current_plan }} ({{ licenses }} Users per month)</p>
+                <div class="text-base font-normal text-right text-jet-black">
+                  Expiry Date: 
+                  {% if expiry_date %}
+                    {{ expiry_date|date:"d/m/Y" }}
+                    {% if status == "Active" %}
+                      <span class="ml-2 text-lg text-strong-red">
+                        ({{ expiry_date|timeuntil }} left to go)
+                      </span>
+                    {% endif %}
+                  {% else %}
+                    None
+                  {% endif %}
+                </div>
               </div>
 
             </div>

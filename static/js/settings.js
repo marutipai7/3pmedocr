@@ -187,153 +187,64 @@ document.querySelectorAll('[data-field]').forEach(input => {
     });
 });
 
-// ngo settings
-// document.addEventListener("DOMContentLoaded", () => {
-//     // Grab modal elements
-//     const viewModal   = document.getElementById("negoViewModal");
-//     // const modalTitle  = viewModal.querySelector("p.font-semibold");
-//     const modalImg    = viewModal.querySelector("#modalContent img");
-//     const modalEmbed  = viewModal.querySelector("#modalContent embed");
-//     const virusCheck  = viewModal.querySelector("input[type=checkbox]");
-//     const replaceBtn  = document.getElementById("replaceBtn");
-//     const saveBtn     = document.getElementById("saveBtn");
-//     const fileInput   = document.getElementById("replaceInput");
-//     const userType    = document.getElementById("userTypeHolder")?.dataset.userType;
+// $("button[data-tab=account-details]").on("click", function (e) {
+//     getAccountDetails();
+// });
 
-//     let currentDocType = null;
-//     let newFile        = null;
+// $(document).on("click", ".cancel-btn", function(){
+//     $('.tabs').show();
+//     $('.edit-toggle').removeClass('hidden').show();
+//     $('.edit-details').addClass('hidden');
+//     $('.account-details').show();
+//     $('#edit-account-details-render').html('');
+//     getAccountDetails();
+// });
 
-//     const docFolder = {
-//         ngo: "ngo_docs",
-//         advertiser: "advertiser_docs",
-//         client: "client_docs",
-//         provider: "provider_docs",
-//     };
-//     // Mapping doc_type → human title
-//     const titleMap = {
-//         ngo_registration_doc: "NGO Registration Document",
-//         incorporation_doc:     "Incorporation Certificate",
-//         gst_doc:               "GST Certificate",
-//         pan_doc:               "PAN Document",
-//         tan_doc:               "TAN Document",
-//         section8_doc:          "Section 8 Certificate",
-//         doc_12a:               "12A Certificate",
-//         brand_image:           "Brand Image",
-//         medical_license_doc:   "Medical License",
-//         storefront_image:      "Storefront Image"
-//     };
 
-//     // 1) View icons open the modal
-//     document.querySelectorAll(".ngo-view-icon").forEach(icon => {
-//         icon.addEventListener("click", () => {
-//         currentDocType = icon.dataset.docType;
-//         const path     = icon.dataset.docPath || "";
-//         const ext      = path.split(".").pop().toLowerCase();
+// $(".editIcon").on("click", function (e) {
+//     $.ajax({
+//         url: "account-details/?type=edit",
+//         type: "GET",
+//         beforeSend: function () {
+//             $("#edit-account-details-render").html(`<h3>Loading....</h3>`);
+//         },
+//         success: function (response) {
+//             if (response.success) {
+//                 $("#edit-account-details-render").html(response.html);
 
-//         const subdirMap = {
-//             ngo_registration_doc: 'registration',
-//             incorporation_doc:     'incorporation',
-//             gst_doc:               'gst',
-//             pan_doc:               'pan',
-//             tan_doc:               'tan',
-//             section8_doc:          'section8',
-//             doc_12a:               'doc_12a',
-//             brand_image:           'brand_image',
-//             medical_license_doc:   'medical_license',
-//             storefront_image:      'store_front',
-//         };
-
-//         const baseFolder = docFolder[userType];   
-//         console.log("Basefolder:", baseFolder)           // e.g. "ngo_docs"
-//         const subfolder  = subdirMap[currentDocType];  
-//         console.log("docType =", currentDocType, "subfolder =", subfolder);      // e.g. "pan"
-//         const fullPath   = `${baseFolder}/${subfolder}/${path}`;  // e.g. "ngo_docs/pan/abc.pdf"
-//         const previewURL = `/document/${fullPath}`; 
-
-//         // Set title
-//         // modalTitle.innerHTML = `<span class="material-symbols-outlined">document_scanner</span> ${titleMap[currentDocType] || "Document Preview"}`;
-
-//         // Reset previews
-//         [modalImg, modalEmbed].forEach(el => el.classList.add("hidden"));
-
-//         // Show correct preview
-//         if (["jpg","jpeg","png","webp"].includes(ext)) {
-//             viewModal.classList.remove("hidden");
-//             modalImg.src    = previewURL;
-//             modalImg.classList.remove("hidden");
-//         } else {
-//             window.open(previewURL, '_blank');
+//                 // ⚡ Bind AJAX submit after form is loaded
+//                 bindEditFormAjax();
+//             } else {
+//                 toastr.error(response.message || 'Error occurred!');
+//             }
+//         },
+//         error: function () {
+//             console.error("Failed to load account details.");
+//             toastr.error("Could not load account details.");
 //         }
-//         // else if (ext === "pdf") {
-//         //     modalEmbed.src    = previewURL;
-//         //     modalEmbed.classList.remove("hidden");
-//         // }
-        
-//         // Virus scan status
-//         const approved = !!icon.closest("div").querySelector("span.material-filled.text-bright-green");
-//         virusCheck.checked = approved;
-
-//         // Reset replace/save
-//         newFile = null;
-//         replaceBtn && (replaceBtn.disabled = false);
-//         saveBtn    && (saveBtn.disabled    = true);
-
-//         // viewModal.classList.remove("hidden");
-//         });
-//     });
-
-//     // 2) Close modal
-//     viewModal.querySelector("#closeModal")
-//         .addEventListener("click", () => viewModal.classList.add("hidden"));
-
-//     // 3) Replace → file picker
-//     replaceBtn && replaceBtn.addEventListener("click", () => {
-//         fileInput.click();
-//     });
-//     fileInput && fileInput.addEventListener("change", () => {
-//         newFile = fileInput.files[0];
-//         saveBtn.disabled = !newFile;
-//     });
-//     // 4) Save → upload via AJAX
-//     saveBtn && saveBtn.addEventListener("click", () => {
-//         if (!newFile || !currentDocType) return;
-
-//         const fd = new FormData();
-//         fd.append("doc_type", currentDocType);
-//         fd.append("document", newFile);
-
-//         const csrftoken = getCookie("csrftoken");
-//         fetch("update-document/", {
-//         method: "POST",
-//         headers: { "X-CSRFToken": csrftoken },
-//         body: fd
-//         })
-//         .then(r => r.json())
-//         .then(json => {
-//         if (json.success) {
-//             location.reload();
-//         } else {
-//             alert(json.error || JSON.stringify(json.errors));
-//         }
-//         })
-//         .catch(e => {
-//         console.error(e);
-//         alert("Upload failed.");
-//         });
 //     });
 // });
-$("button[data-tab=account-details]").on("click", function (e) {
-    getAccountDetails();
-});
 
-$(document).on("click", ".cancel-btn", function(){
-    $('.tabs').show();
-    $('.edit-toggle').removeClass('hidden').show();
-    $('.edit-details').addClass('hidden');
-    $('.account-details').show();
-    $('#edit-account-details-render').html('');
-    getAccountDetails();
-});
+// function getAccountDetails(){
+//     $.ajax({
+//         url: "account-details/",
+//         type: "GET",
+//         beforesend:function(){
+//             $("#account-details-render").html(`<h3>Loading....</h3>`);
+//         },
+//         success: function (response) {
+//             if (response.success) {
+//                 $("#account-details-render").html(response.html);
+//             } else {
+//                 toastr.error(response.messsage || 'Error Occured!');
+//             }
+//         },
+//         error: function () {
+//         console.error("Failed to load account details.");
+//         }
+//     });
+// }
+
 function bindEditFormAjax() {
     $("#editForm").on("submit", function (e) {
         e.preventDefault();
@@ -350,7 +261,6 @@ function bindEditFormAjax() {
                 if (response.success) {
                     toastr.success(response.message || "Profile updated successfully!");
 
-                    // optional: reload account details view after success
                     location.reload();
                 } else {
                     toastr.error(response.message || "Something went wrong.");
@@ -367,50 +277,6 @@ function bindEditFormAjax() {
                 }
             }
         });
-    });
-}
-
-$(".editIcon").on("click", function (e) {
-    $.ajax({
-        url: "account-details/?type=edit",
-        type: "GET",
-        beforeSend: function () {
-            $("#edit-account-details-render").html(`<h3>Loading....</h3>`);
-        },
-        success: function (response) {
-            if (response.success) {
-                $("#edit-account-details-render").html(response.html);
-
-                // ⚡ Bind AJAX submit after form is loaded
-                bindEditFormAjax();
-            } else {
-                toastr.error(response.message || 'Error occurred!');
-            }
-        },
-        error: function () {
-            console.error("Failed to load account details.");
-            toastr.error("Could not load account details.");
-        }
-    });
-});
-
-function getAccountDetails(){
-    $.ajax({
-        url: "account-details/",
-        type: "GET",
-        beforesend:function(){
-            $("#account-details-render").html(`<h3>Loading....</h3>`);
-        },
-        success: function (response) {
-            if (response.success) {
-                $("#account-details-render").html(response.html);
-            } else {
-                toastr.error(response.messsage || 'Error Occured!');
-            }
-        },
-        error: function () {
-        console.error("Failed to load account details.");
-        }
     });
 }
 

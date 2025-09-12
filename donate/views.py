@@ -1,22 +1,23 @@
 import uuid
+import logging
 from decimal import Decimal
-from django.shortcuts import render, get_object_or_404
-from dashboard.utils import dashboard_login_required
-from points.models import PointsActionType, PointsHistory
+from django.db.models import Q
+from django.utils import timezone
 from ngopost.models import NGOPost
 from donate.models import Donation
-from registration.models import NGOProfile, User, AdvertiserProfile, ClientProfile, MedicalProviderProfile, ContactPerson
-from django.db.models import Q
-from registration.views import validate_and_save_file
-from dashboard.views import get_common_context
-from django.views.decorators.http import require_POST, require_GET
+from django.shortcuts import render
 from django.http import JsonResponse
-from django.utils import timezone
-from datetime import date, timedelta, datetime
 from django.core.paginator import Paginator
-from django.template.loader import render_to_string
-import logging
 from django.utils.dateparse import parse_date
+from datetime import date, timedelta, datetime
+from django.template.loader import render_to_string
+from dashboard.views import get_common_context
+from dashboard.utils import dashboard_login_required
+from registration.views import validate_and_save_file
+from points.models import PointsActionType, PointsHistory
+from django.views.decorators.http import require_POST, require_GET
+from registration.models import NGOProfile, AdvertiserProfile, ClientProfile, MedicalProviderProfile, ContactPerson
+
 logger = logging.getLogger(__name__)
 
 @dashboard_login_required
@@ -30,33 +31,8 @@ def donate_view(request):
     elif user.user_type == 'provider':
         user_profile = MedicalProviderProfile.objects.filter(user=user).first()
 
-    # org_query = request.GET.get('org_query', '').strip().lower()
     donation_query = request.GET.get('donation_query', '').strip().lower()
 
-    # # Get Ongoing posts
-    # ngo_posts = NGOPost.objects.filter(status=NGOPost.Status.ONGOING).select_related('user').order_by('-created_at')
-
-    # Map user_id to profile
-    # user_ids = [post.user_id for post in ngo_posts]
-    # profiles = NGOProfile.objects.filter(user_id__in=user_ids)
-    # profile_map = {profile.user_id: profile for profile in profiles}
-
-    # # Attach profile info
-    # for post in ngo_posts:
-    #     profile = profile_map.get(post.user_id)
-    #     post.ngo_name = profile.ngo_name if profile else "NGO Name Not Found"
-    #     post.website_url = profile.website_url if profile else ""
-
-    # # Filter ngo_posts by org_query
-    # if org_query:
-    #     ngo_posts = [post for post in ngo_posts if
-    #                  org_query in post.post_type.lower() or
-    #                  org_query in post.ngo_name.lower()]
-
-    # # Limit the number of posts shown (fixed limit of 50)
-    # ngo_posts = ngo_posts[:50]
-
-    # Filter donations by donation_query
     donations = Donation.objects.filter(user=request.user_obj).select_related('ngopost', 'ngopost__user', 'ngopost__user__ngoprofile', 'ngopost__post_type')
     if donation_query:
         donations = [d for d in donations if
@@ -80,7 +56,6 @@ def get_organization_posts(request):
 
     filters = Q(end_date__gte=timezone.now().date())
 
-    # 🔍 Search filter
     if query:
         filters &= (
             Q(header__icontains=query) |
@@ -91,7 +66,6 @@ def get_organization_posts(request):
             Q(user__ngoprofile__ngo_name__icontains=query)
         )
 
-    # 📅 Date filter
     now = timezone.now()
     applied_date_filter = None
 
@@ -107,7 +81,6 @@ def get_organization_posts(request):
         filters &= Q(created_at__date__gte=now.date() - timedelta(days=365))
         applied_date_filter = "Last 1 Year"
 
-    # ✅ Always respect explicit start/end (from JS) — not only "custom"
     if start and end:
         start_date = parse_date(start)
         end_date = parse_date(end)
@@ -115,7 +88,6 @@ def get_organization_posts(request):
             filters &= Q(created_at__date__range=(start_date, end_date))
             applied_date_filter = f"Explicit Range: {start_date} → {end_date}"
 
-    # 🔎 Apply filters
     posts = NGOPost.objects.filter(filters).select_related("user").order_by("-created_at")
     total_count = posts.count()
 
@@ -181,6 +153,8 @@ def donate_pay_view(request, post_id=None):
         amount_to_ngo = round(amount - platform_fee - gst, 2)
         pan_number = request.POST.get('pan_number', '')
         pan_document_file = request.FILES.get('pan_document')
+        if not pan_number or len(pan_number) != 10:
+            return JsonResponse({'error': 'Invalid PAN number'}, status=400)
         pan_document_path, error = validate_and_save_file(pan_document_file, 'donation_docs', 'PAN Document', user_type='common')
         if error:
             return JsonResponse({'error': error}, status=400)
@@ -226,7 +200,6 @@ def donate_pay_view(request, post_id=None):
 def get_donation_history(request):
     user = request.user_obj
 
-    # --- 2. If not POST, continue with GET listing logic ---
     query = request.GET.get('query', '').strip()
     page = int(request.GET.get('page', 1))
     limit = int(request.GET.get('limit', 10))
@@ -248,7 +221,7 @@ def get_donation_history(request):
     elif date_range == "1 year":
         filters &= Q(created_at__gte=now - timedelta(days=365))
     elif date_range == "custom":
-        # Optional: handle custom start_date and end_date from request.GET
+
         start = request.GET.get('start_date')
         end = request.GET.get('end_date')
         try:
@@ -256,7 +229,7 @@ def get_donation_history(request):
             end_date = datetime.strptime(end, "%Y-%m-%d")
             filters &= Q(created_at__range=(start_date, end_date))
         except Exception:
-            pass  # Invalid format, ignore or handle as needed
+            pass  
 
     donations = Donation.objects.filter(filters).order_by('-created_at')
     paginator = Paginator(donations, limit)
@@ -271,35 +244,32 @@ def get_donation_history(request):
         "html": html,
         "current_page": page_obj.number,
         "total_pages": paginator.num_pages,
-        "total_items": paginator.count,  # Add this
+        "total_items": paginator.count,
     })
 
-# show data on receipt 
 @dashboard_login_required    
 def get_donate_bill(request, donation_id):
+    user = request.user_obj
     donation = Donation.objects.select_related('ngopost__user__ngoprofile').get(id=donation_id)
-    ngoprofile = donation.ngopost.user.ngoprofile
     
-    # Get the related NGO user
     ngo_user = donation.ngopost.user
-    
-     # Try to get the ContactPerson for the NGO profile
+    ngo_profile = NGOProfile.objects.filter(user=ngo_user).first()
     contact_person = ContactPerson.objects.filter(
-        profile_type='ngo',
-        profile_id=ngoprofile.id
-    ).first()  # use .first() to avoid MultipleObjectsReturned
+        profile_type=user.user_type,
+        profile_id=user
+    ).first()  
 
 
     response_data = {
         "receipt_no": donation.id,
         "payment_date": donation.payment_date.strftime("%d-%b-%Y"),
-        "ngo_name": donation.ngopost.user.ngoprofile.ngo_name,
-        "pan": donation.pan_number,
+        "ngo_name": ngo_profile.ngo_name,
+        "pan": ngo_profile.pan_number,
         "amount": f"₹{donation.amount}",
-        "pay_mode": f"₹{donation.payment_method}",
-        "address": f"{donation.ngopost.user.ngoprofile.address}, {donation.ngopost.user.ngoprofile.city}, {donation.ngopost.user.ngoprofile.state}, {donation.ngopost.user.ngoprofile.pincode}",
+        "pay_mode": f"{donation.payment_method}",
+        "address": f"{ngo_profile.address}, {ngo_profile.city}, {ngo_profile.state}, {ngo_profile.pincode}",
         "name": contact_person.name,
-        "email": ngo_user.email,
+        "email": user.email,
     }
 
     return JsonResponse(response_data)
@@ -308,30 +278,28 @@ def get_donate_bill(request, donation_id):
 # show data on receipt 
 @dashboard_login_required    
 def get_platform_bill(request, donation_id):
+    user = request.user_obj
     donation = Donation.objects.select_related('ngopost__user__ngoprofile').get(id=donation_id)
-    ngoprofile = donation.ngopost.user.ngoprofile
     
-    # Get the related NGO user
     ngo_user = donation.ngopost.user
-    
-    # Try to get the ContactPerson for the NGO profile
+    ngo_profile = NGOProfile.objects.filter(user=ngo_user).first()
     contact_person = ContactPerson.objects.filter(
-        profile_type='ngo',
-        profile_id=ngoprofile.id
-    ).first()  # use .first() to avoid MultipleObjectsReturned
+        profile_type=user.user_type,
+        profile_id=user
+    ).first()
 
 
     response_data = {
         "receipt_no": donation.id,
         "payment_date": donation.payment_date.strftime("%d-%b-%Y"),
-        "ngo_name": donation.ngopost.user.ngoprofile.ngo_name,
-        "pan": donation.pan_number,
+        "ngo_name": ngo_profile.ngo_name,
+        "pan": ngo_profile.pan_number,
         "gst": donation.gst,
         "amount": f"₹{donation.amount}",
         "pay_mode": f"₹{donation.payment_method}",
-        "address": f"{donation.ngopost.user.ngoprofile.address}, {donation.ngopost.user.ngoprofile.city}, {donation.ngopost.user.ngoprofile.state}, {donation.ngopost.user.ngoprofile.pincode}",
+        "address": f"{ngo_profile.address}, {ngo_profile.city}, {ngo_profile.state}, {ngo_profile.pincode}",
         "name": contact_person.name,
-        "email": ngo_user.email,
+        "email": user.email,
         "finalTotal": f"{(donation.amount + donation.gst):.2f}",
     }
 

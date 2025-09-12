@@ -1,23 +1,25 @@
 import os
 import json
 import random
-from .utils import dashboard_login_required, get_common_context, get_theme_colors
-from .models import SettingMenu, CouponPerformance,  CalendarEvent, TrendingCoupon
-from registration.models import MedicalProviderProfile, NGOProfile, ClientProfile, AdvertiserProfile, ContactPerson
-from ngopost.models import NGOPost
-from donate.models import Donation
-from coupon.models import Coupon
-from datetime import date, datetime, timedelta
-from django.db.models import Sum, Count, Q
-from django.db.models.functions import TruncDate
-from django.shortcuts import render, redirect
-from django.utils import timezone
-from django.http import JsonResponse
-from django.template.loader import render_to_string
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_GET, require_POST
-from django.core.paginator import Paginator
 import logging
+from coupon.models import Coupon
+from django.utils import timezone
+from donate.models import Donation
+from ngopost.models import NGOPost
+from django.http import JsonResponse
+from django.utils.timezone import now
+from django.core.paginator import Paginator
+from django.shortcuts import render, redirect
+from datetime import date, datetime, timedelta
+from django.db.models.functions import TruncDate
+from django.template.loader import render_to_string
+from subscription.models import SubscriptionHistory
+from django.views.decorators.http import require_GET, require_POST
+from .utils import dashboard_login_required, get_common_context
+from .models import SettingMenu, CouponPerformance,  CalendarEvent, TrendingCoupon
+from django.db.models import Sum, Count, Q, Max, F, ExpressionWrapper, DurationField
+from registration.models import MedicalProviderProfile, NGOProfile, ClientProfile, AdvertiserProfile, ContactPerson
+
 logger = logging.getLogger(__name__)
 
 @dashboard_login_required
@@ -25,17 +27,11 @@ def dashboard_home(request):
     user = request.user_obj
     user_type = user.user_type
 
-    # Get sidebar menu
     menu_items = SettingMenu.objects.filter(
         is_active=True, user_types__contains=[user_type]
         ).order_by('order')
-    # Get common context
     context = get_common_context(request, user)
-
-        # Add theme colors
-    context["theme_colors"] = get_theme_colors(user_type)
-
-    # Add menu
+    # context["theme_colors"] = get_theme_colors(user_type)
     context["sidebar_menu"] = menu_items
     
     try:
@@ -61,11 +57,21 @@ def dashboard_home(request):
 
         elif user_type == 'client':
             client_profile = ClientProfile.objects.get(user=user)
+            latest_sub = SubscriptionHistory.objects.filter(user=user).order_by("-activation_date").first()
+            if latest_sub:
+                latest_sub.save() 
+            if latest_sub and latest_sub.is_active:
+                context['current_plan'] = latest_sub.plan.name
+                context['expiry_date'] = latest_sub.expiry_date
+                context["licenses"] = latest_sub.license_count
+            else:
+                context['current_plan'] = "Free Plan"
+                context['expiry_date'] = None
+                context["licenses"] = 1
             context.update({
                 'client_profile': client_profile,
                 'user_display_name': client_profile.company_name,
                 'user': user,
-                # Add relevant client data if any, e.g. campaigns
             })
             return render(request, "dashboard/home_client.html", context)
 
@@ -76,6 +82,29 @@ def dashboard_home(request):
             performances = CouponPerformance.objects.order_by('date')[:8]
             events = CalendarEvent.objects.all().order_by('date')
 
+            today = now().date()
+            last_30_days = today - timedelta(days=30)
+
+            # Coupons created in last 30 days
+            coupons = Coupon.objects.filter(advertiser=user, created_at__date__gte=last_30_days)
+
+            # Totals (last 30 days)
+            total_coupons = coupons.count()
+            total_active_coupons = coupons.filter(validity__gte=today).count()
+            total_redemptions = coupons.aggregate(total=Sum('redeemed_count'))['total'] or 0
+
+            # Max days left until expiry among ALL active coupons (not just last 30 days)
+            active_coupons_all = Coupon.objects.filter(advertiser=user, validity__gte=today)
+            max_days_left = None
+            if active_coupons_all.exists():
+                max_days_left = active_coupons_all.aggregate(
+                    max_days=Max(
+                        ExpressionWrapper(F('validity') - today, output_field=DurationField())
+                    )
+                )['max_days']
+                if max_days_left:
+                    max_days_left = max_days_left.days  # convert timedelta to int
+
             context.update({
                 'advertiser_profile': advertiser_profile,
                 'user_display_name': advertiser_profile.company_name,
@@ -83,6 +112,10 @@ def dashboard_home(request):
                 'trending_coupons': trending_coupons,
                 'events': events,
                 'user': user,
+                'total_coupons': total_coupons,
+                'total_active_coupons': total_active_coupons,
+                'total_redemptions': total_redemptions,
+                'max_days_left': max_days_left,
             })
             return render(request, "dashboard/home_advertiser.html", context)
 
@@ -98,24 +131,21 @@ def dashboard_home(request):
             })
             return render(request, "dashboard/home_provider.html", context)
 
-
     except Exception as e:
-        # Log e if needed
         return render(request, "dashboard/not_found.html")
     
     
 def get_coupon_chart_data(request):
-    performances = CouponPerformance.objects.order_by('-date')[:8][::-1]  # last 8 entries, ascending
-
+    performances = CouponPerformance.objects.order_by('-date')[:8][::-1]  
     data = {
-        'labels': [perf.date.strftime('%d %b') for perf in performances],  # e.g., "17 Jul"
+        'labels': [perf.date.strftime('%d %b') for perf in performances], 
         'total_coupons': [perf.total_coupons for perf in performances],
         'total_redemptions': [perf.total_redemptions for perf in performances],
         'active_coupons': [perf.active_coupons for perf in performances],
     }
     return JsonResponse(data)
 
-@csrf_exempt
+@require_POST
 @dashboard_login_required
 def save_event(request):
     user = request.user_obj
@@ -126,32 +156,21 @@ def save_event(request):
             date = data.get('date')
             time = data.get('time')
 
-            # Get all future events for this user to avoid color conflicts
             event_date = datetime.strptime(date, '%Y-%m-%d').date()
             future_events = CalendarEvent.objects.filter(
                 user=user,
                 date__gte=event_date,
                 is_active=True
-            ).exclude(id=None)  # Exclude current event if it exists
-            
-            # Get colors already used for future events
+            ).exclude(id=None) 
             used_colors = set(future_events.values_list('color', flat=True))
-            
-            # Available colors (only dark, visible colors)
             all_colors = [
                 'bg-slate-blue', 'bg-strong-red', 'bg-green', 'bg-vivid-orange',
                 'bg-purple', 'bg-pink', 'bg-teal', 'bg-dark-blue', 'bg-dark-green', 'bg-dark-purple'
             ]
-            
-            # Filter out used colors
             available_colors = [color for color in all_colors if color not in used_colors]
-            
-            # If no colors available, use any color (fallback)
             if not available_colors:
                 available_colors = all_colors
-            
             random_color = random.choice(available_colors)
-
             if name and date and time:
                 CalendarEvent.objects.create(
                     user=user,
@@ -165,7 +184,6 @@ def save_event(request):
                 return JsonResponse({'success': False, 'error': 'Missing fields'})
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
-
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 @require_GET
@@ -184,7 +202,6 @@ def get_events(request):
                 'time': event.time.strftime('%H:%M'),
                 'color': event.color
             })
-
         return JsonResponse({'events': event_data})
 
 @require_GET
@@ -192,13 +209,11 @@ def get_events(request):
 def get_upcoming_events(request):
     user = request.user_obj
     if request.method == 'GET':
-        # Get next 5 upcoming events for the user, ordered by date and time
         upcoming_events = CalendarEvent.objects.filter(
             user=user,
             date__gte=datetime.now().date(),
             is_active=True
         ).order_by('date', 'time')[:5]
-        
         events_data = []
         for event in upcoming_events:
             event_data = {
@@ -209,7 +224,6 @@ def get_upcoming_events(request):
                 'color_hex': event.get_color_hex()
             }
             events_data.append(event_data)
-
         response_data = {'upcoming_events': events_data}
         return JsonResponse(response_data)
 
@@ -217,16 +231,13 @@ def logout_view(request):
     request.session.flush() 
     return redirect('/') 
 
-## Saved Section Common
 @dashboard_login_required
 def saved(request):
     user = request.user_obj
     context = get_common_context(request, user)
-    if user.user_type == 'ngo':
-    # Search query (optional)
-        query = request.GET.get('query', '').strip().lower()
 
-        # Menu items for sidebar
+    if user.user_type == 'ngo':
+        query = request.GET.get('query', '').strip().lower()
         menu_items = SettingMenu.objects.filter(
             is_active=True, user_types__contains=[user.user_type]
         ).order_by('order')
@@ -236,38 +247,28 @@ def saved(request):
             user_profile = user
         except NGOProfile.DoesNotExist:
             return render(request, "dashboard/not_found.html")
-
-        # Get the limit parameter from the request, default to 50
         limit = request.GET.get('limit', '50')
         try:
             limit = int(limit)
         except ValueError:
             limit = 50
-
-        # Base saved posts query
         saved_posts = NGOPost.objects.filter(user=user, saved=True)
-
-        # Filter by query (if provided)
         if query:
             saved_posts = saved_posts.filter(
                 Q(post_type__icontains=query) |
                 Q(status__icontains=query) |
                 Q(created_at__icontains=query)
             )
-
-        # Apply limit
         saved_posts = saved_posts[:limit]
-
         context.update({
             'ngo_profile': ngo_profile,
             'user_display_name': ngo_profile.ngo_name,
             'user_profile': user_profile,
             'menu_items': menu_items,
             'saved_posts': saved_posts,
-            'query': query,  # To retain search input
-            'limit': str(limit),  # To retain limit select
+            'query': query,
+            'limit': str(limit),
         })
-
         return render(request, "saved/saved_ngo.html", context)
     
     elif user.user_type == 'advertiser':
@@ -278,7 +279,6 @@ def saved(request):
             'user_profile': user,
             'user': user
         })
-        # Normal page render
         return render(request, "saved/saved_advertiser.html", context)
     
     elif user.user_type == 'provider':
@@ -302,7 +302,6 @@ def saved(request):
         return render(request, "saved/saved_client.html", context)
 
 
-## FOR Advertiser Saved Coupon In Saved Section ##
 @require_GET
 @dashboard_login_required
 def adv_saved_coupon_history(request):
@@ -327,7 +326,7 @@ def adv_saved_coupon_history(request):
     elif date_range == "1 year":
         filters &= Q(created_at__gte=now - timedelta(days=365))
     elif date_range == "custom":
-        # Optional: handle custom start_date and end_date from request.GET
+        
         start = request.GET.get('start_date')
         end = request.GET.get('end_date')
         try:
@@ -335,16 +334,14 @@ def adv_saved_coupon_history(request):
             end_date = datetime.strptime(end, "%Y-%m-%d")
             filters &= Q(created_at__range=(start_date, end_date))
         except Exception:
-            pass  # Invalid format, ignore or handle as needed
+            pass  
     saved_coupons = Coupon.objects.filter(filters, saved=True).order_by('-created_at')
     paginator = Paginator(saved_coupons, limit)
     page_obj = paginator.get_page(page)
-
     html = render_to_string("advertiser/partials/saved-coupon-history-table.html", {
         "saved_coupon_history": page_obj.object_list,
         'today': date.today(),
     })
-
     return JsonResponse({
         "html": html,
         "current_page": page_obj.number,
@@ -389,7 +386,6 @@ def coupon_detail(request, coupon_id):
 @require_GET
 def export_saved_coupon_history(request):
     user = request.user_obj
-    # date_range = request.GET.get('daterange', '').strip().lower()
     filters = Q(advertiser=user)
     saved_coupons = Coupon.objects.filter(filters, saved=True).order_by('-created_at')
     html = render_to_string("partials/export-saved-history-table.html", {
@@ -399,7 +395,7 @@ def export_saved_coupon_history(request):
 
     return JsonResponse({
         "html": html,
-        "total_items": saved_coupons.count(),  # Add this
+        "total_items": saved_coupons.count(), 
     })
 
 @dashboard_login_required
@@ -426,14 +422,9 @@ def platform_bill(request, coupon_id):
             'displays_per_coupon': getattr(coupon, 'displays_per_coupon', 0),
             'gst_amount': getattr(coupon, 'gst_amount', 0),
             'final_paid_amount': getattr(coupon, 'final_paid_amount', 0),
-
-            ## Platform Company details
             'company': os.environ.get("COMPANY", ""),
             'gstin': os.environ.get("GSTIN", ""),
             'address': os.environ.get("ADDRESS", ""),
-            # 'phone': os.environ.get("PHONE", ""),
-            # 'email': os.environ.get("EMAIL", ""),
-            # 'website': os.environ.get("WEBSITE", ""),
         }
     except Exception as e:
         logger.error(f"Error building coupon detail data: {e}", exc_info=True)
@@ -444,8 +435,6 @@ def platform_bill(request, coupon_id):
 @require_GET
 def get_donation_history(request):
     user = request.user_obj
-
-    # --- 2. If not POST, continue with GET listing logic ---
     query = request.GET.get('query', '').strip()
     page = int(request.GET.get('page', 1))
     limit = int(request.GET.get('limit', 10))
@@ -468,7 +457,7 @@ def get_donation_history(request):
     elif date_range == "1 year":
         filters &= Q(created_at__gte=now - timedelta(days=365))
     elif date_range == "custom":
-        # Optional: handle custom start_date and end_date from request.GET
+
         start = request.GET.get('start_date')
         end = request.GET.get('end_date')
         try:
@@ -476,86 +465,89 @@ def get_donation_history(request):
             end_date = datetime.strptime(end, "%Y-%m-%d")
             filters &= Q(created_at__range=(start_date, end_date))
         except Exception:
-            pass  # Invalid format, ignore or handle as needed
+            pass  
     if saved_only:
         filters &= Q(saved=True)
     donations = Donation.objects.filter(filters).order_by('-created_at')
     paginator = Paginator(donations, limit)
     page_obj = paginator.get_page(page)
     
-    html = render_to_string("advertiser/partials/donate-history.html", {
-        "donation_history": page_obj.object_list,
-        'today': date.today(),
-    })
+    if user.user_type == 'advertiser':
+        html = render_to_string("advertiser/partials/donate-history.html", {
+            "donation_history": page_obj.object_list,
+            'today': date.today(),
+        })
+    elif user.user_type == 'client':
+        html = render_to_string("client/partials/donate-history.html", {
+            "donation_history": page_obj.object_list,
+            'today': date.today(),
+        })
+    elif user.user_type == 'provider':
+        html = render_to_string("provider/partials/donate-history.html", {
+            "donation_history": page_obj.object_list,
+            'today': date.today(),
+        })
     logger.info(f"User {user.id} fetched donation history: {query}")
+    logger.info(f"user type: {user.user_type} has {donations.count()} donations")
     return JsonResponse({
         "html": html,
         "current_page": page_obj.number,
         "total_pages": paginator.num_pages,
-        "total_items": paginator.count,  # Add this
+        "total_items": paginator.count,  
     })
 
-# show data on receipt 
+
 @dashboard_login_required    
 def get_donate_bill(request, donation_id):
+    user = request.user_obj
     donation = Donation.objects.select_related('ngopost__user__ngoprofile').get(id=donation_id)
-    ngoprofile = donation.ngopost.user.ngoprofile
-    
-    # Get the related NGO user
     ngo_user = donation.ngopost.user
-    
-     # Try to get the ContactPerson for the NGO profile
-    contact_person = ContactPerson.objects.filter(
-        profile_type='ngo',
-        profile_id=ngoprofile.id
-    ).first()  # use .first() to avoid MultipleObjectsReturned
+    ngo_profile = NGOProfile.objects.filter(user=ngo_user).first()
 
+    contact_person = ContactPerson.objects.filter(
+        profile_type=user.user_type,
+        profile_id=user
+    ).first() 
 
     response_data = {
         "receipt_no": donation.id,
         "payment_date": donation.payment_date.strftime("%d-%b-%Y"),
-        "ngo_name": donation.ngopost.user.ngoprofile.ngo_name,
-        "pan": donation.pan_number,
+        "ngo_name": ngo_profile.ngo_name,
+        "pan": ngo_profile.pan_number,
         "amount": f"₹{donation.amount}",
-        "pay_mode": f"₹{donation.payment_method}",
-        "address": f"{donation.ngopost.user.ngoprofile.address}, {donation.ngopost.user.ngoprofile.city}, {donation.ngopost.user.ngoprofile.state}, {donation.ngopost.user.ngoprofile.pincode}",
+        "pay_mode": f"{donation.payment_method}",
+        "address": f"{ngo_profile.address}, {ngo_profile.city}, {ngo_profile.state}, {ngo_profile.pincode}",
         "name": contact_person.name,
-        "email": ngo_user.email,
+        "email": user.email,
     }
-
     return JsonResponse(response_data)
 
 
-# show data on receipt 
 @dashboard_login_required    
 def get_platform_bill(request, donation_id):
+    user = request.user_obj
     donation = Donation.objects.select_related('ngopost__user__ngoprofile').get(id=donation_id)
-    ngoprofile = donation.ngopost.user.ngoprofile
     
-    # Get the related NGO user
     ngo_user = donation.ngopost.user
-    
-    # Try to get the ContactPerson for the NGO profile
+    ngo_profile = NGOProfile.objects.filter(user=ngo_user).first()
     contact_person = ContactPerson.objects.filter(
-        profile_type='ngo',
-        profile_id=ngoprofile.id
-    ).first()  # use .first() to avoid MultipleObjectsReturned
-
+        profile_type=user.user_type,
+        profile_id=user
+    ).first()
 
     response_data = {
         "receipt_no": donation.id,
         "payment_date": donation.payment_date.strftime("%d-%b-%Y"),
-        "ngo_name": donation.ngopost.user.ngoprofile.ngo_name,
-        "pan": donation.pan_number,
+        "ngo_name": ngo_profile.ngo_name,
+        "pan": ngo_profile.pan_number,
         "gst": donation.gst,
         "amount": f"₹{donation.amount}",
-        "pay_mode": f"₹{donation.payment_method}",
-        "address": f"{donation.ngopost.user.ngoprofile.address}, {donation.ngopost.user.ngoprofile.city}, {donation.ngopost.user.ngoprofile.state}, {donation.ngopost.user.ngoprofile.pincode}",
+        "pay_mode": f"{donation.payment_method}",
+        "address": f"{ngo_profile.address}, {ngo_profile.city}, {ngo_profile.state}, {ngo_profile.pincode}",
         "name": contact_person.name,
-        "email": ngo_user.email,
+        "email": user.email,
         "finalTotal": f"{(donation.amount + donation.gst):.2f}",
     }
-
     return JsonResponse(response_data)
 
 @dashboard_login_required
@@ -579,15 +571,12 @@ def toggle_saved_donation(request):
         logger.warning(f"Donation {donation_id} not found or does not belong to user {request.user_obj}")
         return JsonResponse({'success': False, 'error': 'Donation not found'}, status=404)
 
-# csv 
+
 @dashboard_login_required
 @require_GET
 def export_donation_history(request):
     user = request.user_obj
-    # date_range = request.GET.get('daterange', '').strip().lower()
-    filters = Q(user=user)
-    # For export, we want to show all donations, not just saved ones
-    donations = Donation.objects.filter(filters).order_by('-created_at')
+    donations = Donation.objects.filter(Q(user=user) & Q(saved=True)).order_by('-created_at')
     html = render_to_string("advertiser/partials/export-donate-history.html", {
         "donation_history": donations,
         'today': date.today(),
@@ -595,7 +584,7 @@ def export_donation_history(request):
     logger.info(f"Exporting donation history for user {user} with {donations.count()} records")
     return JsonResponse({
         "html": html,
-        "total_items": donations.count(),  # Add this
+        "total_items": donations.count(),
     })
 
 
@@ -606,7 +595,6 @@ def get_ngo_graph_data(request):
     user = request.user_obj
     today = timezone.now().date()
 
-    # Parse date input
     start_date_str = request.GET.get("start_date")
     end_date_str = request.GET.get("end_date")
 
@@ -616,11 +604,9 @@ def get_ngo_graph_data(request):
     except ValueError:
         return JsonResponse({'error': 'Invalid date format'}, status=400)
 
-    # Truncate to date and aggregate
     posts = (
         NGOPost.objects
-        .annotate(date=TruncDate('created_at'))  # Only date, no time
-        # .filter(date__range=(start_date, end_date))
+        .annotate(date=TruncDate('created_at'))
         .filter(
             user_id=user,
             date__range=(start_date, end_date)
@@ -635,7 +621,6 @@ def get_ngo_graph_data(request):
         .order_by('date')
     )
 
-    # Prepare data dictionary
     data_by_date = {entry['date']: entry for entry in posts}
 
     labels = []
@@ -644,11 +629,10 @@ def get_ngo_graph_data(request):
     target_donation = []
     donation_received = []
 
-    # Fill values for each day (even if zero)
     current_date = start_date
     while current_date <= end_date:
         entry = data_by_date.get(current_date, {})
-        labels.append(current_date.strftime('%d-%b'))  # Format: 29-Jul
+        labels.append(current_date.strftime('%d-%b')) 
         total_post.append(entry.get('total_post', 0))
         total_views.append(entry.get('total_views', 0) or 0)
         target_donation.append(entry.get('target_donation', 0) or 0)
@@ -670,7 +654,6 @@ def get_ngo_graph_data(request):
 def get_ngo_graph_data_old(request):
     today = timezone.now().date()
 
-    # Simulated day-wise data for last 7 days
     labels = []
     total_post = []
     total_views = []
@@ -711,7 +694,7 @@ def advertiser_advance(request):
             'user_profile': user,
             'user': user
         })
-        # Normal page render
+
         return render(request, "advertiser/advertiser_advance.html", context)
     elif user.user_type == 'ngo':
         provider_profile = NGOProfile.objects.get(user=user)
@@ -745,7 +728,7 @@ def cart(request):
             'user_profile': user,
             'user': user
         })
-        # Normal page render
+
         return render(request, "dashboard/cart.html", context)
     elif user.user_type == 'provider':
         provider_profile = MedicalProviderProfile.objects.get(user=user)

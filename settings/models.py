@@ -12,7 +12,7 @@ USER_TYPE = [
 
 class UserColorScheme(models.Model):
     user_type = models.CharField(max_length=32, choices=USER_TYPE, unique=True, verbose_name=_("User Type"))
-    color_data = models.JSONField(default=dict, help_text=_("JSON object defining the color variables for this theme (e.g., {'header_bg_color': 'violet-sky'})"))
+    color_data = models.JSONField(default=dict, help_text=_("JSON object defining the color variables for this theme "))
     is_active = models.BooleanField(default=True, help_text=_("Is the color scheme active for the user type"))
 
     class Meta:

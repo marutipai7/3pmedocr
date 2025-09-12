@@ -1,5 +1,6 @@
-{% if user_type == 'ngo' %}
-    <div class="hidden tab-content" id="documents">
+{% load static %}
+{% if user.user_type == 'ngo' %}
+    <div class="hidden tab-content documents">
         <div class="flex lg:items-center justify-between pt-4 flex-col lg:flex-row">
           <div class="flex flex-col gap-1">
             <p class="font-semibold text-lg text-jet-black">
@@ -287,7 +288,7 @@
           </div>
         </div>
     </div>
-{% elif user_type == 'advertiser' %}
+{% elif user.user_type == 'advertiser' %}
     <div class="hidden tab-content documents">
     <div class="flex lg:items-center justify-between pt-8 flex-col lg:flex-row">
     <div class="flex flex-col gap-1">
@@ -502,8 +503,8 @@
     <p class="font-bold text-base">Incorrect or Mismatched Information - <span>The document does not match your profile details (e.g., name, ID, registration info).</span> </p>
     </div>
     </div>
-{% elif user_type == 'client' %}
-    <div class="hidden tab-content documents" id="">
+{% elif user.user_type == 'client' %}
+    <div class="hidden tab-content documents">
         <div
         class="flex lg:items-center justify-between pt-8 flex-col lg:flex-row"
         >
@@ -749,7 +750,7 @@
         </p>
         </div>
     </div>
-{% elif user_type == 'provider' %}
+{% elif user.user_type == 'provider' %}
     <div class="hidden tab-content documents">
       <!-- Incorporation -->
       <div class="flex lg:items-center justify-between pt-7 flex-col lg:flex-row">

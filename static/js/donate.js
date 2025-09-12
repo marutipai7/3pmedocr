@@ -402,7 +402,7 @@ function openDonatePopup(donationId) {
       document.getElementById("amount").innerText = data.amount;
       document.getElementById("payMode").innerText = data.pay_mode;
       
-      document.getElementById("donateReceiptModal").style.display = 'block'; 
+      document.getElementById("donateReceiptModal").style.display = 'flex'; 
     })
     .catch(err => {
       console.error("Error loading receipt:", err);
@@ -548,10 +548,10 @@ $(document).on('click', '.donate-bookmark-toggle', function() {
                 if (response.success) {
                     $icon.data('saved', response.saved);
                     if (response.saved) {
-                        $icon.addClass('material-filled text-violet-sky');
-                        $icon.removeClass('text-living-coral');
+                        $icon.addClass('material-filled text-living-coral');
+                        // $icon.removeClass('text-living-coral');
                     } else {
-                        $icon.removeClass('material-filled text-violet-sky');
+                        $icon.removeClass('material-filled text-living-coral');
                         // If in Saved Donation table, remove the row
                         if ($icon.closest('.saved-donation').length || $icon.closest('table').closest('.saved-donation').length) {
                             $icon.closest('tr').remove();

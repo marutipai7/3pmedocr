@@ -1,4 +1,5 @@
-{% if user_type == 'ngo' %}
+{% load static %}
+{% if user.user_type == 'ngo' %}
     <form id="editForm" method="POST" action="{% url 'update_ngo_profile' %}" class="submit-form grid grid-cols-1 gap-x-6 md:gap-x-12 gap-y-6 px-4 sm:px-6 pt-6 text-sm">
         {% csrf_token %}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm">
@@ -89,96 +90,96 @@
 
 
         <div class="relative dropdown-container">
-        <!--Address-->
-        <input name="address" type="text" class="w-full rounded" placeholder="Address" value="{{address}}"/>
+            <!--Address-->
+            <input name="address" type="text" class="w-full rounded" placeholder="Address" value="{{address}}"/>
             <span class="error addressError text-red-500 text-sm mt-1 hidden"></span>
-            </div>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm">
-        <!-- City,Town,District -->
-        <div class="flex flex-col">
-            <input name="city" type="text" class="border rounded px-3 py-2" placeholder="City,Town,District" value="{{city}}"/>
-            <span class="error cityError text-red-500 text-sm mt-1 hidden"></span>
-        </div>
-        <!-- State -->
-        <div class="flex flex-col">
-            <input name="state" type="text" class="border rounded px-3 py-2" placeholder="State" value="{{state}}"/>
-            <span class="error stateError text-red-500 text-sm mt-1 hidden"></span>
-        </div>
-        <!-- Country -->
-        <div class="flex flex-col">
-            <input name="country" type="text" class="border rounded px-3 py-2" placeholder="Country" value="{{country}}"/>
-            <span class="error countryError text-red-500 text-sm mt-1 hidden"></span>
-        </div>
-        <!-- Pincode -->
-        <div class="flex flex-col">
-            <input name="pincode" type="text" class="border rounded px-3 py-2" placeholder="Pincode" value="{{pincode}}"/>
-            <span class="error pincodeError text-red-500 text-sm mt-1 hidden"></span>
-        </div>
-        <!-- contact -->
-        <div class="flex flex-col">
-            <input name="contact_name" type="text" class="border rounded px-3 py-2" placeholder="Contact Person Name" value="{{contact_name}}"/>
-            <span class="error contact_nameError text-red-500 text-sm mt-1 hidden"></span>
-        </div>
-        <!-- ROle -->
-        <div class="flex flex-col">
-            <input name="contact_role" type="text" class="border rounded px-3 py-2" placeholder="Role" value="{{contact_role}}"/>
-            <span class="error contact_roleError text-red-500 text-sm mt-1 hidden"></span>
-        </div>
-        <!-- Country code + Phone -->
-        <div class="flex flex-col lg:flex-row gap-4">
-            <!-- Country Code -->
-            <div class="lg:w-1/4">
-            <select name="countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}" placeholder="India (+91)">
-                {% for country_code in country_codes %}
-                    {% comment %} <option value="{{ country_code.dial_code }}">{{ country_code.dial_code }}</option> {% endcomment %}
-                    <option value="{{ country_code.dial_code }}"
-                        {% if country_code.dial_code == country_code %}selected{% endif %}>
-                        {{ country_code.name }} ({{ country_code.dial_code }})
-                    </option>
-                {%endfor%}
-            </select>
-            <span class="error countryCodesError text-red-500 text-sm mt-1 hidden"></span>
+            <!-- City,Town,District -->
+            <div class="flex flex-col">
+                <input name="city" type="text" class="border rounded px-3 py-2" placeholder="City,Town,District" value="{{city}}"/>
+                <span class="error cityError text-red-500 text-sm mt-1 hidden"></span>
             </div>
+            <!-- State -->
+            <div class="flex flex-col">
+                <input name="state" type="text" class="border rounded px-3 py-2" placeholder="State" value="{{state}}"/>
+                <span class="error stateError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- Country -->
+            <div class="flex flex-col">
+                <input name="country" type="text" class="border rounded px-3 py-2" placeholder="Country" value="{{country}}"/>
+                <span class="error countryError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- Pincode -->
+            <div class="flex flex-col">
+                <input name="pincode" type="text" class="border rounded px-3 py-2" placeholder="Pincode" value="{{pincode}}"/>
+                <span class="error pincodeError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- contact -->
+            <div class="flex flex-col">
+                <input name="contact_name" type="text" class="border rounded px-3 py-2" placeholder="Contact Person Name" value="{{contact_name}}"/>
+                <span class="error contact_nameError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- ROle -->
+            <div class="flex flex-col">
+                <input name="contact_role" type="text" class="border rounded px-3 py-2" placeholder="Role" value="{{contact_role}}"/>
+                <span class="error contact_roleError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- Country code + Phone -->
+            <div class="flex flex-col lg:flex-row gap-4">
+                <!-- Country Code -->
+                <div class="lg:w-1/4">
+                <select name="countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}" placeholder="India (+91)">
+                    {% for country_code in country_codes %}
+                        {% comment %} <option value="{{ country_code.dial_code }}">{{ country_code.dial_code }}</option> {% endcomment %}
+                        <option value="{{ country_code.dial_code }}"
+                            {% if country_code.dial_code == country_code %}selected{% endif %}>
+                            {{ country_code.name }} ({{ country_code.dial_code }})
+                        </option>
+                    {%endfor%}
+                </select>
+                <span class="error countryCodesError text-red-500 text-sm mt-1 hidden"></span>
+                </div>
 
-            <!-- Phone -->
-            <div class="flex-1">
-            <input name="contact_phone_number" type="text" class="border rounded px-3 py-2 w-full" placeholder="Phone Number" value="{{contact_phone_number}}"/>
-            <span class="error contact_phone_numberError text-red-500 text-sm mt-1 hidden"></span>
+                <!-- Phone -->
+                <div class="flex-1">
+                <input name="contact_phone_number" type="text" class="border rounded px-3 py-2 w-full" placeholder="Phone Number" value="{{contact_phone_number}}"/>
+                <span class="error contact_phone_numberError text-red-500 text-sm mt-1 hidden"></span>
+                </div>
             </div>
-        </div>
-        <!--Send OTP-->
-        <div class="flex items-center gap-2">
-            <div class="flex-1">
-            <button type="button" class="bg-violet-sky text-white px-2 py-2.5 rounded w-full cursor-pointer">
-                Send Phone OTP
-            </button>
-            <span class="text-primary-color text-sm mt-2">Didn’t get the code ?
-                <span class="text-black">Resend</span></span>
+            <!--Send OTP-->
+            <div class="flex items-center gap-2">
+                <div class="flex-1">
+                <button type="button" class="bg-violet-sky text-white px-2 py-2.5 rounded w-full cursor-pointer">
+                    Send Phone OTP
+                </button>
+                <span class="text-primary-color text-sm mt-2">Didn’t get the code ?
+                    <span class="text-black">Resend</span></span>
+                </div>
+                <div class="flex-1">
+                <input name="otp2" type="text" class="border rounded px-2 py-2 w-full" placeholder="224584" maxlength="6" 
+                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);"/>
+                <span class="error phoneError text-red-500 text-sm mt-1 hidden"></span>
+                <div class="flex items-center gap-2 justify-end">
+                    <span class="material-symbols-outlined material-filled text-bright-green">check_box</span>
+                    <p class="font-normal text-xs text-bright-green">Verified</p>
+                </div>
+                </div>
             </div>
-            <div class="flex-1">
-            <input name="otp2" type="text" class="border rounded px-2 py-2 w-full" placeholder="224584" maxlength="6" 
-            oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);"/>
-            <span class="error phoneError text-red-500 text-sm mt-1 hidden"></span>
-            <div class="flex items-center gap-2 justify-end">
-                <span class="material-symbols-outlined material-filled text-bright-green">check_box</span>
-                <p class="font-normal text-xs text-bright-green">Verified</p>
+            <!-- Buttons -->
+            <div class="md:col-span-2 flex justify-end pt-4 gap-2 flex-wrap">
+                <button type="button"
+                class="px-4 py-2 rounded-md border text-violet-sky font-normal text-lg border-violet-sky cancel-btn">
+                Cancel
+                </button>
+                <button type="submit"
+                class="bg-violet-sky text-white px-6 py-2 rounded-lg font-normal text-lg cursor-pointer save-btn">
+                Save Changes
+                </button>
             </div>
-            </div>
-        </div>
-        <!-- Buttons -->
-        <div class="md:col-span-2 flex justify-end pt-4 gap-2 flex-wrap">
-            <button type="button"
-            class="px-4 py-2 rounded-md border text-violet-sky font-normal text-lg border-violet-sky cancel-btn">
-            Cancel
-            </button>
-            <button type="submit"
-            class="bg-violet-sky text-white px-6 py-2 rounded-lg font-normal text-lg cursor-pointer save-btn">
-            Save Changes
-            </button>
-        </div>
         </div>
     </form>
-{% elif user_type == 'advertiser' %}
+{% elif user.user_type == 'advertiser' %}
     <form id="editForm" method="POST" action="{% url 'update_advertiser_profile' %}" class="submit-formgrid grid-cols-1 gap-x-6 md:gap-x-12 gap-y-6 px-4 sm:px-6 pt-6 text-sm">
         {% csrf_token %}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm mb-2">
@@ -379,7 +380,7 @@
             </div>
         </div>
     </form>
-{% elif user_type == 'provider' %}
+{% elif user.user_type == 'provider' %}
     <form id="editForm" method="POST" action="{% url 'update_provider_profile' %}" class="submit-formgrid grid-cols-1 gap-x-6 md:gap-x-12 gap-y-6 px-4 sm:px-6 pt-6 text-sm">
         {% csrf_token %}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm mb-2">
@@ -606,7 +607,7 @@
             </div>
         </div>
     </form>
-{% elif user_type == 'client' %}
+{% elif user.user_type == 'client' %}
     <form id="editForm" method="POST" action="{% url 'update_client_profile' %}" class="submit-form grid grid-cols-1 gap-x-6 md:gap-x-12 gap-y-6 px-4 sm:px-6 pt-6 text-sm">
         {% csrf_token %}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm">
