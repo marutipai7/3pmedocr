@@ -259,7 +259,7 @@ function openDonatePopup(donationId) {
       document.getElementById("amount").innerText = data.amount;
       document.getElementById("payMode").innerText = data.pay_mode;
       
-      document.getElementById("donateReceiptModal").style.display = 'block'; 
+      document.getElementById("donateReceiptModal").style.display = 'flex'; 
     })
     .catch(err => {
       console.error("Error loading receipt:", err);

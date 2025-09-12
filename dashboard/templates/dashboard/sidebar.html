@@ -29,12 +29,24 @@
         <ul class="flex flex-col gap-1">
         {% for menu in sidebar_menu %}
             <li>
-                <a href="{{ menu.url }}" class="flex items-center gap-3 px-6 py-3 w-full hover:bg-gray-100 transition-colors {% if request.resolver_match.url_name == menu.url_name %}bg-blue-50 text-blue-600{% endif %}">
+                <a href="{{ menu.url }}" 
+                    class="flex items-center gap-3 px-6 py-3 w-full hover:bg-gray-100 transition-colors
+                        {% if request.resolver_match.url_name == menu.url_name %}
+                            bg-{{ theme_colors.primary_bg }} text-white
+                        {% endif %}">
+                    {% if menu.icon %}
+                        <span class="material-symbols-outlined {% if menu.icon == 'emoji_events' %}material-filled{% endif %}">
+                            {{ menu.icon }}
+                        </span>
+                    {% endif %}
+                    <p>{{ menu.name }}</p>
+                </a>
+                {% comment %} <a href="{{ menu.url }}" class="flex items-center gap-3 px-6 py-3 w-full hover:bg-gray-100 transition-colors {% if request.resolver_match.url_name == menu.url_name %}bg-blue-50 text-blue-600{% endif %}">
                     {% if menu.icon %}
                     <span class="material-symbols-outlined {% if menu.icon == 'emoji_events' %}material-filled{% endif %}">{{ menu.icon }}</span>
                     {% endif %}
                     <p>{{ menu.name }}</p>
-                </a>
+                </a> {% endcomment %}
             </li>
         {% endfor %}
         </ul>
