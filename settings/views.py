@@ -15,7 +15,6 @@ from django.core.exceptions import ValidationError
 from django.template.loader import render_to_string
 from django.db import transaction
 import logging
-from .models import UserColorScheme
 from coupon.models import Coupon
 from donate.models import Donation
 from ngopost.models import NGOPost
@@ -130,7 +129,7 @@ def handle_advertiser_profile(user):
         'state': profile.state,
         'country': profile.country,
         'pincode': profile.pincode,
-        'description': profile.brand_description,
+        'brand_description': profile.brand_description,
         'brand_image_path': os.path.basename(profile.brand_image_path),
         'referral_code': profile.referral_code,
         'incorporation_number': profile.incorporation_number,
@@ -338,7 +337,7 @@ def update_ngo_profile(request):
     
     validate_email_phone(data, errors)
     
-    ngo_services = request.POST.getlist("services")
+    ngo_services = request.POST.get("ngo_services")
     if not ngo_services:
         errors["services"] = "Select at least one NGO service."
         
@@ -362,18 +361,18 @@ def update_ngo_profile(request):
         if ngo_profile:
             for field in ["ngo_name", "website_url", "address", "city", "state", "country", "pincode", "referral_code"]:
                 setattr(ngo_profile, field, data.get(field))
-            ngo_profile.ngo_services = data.getlist("services")
+            ngo_profile.ngo_services = NGOService.objects.get(name=data.get("ngo_services"))
             ngo_profile.save()
         contact_person = ContactPerson.objects.filter(profile_type='ngo', profile_id=user).first()
 
         if contact_person:
             contact_person.name = request.POST.get('contact_name')
-            contact_person.phone_country_code = request.POST.get('countryCodes', "+91")
+            contact_person.phone_country_code = request.POST.get('contact_countryCodes')
             contact_person.phone_number = request.POST.get('contact_phone_number')
             contact_person.role = request.POST.get('contact_role')
             contact_person.save()
 
-    return JsonResponse({"success": True, "message": "NGO profile updated successfully."})  # Redirect back to settings page after save
+    return JsonResponse({"success": True, "message": "NGO profile updated successfully."})
     
 @require_POST
 @dashboard_login_required
@@ -396,15 +395,15 @@ def update_advertiser_profile(request):
         with transaction.atomic():
             # --- Update User ---
             user.email = post_data.get('email')
-            user.phone_country_code = post_data.get("countryCodes", "+91")
+            user.phone_country_code = post_data.get("countryCodes")
             user.phone_number = post_data.get("phone")
             user.save()
 
             # --- Update AdvertiserProfile ---
             advertiser_profile = get_object_or_404(AdvertiserProfile, user=user)
             advertiser_profile.company_name = post_data.get("company_name")
-            advertiser_profile.advertiser_type = post_data.getlist("advertiser_type") or None
-            advertiser_profile.ad_services_required = post_data.getlist("company_services") or None
+            advertiser_profile.advertiser_type = AdvertiserType.objects.get(name=post_data.get("advertiser_type"))
+            advertiser_profile.ad_services_required = AdServiceReq.objects.get(name=post_data.get("company_services") )
             advertiser_profile.website_url = post_data.get("website_url")
             advertiser_profile.city = post_data.get("city")
             advertiser_profile.state = post_data.get("state")
@@ -422,7 +421,7 @@ def update_advertiser_profile(request):
                 )
                 contact.name = contact_name
                 contact.role = post_data.get("contact_role")
-                contact.phone_country_code = post_data.get("countryCodes", "+91")
+                contact.phone_country_code = post_data.get("contact_countryCodes")
                 contact.phone_number = contact_phone
                 contact.save()
 
@@ -437,8 +436,6 @@ def update_client_profile(request):
     post_data = request.POST
     errors = {}
     user = request.user_obj
-    
-    # --- Common Validations ---
     validate_email_phone(post_data, errors)
 
     # Required fields
@@ -458,22 +455,37 @@ def update_client_profile(request):
             user.save()
             
             # --- Update ClientProfile ---
-            profile, _ = ClientProfile.objects.get_or_create(user=user)
+            profile = get_object_or_404(ClientProfile, user=user)
             profile.company_name = post_data.get("company_name")
-            profile.company_type = post_data.get("company_type")
+            profile.company_type = ClientType.objects.get(name=post_data.get("company_type"))
             profile.website_url = post_data.get("website_url")
             profile.address = post_data.get("address")
             profile.city = post_data.get("city")
             profile.state = post_data.get("state")
             profile.pincode = post_data.get("pincode")
             profile.country = post_data.get("country")
-            profile.services_interested = post_data.getlist("company_services") or []
+            profile.services_interested = ClientService.objects.get(name=post_data.get("company_services")) 
             profile.phone = post_data.get("phone")
-            profile.phone_country_code = post_data.get("countryCodes", "+91")
+            profile.phone_country_code = post_data.get("countryCodes")
             profile.save()
+            
+            contact_name = post_data.get("contact_name")
+            contact_phone = post_data.get("contact_phone_number")
+            if contact_name or contact_phone:
+                contact, _ = ContactPerson.objects.get_or_create(
+                    profile_type="advertiser",
+                    profile_id=user
+                )
+                contact.name = contact_name
+                contact.role = post_data.get("contact_role")
+                contact.phone_country_code = post_data.get("contact_countryCodes")
+                contact.phone_number = contact_phone
+                contact.save()
 
         return JsonResponse({'success': True, 'message': 'Client profile updated successfully.'})
     except Exception as e:
+        import traceback
+        print(traceback)
         return JsonResponse({'success': False, 'message': f'Error updating profile: {str(e)}'})
 
 @require_POST
@@ -497,7 +509,7 @@ def update_provider_profile(request):
         with transaction.atomic():
             # --- Update User ---
             user.email = post_data.get('email')
-            user.phone_country_code = post_data.get("countryCodes", "+91")
+            user.phone_country_code = post_data.get("countryCodes")
             user.phone_number = post_data.get("phone")
             user.save()
 
@@ -510,41 +522,16 @@ def update_provider_profile(request):
             provider_profile.state = post_data.get("state")
             provider_profile.country = post_data.get("country")
             provider_profile.pincode = post_data.get("pincode")
-            provider_profile.referral_code = post_data.get("referral_code")
 
             provider_type_value = post_data.get("provider_type")
             if provider_type_value:
-                try:
-                    # Try to get by ID first, then by name
-                    if provider_type_value.isdigit():
-                        provider_profile.provider_type = get_object_or_404(MedicalProviderType, id=provider_type_value)
-                    else:
-                        provider_profile.provider_type = get_object_or_404(MedicalProviderType, name=provider_type_value)
-                except:
-                    # If not found, keep the current value
-                    pass
-
-            # Services Offered (ForeignKey) - single selection
+                provider_profile.provider_type = get_object_or_404(MedicalProviderType, name=provider_type_value)
             services_offered_value = post_data.get("services_offered")
             if services_offered_value:
-                try:
-                    if services_offered_value.isdigit():
-                        provider_profile.services_offered = get_object_or_404(MedicalProviderServices, id=services_offered_value)
-                    else:
-                        provider_profile.services_offered = get_object_or_404(MedicalProviderServices, name=services_offered_value)
-                except:
-                    pass
-
-            # Working Days (ForeignKey) - single selection
+                provider_profile.services_offered = get_object_or_404(MedicalProviderServices, name=services_offered_value)
             working_days_value = post_data.get("working_days")
             if working_days_value:
-                try:
-                    if working_days_value.isdigit():
-                        provider_profile.working_days = get_object_or_404(MedicalProviderWorkingDays, id=working_days_value)
-                    else:
-                        provider_profile.working_days = get_object_or_404(MedicalProviderWorkingDays, name=working_days_value)
-                except:
-                    pass
+                provider_profile.working_days = get_object_or_404(MedicalProviderWorkingDays, name=working_days_value)
 
             provider_profile.save()
 
@@ -558,7 +545,7 @@ def update_provider_profile(request):
                 )
                 contact.name = contact_name
                 contact.role = post_data.get("contact_role")
-                contact.phone_country_code = post_data.get("contact_countryCodes", "+91")
+                contact.phone_country_code = post_data.get("contact_countryCodes")
                 contact.phone_number = contact_phone
                 contact.save()
 
@@ -573,7 +560,7 @@ def delete_account(request):
     user = request.user_obj
     data = json.loads(request.body)
     reason = data.get("reason", "No reason provided")
-    print(f"Deleted account {user.email}. Reason: {reason}")
+    logger.info(msg=f"Deleted account {user.email}. Reason: {reason}")
 
     # Soft delete: deactivate user
     user.is_active = False
@@ -636,58 +623,3 @@ def change_password(request):
         return JsonResponse({'success': True, 'message': 'Password changed successfully', "errors" : ''})
     except Exception as e:
         return JsonResponse({'success': False, 'errors': f'Error updating password: {str(e)}', "message" : ''})
-
-# @require_GET
-# @dashboard_login_required
-# def get_user_theme_api(request):
-    user = request.user_obj
-    user_type = None
-
-    try:
-        if hasattr(user, 'ngoprofile') and user.ngoprofile is not None:
-            user_type = 'ngo'
-        elif hasattr(user, 'advertiserprofile') and user.advertiserprofile is not None:
-            user_type = 'advertiser'
-        elif hasattr(user, 'clientprofile') and user.clientprofile is not None:
-            user_type = 'client'
-        elif hasattr(user, 'medicalproviderprofile') and user.medicalproviderprofile is not None:
-            user_type = 'provider'
-        elif hasattr(user, 'userprofile') and user.userprofile is not None:
-             user_type = 'user'
-        else:
-            user_type = None 
-            logger.warning(f"Theme API: No specific profile found for user {user.username}. User type could not be determined for theme.")
-
-    except Exception as e:
-        logger.error(f"ERROR: Exception during user profile determination for user {user.id} in theme API: {e}", exc_info=True)
-        user_type = None 
-
-    if not user_type:
-        logger.error(f"Theme API: User '{user.username if hasattr(user, 'username') else user.id}' has no determined user type for theme. Aborting.")
-        return JsonResponse(
-            {"error": "User type for theme could not be determined. Please ensure your profile is complete."},
-            status=400
-        )
-
-    #logger.info(f"Theme requested for user: {user.username if hasattr(user, 'username') else user.id}, determined type: {user_type}")
-
-    try:
-        color_scheme_obj = UserColorScheme.objects.get(user_type=user_type, is_active=True)
-        return JsonResponse(color_scheme_obj.color_data) 
-
-    except UserColorScheme.DoesNotExist:
-        logger.warning(f"No active UserColorScheme found for type: {user_type}. Falling back to 'user' theme.")
-        try:
-            default_color_scheme_obj = UserColorScheme.objects.get(user_type='user', is_active=True)
-            return JsonResponse(default_color_scheme_obj.color_data, status=200)
-
-        except UserColorScheme.DoesNotExist:
-            logger.error(f"No active UserColorScheme found for default 'user' type either. Returning server error for theme config.")
-            return JsonResponse(
-                {"error": "Site theme not configured for your user type or default. Contact admin."},
-                status=500
-            )
-
-    except Exception as e:
-        logger.exception(f"An unexpected error occurred while fetching UserColorScheme for {user.username if hasattr(user, 'username') else user.id}: {e}")
-        return JsonResponse({"error": "An unexpected server error occurred while loading theme. Please try again."}, status=500)

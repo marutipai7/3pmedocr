@@ -281,8 +281,8 @@ def get_claimed_coupons(request):
                 start = parse_date(start_date)
                 if start:
                     claimed_qs = claimed_qs.filter(date_claimed__date__gte=start)
-            except Exception as e:
-                print("Invalid start date:", e)
+            except Exception as e: 
+                return JsonResponse({"error": f"Error occurred - Invalid start date: {str(e)}"}, status=500)
 
         # End Date Filter
         if end_date:
@@ -291,7 +291,7 @@ def get_claimed_coupons(request):
                 if end:
                     claimed_qs = claimed_qs.filter(date_claimed__date__lte=end)
             except Exception as e:
-                print("Invalid end date:", e)
+                return JsonResponse({"error": f"Error occurred - Invalid end date: {str(e)}"}, status=500)
 
         paginator = Paginator(claimed_qs.order_by('-date_claimed'), 5)
         try:

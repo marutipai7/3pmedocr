@@ -136,6 +136,7 @@ def login_auth(request):
     data = request.POST
     email = data.get("email").strip()
     password = data.get("password").strip()
+    remember_me = data.get("remember_me")
     errors = {}
 
     if not email:
@@ -160,6 +161,10 @@ def login_auth(request):
         user.save(update_fields=["last_login"])
         
         request.session['user_id'] = user.id
+        if remember_me:
+            request.session.set_expiry(60 * 60 * 24 * 30)
+        else:
+            request.session.set_expiry(0)
         dashboard_url = reverse("dashboard")
         logger.info(f"User {user.email} logged in successfully. Redirecting to {dashboard_url}")
         logger.info(f"User ID: {user.id}, Email: {user.email}, User Type: {user.user_type}")
@@ -605,7 +610,9 @@ def save_advertiser(request):
         errors["tan_doc"] = err
 
     # Brand Image
-    brand_image_path, err = validate_and_save_file(files.get("brand_image"), "brand", "Brand Image",user_type="advertiser")
+    brand_image_path, err = validate_and_save_file(files.get("brand_image"), "brand_image", "Brand Image",user_type="advertiser")
+    if not brand_image_path:
+        errors["brand_image"] = "Upload Image"
     if err:
         errors["brand_image"] = err
 

@@ -413,7 +413,7 @@ $('#login-form').on('submit', function(e) {
         url: formUrl,
         type: 'POST',
         headers: { 'X-CSRFToken': csrftoken },
-        data: { email: email, password: password },
+        data: { email: email, password: password , remember_me:false},
         success: function(resp) {
             if (resp.success) {
                 toastr.success('Login successful!');
