@@ -45,7 +45,7 @@ $(document).ready(function () {
     })
 
     // Copy Code Functionality
- $('.copy-btn').click(async function (e) {
+$('.copy-btn').click(async function (e) {
   e.preventDefault();
 
   const targetSelector = $(this).data('target');
@@ -55,6 +55,24 @@ $(document).ready(function () {
     console.log('Target not found!');
     return;
   }
+
+  try {
+    await navigator.clipboard.writeText($target.val());
+
+    // Change button text for feedback
+    const $btn = $(this);
+    const originalText = $btn.text();
+
+    $btn.text('Copied');
+    toastr.success('Code copied!');
+    setTimeout(() => {
+      $btn.text(originalText);
+    }, 2000);
+
+  } catch (err) {
+    console.error('Failed to copy text: ', err);
+  }
+
 
   let textToCopy = '';
   if ($target.is('input') || $target.is('textarea')) {
@@ -72,6 +90,33 @@ $(document).ready(function () {
   }
 });
 
+$('.share-app').click(function () {
+  const app = $(this).data('app');
+  const link = $('#share-link').val();
+  let url = '';
+
+  switch (app) {
+    case 'whatsapp':
+      url = `https://wa.me/?text=${encodeURIComponent(link)}`;
+      break;
+    case 'telegram':
+      url = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=Check this out!`;
+      break;
+    case 'facebook':
+      url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`;
+      break;
+    case 'sms':
+      url = `sms:?body=${encodeURIComponent(link)}`;
+      break;
+    case 'gmail':
+      url = `mailto:?subject=Check this out&body=${encodeURIComponent(link)}`;
+      break;
+  }
+
+  if (url) {
+    window.open(url, '_blank'); // open in new tab / app
+  }
+});
     // Scan Virus Functionality
     const checkbox = $('.scan-toggle');
     const statusText = $('.status-text');

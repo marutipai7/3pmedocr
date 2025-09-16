@@ -280,11 +280,12 @@ function loadDonationHistory(page = 1, $container = $('#donationHistory')) {
 
 function renderPagination(current, total, $container) {
     let html = '';
+    const tableColor = "{{ table }}";
 
     html += `<button onclick="changePage(${current - 1})" class="bg-white px-3 py-1 rounded text-light-gray1 text-sm" ${current === 1 ? "disabled" : ""}>Previous</button>`;
 
     function pageBtn(i) {
-      return `<button onclick="changePage(${i})" class="px-3 py-1.5 rounded-lg text-sm ${i === current ? "bg-living-coral text-white" : "bg-pagination"}">${i}</button>`;
+      return `<button onclick="changePage(${i})" class="px-3 py-1.5 rounded-lg text-sm ${i === current ? `bg-${tableColor} text-white` : "bg-pagination"}">${i}</button>`;
     }
 
     if (total <= 5) {
@@ -532,10 +533,11 @@ function downloadPlatformPDF() {
 $(document).on('click', '.donate-bookmark-toggle', function() {
         console.log('Bookmark clicked!');
         var $icon = $(this);
+        var textClass = $icon.data('text-class');
         var donationId = $icon.data('donation-id');
         var isSaved = $icon.data('saved') === true || $icon.data('saved') === 'true';
         var action = isSaved ? 'unsave' : 'save';
-    
+
         $.ajax({
             url: '/donate/toggle-saved/',
             type: 'POST',
@@ -548,10 +550,10 @@ $(document).on('click', '.donate-bookmark-toggle', function() {
                 if (response.success) {
                     $icon.data('saved', response.saved);
                     if (response.saved) {
-                        $icon.addClass('material-filled text-living-coral');
+                        $icon.addClass('material-filled text-' + response.text_class);
                         // $icon.removeClass('text-living-coral');
                     } else {
-                        $icon.removeClass('material-filled text-living-coral');
+                        $icon.removeClass('material-filled text-' + response.text_class);
                         // If in Saved Donation table, remove the row
                         if ($icon.closest('.saved-donation').length || $icon.closest('table').closest('.saved-donation').length) {
                             $icon.closest('tr').remove();
@@ -560,6 +562,7 @@ $(document).on('click', '.donate-bookmark-toggle', function() {
                     // Use toastr if available, otherwise show alert
                     if (typeof toastr !== 'undefined') {
                         toastr.success(response.saved ? 'Donation saved!' : 'Donation unsaved!');
+                        console.log("Applied class:", textClass);
                     } else {
                         alert(response.saved ? 'Donation saved!' : 'Donation unsaved!');
                     }

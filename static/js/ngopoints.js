@@ -142,7 +142,7 @@ function setupPagination(totalPages, currentPage) {
 
   function pageBtn(i) {
     return `<button 
-            class="px-3 py-2 rounded-lg cursor-pointer font-normal text-xs ${i === currentPage ? 'bg-violet-sky text-white' : 'bg-pagination'}" 
+            class="px-3 py-2 rounded-lg cursor-pointer font-normal text-xs ${i === currentPage ? 'bg-living-coral text-white' : 'bg-pagination'}" 
             data-page="${i}">
             ${i}
         </button>`;
@@ -207,7 +207,29 @@ $('#nextPage1').on('click', function () {
 });
 
 
+function truncateDescriptions() {
+  document.querySelectorAll('*').forEach(element => {
+    if (element.textContent && element.children.length === 0) {
+      const text = element.textContent.trim();
+      
+      // Check for very long text (more than 100 characters) or repeating patterns
+      if (text.length > 100 || /(.{4,})\1{3,}/.test(text)) {
+        const words = text.split(' ');
+        if (words.length > 15) {
+          element.textContent = words.slice(0, 15).join(' ') + '...';
+        } else {
+          element.textContent = text.substring(0, 80) + '...';
+        }
+        console.log('Truncated long text');
+      }
+    }
+  });
+}
 
+// Call after coupons are loaded
+$(document).ready(function() {
+  truncateDescriptions();
+});
 
   // Listen for button click with data-tab="all-rewards"
   $('[data-tab="all-rewards"]').on('click', function () {
@@ -230,6 +252,8 @@ $('#nextPage1').on('click', function () {
       method: 'GET',
       success: function(response) {
         $('#popular-coupons').html(response.html);
+        truncateDescriptions();
+        console.log("Truncated descriptions");
         currentPopularPage = page;
         console.log(response, response.pagination);
         if (response.pagination) {
@@ -247,7 +271,7 @@ $('#nextPage1').on('click', function () {
 
     function pageBtn(i) {
       return `<button 
-            class="px-3 py-2 rounded-lg cursor-pointer font-normal text-xs popular-page-btn ${i === currentPage ? 'bg-violet-sky text-white' : 'bg-pagination'}" 
+            class="px-3 py-2 rounded-lg cursor-pointer font-normal text-xs popular-page-btn ${i === currentPage ? 'bg-living-coral text-white' : 'bg-pagination'}" 
             data-page="${i}">
             ${i}
         </button>`;
@@ -332,19 +356,19 @@ $('#nextPage1').on('click', function () {
     const startDate = $("#startDateInput").val();
     const endDate = $("#endDateInput").val();
 
-    $.ajax({
+      $.ajax({
         url: "history/",
         data: {
-            search: search,
-            start_date: startDate,
-            end_date: endDate,
-            page: page
+          search: search,
+          start_date: startDate,
+          end_date: endDate,
+          page: page
         },
         success: function(data) {
-            $("#pointsTable").html(data);
+          $("#pointsTable").html(data); // This now includes both table AND pagination
         }
-    });
-  }
+      });
+    }
 
   $("input[name='search']").on("input", function () {
       clearTimeout(window.searchTimeout);
@@ -355,31 +379,39 @@ $('#nextPage1').on('click', function () {
     fetchFilteredData();
   });
 
-  function applyDateFilter(type) {
-    const today = new Date();
-    let start = "", end = "";
+function applyDateFilter(type) {
+  const today = new Date();
+  let start = "", end = "";
 
-    if (type === "last_week") {
-        start = new Date(today.setDate(today.getDate() - 7));
-        end = new Date();
-    } else if (type === "last_month") {
-        start = new Date(today.setMonth(today.getMonth() - 1));
-        end = new Date();
-    } else if (type === "last_year") {
-        start = new Date(today.setFullYear(today.getFullYear() - 1));
-        end = new Date();
-    } else if (type === "custom") {
-        $("#startDateInput").removeClass("hidden");
-        $("#endDateInput").removeClass("hidden");
-        return;
-    }
-
-    if (start && end) {
-        $("#startDateInput").val(start.toISOString().split('T')[0]);
-        $("#endDateInput").val(end.toISOString().split('T')[0]);
-        fetchFilteredData();
-    }
+  // Remove font-bold class from all filter options first
+  $('.filter-dropdown-option div').removeClass('font-bold');
+  
+  if (type === "last_week") {
+    start = new Date(today.setDate(today.getDate() - 7));
+    end = new Date();
+    // Add font-bold to the clicked option
+    $('[onclick="applyDateFilter(\'last_week\')"]').addClass('font-bold');
+  } else if (type === "last_month") {
+    start = new Date(today.setMonth(today.getMonth() - 1));
+    end = new Date();
+    $('[onclick="applyDateFilter(\'last_month\')"]').addClass('font-bold');
+  } else if (type === "last_year") {
+    start = new Date(today.setFullYear(today.getFullYear() - 1));
+    end = new Date();
+    $('[onclick="applyDateFilter(\'last_year\')"]').addClass('font-bold');
+  } else if (type === "custom") {
+    $("#startDateInput").removeClass("hidden").show();
+    $("#endDateInput").removeClass("hidden").show();
+    $('[onclick="applyDateFilter(\'custom\')"]').addClass('font-bold');
+    return;
   }
+
+  if (start && end) {
+    $("#startDateInput").val(start.toISOString().split('T')[0]);
+    $("#endDateInput").val(end.toISOString().split('T')[0]);
+    fetchFilteredData();
+  }
+}
   $('[data-tab="points-history"]').on('click', function () {
     fetchFilteredData();
   });
@@ -474,7 +506,7 @@ $(document).on("click", ".claim-btn", function () {
 
 
   $(document).on("click", ".rewardsClaimed .dateFilter", function() {
-    $(".rewardsClaimed .dateFilter").removeClass('rewardsClaimedActive');
+    $(".rewardsClaimed .dateFilter").removeClass('rewardsClaimedActive font-bold');
     $(this).addClass('rewardsClaimedActive').addClass('font-bold');
     rewardClaimed($('#rewards-claimed-search').val().trim() || '', '', '', 1, $(this).data('range').trim());
   });

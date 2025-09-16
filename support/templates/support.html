@@ -8,7 +8,7 @@
 <!-- Main Content -->
 <div
   class="h-full flex-1 flex flex-col gap-8 p-6 overflow-y-auto scroll bg-slate-white relative transition-all duration-300 main-content">
-  <div class="show-sidebar-toggle hidden fixed top-24 left-0 z-50 h-10 w-10 bg-transparent-violet-sky items-center justify-center rounded-r-md cursor-pointer">
+  <div class="show-sidebar-toggle hidden fixed top-24 left-0 z-50 h-10 w-10 bg-{{ secondary_bg }} items-center justify-center rounded-r-md cursor-pointer">
     <span class="material-symbols-outlined bold-weight text-living-coral">
         arrow_forward_ios
     </span>
@@ -32,7 +32,7 @@
         <div class="flex items-center gap-2 justify-between w-full">
           <div class="w-1/2 flex flex-col gap-1">
             <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-violet-sky"> quiz </span>
+              <span class="material-symbols-outlined text-{{ text }}"> quiz </span>
               <p class="text-sm font-semibold">FAQ Section</p>
             </div>
             <p class="font-normal text-sm text-medium-gray">Quick Answers.</p>
@@ -41,7 +41,7 @@
             <div
               class="w-full max-w-[360px] h-[48px] rounded-[6px] text-sm flex items-center justify-center"
             >
-              <a href="#" class="underline text-violet-sky font-normal">
+              <a href="#" class="underline text-{{ text }} font-normal">
                 Click to read More/Hide
               </a>
             </div>

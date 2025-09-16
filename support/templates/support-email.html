@@ -2,7 +2,7 @@
 <div class="flex items-center gap-2 justify-between w-full">
   <div class="w-1/2 flex flex-col gap-1">
     <div class="flex items-center gap-2">
-      <span class="material-symbols-outlined text-violet-sky"> mail </span>
+      <span class="material-symbols-outlined text-{{ text }}"> mail </span>
       <p class="text-sm font-semibold">Email Support</p>
     </div>
     <p class="font-normal text-sm text-medium-gray">
@@ -25,7 +25,7 @@
   >
     <div class="bg-white w-[90%] max-w-md rounded-lg shadow-lg">
       <!-- Header -->
-      <div class="bg-violet-sky text-white p-4 rounded-t-lg relative">
+      <div class="bg-{{ border }} text-white p-4 rounded-t-lg relative">
         <h2 class="text-lg font-semibold text-center">Email Support</h2>
 
         <!-- Close Button (Top Right) -->
@@ -73,7 +73,7 @@
         <!-- Send Button -->
         <div class="flex justify-end cursor-pointer">
           <button
-            class="bg-violet-sky text-white font-semibold px-8 py-2 rounded-md"
+            class="bg-{{ border }} text-white font-semibold px-8 py-2 rounded-md"
             onclick="sendEmailSupport()"
           >
             Send
@@ -88,7 +88,7 @@
 <div class="flex items-center gap-2 justify-between w-full">
   <div class="w-1/2 flex flex-col gap-1">
     <div class="flex items-center gap-2">
-      <span class="material-symbols-outlined text-violet-sky"> forum </span>
+      <span class="material-symbols-outlined text-{{ text }}"> forum </span>
       <p class="text-sm font-semibold">Chat Support</p>
     </div>
     <p class="font-normal text-sm text-medium-gray">

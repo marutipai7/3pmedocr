@@ -17,8 +17,8 @@
                 <p class="text-18-nr">{{ badge.name|default:"No Badge" }}</p>
             </div>
         </div>
-        <div class="menu-toggle absolute right-0 top-1/2 -translate-y-1/2 h-[48px] w-[48px] bg-transparent-living-coral flex items-center justify-center rounded-l-md cursor-pointer z-10">
-            <span class="material-symbols-outlined bold-weight text-living-coral pl-2.5">
+        <div class="menu-toggle absolute right-0 top-1/2 -translate-y-1/2 h-[48px] w-[48px] bg-{{ secondary_bg }} flex items-center justify-center rounded-l-md cursor-pointer z-10">
+            <span class="material-symbols-outlined bold-weight text-{{ text }} pl-2.5 font-bold">
                 arrow_back_ios
             </span>
         </div>
@@ -30,9 +30,11 @@
         {% for menu in sidebar_menu %}
             <li>
                 <a href="{{ menu.url }}" 
-                    class="flex items-center gap-3 px-6 py-3 w-full hover:bg-gray-100 transition-colors
-                        {% if request.resolver_match.url_name == menu.url_name %}
-                            bg-{{ theme_colors.primary_bg }} text-white
+                    class="flex items-center gap-3 px-6 py-3 w-full transition-colors
+                        {% if request.path == menu.url %}
+                            bg-{{ secondary_bg }} text-{{ text }} font-semibold active-menu border-r-4 border-{{ border }} 
+                        {% else %}
+                            hover:bg-gray-100
                         {% endif %}">
                     {% if menu.icon %}
                         <span class="material-symbols-outlined {% if menu.icon == 'emoji_events' %}material-filled{% endif %}">
@@ -41,12 +43,6 @@
                     {% endif %}
                     <p>{{ menu.name }}</p>
                 </a>
-                {% comment %} <a href="{{ menu.url }}" class="flex items-center gap-3 px-6 py-3 w-full hover:bg-gray-100 transition-colors {% if request.resolver_match.url_name == menu.url_name %}bg-blue-50 text-blue-600{% endif %}">
-                    {% if menu.icon %}
-                    <span class="material-symbols-outlined {% if menu.icon == 'emoji_events' %}material-filled{% endif %}">{{ menu.icon }}</span>
-                    {% endif %}
-                    <p>{{ menu.name }}</p>
-                </a> {% endcomment %}
             </li>
         {% endfor %}
         </ul>

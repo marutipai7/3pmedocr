@@ -20,7 +20,7 @@
     >
       <div class="flex items-center gap-4">
         <div
-          class="help-email-short bg-transparent-violet-sky rounded-full w-10 h-10 flex justify-center items-center font-semibold text-base"
+          class="help-email-short bg-{{ secondary_bg }} rounded-full w-10 h-10 flex justify-center items-center font-semibold text-base"
         >
           
         </div>
@@ -54,7 +54,7 @@
       </div>
     </div>
 
-    <hr class="text-violet-sky mt-4" />
+    <hr class="text-{{ text }} mt-4" />
     <div class="overflow-y-auto max-h-96 scroll">
       <!-- Order Info -->
       <div
@@ -79,7 +79,7 @@
         </div>
       </div>
 
-      <div class="bg-slate-white border border-violet-sky p-4 mt-4 rounded-md">
+      <div class="bg-slate-white border border-{{ border }} p-4 mt-4 rounded-md">
         <!-- Ref Image + Note Section -->
         <div class="mt-6">
           <!-- <p class="font-semibold text-sm text-jet-black mb-2">Ref image :</p> -->
@@ -114,8 +114,8 @@
           <!-- Row 1 -->
           <div class="flex items-start gap-3 status-step" data-status="Open">
             <div class="flex flex-col items-center">
-              <div class="dot bg-violet-sky rounded-full h-4 w-4"></div>
-              <div class="line h-6 w-px bg-violet-sky"></div>
+              <div class="dot bg-{{ border }} rounded-full h-4 w-4"></div>
+              <div class="line h-6 w-px bg-{{ border }}"></div>
             </div>
             <div class="flex justify-between w-full">
               <p class="help-status text-base"></p>
@@ -126,8 +126,8 @@
           <!-- Row 2 -->
           <div class="flex items-start gap-3 status-step" data-status="In Progress">
             <div class="flex flex-col items-center">
-              <div class="bg-violet-sky rounded-full h-4 w-4"></div>
-              <div class="h-6 w-px bg-violet-sky"></div>
+              <div class="bg-{{ border }} rounded-full h-4 w-4"></div>
+              <div class="h-6 w-px bg-{{ border }}"></div>
             </div>
             <div class="flex justify-between w-full">
               <p class="text-base">In Progress</p>
@@ -138,8 +138,8 @@
           <!-- Row 3 -->
           <div class="flex items-start gap-3 status-step" data-status="On Hold">
             <div class="flex flex-col items-center">
-              <div class="bg-violet-sky rounded-full h-4 w-4"></div>
-              <div class="h-6 w-px bg-violet-sky"></div>
+              <div class="bg-{{ border }} rounded-full h-4 w-4"></div>
+              <div class="h-6 w-px bg-{{ border }}"></div>
             </div>
             <div class="flex justify-between w-full">
               <p class="text-base">On Hold</p>
@@ -150,8 +150,8 @@
           <!-- Row 4 -->
           <div class="flex items-start gap-3 status-step" data-status="Resolved">
             <div class="flex flex-col items-center">
-              <div class="bg-violet-sky rounded-full h-4 w-4"></div>
-              <div class="h-6 w-px bg-violet-sky"></div>
+              <div class="bg-{{ border }} rounded-full h-4 w-4"></div>
+              <div class="h-6 w-px bg-{{ border }}"></div>
             </div>
             <div class="flex justify-between w-full">
               <p class="text-base">Resolved</p>
@@ -162,7 +162,7 @@
           <!-- Row 5 (last dot without line) -->
           <div class="flex items-start gap-3 status-step" data-status="Cancelled">
             <div class="flex flex-col items-center">
-              <div class="bg-violet-sky rounded-full h-4 w-4"></div>
+              <div class="bg-{{ border }} rounded-full h-4 w-4"></div>
             </div>
             <div class="flex justify-between w-full">
               <p class="text-base">Cancelled</p>
@@ -173,7 +173,7 @@
           <!-- Row 5 (last dot without line) -->
           <div class="flex items-start gap-3 status-step" data-status="Closed">
             <div class="flex flex-col items-center">
-              <div class="bg-violet-sky rounded-full h-4 w-4"></div>
+              <div class="bg-{{ border }} rounded-full h-4 w-4"></div>
             </div>
             <div class="flex justify-between w-full">
               <p class="text-base">Closed</p>
@@ -185,7 +185,7 @@
       </div>
 
       <div
-        class="flex flex-col border border-violet-sky rounded-lg p-4 mt-4 bg-slate-white"
+        class="flex flex-col border border-{{ border }} rounded-lg p-4 mt-4 bg-slate-white"
       >
         <!-- Chat Header -->
         <div class="pb-3">
@@ -196,7 +196,7 @@
         <div class="flex flex-col space-y-4 pt-3">
           <!-- User Questions Block -->
           <div
-            class="m:w-60 lg:w-1/2 p-2 rounded-2xl bg-white shadow border border-violet-sky"
+            class="m:w-60 lg:w-1/2 p-2 rounded-2xl bg-white shadow border border-{{ border }}"
           >
             <p>Is Cash on Delivery (COD) available?</p>
             <p class="pt-2">How do I apply a coupon or discount code?</p>
@@ -206,7 +206,7 @@
           <!-- User Message -->
           <div class="flex flex-col items-end">
             <div
-              class="bg-pastel-violet-sky text-black rounded-2xl rounded-br-none p-3 max-w-xs shadow w-full"
+              class="bg-{{ secondary_bg }} text-black rounded-2xl rounded-br-none p-3 max-w-xs shadow w-full"
             >
               <div class="flex justify-between items-end">
                 <p class="text-sm">Is Cash on Delivery (COD) available</p>
@@ -233,7 +233,7 @@
         <!-- User Message -->
         <div class="flex flex-col items-end mt-10">
           <div
-            class="bg-pastel-violet-sky text-black rounded-2xl rounded-tl-none rounded-br-none p-3 max-w-xs shadow w-full"
+            class="bg-{{ secondary_bg }} text-black rounded-2xl rounded-tl-none rounded-br-none p-3 max-w-xs shadow w-full"
           >
             <p class="text-sm">Thanks, for the info</p>
             <div class="flex justify-end">
@@ -281,7 +281,7 @@
               <!-- Gallery Icon (Black, Rounded) -->
               <button
                 type="button"
-                class="w-8 h-8 flex items-center justify-center rounded-md bg-transparent-violet-sky"
+                class="w-8 h-8 flex items-center justify-center rounded-md bg-{{ secondary_bg }}"
               >
                 <span class="material-symbols-outlined text-black text-xl"
                   >photo_library</span
@@ -290,7 +290,7 @@
               <!-- Pin Icon (Black, Rounded & Centered) -->
               <button
                 type="button"
-                class="w-8 h-8 flex items-center justify-center rounded-md bg-transparent-violet-sky"
+                class="w-8 h-8 flex items-center justify-center rounded-md bg-{{ secondary_bg }}"
               >
                 <span class="material-symbols-outlined text-black text-xl"
                   >attach_file</span
@@ -301,7 +301,7 @@
 
           <button
             type="button"
-            class="flex items-center justify-center w-10 h-10 rounded-full bg-violet-sky"
+            class="flex items-center justify-center w-10 h-10 rounded-full bg-{{ border }}"
           >
             <span class="material-symbols-outlined text-white text-xl"
               >send</span
@@ -335,7 +335,7 @@
     >
       <div class="flex items-center gap-4">
         <div
-          class="bg-transparent-violet-sky rounded-full w-10 h-10 flex justify-center items-center font-semibold text-base"
+          class="bg-{{ secondary_bg }} rounded-full w-10 h-10 flex justify-center items-center font-semibold text-base"
         >
           MS
         </div>
@@ -369,7 +369,7 @@
       </div>
     </div>
 
-    <hr class="text-violet-sky mt-4" />
+    <hr class="text-{{ text }} mt-4" />
     <div class="overflow-y-auto max-h-96 scroll">
       <!-- Order Info -->
       <div
@@ -394,7 +394,7 @@
         </div>
       </div>
 
-      <div class="bg-slate-white border border-violet-sky p-4 mt-4 rounded-md">
+      <div class="bg-slate-white border border-{{ border }} p-4 mt-4 rounded-md">
         <!-- Ref Image + Note Section -->
         <div class="mt-6">
           <p class="font-semibold text-sm text-jet-black mb-2">Ref image :</p>
@@ -429,8 +429,8 @@
           <!-- Row 1 -->
           <div class="flex items-start gap-3">
             <div class="flex flex-col items-center">
-              <div class="bg-violet-sky rounded-full h-4 w-4"></div>
-              <div class="h-6 w-px bg-violet-sky"></div>
+              <div class="bg-{{ border }} rounded-full h-4 w-4"></div>
+              <div class="h-6 w-px bg-{{ border }}"></div>
             </div>
             <div class="flex justify-between w-full">
               <p class="text-base">Open</p>
@@ -441,8 +441,8 @@
           <!-- Row 2 -->
           <div class="flex items-start gap-3">
             <div class="flex flex-col items-center">
-              <div class="bg-violet-sky rounded-full h-4 w-4"></div>
-              <div class="h-6 w-px bg-violet-sky"></div>
+              <div class="bg-{{ border }} rounded-full h-4 w-4"></div>
+              <div class="h-6 w-px bg-{{ border }}"></div>
             </div>
             <div class="flex justify-between w-full">
               <p class="text-base">In-Progress</p>
@@ -453,8 +453,8 @@
           <!-- Row 3 -->
           <div class="flex items-start gap-3">
             <div class="flex flex-col items-center">
-              <div class="bg-violet-sky rounded-full h-4 w-4"></div>
-              <div class="h-6 w-px bg-violet-sky"></div>
+              <div class="bg-{{ border }} rounded-full h-4 w-4"></div>
+              <div class="h-6 w-px bg-{{ border }}"></div>
             </div>
             <div class="flex justify-between w-full">
               <p class="text-base">On Hold</p>
@@ -465,8 +465,8 @@
           <!-- Row 4 -->
           <div class="flex items-start gap-3">
             <div class="flex flex-col items-center">
-              <div class="bg-violet-sky rounded-full h-4 w-4"></div>
-              <div class="h-6 w-px bg-violet-sky"></div>
+              <div class="bg-{{ border }} rounded-full h-4 w-4"></div>
+              <div class="h-6 w-px bg-{{ border }}"></div>
             </div>
             <div class="flex justify-between w-full">
               <p class="text-base">Resolved</p>
@@ -477,7 +477,7 @@
           <!-- Row 5 (last dot without line) -->
           <div class="flex items-start gap-3">
             <div class="flex flex-col items-center">
-              <div class="bg-violet-sky rounded-full h-4 w-4"></div>
+              <div class="bg-{{ border }} rounded-full h-4 w-4"></div>
             </div>
             <div class="flex justify-between w-full">
               <p class="text-base">Cancelled</p>
@@ -488,7 +488,7 @@
       </div>
 
       <div
-        class="flex flex-col border border-violet-sky rounded-lg p-4 mt-4 bg-slate-white"
+        class="flex flex-col border border-{{ border }} rounded-lg p-4 mt-4 bg-slate-white"
       >
         <!-- Chat Header -->
         <div class="pb-3">
@@ -499,7 +499,7 @@
         <div class="flex flex-col space-y-4 pt-3">
           <!-- User Questions Block -->
           <div
-            class="m:w-60 lg:w-1/2 p-2 rounded-2xl bg-white shadow border border-violet-sky"
+            class="m:w-60 lg:w-1/2 p-2 rounded-2xl bg-white shadow border border-{{ border }}"
           >
             <p>Is Cash on Delivery (COD) available?</p>
             <p class="pt-2">How do I apply a coupon or discount code?</p>
@@ -509,7 +509,7 @@
           <!-- User Message -->
           <div class="flex flex-col items-end">
             <div
-              class="bg-pastel-violet-sky text-black rounded-2xl rounded-br-none p-3 max-w-xs shadow w-full"
+              class="bg-{{ secondary_bg }} text-black rounded-2xl rounded-br-none p-3 max-w-xs shadow w-full"
             >
               <div class="flex justify-between items-end">
                 <p class="text-sm">Is Cash on Delivery (COD) available</p>
@@ -536,7 +536,7 @@
         <!-- User Message -->
         <div class="flex flex-col items-end mt-10">
           <div
-            class="bg-pastel-violet-sky text-black rounded-2xl rounded-tl-none rounded-br-none p-3 max-w-xs shadow w-full"
+            class="bg-{{ secondary_bg }} text-black rounded-2xl rounded-tl-none rounded-br-none p-3 max-w-xs shadow w-full"
           >
             <p class="text-sm">Thanks, for the info</p>
             <div class="flex justify-end">

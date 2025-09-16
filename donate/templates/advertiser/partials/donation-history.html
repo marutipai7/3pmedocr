@@ -14,9 +14,10 @@
   </td>
   <td class="px-4 py-2.5 text-center">
     <div class="flex items-center justify-center gap-2">
-      <span class="material-symbols-outlined bookmark-fill cursor-pointer save-post-btn donate-bookmark-toggle {% if donation.saved %} material-filled text-living-coral{% endif %}"
+      <span class="material-symbols-outlined bookmark-fill cursor-pointer save-post-btn donate-bookmark-toggle {% if donation.saved %} material-filled text-{{ text }}{% endif %}"
             data-donation-id="{{ donation.id }}"
-            data-saved="{{ donation.saved|yesno:'true,false' }}">
+            data-saved="{{ donation.saved|yesno:'true,false' }}"
+            data-text-class="text-{{ text }}">
         bookmark
       </span>
       <span class="mx-1">

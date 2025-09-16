@@ -7,9 +7,9 @@
   <!-- Main Content -->
   <div class="h-full flex-1 relative transition-all duration-300 main-content">
     <div
-      class="show-sidebar-toggle hidden absolute top-10 left-0 z-50 h-10 w-10 bg-light-gray items-center justify-center rounded-r-md cursor-pointer">
+      class="show-sidebar-toggle hidden absolute top-10 left-0 z-50 h-10 w-10 bg-{{ secondary_bg }} items-center justify-center rounded-r-md cursor-pointer">
       <span
-        class="material-symbols-outlined text-living-coral font-bold text-2xl">
+        class="material-symbols-outlined text-{{ text }} font-bold text-2xl">
         arrow_forward_ios
       </span>
     </div>
@@ -32,12 +32,12 @@
         <!-- Tabs Section -->
         <div class="tabs-section flex gap-6 sm:gap-8 whitespace-nowrap mt-8 overflow-x-auto no-scrollbar">
           <button 
-            class="tab-btn-advertiser active-tab-advertiser px-4 text-18-fs cursor-pointer border-living-coral text-living-coral"
+            class="{{ tab_class }} {% if active_tab == 'organization' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
             data-tab="organization">
             Organizations
           </button>
           <button 
-            class="tab-btn-advertiser px-4 text-18-fs cursor-pointer text-living-coral"
+            class="{{ tab_class }} {% if active_tab == 'donation-history' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer text-{{ text }}"
             data-tab="donation-history">
             Donation History
           </button>
@@ -63,16 +63,16 @@
             </button>
             <div
               class="filterDropdown absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-50">
-              <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-living-coral hover:text-white rounded organization-daterange" data-range="custom">
+              <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-{{ hover_bg }} hover:text-white rounded organization-daterange" data-range="custom">
                 Custom date<span class="material-symbols-outlined calendar-icon">calendar_today</span>
               </div>
-              <div class="p-2 pl-4 hover:bg-living-coral hover:text-white rounded cursor-pointer organization-daterange" data-range="1 week">
+              <div class="p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded cursor-pointer organization-daterange" data-range="1 week">
                 1 Week
               </div>
-              <div class="p-2 pl-4 hover:bg-living-coral hover:text-white rounded cursor-pointer organization-daterange" data-range="1 month">
+              <div class="p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded cursor-pointer organization-daterange" data-range="1 month">
                 1 Month
               </div>
-              <div class="p-2 pl-4 hover:bg-living-coral hover:text-white rounded cursor-pointer organization-daterange" data-range="1 year">
+              <div class="p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded cursor-pointer organization-daterange" data-range="1 year">
                 1 Year
               </div>
             </div>

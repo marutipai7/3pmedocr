@@ -8,13 +8,6 @@ from .models import (
     PointsBadge,
     CouponClaimed
     )
-from registration.models import (
-    User,
-    AdvertiserProfile,
-    ClientProfile,
-    MedicalProviderProfile,
-    NGOProfile
-    )
 from coupon.models import Coupon
 from collections import defaultdict
 from django.http import JsonResponse
@@ -25,82 +18,47 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.db.models import Sum, Q
 from django.core.paginator import Paginator
-import logging
 
 
 @dashboard_login_required
 def points_dashboard(request):
     user = request.user_obj
-    user_type = user.user_type
 
-    if user_type == 'ngo':
-        chart_action_types = ['Map', 'Referral', 'Post']
-        user_profile = NGOProfile.objects.filter(user=user).first()
-    elif user_type == 'client':
-        chart_action_types = ['Map', 'Referral', 'Subscription']
-        user_profile = ClientProfile.objects.filter(user=user).first()
-    elif user_type == 'advertiser':
-        chart_action_types = ['Map', 'Referral', 'Coupon']
-        user_profile = AdvertiserProfile.objects.filter(user=user).first()
-    elif user_type == 'provider':
-        chart_action_types = ['Map', 'Referral', 'Coupon']
-        user_profile = MedicalProviderProfile.objects.filter(user=user).first()
-    else:
-        chart_action_types = []
+    context = get_common_context(request, user)
 
-    all_actions = PointsActionType.objects.filter(action_type__in=chart_action_types)
-    action_points = {
-        action.action_type: PointsHistory.objects.filter(
-            user_id=user.id, action_type=action
-        ).aggregate(total=Sum('points'))['total'] or 0
-        for action in all_actions
-    }
-
-    total_points = sum(action_points.values())
-    all_badges = PointsBadge.objects.all()
-    badge = PointsBadge.objects.filter(
-    min_points__lte=total_points
-        ).filter(
-            Q(max_points__gte=total_points) | Q(max_points__isnull=True)
-        ).order_by('min_points').first()
-
-    # 🔍 Search & Filters - PREVIOUS DATA HERE OF filter_point
-    if user_type == 'ngo':
-        user_display_name = user_profile.ngo_name if user_profile else 'Unknown'
-    else:
-        user_display_name = user_profile.company_name if user_profile else 'Unknown'
-    # 📊 Chart data (last 7 days)
+    # Extra data for chart only
+    chart_action_types = context.get("chart_action_types", [])
     chart_data = defaultdict(lambda: [0] * 7)
     today = datetime.date.today()
     last_7_days = [today - datetime.timedelta(days=6 - i) for i in range(7)]
 
     for day_index, day in enumerate(last_7_days):
         for action_type in chart_action_types:
-            action_obj = PointsActionType.objects.filter(action_type__iexact=action_type).first()
+            action_obj = PointsActionType.objects.filter(
+                action_type__iexact=action_type
+            ).first()
             if action_obj:
-                points = PointsHistory.objects.filter(
-                    user=user,
-                    action_type=action_obj,
-                    timestamp__date=day
-                ).aggregate(total=Sum('points'))['total'] or 0
+                points = (
+                    PointsHistory.objects.filter(
+                        user=user, action_type=action_obj, timestamp__date=day
+                    ).aggregate(total=Sum("points"))["total"]
+                    or 0
+                )
                 chart_data[action_type.title()][day_index] = points
 
-    chart_labels = [d.strftime('%d/%m') for d in last_7_days]
+    context.update(
+        {
+            "chart_labels": [d.strftime("%d/%m") for d in last_7_days],
+            "chart_data": dict(chart_data),
+            "all_badges": PointsBadge.objects.all(),
+        }
+    )
 
-    return render(request, 'ngo_points.html', {
-        'total_points': total_points,
-        'action_points': action_points,
-        'chart_labels': chart_labels,
-        'chart_data': dict(chart_data),
-        'all_badges': all_badges,
-        'badge': badge,
-        'user':user,
-        'user_display_name': user_display_name,
-    })
+    return render(request, "ngo_points.html", context)
 
-from django.core.paginator import Paginator
-
+@dashboard_login_required
 def get_coupon_data(request, is_popular=False):
+    user = request.user_obj
     try:
         query = request.GET.get('search', '').strip().lower()
         date_range = request.GET.get('daterange', '').strip().lower()
@@ -160,9 +118,11 @@ def get_coupon_data(request, is_popular=False):
                 item["percent_used"] = int((redeemed / max_redemptions) * 100)
             data_list.append(item)
 
+        context = {"coupons" if is_popular else "products": data_list}
+        context.update(get_common_context(request, user))
         html = render_to_string(
             "partials/coupon_card_layout.html" if is_popular else "partials/coupon_cards.html",
-            {"coupons" if is_popular else "products": data_list}
+            context
         )
 
         return JsonResponse({
@@ -249,6 +209,7 @@ def filter_points(request):
     return {
         'data': history_data,
         'page_obj': page_obj,
+        **get_common_context(request, user)
     }
 
 @csrf_exempt
@@ -301,17 +262,6 @@ def get_claimed_coupons(request):
                 Q(coupon__brand_name__name__icontains=search)
             )
 
-        # today = timezone.now().date()
-
-        # # Date range filter (applied only if manual dates are not present)
-        # if not (start_date or end_date) and date_range:
-        #     if date_range == "1 week":
-        #         claimed_qs = claimed_qs.filter(date_claimed__date__gte=today - timedelta(weeks=1))
-        #     elif date_range == "1 month":
-        #         claimed_qs = claimed_qs.filter(date_claimed__date__gte=today - timedelta(days=30))
-        #     elif date_range == "1 year":
-        #         claimed_qs = claimed_qs.filter(date_claimed__date__gte=today - timedelta(days=365))
-        
         # Normalize date_range
         if date_range:
             date_range = date_range.strip().lower()
@@ -320,7 +270,7 @@ def get_claimed_coupons(request):
             if date_range == "1 week":
                 claimed_qs = claimed_qs.filter(date_claimed__date__gte=today - datetime.timedelta(weeks=1))
             elif date_range == "1 month":
-                claimed_qs = claimed_qs.filter(date_claimed__date__gte=today - datetime.datetime.timedelta(days=30))
+                claimed_qs = claimed_qs.filter(date_claimed__date__gte=today - datetime.timedelta(days=30))
             elif date_range == "1 year":
                 claimed_qs = claimed_qs.filter(date_claimed__date__gte=today - datetime.timedelta(days=365))
 
@@ -354,7 +304,8 @@ def get_claimed_coupons(request):
         })
 
         pagination_html = render_to_string("partials/coupon_claimed_pagination.html", {
-            "page_obj": page_obj
+            "page_obj": page_obj,
+            **get_common_context(request, user)
         })
 
         return JsonResponse({"html": html, "pagination": pagination_html})

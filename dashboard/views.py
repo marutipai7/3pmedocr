@@ -15,7 +15,7 @@ from django.db.models.functions import TruncDate
 from django.template.loader import render_to_string
 from subscription.models import SubscriptionHistory
 from django.views.decorators.http import require_GET, require_POST
-from .utils import dashboard_login_required, get_common_context
+from .utils import dashboard_login_required, get_common_context, get_theme_colors
 from .models import SettingMenu, CouponPerformance,  CalendarEvent, TrendingCoupon
 from django.db.models import Sum, Count, Q, Max, F, ExpressionWrapper, DurationField
 from registration.models import MedicalProviderProfile, NGOProfile, ClientProfile, AdvertiserProfile, ContactPerson
@@ -31,7 +31,7 @@ def dashboard_home(request):
         is_active=True, user_types__contains=[user_type]
         ).order_by('order')
     context = get_common_context(request, user)
-    # context["theme_colors"] = get_theme_colors(user_type)
+    context["theme_colors"] = get_theme_colors(user_type)
     context["sidebar_menu"] = menu_items
     
     try:
@@ -714,6 +714,12 @@ def advertiser_advance(request):
             'user':user
         })
         return render(request, "advertiser/advertiser_advance.html", context)
+
+@dashboard_login_required
+def advertiser_advance_history(request):
+    user = request.user_obj
+    context = get_common_context(request, user)
+    return render(request, "advertiser/advance-history.html", context)
 
 
 @dashboard_login_required

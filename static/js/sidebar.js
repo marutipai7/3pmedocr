@@ -58,7 +58,7 @@ $(document).ready(function () {
     // Find matching style based on path
     $.each(themeStyles, function (keyword, styles) {
         if (currentPath.includes(keyword)) {
-            appliedStyles = styles;
+            // appliedStyles = styles;
             return false; // break loop
         }
     }); 
@@ -71,7 +71,7 @@ $(document).ready(function () {
             (currentPath === '/' && href.includes('index.html')) ||
             (currentPath.includes("purchase-my-cart.html") && href.includes("purchase"))
         ) {
-            $(this).css(appliedStyles);
+            // $(this).css(appliedStyles);
         }
     });
 
@@ -82,14 +82,14 @@ $(document).ready(function () {
 
     // Add hover effects for sidebar items
     $(".sidebar nav a").hover(
+        // function() {
+        //     if (!$(this).hasClass('bg-blue-50')) {
+        //         $(this).css('background-color', '#123456');
+        //     }
+        // },
         function() {
             if (!$(this).hasClass('bg-blue-50')) {
-                $(this).css('background-color', '#f3f4f6');
-            }
-        },
-        function() {
-            if (!$(this).hasClass('bg-blue-50')) {
-                $(this).css('background-color', 'transparent');
+                $(this).css('background-color');
             }
         }
     );
