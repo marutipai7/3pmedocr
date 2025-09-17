@@ -3,7 +3,10 @@ from dashboard.utils import dashboard_login_required, get_common_context
 import os
 import tempfile
 from django.http import JsonResponse
-from .utils import process_document
+# from .utils import process_document
+
+def process_document():
+    pass
 
 @dashboard_login_required
 def shared(request):

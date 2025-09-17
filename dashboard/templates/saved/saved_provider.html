@@ -36,25 +36,25 @@
               class="flex gap-6 whitespace-nowrap mt-8 overflow-x-auto no-scrollbar"
             >
               <button
-                class="tab-btn-pharmacy active-tab-pharmacy text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+                class="{{ tab_class }} {% if active_tab == 'places' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
                 data-tab="places"
               >
                 Places
               </button>
               <button
-                class="tab-btn-pharmacy text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+                class="{{ tab_class }} {% if active_tab == 'order-history' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
                 data-tab="order-history"
               >
                 Order History
               </button>
               <button
-                class="tab-btn-pharmacy text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+                class="{{ tab_class }} {% if active_tab == 'share-history' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
                 data-tab="share-history"
               >
                 Share History
               </button>
               <button
-                class="tab-btn-pharmacy text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+                class="{{ tab_class }} {% if active_tab == 'donationSaved' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
                 data-tab="donationSaved"
               >
                 Donation History

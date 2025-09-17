@@ -32,7 +32,7 @@
                 <a href="{{ menu.url }}" 
                     class="flex items-center gap-3 px-6 py-3 w-full transition-colors
                         {% if request.path == menu.url %}
-                            bg-{{ secondary_bg }} text-{{ text }} font-semibold active-menu border-r-4 border-{{ border }} 
+                            bg-{{ secondary_bg }} text-{{ text }} font-semibold active-menu pr-5 border-r-4 border-{{ border }} 
                         {% else %}
                             hover:bg-gray-100
                         {% endif %}">

@@ -53,7 +53,7 @@ def points_dashboard(request):
             "all_badges": PointsBadge.objects.all(),
         }
     )
-
+    print(context)
     return render(request, "ngo_points.html", context)
 
 @dashboard_login_required

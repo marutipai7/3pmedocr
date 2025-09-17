@@ -35,13 +35,13 @@
               class="flex gap-6 whitespace-nowrap mt-8 overflow-x-auto no-scrollbar"
             >
               <button
-                class="tab-btn-ngo active-tab-ngo text-sm sm:text-18-nr px-4 font-medium cursor-pointer text-light-gray1"
+                class="{{ tab_class }} {% if active_tab == 'places' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
                 data-tab="places"
               >
                 Places
               </button>
               <button
-                class="tab-btn-ngo text-sm sm:text-18-nr px-4 font-medium cursor-pointer text-light-gray1"
+                class="{{ tab_class }} {% if active_tab == 'saved-post' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
                 data-tab="saved-post"
               >
                 Saved Post
