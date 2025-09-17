@@ -43,7 +43,7 @@ def send_otp(request):
         return JsonResponse({"success": False, "message": "This email is already registered."}, status=400)
 
     # Generate secret + OTP
-    token_data = asyncio.run(async_send_otp_email(type("obj", (object,), {"email": email})))
+    token_data = async_to_sync(async_send_otp_email)(type("obj", (object,), {"email": email}))
     secret = token_data["otp_token"]
 
     # Cache secret (NOT otp value) for 5 minutes

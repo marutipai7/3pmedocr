@@ -77,19 +77,9 @@ $(document).ready(function () {
         $('.dropdown-option').hide();
         $(".dropdown-arrow").removeClass("rotate-180");
     });
-    
-    // password hide/unhide
-    $('.togglePassword').on('click', function () {
-        const targetId = $(this).data('target');
-        const passwordField = $('#' + targetId);
-        if (passwordField.length) {
-            const type = passwordField.attr('type') === 'password' ? 'text' : 'password';
-            passwordField.attr('type', type);     
-            $(this).text(type === 'password' ? 'visibility' : 'visibility_off');
-        }
-      }); 
     // resend
     $('.resend').on('click', function () {
+        toastr.success("OTP Resent on Mail");
         const $btn = $(this);
         let timeLeft = 30;
         $btn.off('click');
@@ -110,31 +100,36 @@ $(document).ready(function () {
     });
     // Send OTP
     $(".send-otp").click(function () {
-        $(this).addClass("!bg-Dark-Cornflower-Blue");
+        const $btn = $(this);
+        if ($btn.hasClass("disabled")) return;
         let email = $('input[name="email"]').val();
-
+        console.log(email)
         if (!email) {
             toastr.error("Please enter your email address.");
+            console.log(email.type)
             return;
         }
-
         $.ajax({
             url: "/user/otp/send",
             type: "POST",
             headers: { 'X-CSRFToken': csrftoken },
             data: { "email": email },
+            beforeSend: function(){
+                $btn.addClass("!bg-Dark-Cornflower-Blue disabled");
+            },
             success: function (response) {
+                console.log("Success")
                 toastr.success(response.message);
-
                 // Store token in hidden field
                 if ($("#otp_token").length === 0) {
                     $("form").append('<input type="hidden" id="otp_token" value="' + response.token + '">');
                 } else {
                     $("#otp_token").val(response.token);
                 }
-
                 // ✅ Make email readonly immediately after OTP is sent
                 $('input[name="email"]').prop("readonly", true);
+
+                $(".otp").removeClass("hidden");
             },
             error: function (response) {
                 console.error("Failed to send OTP:", response);

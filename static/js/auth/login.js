@@ -49,7 +49,7 @@ $(document).ready(function () {
       const type =
         passwordField.attr("type") === "password" ? "text" : "password";
       passwordField.attr("type", type);
-
+      
       $(this).text(type === "password" ? "visibility" : "visibility_off");
     }
   });
@@ -155,13 +155,13 @@ $('.continueBtn').on('click', function () {
 // Set placeholder dynamically based on screen size
 function setPlaceholder() {
     if ($(window).width() < 640) {
-      $("#Password").attr("placeholder", "Password");
+      $("#password").attr("placeholder", "Password");
       $("#userName").attr('placeholder',"User Name")
       $('input').addClass('shadow-lg bg-indigo-blue').removeClass('shadow-none');
       $("#NewPassword").attr("placeholder", "New Password");
       $("#ConfirmPassword").attr("placeholder", "Confirm Password");
     } else {
-      $("#Password").attr("placeholder", "********");
+      $("#password").attr("placeholder", "********");
       $("#userName").attr('placeholder',"Rachel Saket")
       $('input').removeClass('shadow-lg bg-indigo-blue').addClass('shadow-none');
       $("#NewPassword").attr("placeholder", "************");
