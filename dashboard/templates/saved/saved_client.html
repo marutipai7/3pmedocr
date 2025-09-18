@@ -24,11 +24,11 @@
             Quickly view and manage all your saved favorites in one place.
         </p>
         </div>
-        <span
-        class="material-symbols-outlined cursor-pointer closesaved-btn"
-        >
-        close
-        </span>
+        <a href="/dashboard">
+            <span class="material-symbols-outlined cursor-pointer">
+                close
+            </span>
+        </a>
     </div>
 
     <!-- Tabs -->
@@ -36,19 +36,19 @@
         class="flex gap-4 sm:gap-5 whitespace-nowrap mt-8 overflow-x-auto no-scrollbar"
     >
         <button
-        class="tab-btn-client active-tab-client text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+        class="{{ tab_class }} {% if active_tab == 'places' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
         data-tab="places"
         >
         Places
         </button>
         <button
-        class="tab-btn-client text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+        class="{{ tab_class }} {% if active_tab == 'saved-reports' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
         data-tab="saved-reports"
         >
         Saved Reports
         </button>
         <button
-        class="tab-btn-client text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+        class="{{ tab_class }} {% if active_tab == 'donationSaved' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
         data-tab="donationSaved"
         >
         Donation History

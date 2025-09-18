@@ -1,8 +1,10 @@
 import pyotp
+import asyncio
 import aiosmtplib
 from asgiref.sync import sync_to_async
 from email.message import EmailMessage
 from .models import PasswordResetToken
+from concurrent.futures import ThreadPoolExecutor
 
 SMTP_HOST = "mail.sizaf.com"
 SMTP_PORT = 465
@@ -10,6 +12,18 @@ SMTP_USERNAME = "dotsdesktop@sizaf.com"
 SMTP_PASSWORD = "eri$45;e]H0K"
 SMTP_FROM = "dotsdesktop@sizaf.com"
 RESET_TOKEN_EXPIRY = 1800 
+
+executor = ThreadPoolExecutor(max_workers=5)
+
+def send_email_background(msg):
+    asyncio.run(aiosmtplib.send(
+        msg,
+        hostname=SMTP_HOST,
+        port=SMTP_PORT,
+        username=SMTP_USERNAME,
+        password=SMTP_PASSWORD,
+        use_tls=True,
+    ))
 
 def generate_otp_secret() -> str:
     return pyotp.random_base32()
@@ -20,39 +34,27 @@ def generate_otp(secret: str, interval: int = 300) -> str:
 def verify_otp(secret: str, otp: str, interval: int = 300) -> bool:
     return pyotp.TOTP(secret, interval=interval).verify(otp, valid_window=5)
 
-async def send_email(recipient: str, subject: str, body: str):
+def send_email(recipient: str, subject: str, body: str):
     msg = EmailMessage()
     msg["From"] = SMTP_FROM
     msg["To"] = recipient
     msg["Subject"] = subject
     msg.set_content(body)
-    print("Connecting to mail.sizaf.com:465 with SSL")
-    try:
-        await aiosmtplib.send(
-            msg,
-            hostname=SMTP_HOST,
-            port=SMTP_PORT,
-            username=SMTP_USERNAME,
-            password=SMTP_PASSWORD,
-            use_tls=True,
-        )
-        print("Email sent!")
-        return True
-    except Exception as e:
-        print("EMAIL SEND ERROR:", e)
-        return False
+    executor.submit(send_email_background, msg)
+    return True
     
 async def async_send_otp_email(user):
     otp_secret = generate_otp_secret()
     otp = generate_otp(otp_secret)
-    email_sent = await send_email(user.email, "Your OTP Code", f"Your OTP is: {otp}")
+    email_sent = send_email(user.email, "Your OTP Code", f"Your OTP is: {otp}")
+    print(otp)
     if not email_sent:
         return {"success": False, "message": "Failed to send email."}
 
     return {"success": True, "otp_token": otp_secret}
 
 async def send_forgot_password_email(user, company_name: str, base_url: str):
-    token_obj = await sync_to_async(PasswordResetToken.create_token)(user)
+    token_obj = sync_to_async(PasswordResetToken.create_token)(user)
     reset_link = f"{base_url}/user/reset-password/{token_obj.token}/"
     subject = f"Reset your {company_name} password"
     body_text = f"""Hi {user.email},

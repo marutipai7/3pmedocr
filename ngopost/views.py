@@ -203,8 +203,6 @@ def save_ngo_post(request):
         return JsonResponse({'success': True, 'post_id': post.id, 'message': 'NGO Post Saved.'})
 
     except Exception as e:
-        import traceback
-        traceback.print_exc()
         return JsonResponse({'error': 'Something went wrong.', 'message': 'NGO Post not Saved.', 'details': str(e)}, status=500)
     
 

@@ -947,7 +947,7 @@ function removeNgoFile(index, submitBtn) {
   updateNgoFileDisplay(submitBtn);
 }
 
-//submit btn
+// submit btn
 form.addEventListener("submit", async function (e) {
   e.preventDefault();
 
@@ -955,7 +955,7 @@ form.addEventListener("submit", async function (e) {
   const issueOption = document.getElementById("select_issue").value;
 
   if (!issueType || issueType === "" || !issueOption || issueOption === "") {
-    showToaster("error", "Please select both Issue Type and Issue Option.");
+    toastr.error("Please select both Issue Type and Issue Option.", "Error");
     return; // stop form submission
   }
 
@@ -978,25 +978,13 @@ form.addEventListener("submit", async function (e) {
     const result = await response.json();
 
     if (result.success) {
-      // toastr.success(result.message);
-      showToaster(
-        "success",
-        result.message || "Ticket created successfully..."
-      );
-      form.reset();
+      toastr.success(result.message || "Ticket created successfully...", "Success");
+      location.reload();
 
       // reset file input styles
       submitBtn.disabled = true;
-      submitBtn.classList.remove(
-        "cursor-pointer",
-        "bg-violet-sky",
-        "text-white"
-      );
-      submitBtn.classList.add(
-        "cursor-not-allowed",
-        "bg-light-gray",
-        "text-medium-gray"
-      );
+      submitBtn.classList.remove("cursor-pointer", "bg-violet-sky", "text-white");
+      submitBtn.classList.add("cursor-not-allowed", "bg-light-gray", "text-medium-gray");
 
       // Wait for latest data from server
       await fetchTickets();
@@ -1004,12 +992,10 @@ form.addEventListener("submit", async function (e) {
       renderTickets();
       renderPagination();
     } else {
-      // toastr.error(result.message || "Something went wrong.");
-      showToaster("error", result.message || "Something went wrong.");
+      toastr.error(result.message || "Something went wrong.", "Error");
     }
   } catch (error) {
-    toastr.error("Something went wrong while submitting your issue.");
-    console.error(error);
+    toastr.error("Something went wrong while submitting your issue.", "Error");
   }
 });
 
@@ -1380,26 +1366,24 @@ function goToPage(pageNum) {
 $(document).ready(function () {
   let faqLoaded = false;
 
-  // Handle tab switching
   $(".ngo-sprt-tab-btn").click(function () {
     const target = $(this).data("tab");
 
-    $(".ngo-sprt-tab-btn").removeClass("active-tab-ngo");
-    $(this).addClass("active-tab-ngo");
+    // Reset active class using context-driven class
+    $(".ngo-sprt-tab-btn").removeClass("{{ active_tab_class }}");
+    $(this).addClass("{{ active_tab_class }}");
 
+    // Show target content
     $(".tab-content").addClass("hidden");
     $("." + target).removeClass("hidden");
 
     if (target === "contact-support" && !faqLoaded) {
-      fetchFaqs(); // Load all on first open
+      fetchFaqs();
       faqLoaded = true;
-
-      // Autofocus input after short delay
-      setTimeout(() => {
-        $("#faq-search-input").focus();
-      }, 100);
+      setTimeout(() => $("#faq-search-input").focus(), 100);
     }
   });
+});
 
   // Reusable FAQ fetcher
   function fetchFaqs(query = "") {
@@ -1436,7 +1420,7 @@ $(document).ready(function () {
       fetchFaqs(query); // If empty, all FAQs will load
     }, 300)
   );
-});
+
 
 //accordian open in faq
 $(document).on("click", ".toggle-subscription", function () {

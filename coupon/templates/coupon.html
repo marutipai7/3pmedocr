@@ -27,15 +27,15 @@
           <div>
             <div class="flex gap-4 sm:gap-4 whitespace-nowrap overflow-x-auto no-scrollbar">
               <button
-                class="tab-btn-adv active-tab-adv text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+                class="{{ tab_class }} {% if active_tab == 'new-coupon' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
                 data-tab="new-coupon">
                 Add New Coupon
               </button>
-              <button class="tab-btn-adv text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+              <button class="{{ tab_class }} {% if active_tab == 'coupon-history' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
                 data-tab="coupon-history">
                 Coupon History
               </button>
-              <button class="tab-btn-adv text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+              <button class="{{ tab_class }} {% if active_tab == 'saved-coupon-history' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
                 data-tab="saved-coupon-history">
                 Saved Coupon
               </button>
@@ -88,6 +88,7 @@
                           {% for option in category_options %}
                             <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
                           {% endfor %}
+                          <div class="px-4 py-2 font-semibold text-blue-600 cursor-pointer" data-value="custom">+ Custom</div>
                         </div>
                       </div>
                     </div>
@@ -106,6 +107,7 @@
                           {% for option in brand_options %}
                             <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
                           {% endfor %}
+                          <div class="px-4 py-2 font-semibold text-blue-600 cursor-pointer" data-value="custom">+ Custom</div>
                         </div>
                       </div>
                     </div>
@@ -131,6 +133,7 @@
                           {% for option in country_options %}
                             <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
                           {% endfor %}
+                          <div class="px-4 py-2 font-semibold text-blue-600 cursor-pointer" data-value="custom">+ Custom</div>
                       </div>
                     </div>
                   </div>
@@ -151,6 +154,7 @@
                             {% for option in state_options %}
                               <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
                             {% endfor %}
+                            <div class="px-4 py-2 font-semibold text-blue-600 cursor-pointer" data-value="custom">+ Custom</div>
                         </div>
                       </div>
                     </div>
@@ -170,6 +174,7 @@
                             {% for option in city_options %}
                               <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
                             {% endfor %}
+                            <div class="px-4 py-2 font-semibold text-blue-600 cursor-pointer" data-value="custom">+ Custom</div>
                         </div>
                       </div>
                     </div>
@@ -189,6 +194,7 @@
                           {% for option in pincode_options %}
                             <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id }}">{{ option.code }}</div>
                           {% endfor %}
+                          <div class="px-4 py-2 font-semibold text-blue-600 cursor-pointer" data-value="custom">+ Custom</div>
                         </div>
                       </div>
                     </div>
@@ -210,6 +216,7 @@
                             {% for option in age_options %}
                               <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
                             {% endfor %}
+                            <div class="px-4 py-2 font-semibold text-blue-600 cursor-pointer" data-value="custom">+ Custom</div>
                           </div>
                       </div>
                     </div>
@@ -229,6 +236,7 @@
                             {% for option in gender_options %}
                               <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
                             {% endfor %}
+                            <div class="px-4 py-2 font-semibold text-blue-600 cursor-pointer" data-value="custom">+ Custom</div>
                           </div>
                       </div>
                     </div>
@@ -250,6 +258,7 @@
                               {% for option in spending_power_options %}
                                 <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
                               {% endfor %}
+                              <div class="px-4 py-2 font-semibold text-blue-600 cursor-pointer" data-value="custom">+ Custom</div>
                             </div>
                       </div>
                     </div>
@@ -269,6 +278,7 @@
                           {% for option in offer_type_options %}
                             <div class="px-4 py-2 hover:bg-transparent-living-coral cursor-pointer" data-value="{{ option.id|slugify }}">{{ option.name }}</div>
                           {% endfor %}
+                          <div class="px-4 py-2 font-semibold text-blue-600 cursor-pointer" data-value="custom">+ Custom</div>
                         </div>
                       </div>
                     </div>

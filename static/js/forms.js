@@ -20,7 +20,6 @@ $(document).ready(function () {
   });
 
   // Form submit for edit details
-  // $("#editForm").off("submit").on("submit", function (e) {
   $(document).off("submit").on("submit", "#editForm", function (e) {
     e.preventDefault();
 
@@ -60,7 +59,7 @@ $(document).ready(function () {
       url: actionUrl,
       type: method,
       data: formData,
-      beforesend:function(){
+      beforeSend:function(){
         $('.save-btn').text('Saving....').attr('disabled', true);
       },
       headers: {

@@ -36,12 +36,12 @@
             </div>
             <p class="font-normal text-base text-dark-gray pt-2">
               Congratulation! You have earned
-              <span class="font-bold text-lg text-living-coral">2.8</span>
+              <span class="font-bold text-lg text-{{ text }}">2.8</span>
               Points on the Platform Usage
             </p>
             <a
-              href="./advance-history.html"
-              class="bg-living-coral px-4 py-2 mt-2 text-white rounded-md font-semibold text-base"
+              href="{% url 'advance-history' %}"
+              class="bg-{{ primary_bg }} px-4 py-2 mt-2 text-white rounded-md font-semibold text-base"
               >Advance History</a
             >
           </div>
@@ -51,8 +51,8 @@
       <div
         class="bg-white p-4 main-content rounded-md shadow-lg m-4 overflow-y-auto max-h-[calc(100vh-120px)] scroll"
       >
-      <div class="show-sidebar-toggle hidden fixed top-24 left-0 z-50 h-10 w-10 bg-transparent-living-coral items-center justify-center rounded-r-md cursor-pointer">
-          <span class="material-symbols-outlined bold-weight text-living-coral">
+      <div class="show-sidebar-toggle hidden fixed top-24 left-0 z-50 h-10 w-10 bg-{{ secondary_bg }} items-center justify-center rounded-r-md cursor-pointer">
+          <span class="material-symbols-outlined bold-weight text-{{ text }}">
               arrow_forward_ios
           </span>
         </div>
@@ -69,8 +69,8 @@
           </div>
           <div class="flex items-center gap-4 pr-4">
             <a
-              href="./advance-history.html"
-              class="font-semibold text-lg text-living-coral underline"
+              href="{% url 'advance-history' %}"
+              class="font-semibold text-lg text-{{ text }} underline"
               >Advance History</a
             >
             <span
@@ -85,7 +85,7 @@
               <p class="font-semibold text-xl text-dark-gray">
                 Advance Balance
               </p>
-              <p class="font-bold text-5xl text-living-coral">
+              <p class="font-bold text-5xl text-{{ text }}">
                 &#8377;12,500.00
               </p>
               <p class="font-normal text-base text-dark-gray">
@@ -122,17 +122,17 @@
           </div>
           <div class="flex items-center justify-center gap-4">
             <button
-              class="bg-blush-petal rounded-md px-6 py-2 cursor-pointer font-semibold text-lg text-jet-black amount-btn hover:bg-living-coral hover:text-white hover:shadow-lg hover:shadow-blush-petal"
+              class="bg-blush-petal rounded-md px-6 py-2 cursor-pointer font-semibold text-lg text-jet-black amount-btn hover:bg-{{ primary_bg }} hover:text-white hover:shadow-lg hover:shadow-blush-petal"
             >
               &#8377;500
             </button>
             <button
-              class="bg-blush-petal rounded-md px-6 py-2 cursor-pointer font-semibold text-lg text-jet-black amount-btn hover:bg-living-coral hover:text-white hover:shadow-lg hover:shadow-blush-petal"
+              class="bg-blush-petal rounded-md px-6 py-2 cursor-pointer font-semibold text-lg text-jet-black amount-btn hover:bg-{{ primary_bg }} hover:text-white hover:shadow-lg hover:shadow-blush-petal"
             >
               &#8377;1000
             </button>
             <button
-              class="bg-blush-petal rounded-md px-6 py-2 cursor-pointer font-semibold text-lg text-jet-black amount-btn hover:bg-living-coral hover:text-white hover:shadow-lg hover:shadow-blush-petal"
+              class="bg-blush-petal rounded-md px-6 py-2 cursor-pointer font-semibold text-lg text-jet-black amount-btn hover:bg-{{ primary_bg }} hover:text-white hover:shadow-lg hover:shadow-blush-petal"
             >
               &#8377;1500
             </button>
@@ -149,7 +149,7 @@
         <p class="font-semibold text-base text-dark-gray pt-6">
           Select Mode of Payment
         </p>
-        <div class="border border-living-coral p-2 rounded-md mt-2">
+        <div class="border border-{{ border }} p-2 rounded-md mt-2">
           <div class="flex justify-between items-center">
             <div class="flex items-center gap-2">
               <label class="custom-radio">
@@ -161,7 +161,7 @@
             <img src="/static/images/upi.svg" alt="upi" />
           </div>
         </div>
-        <div class="border border-living-coral p-2 rounded-md mt-2">
+        <div class="border border-{{ border }} p-2 rounded-md mt-2">
           <div class="flex items-center gap-2">
             <label class="custom-radio">
               <input type="radio" name="payment" />
@@ -170,7 +170,7 @@
             <p class="font-semibold text-base text-jet-black">Net Banking</p>
           </div>
         </div>
-        <div class="border border-living-coral p-2 rounded-md mt-2">
+        <div class="border border-{{ border }} p-2 rounded-md mt-2">
           <div class="flex items-center gap-2">
             <label class="custom-radio">
               <input type="radio" name="payment" />
@@ -187,12 +187,12 @@
         </div>
         <div class="flex justify-end items-center pt-4 gap-2">
           <button
-            class="border border-living-coral text-living-coral px-4 py-2 rounded-md cursor-pointer cancelBtn"
+            class="border border-{{ border }} text-{{ text }} px-4 py-2 rounded-md cursor-pointer cancelBtn"
           >
             Cancel
           </button>
           <button
-            class="bg-living-coral text-white px-4 py-2 rounded-md cursor-pointer recharge-btn"
+            class="bg-{{ primary_bg }} text-white px-4 py-2 rounded-md cursor-pointer recharge-btn"
           >
             Recharge
           </button>
@@ -200,7 +200,7 @@
       </div>
 
       <div class="fixed bottom-6 right-8 z-50">
-        <button class="chatTrigger cursor-pointer w-16 h-16 bg-living-coral text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
+        <button class="chatTrigger cursor-pointer w-16 h-16 bg-{{ primary_bg }} text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
           <img src="/static/images/avatar.svg" alt="avatar" class="w-full h-full object-contain" />
         </button>
 
@@ -213,7 +213,7 @@
 ">
             <span class="material-symbols-outlined flex items-center justify-center p-[0.35rem] text-dark-gray">close</span>
           </button>
-          <button class="absolute cursor-pointer bottom-6 right-18 bg-living-coral text-white p-2 rounded-md">
+          <button class="absolute cursor-pointer bottom-6 right-18 bg-{{ primary_bg }} text-white p-2 rounded-md">
             Talk
           </button>
         </div>

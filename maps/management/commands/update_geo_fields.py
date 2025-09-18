@@ -7,7 +7,6 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         updated = 0
         for key, collection in settings.MONGO_COLLECTIONS.items():
-            print(f"Processing {key}...")
 
             # Update documents without `location` field
             for doc in collection.find({"location": {"$exists": False}}):
@@ -25,7 +24,5 @@ class Command(BaseCommand):
                     )
                     updated += 1
 
-            # Create index (if not already exists)
             collection.create_index([("location", "2dsphere")])
             print(f"{key}: Indexed & updated {updated} documents.\n")
-        print("All done.")

@@ -1,7 +1,7 @@
 {% load static %}
 <button
   id="chat-toggle-button"
-  class="z-10 chat-toggle cursor-pointer bg-violet-sky text-white rounded-full w-10 h-10 flex items-center justify-center fixed bottom-4 right-10 cursor-pointer shadow-lg"
+  class="z-10 chat-toggle cursor-pointer bg-{{ border }} text-white rounded-full w-12 h-12 flex items-center justify-center fixed bottom-4 right-10 cursor-pointer shadow-lg"
   onclick="toggleChat()">
   <span class="material-symbols-outlined">
     chat_bubble
@@ -9,40 +9,48 @@
 </button>
 
 <div id="chat-popup" class="bg-black/30 chat-popup hidden fixed inset-0 flex items-end justify-end right-4 bg-opacity-70 z-50">
-  <div class="bg-white w-[70%] max-w-xs shadow-lg p-4 rounded-lg text-black backdrop-blur-sm flex flex-col h-[550px]">
+  <div class="bg-white w-[90%] max-w-md shadow-lg p-4 rounded-lg text-black backdrop-blur-sm flex flex-col h-[650px] sm:h-[700px]">
 
-    <div class="chat-header bg-violet-sky text-white p-4 w-full rounded-t-md relative">
-      <button onclick="toggleChat()"
-        class="absolute top-2 right-2 text-white text-xl font-bold focus:outline-none">
-        ×
-      </button>
+    <div class="chat-header bg-{{ border }} text-white p-4 w-full rounded-t-lg relative">
+      <button onclick="toggleChat()" class="absolute top-3 right-3 text-white text-xl font-bold focus:outline-none">×</button>
       <p class="font-semibold text-xl">Hi there!</p>
       <p class="font-semibold text-xl">I am PharmaBot</p>
       <p id="initial-bot-message" class="text-base font-normal text-white mt-3 mb-5"></p>
     </div>
 
-    <div id="message-container" class="flex-1 overflow-y-auto p-4 border-t-0 border border-violet-sky rounded-md bg-white text-black w-full mx-auto rounded-b-md shadow -mt-4 relative z-10 custom-scrollbar">
-      </div>
+    <!-- Chat Messages -->
+    <div id="message-container" class="flex-1 overflow-y-auto px-4 py-2 bg-white text-black custom-scrollbar"></div>
 
+    <!-- Chat Options -->
     <div class="chat-options-area p-4 w-full mt-auto flex flex-col gap-3">
-      <div id="initial-options-area" class="flex flex-wrap gap-2 justify-center">
-        </div>
-      <div id="sub-options-area" class="flex flex-wrap gap-2 justify-center hidden">
-        </div>
-      
+      <div id="initial-options-area" class="flex flex-col gap-3"></div>
+      <div id="sub-options-area" class="flex flex-col gap-3 hidden"></div>
+
+      <!-- Custom Query Input -->
       <div id="custom-query-input-area" class="p-3 bg-gray-50 border-t flex flex-col gap-2 hidden">
-          <textarea id="custom-query-textarea"
-                    class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    rows="3" placeholder="Type your query here..."></textarea>
-          <button id="submit-custom-query-btn"
-                  class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-200">
-              Submit Query
-          </button>
+        <textarea id="custom-query-textarea"
+                  class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows="3" placeholder="Type your query here..."></textarea>
+        <button id="submit-custom-query-btn"
+                class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-200">
+          Submit Query
+        </button>
       </div>
 
+      <!-- Ticket Chat Area -->
+      <div id="ticket-chat-area" class="hidden flex flex-col h-full">
+        <div id="ticket-chat-messages" class="flex-1 overflow-y-auto bg-gray-50 p-2 rounded-md mb-2"></div>
+        <div class="flex gap-2">
+          <input id="ticket-chat-input" type="text" placeholder="Type your message..."
+                 class="flex-1 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <button id="send-ticket-message-btn" class="bg-living-coral text-white px-4 py-2 rounded-md">Send</button>
+          <button id="back-to-tickets-btn" class="bg-gray-300 text-black px-4 py-2 rounded-md">Back</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
 
 
 

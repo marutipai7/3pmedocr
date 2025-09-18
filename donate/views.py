@@ -11,7 +11,7 @@ from django.core.paginator import Paginator
 from django.utils.dateparse import parse_date
 from datetime import date, timedelta, datetime
 from django.template.loader import render_to_string
-from dashboard.views import get_common_context
+from dashboard.views import get_common_context, get_theme_colors
 from dashboard.utils import dashboard_login_required
 from registration.views import validate_and_save_file
 from points.models import PointsActionType, PointsHistory
@@ -46,8 +46,10 @@ def donate_view(request):
     })
     return render(request, "advertiser/donate.html", context)
 
+@dashboard_login_required
 @require_GET
 def get_organization_posts(request):
+    user = request.user_obj
     query = request.GET.get("query", "").strip()
     start = request.GET.get("start_date", "").strip()
     end = request.GET.get("end_date", "").strip()
@@ -110,8 +112,9 @@ def get_organization_posts(request):
 
     html = render_to_string(
         "advertiser/partials/organization-cards.html",
-        {"ngo_posts": posts_page},
-        request=request
+        {"ngo_posts": posts_page,
+        **get_common_context(request, user)},
+        request=request,
     )
 
     return JsonResponse({
@@ -124,7 +127,8 @@ def get_organization_posts(request):
 def donate_pay_view(request, post_id=None):
     post = None
     ngo_profile = None
-    context = get_common_context(request, request.user_obj)
+    user = request.user_obj
+    context = get_common_context(request, user)
     if post_id:
         try:
             post = NGOPost.objects.select_related('user').get(id=post_id)
@@ -204,7 +208,6 @@ def get_donation_history(request):
     page = int(request.GET.get('page', 1))
     limit = int(request.GET.get('limit', 10))
     date_range = request.GET.get('daterange', '').strip().lower()
-
     filters = Q(user=user)
     if query:
         filters &= (
@@ -235,9 +238,10 @@ def get_donation_history(request):
     paginator = Paginator(donations, limit)
     page_obj = paginator.get_page(page)
     
-    html = render_to_string("advertiser/partials/donate-history.html", {
+    html = render_to_string("advertiser/partials/donation-history.html", {
         "donation_history": page_obj.object_list,
         'today': date.today(),
+        **get_common_context(request, request.user_obj),
     })
     logger.info(f"User {user.id} fetched donation history: {query}")
     return JsonResponse({
@@ -320,7 +324,7 @@ def toggle_saved_donation(request):
         donation.save()
 
         logger.info(f"User {request.user_obj} set saved={donation.saved} for donation {donation_id} (action={action})")
-        return JsonResponse({'success': True, 'saved': donation.saved})
+        return JsonResponse({'success': True, 'saved': donation.saved, 'text_class': get_theme_colors(request.user_obj.user_type).get("text", "blue-500")})
 
     except Donation.DoesNotExist:
         logger.warning(f"Donation {donation_id} not found or does not belong to user {request.user_obj}")

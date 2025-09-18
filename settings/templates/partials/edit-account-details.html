@@ -17,11 +17,10 @@
                     <!-- Country Code -->
                     <div class="pl-4 lg:w-1/4">
                         <select name="countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}">
-                            {% for country_code in country_codes %}
-                                {% comment %} <option value="{{ country_code.dial_code }}">{{ country_code.dial_code }}</option> {% endcomment %}
-                                <option value="{{ country_code.dial_code }}"
-                                    {% if country_code.dial_code == country_code %}selected{% endif %}>
-                                    {{ country_code.name }} ({{ country_code.dial_code }})
+                            {% for code in country_codes %}
+                                <option value="{{ code.dial_code }}"
+                                    {% if code.dial_code == country_code %}selected{% endif %}>
+                                    {{ code.name }} ({{ code.dial_code }})
                                 </option>
                             {%endfor%}
                         </select>
@@ -67,34 +66,22 @@
         </div>
         <!--NGO Services -->
         <div class="relative dropdown-container">
-            <input name="ngo_services" type="text" class="rounded w-full dropdown-input cursor-pointer" placeholder="NGO Services"
-                value="{{ ngo_services|join:', ' }}" readonly />
-            <span class="material-symbols-outlined absolute right-2 top-2 toggleDropdown cursor-pointer">
-            keyboard_arrow_down
-            </span>
-
-            <div class="dropdown-menu p-4 hidden bg-white rounded shadow-md z-10 absolute w-full">
-            {% for service in all_services %}
-            <div class="flex items-center justify-between">
-                <p class="px-2 py-2 font-normal text-base text-violet-sky">
-                {{ service }}
-                </p>
-                <input type="checkbox" name="services" value="{{ service }}"
-                    class="w-5 h-5 text-violet-sky rounded-sm focus:ring-2 focus:ring-violet-sky"
-                    {% if service in ngo_services %}checked{% endif %} />
-            </div>
-            {% endfor %}
-            </div>
+            <select name="ngo_services" class="ngo_services border rounded px-3 py-2 w-full" data-selected="{{ngo_services}}">
+                {% for service in all_services %}
+                    <option value="{{ service }}"
+                        {% if service == ngo_services %}selected{% endif %}>
+                        {{ service }}
+                    </option>
+                {%endfor%}
+            </select>
             <span class="error ngo_servicesError text-red-500 text-sm mt-1 hidden"></span>
         </div>
-
-
-        <div class="relative dropdown-container">
-            <!--Address-->
-            <input name="address" type="text" class="w-full rounded" placeholder="Address" value="{{address}}"/>
-            <span class="error addressError text-red-500 text-sm mt-1 hidden"></span>
-        </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm">
+            <!--Address-->
+            <div class="flex flex-col">
+                <input name="address" type="text" class="border rounded px-3 py-2" placeholder="Address" value="{{address}}"/>
+                <span class="error addressError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
             <!-- City,Town,District -->
             <div class="flex flex-col">
                 <input name="city" type="text" class="border rounded px-3 py-2" placeholder="City,Town,District" value="{{city}}"/>
@@ -128,17 +115,16 @@
             <!-- Country code + Phone -->
             <div class="flex flex-col lg:flex-row gap-4">
                 <!-- Country Code -->
-                <div class="lg:w-1/4">
-                <select name="countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}" placeholder="India (+91)">
-                    {% for country_code in country_codes %}
-                        {% comment %} <option value="{{ country_code.dial_code }}">{{ country_code.dial_code }}</option> {% endcomment %}
-                        <option value="{{ country_code.dial_code }}"
-                            {% if country_code.dial_code == country_code %}selected{% endif %}>
-                            {{ country_code.name }} ({{ country_code.dial_code }})
-                        </option>
-                    {%endfor%}
-                </select>
-                <span class="error countryCodesError text-red-500 text-sm mt-1 hidden"></span>
+                <div class="pl-4 lg:w-1/4">
+                    <select name="contact_countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}">
+                        {% for code in country_codes %}
+                            <option value="{{ code.dial_code }}"
+                                {% if code.dial_code == country_code %}selected{% endif %}>
+                                {{ code.name }} ({{ code.dial_code }})
+                            </option>
+                        {%endfor%}
+                    </select>
+                    <span class="error countryCodesError text-red-500 text-sm mt-1 hidden"></span>
                 </div>
 
                 <!-- Phone -->
@@ -178,6 +164,7 @@
                 </button>
             </div>
         </div>
+        </div>
     </form>
 {% elif user.user_type == 'advertiser' %}
     <form id="editForm" method="POST" action="{% url 'update_advertiser_profile' %}" class="submit-formgrid grid-cols-1 gap-x-6 md:gap-x-12 gap-y-6 px-4 sm:px-6 pt-6 text-sm">
@@ -191,23 +178,20 @@
                         placeholder="Email Address" value="{{email}}"/>
                     <span class="error emailError text-red-500 text-sm mt-1 hidden"></span>
                 </div>
-
                 <!-- Country code + Phone -->
                 <div class="flex flex-col lg:flex-row gap-4">
                     <!-- Country Code -->
                     <div class="pl-4 lg:w-1/4">
                         <select name="countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}">
-                            {% for country_code in country_codes %}
-                                {% comment %} <option value="{{ country_code.dial_code }}">{{ country_code.dial_code }}</option> {% endcomment %}
-                                <option value="{{ country_code.dial_code }}"
-                                    {% if country_code.dial_code == country_code %}selected{% endif %}>
-                                    {{ country_code.name }} ({{ country_code.dial_code }})
+                            {% for code in country_codes %}
+                                <option value="{{ code.dial_code }}"
+                                    {% if code.dial_code == country_code %}selected{% endif %}>
+                                    {{ code.name }} ({{ code.dial_code }})
                                 </option>
                             {%endfor%}
                         </select>
                         <span class="error countryCodesError text-red-500 text-sm mt-1 hidden"></span>
                     </div>
-
                     <!-- Phone -->
                     <div class="flex-1">
                         <input name="phone" type="text" class="border rounded px-3 py-2 w-full"
@@ -216,7 +200,6 @@
                     </div>
                 </div>
                 <!-- OTP -->
-
                 <div class="flex-1">
                     <button type="button"
                         class="bg-living-coral opacity-50 text-white px-2 py-2.5 rounded mb-1.5 w-full cursor-pointer">
@@ -243,65 +226,40 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm mb-3">
             <!--Advertiser Type-->
             <div class="issue-type-wrapper w-full rounded-[6px] text-dark-gray border border-slate-gray pl-0.5 text-sm flex items-center justify-between relative">
-
-                <input name="advertiser_type" type="text" placeholder="Advertiser Type"
-                    class="issue-type-input w-full focus:outline-none focus:ring-0 border-0 cursor-pointer" value="{{ advertiser_type|join:', ' }}" readonly>
-                <span class="material-symbols-outlined cursor-pointer">keyboard_arrow_down</span>
-
-                <!-- Dropdown options -->
-                
-                <ul class="issue-type-dropdown absolute top-full left-0 w-full bg-white  rounded-md shadow-md z-50 hidden  border border-dark-gray mt-2  ">
+                <select name="advertiser_type" class="advertiser_type border rounded px-3 py-2 w-full" data-selected="{{advertiser_type}}">
                     {% for type in all_types %}
-                    <li class="dropdown-option px-2 py-2 flex mb-2 justify-between items-center hover:bg-transparent-living-coral  ">
-                    <span class="text-base font-normal">{{type}}</span>
-                    <input type="checkbox" value="{{type}}"
-                        class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
-                        data-type="{{type}}" name="advertiser_type"/>
-                    </li>    
-                    {% endfor %}            
-                    <li class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-transparent-living-coral">
-                    <span class="text-base font-normal">Others</span>
-                    <input type="checkbox" value="Others"
-                        class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black  rounded-sm mr-2 "
-                        data-type="other" name="advertiser_type"/>
-                    </li>
-                </ul>
+                        <option value="{{ type }}"
+                            {% if type == advertiser_type %}selected{% endif %}>
+                            {{ type }}
+                        </option>
+                    {%endfor%}
+                </select>
                 <span class="error advertiser_typeError text-red-500 text-sm mt-1 hidden"></span>
             </div>
             <!--Ad Services Required-->
             <div class="issue-type-wrapper w-full  rounded-[6px] text-dark-gray border border-slate-gray pl-0.5 text-sm flex items-center justify-between relative">
-                <input name="company_services" type="text" placeholder="Ad Services Required"
-                    class="issue-type-input w-full focus:outline-none focus:ring-0 border-0 cursor-pointer" value="{{ services_interested|join:', ' }}" readonly>
-                <span class="material-symbols-outlined cursor-pointer">keyboard_arrow_down</span>
-                <!-- Dropdown options -->
-                <ul class="issue-type-dropdown absolute top-full left-0 w-full bg-white  rounded-md shadow-md z-50 hidden  border border-dark-gray mt-2  ">
+                <select name="company_services" class="company_services border rounded px-3 py-2 w-full" data-selected="{{services_interested}}">
                     {% for service in all_services %}
-                    <li class="dropdown-option px-2 py-2 flex mb-2 justify-between items-center hover:bg-transparent-living-coral  ">
-                    <span class="text-base font-normal">{{service}}</span>
-                    <input type="checkbox" name="company_services" value="{{service}}"
-                        class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
-                        data-type="{{service}}" />
-                    </li>
-                    {% endfor %}
-                    <li class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-transparent-living-coral">
-                    <span class="text-base font-normal">Others</span>
-                    <input type="checkbox" name="company_services" value="{{service}}"
-                        class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black  rounded-sm mr-2 "
-                        data-type="Others" />
-                    </li>
-                </ul>   
+                        <option value="{{ service }}"
+                            {% if service == services_interested %}selected{% endif %}>
+                            {{ service }}
+                        </option>
+                    {%endfor%}
+                </select>
                 <span class="error company_servicesError text-red-500 text-sm mt-1 hidden"></span>
             </div>
         </div>
-        <!--Website URL-->
-        <input name="website_url" type="text" class="w-full rounded mb-3" placeholder="Website URL" value="{{website_url}}"/>
-        <span class="error website_urlError text-red-500 text-sm mt-1 hidden"></span>
-
-        <!--Address-->
-        <input type="text" class="w-full rounded mb-3" placeholder="Address" name="address"/>
-        <span class="error addressError text-red-500 text-sm mt-1 hidden"></span>
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm">
+            <!--Website URL-->
+            <div class="flex flex-col">
+                <input name="website_url" type="text" class="border rounded px-3 py-2" placeholder="Website URL" value="{{website_url}}"/>
+                <span class="error website_urlError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!--Address-->
+            <div class="flex flex-col">
+                <input name="address" type="text" class="border rounded px-3 py-2" placeholder="Address" value="{{address}}"/>
+                <span class="error addressError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
             <!-- City,Town,District -->
             <div class="flex flex-col">
                 <input name="city" type="text" class="border rounded px-3 py-2" placeholder="City,Town,District" value="{{city}}"/>
@@ -335,12 +293,13 @@
             <!-- Country code + Phone -->
             <div class="flex flex-col lg:flex-row gap-4">
                 <!-- Country Code -->
-                <div class="lg:w-1/4">
-                    <select name="countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}">
-                        {% for country_code in country_codes %}
-                            <option value="{{ country_code.dial_code }}"
-                                {% if country_code.dial_code == country_code %}selected{% endif %}>
-                                {{ country_code.name }} ({{ country_code.dial_code }})
+                <div class="pl-4 lg:w-1/4">
+                    <select name="contact_countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}">
+                        {% for code in country_codes %}
+                            {% comment %} <option value="{{ code.dial_code }}">{{ code.dial_code }}</option> {% endcomment %}
+                            <option value="{{ code.dial_code }}"
+                                {% if code.dial_code == country_code %}selected{% endif %}>
+                                {{ code.name }} ({{ code.dial_code }})
                             </option>
                         {%endfor%}
                     </select>
@@ -398,10 +357,10 @@
                     <!-- Country Code -->
                     <div class="pl-4 lg:w-1/4">
                         <select name="countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}">
-                            {% for country_code in country_codes %}
-                                <option value="{{ country_code.dial_code }}"
-                                    {% if country_code.dial_code == country_code %}selected{% endif %}>
-                                    {{ country_code.name }} ({{ country_code.dial_code }})
+                            {% for code in country_codes %}
+                                <option value="{{ code.dial_code }}"
+                                    {% if code.dial_code == country_code %}selected{% endif %}>
+                                    {{ code.name }} ({{ code.dial_code }})
                                 </option>
                             {%endfor%}
                         </select>
@@ -443,85 +402,55 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm mb-3">
             <!--Provider Type-->
             <div class="issue-type-wrapper w-full rounded-[6px] text-dark-gray border border-slate-gray pl-0.5 text-sm flex items-center justify-between relative">
-
-                <input name="provider_type" type="text" placeholder="Type Of Medical Provider"
-                    class="issue-type-input w-full focus:outline-none focus:ring-0 border-0 cursor-pointer" value="{{ provider_type }}" readonly>
-                <span class="material-symbols-outlined cursor-pointer">keyboard_arrow_down</span>
-
                 <!-- Dropdown options -->
-                
-                <ul class="issue-type-dropdown absolute top-full left-0 w-full bg-white  rounded-md shadow-md z-50 hidden  border border-dark-gray mt-2  ">
+                <select name="provider_type" class="border rounded px-3 py-2 w-full" data-selected="{{provider_type}}">
                     {% for type in all_types %}
-                    <li class="px-2 py-2 flex mb-2 justify-between items-center hover:bg-transparent-living-coral  ">
-                    <span class="text-base font-normal">{{type}}</span>
-                    <input type="radio" value="{{type}}"
-                        class="issue-checkbox form-radio cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
-                        data-type="{{type}}" name="provider_type"/>
-                    </li>    
-                    {% endfor %}            
-                    <li class="px-2 py-2 mb-2 flex justify-between items-center hover:bg-transparent-living-coral">
-                    <span class="text-base font-normal">Others</span>
-                    <input type="radio" value="Others"
-                        class="issue-checkbox form-radio cursor-pointer w-5 h-5 text-black  rounded-sm mr-2 "
-                        data-type="other" name="provider_type"/>
-                    </li>
-                </ul>
+                        <option value="{{ type }}"
+                            {% if type == provider_type %}selected{% endif %}>
+                            {{ type }}
+                        </option>
+                    {%endfor%}
+                </select>
                 <span class="error provider_typeError text-red-500 text-sm mt-1 hidden"></span>
             </div>
             <!--Services Offered-->
             <div class="issue-type-wrapper w-full  rounded-[6px] text-dark-gray border border-slate-gray pl-0.5 text-sm flex items-center justify-between relative">
-                <input name="services_offered" type="text" placeholder="Services You Offer"
-                    class="issue-type-input w-full focus:outline-none focus:ring-0 border-0 cursor-pointer" value="{{ services_offered|join:', ' }}" readonly>
-                <span class="material-symbols-outlined cursor-pointer">keyboard_arrow_down</span>
-                <!-- Dropdown options -->
-                <ul class="issue-type-dropdown absolute top-full left-0 w-full bg-white  rounded-md shadow-md z-50 hidden  border border-dark-gray mt-2  ">
+                <select name="services_offered" class="border rounded px-3 py-2 w-full" data-selected="{{services_offered}}">
                     {% for service in all_services %}
-                    <li class="px-2 py-2 flex mb-2 justify-between items-center hover:bg-transparent-living-coral  ">
-                    <span class="text-base font-normal">{{service}}</span>
-                    <input type="checkbox" name="services_offered" value="{{service}}"
-                        class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
-                        data-type="{{service}}" />
-                    </li>
-                    {% endfor %}
-                    <li class="px-2 py-2 mb-2 flex justify-between items-center hover:bg-transparent-living-coral">
-                    <span class="text-base font-normal">Others</span>
-                    <input type="checkbox" name="services_offered" value="Others"
-                        class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black  rounded-sm mr-2 "
-                        data-type="Others" />
-                    </li>
-                </ul>   
+                        <option value="{{ service }}"
+                            {% if service == services_offered %}selected{% endif %}>
+                            {{ service }}
+                        </option>
+                    {%endfor%}
+                </select>
                 <span class="error services_offeredError text-red-500 text-sm mt-1 hidden"></span>
             </div>
         </div>
 
         <!--Working Days-->
         <div class="issue-type-wrapper w-full  rounded-[6px] text-dark-gray border border-slate-gray pl-0.5 text-sm flex items-center justify-between relative mb-3">
-            <input name="working_days" type="text" placeholder="Working Days"
-                class="issue-type-input w-full focus:outline-none focus:ring-0 border-0 cursor-pointer" value="{{ working_days }}" readonly>
-            <span class="material-symbols-outlined cursor-pointer">keyboard_arrow_down</span>
-            <!-- Dropdown options -->
-            <ul class="issue-type-dropdown absolute top-full left-0 w-full bg-white  rounded-md shadow-md z-50 hidden  border border-dark-gray mt-2  ">
+            <select name="working_days" class="border rounded px-3 py-2 w-full" data-selected="{{working_days}}">
                 {% for day in all_workingdays %}
-                <li class="px-2 py-2 flex mb-2 justify-between items-center hover:bg-transparent-living-coral  ">
-                <span class="text-base font-normal">{{day}}</span>
-                <input type="radio" name="working_days" value="{{day}}"
-                    class="issue-checkbox form-radio cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
-                    data-type="{{day}}" />
-                </li>
-                {% endfor %}
-            </ul>   
+                    <option value="{{ day }}"
+                        {% if day == working_days %}selected{% endif %}>
+                        {{ day }}
+                    </option>
+                {%endfor%}
+            </select>
             <span class="error working_daysError text-red-500 text-sm mt-1 hidden"></span>
         </div>
 
-        <!--Website URL-->
-        <input name="website_url" type="text" class="w-full rounded mb-3" placeholder="Website URL" value="{{website_url}}"/>
-        <span class="error website_urlError text-red-500 text-sm mt-1 hidden"></span>
-
-        <!--Address-->
-        <input type="text" class="w-full rounded mb-3" placeholder="Address" name="address" value="{{address}}"/>
-        <span class="error addressError text-red-500 text-sm mt-1 hidden"></span>
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm">
+            <!--Website URL-->
+            <div class="flex flex-col">
+                <input name="website_url" type="text" class="border rounded px-3 py-2" placeholder="Website URL" value="{{website_url}}"/>
+                <span class="error website_urlError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!--Address-->
+            <div class="flex flex-col">
+                <input name="address" type="text" class="border rounded px-3 py-2" placeholder="Address" value="{{address}}"/>
+                <span class="error addressError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
             <!-- City,Town,District -->
             <div class="flex flex-col">
                 <input name="city" type="text" class="border rounded px-3 py-2" placeholder="City,Town,District" value="{{city}}"/>
@@ -555,16 +484,16 @@
             <!-- Contact Person Country code + Phone -->
             <div class="flex flex-col lg:flex-row gap-4">
                 <!-- Country Code -->
-                <div class="lg:w-1/4">
-                    <select name="contact_countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{contact_phone_country_code}}">
-                        {% for country_code in country_codes %}
-                            <option value="{{ country_code.dial_code }}"
-                                {% if country_code.dial_code == contact_phone_country_code %}selected{% endif %}>
-                                {{ country_code.name }} ({{ country_code.dial_code }})
+                <div class="pl-4 lg:w-1/4">
+                    <select name="contact_countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}">
+                        {% for code in country_codes %}
+                            <option value="{{ code.dial_code }}"
+                                {% if code.dial_code == country_code %}selected{% endif %}>
+                                {{ code.name }} ({{ code.dial_code }})
                             </option>
                         {%endfor%}
                     </select>
-                    <span class="error contact_countryCodesError text-red-500 text-sm mt-1 hidden"></span>
+                    <span class="error countryCodesError text-red-500 text-sm mt-1 hidden"></span>
                 </div>
 
                 <!-- Phone -->
@@ -591,12 +520,6 @@
                         <p class="font-normal text-xs text-bright-green">Verified</p>
                     </div>
                 </div>
-            </div>
-
-            <!--Referral Code-->
-            <div class="flex flex-col">
-                <input name="referral_code" type="text" class="border rounded px-3 py-2" placeholder="Referral Code (Optional)" value="{{referral_code}}"/>
-                <span class="error referral_codeError text-red-500 text-sm mt-1 hidden"></span>
             </div>
 
             <!-- Buttons -->
@@ -633,20 +556,15 @@
             <div class="flex flex-col lg:flex-row gap-4">
                 <!-- Country Code -->
                 <div class="pl-4 lg:w-1/4">
-                <select
-                    name="countryCodes"
-                    class="countryCodes border rounded px-3 py-2 w-full"
-                    data-selected="{{country_code}}"
-                >
-                    {% for country_code in country_codes %}
-                        {% comment %} <option value="{{ country_code.dial_code }}">{{ country_code.dial_code }}</option> {% endcomment %}
-                        <option value="{{ country_code.dial_code }}"
-                            {% if country_code.dial_code == country_code %}selected{% endif %}>
-                            {{ country_code.name }} ({{ country_code.dial_code }})
-                        </option>
-                    {%endfor%}
-            </select>
-            <span class="error countryCodesError text-red-500 text-sm mt-1 hidden"></span>
+                    <select name="countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}">
+                        {% for code in country_codes %}
+                            <option value="{{ code.dial_code }}"
+                                {% if code.dial_code == country_code %}selected{% endif %}>
+                                {{ code.name }} ({{ code.dial_code }})
+                            </option>
+                        {%endfor%}
+                    </select>
+                    <span class="error countryCodesError text-red-500 text-sm mt-1 hidden"></span>
                 </div>
 
                 <!-- Phone -->
@@ -707,51 +625,28 @@
             class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm"
         >
             <!--Company Type-->
-            <div
-            class="issue-type-wrapper w-full  rounded-[6px] text-dark-gray border border-slate-gray pl-0.5 text-sm flex items-center justify-between relative">
-                <input name="company_type" type="text" placeholder="Company Type"
-                    class="issue-type-input w-full focus:outline-none focus:ring-0 border-0 cursor-pointer" value="{{ company_type|join:', ' }}" readonly>
-                <span class="material-symbols-outlined cursor-pointer">keyboard_arrow_down</span>
-
-                <!-- Dropdown options -->
-                <ul class="issue-type-dropdown absolute top-full left-0 w-full bg-white  rounded-md shadow-md z-50 hidden  border border-dark-gray mt-2  ">
+            <div class="issue-type-wrapper w-full  rounded-[6px] text-dark-gray border border-slate-gray pl-0.5 text-sm flex items-center justify-between relative">
+                <select name="company_type" class="border rounded px-3 py-2 w-full" data-selected="{{company_type}}">
                     {% for type in all_types %}
-                        <li class="dropdown-option px-2 py-2 flex mb-2 justify-between items-center hover:bg-transparent-dark-blue  ">
-                        <span class="text-base font-normal">{{type}}</span>
-                        <input type="checkbox" name="company_type" value="{{type}}"
-                            class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
-                            data-type="{{type}}" />
-                        </li>
-                    {% endfor %}
-                    <li class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-transparent-dark-blue">
-                    <span class="text-base font-normal ">Type....</span>
-                    </li>
-                </ul>
+                        <option value="{{ type }}"
+                            {% if type == company_type %}selected{% endif %}>
+                            {{ type }}
+                        </option>
+                    {%endfor%}
+                </select>
                 <span class="error company_typeError text-red-500 text-sm mt-1 hidden"></span>
             </div>
             <!--Services Interested-->
             <div class="issue-type-wrapper w-full  rounded-[6px] text-dark-gray border border-slate-gray pl-0.5 text-sm flex items-center justify-between relative">
-            <input name="company_services" type="text" placeholder="Services You're Interested In"
-                class="issue-type-input w-full focus:outline-none focus:ring-0 border-0 cursor-pointer" value="{{ services_interested|join:', ' }}" readonly>
-            <span class="material-symbols-outlined cursor-pointer">keyboard_arrow_down</span>
-                <!-- Dropdown options -->
-                <ul
-                    class="issue-type-dropdown absolute top-full left-0 w-full bg-white  rounded-md shadow-md z-50 hidden  border border-dark-gray mt-2  ">
-                    {% for service in all_services %}
-                        <li class="dropdown-option px-2 py-2 flex mb-2 justify-between items-center hover:bg-transparent-dark-blue  ">
-                        <span class="text-base font-normal">{{service}}</span>
-                        <input type="checkbox" name="company_services" value="{{service}}"
-                            class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
-                            data-type="{{service}}" />
-                        </li>
-                    {% endfor %}
-                    <li class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-transparent-dark-blue">
-                    <span class="text-base font-normal">Type....</span>
-                    
-                    </li>
-                </ul>
-                <span class="error company_servicesError text-red-500 text-sm mt-1 hidden"></span>
-            
+            <select name="company_services" class="border rounded px-3 py-2 w-full" data-selected="{{services_interested}}">
+                {% for service in all_services %}
+                    <option value="{{ service }}"
+                        {% if service == services_interested %}selected{% endif %}>
+                        {{ service }}
+                    </option>
+                {%endfor%}
+            </select>
+            <span class="error company_servicesError text-red-500 text-sm mt-1 hidden"></span>
             </div>
         </div>
         <!--Website URL-->
@@ -859,13 +754,12 @@
             <!-- Country code + Phone -->
             <div class="flex flex-col lg:flex-row gap-4">
             <!-- Country Code -->
-            <div class="lg:w-1/4">
-                <select name="countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}" placeholder="India (+91)">
-                    {% for country_code in country_codes %}
-                        {% comment %} <option value="{{ country_code.dial_code }}">{{ country_code.dial_code }}</option> {% endcomment %}
-                        <option value="{{ country_code.dial_code }}"
-                            {% if country_code.dial_code == country_code %}selected{% endif %}>
-                            {{ country_code.name }} ({{ country_code.dial_code }})
+            <div class="pl-4 lg:w-1/4">
+                <select name="contact_countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}">
+                    {% for code in country_codes %}
+                        <option value="{{ code.dial_code }}"
+                            {% if code.dial_code == country_code %}selected{% endif %}>
+                            {{ code.name }} ({{ code.dial_code }})
                         </option>
                     {%endfor%}
                 </select>

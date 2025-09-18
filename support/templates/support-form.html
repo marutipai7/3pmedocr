@@ -29,7 +29,7 @@
     <div class="flex items-center justify-between w-full gap-4">
       <!-- Upload image field -->
       <div
-        class="w-full sm:w-1/2 h-[50px] rounded-[6px] border-2 border-dashed border-violet-sky flex items-center justify-between px-3 relative"
+        class="w-full sm:w-1/2 h-[50px] rounded-[6px] border-2 border-dashed border-{{ border }} flex items-center justify-between px-3 relative"
       >
         <input
           name="image"
@@ -57,7 +57,7 @@
 
         <!-- "+" Icon on right -->
         <label for="ngo-issue-image" class="cursor-pointer">
-          <span class="material-symbols-outlined bg-violet-sky text-white rounded-md p-1">add</span
+          <span class="material-symbols-outlined bg-{{ primary_bg }} text-white rounded-md p-1">add</span
           >
         </label>
       </div>
@@ -72,6 +72,6 @@
       </button>
     </div>
   </form>
-  <div class="w-full h-0.5 rounded bg-violet-sky mt-7"></div>
+  <div class="w-full h-0.5 rounded bg-{{ primary_bg }} mt-7"></div>
 </div>
 

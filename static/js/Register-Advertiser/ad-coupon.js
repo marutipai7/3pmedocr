@@ -13,7 +13,12 @@ $(document).ready(function () {
         const $wrapper = $(this).closest('.dropdown-wrapper');
         const selectedText = $(this).text();
         const selectedID = $(this).attr('data-value');
-        $wrapper.find('.dropdown-input').val(selectedText);
+        if (selectedID === "custom") {
+        // Custom option
+        $wrapper.find('.dropdown-input').val('').focus();
+        } else {
+            $wrapper.find('.dropdown-input').val(selectedText);
+        }
         $wrapper.find('.dropdown-input-hidden').val(selectedID);
         $wrapper.find('.dropdown-list').hide();
         console.log('Selected:', selectedID);
@@ -499,11 +504,38 @@ $(document).ready(function () {
         let valid = true;
 
         $('.required-field').removeClass('error');
+        
+        $('.required-field').each(function () {
+            const $this = $(this);
+            const isDropdown = $this.hasClass('dropdown-input');
 
-        $('.required-field').each(function() {
-            if (!$(this).val().trim() || $(this).val() === 'Select') {
-                valid = false;
-                $(this).addClass('error');
+            if (isDropdown) {
+                const $wrapper = $this.closest('.dropdown-wrapper');
+                const selectedID = $wrapper.find('.dropdown-input-hidden').val().trim();
+                const val = $this.val().trim();
+
+                if (selectedID === 'custom') {
+                    if (val === '') {
+                        valid = false;
+                        $this.addClass('error');
+                        toastr.error('You selected "Custom". Please type a value.');
+                        return false;
+                    }
+                } else {
+                    if (!selectedID) {
+                        valid = false;
+                        $this.addClass('error');
+                        toastr.error('Please Type a Valid value');
+                        return false;
+                    }
+                }
+            } else {
+                if ($this.val().trim() === '') {
+                    valid = false;
+                    $this.addClass('error');
+                    toastr.error('Please fill all required fields.');
+                    return false;
+                }
             }
         });
 
@@ -511,14 +543,13 @@ $(document).ready(function () {
         if (!imageFile) {
             valid = false;
             $('.upload-area').addClass('error');
+            toastr.error('Please upload an image.');
+            return;
         } else {
             $('.upload-area').removeClass('error');
         }
 
-        if (!valid) {
-            toastr.error('Please fill all required fields.');
-            return;
-        }
+        if (!valid) return;
 
         if (imageFile) {
             const reader = new FileReader();
@@ -548,7 +579,8 @@ $(document).ready(function () {
         let valid = true;
 
         $('#step-1 .required-field').each(function() {
-            if (!$(this).val().trim() || $(this).val() === 'Select') {
+            const val = $(this).val().trim();
+            if (!val || val === 'Select' || val === 'custom') {   // ⬅️ added "custom"
                 valid = false;
                 $(this).addClass('error').addClass('border-dark-red').next('p').addClass('text-dark-red');
             } else {
@@ -657,37 +689,38 @@ $(document).ready(function () {
             return;
         }
 
+
         if (!imageFile) {
             toastr.error("Please upload a coupon image.");
             return;
         }
 
-        if (!offerType) {
+        if (!offerType || offerType === 'custom') {
             toastr.error("Please select an Offer Type.");
             return;
         }
 
-        if (!spendingPower) {
+        if (!spendingPower || spendingPower === 'custom') {
             toastr.error("Please select Spending Power.");
             return;
         }
 
-        if (!country) {
+        if (!country || country === 'custom') {
             toastr.error("Please select Country.");
             return;
         }
 
-        if (!state) {
+        if (!state || state === 'custom') {
             toastr.error("Please select State.");
             return;
         }
 
-        if (!city) {
+        if (!city || city === 'custom') {
             toastr.error("Please select City.");
             return;
         }
 
-        if (!pincode) {
+        if (!pincode || pincode === 'custom') {
             toastr.error("Please select Pincode.");
             return;
         }
@@ -954,4 +987,58 @@ $(document).ready(function () {
         loadSavedCouponHistory(1);
     });
     loadSavedCouponHistory(1, '');
+});
+$(document).ready(function () {
+  $(".dropdown-wrapper").each(function () {
+    const $wrapper = $(this);
+    const $input = $wrapper.find(".dropdown-input");
+    const $hiddenInput = $wrapper.find(".dropdown-input-hidden");
+    const $dropdown = $wrapper.find(".dropdown-list");
+    const $toggle = $wrapper.find(".material-symbols-outlined");
+
+    // Toggle dropdown open/close
+    $toggle.on("click", function () {
+      $dropdown.toggleClass("hidden");
+    });
+
+    // Handle option click
+    $dropdown.find("div").on("click", function () {
+      const value = $(this).data("value");
+
+      if (value === "custom") {
+        // Custom option → allow typing
+        $input.prop("readonly", false).val("").focus();
+        $hiddenInput.val("");
+      } else {
+        // Normal option
+        $input.prop("readonly", true).val($(this).text().trim());
+        $hiddenInput.val(value);
+      }
+
+      $dropdown.addClass("hidden");
+    });
+
+    // Sync custom typed value into hidden field
+    $input.on("input", function () {
+      if (!$input.prop("readonly")) {
+        $hiddenInput.val($input.val().trim());
+      }
+    });
+
+    // Reset to placeholder if custom left empty
+    $input.on("blur", function () {
+      if (!$input.prop("readonly") && $input.val().trim() === "") {
+        $input.val("").prop("readonly", true); // lock back
+        $hiddenInput.val(""); // clear hidden too
+        $input.attr("placeholder", "Select..."); // show placeholder
+      }
+    });
+  });
+
+  // Optional: Close dropdowns when clicking outside
+  $(document).on("click", function (e) {
+    if (!$(e.target).closest(".dropdown-wrapper").length) {
+      $(".dropdown-list").addClass("hidden");
+    }
+  });
 });

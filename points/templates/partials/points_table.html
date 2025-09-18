@@ -1,53 +1,57 @@
-<table class="min-w-full table-auto whitespace-nowrap">
-  <thead class="bg-violet-sky text-white text-sm sm:text-18-b">
-    <tr>
-      <th class="text-center px-4 py-6 border-r border-white">Date & Time</th>
-      <th class="text-center px-4 py-6 border-r border-white">Type</th>
-      <th class="text-center px-4 py-6 border-r border-white">Points</th>
-      <th class="text-center px-4 py-6 border-r border-white">Status</th>
-    </tr>
-  </thead>
-  <tbody class="bg-snow-gray text-dark-gray text-16-fs">
-    {% for row in data %}
-    <tr>
-      <td class="px-4 py-4.5 text-center">{{ row.timestamp }}</td>
-      <td class="px-4 py-4.5 text-center">{{ row.action_type }}</td>
-      <td class="px-4 py-4.5 text-center">{{ row.points }}</td>
-      <td class="px-4 py-4.5 text-center">
-        <div class="bg-mint-cream text-green py-2 rounded-md border-none w-30">{{ row.status }}</div>
-      </td>
-    </tr>
-    {% empty %}
-    <tr>
-      <td colspan="4" class="text-center py-5 text-gray-500">No history available</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% if page_obj.has_other_pages %}
-  <div id="pagination-container" class="flex justify-center gap-2 mt-4">
+<div id="points-history-container">
+  <table class="min-w-full table-auto whitespace-nowrap">
+    <thead class="bg-{{ primary_bg }} text-white text-sm sm:text-18-b">
+      <tr>
+        <th class="text-center px-4 py-6 border-r border-white">Date & Time</th>
+        <th class="text-center px-4 py-6 border-r border-white">Type</th>
+        <th class="text-center px-4 py-6 border-r border-white">Points</th>
+        <th class="text-center px-4 py-6 border-r border-white">Status</th>
+      </tr>
+    </thead>
+    <tbody class="bg-snow-gray text-dark-gray text-16-fs">
+      {% for row in data %}
+      <tr>
+        <td class="px-4 py-4.5 text-center">{{ row.timestamp }}</td>
+        <td class="px-4 py-4.5 text-center">{{ row.action_type }}</td>
+        <td class="px-4 py-4.5 text-center">{{ row.points }}</td>
+        <td class="px-4 py-4.5 flex justify-center items-center text-center">
+          <div class="bg-mint-cream text-green py-2 rounded-md border-none w-30">{{ row.status }}</div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4" class="text-center py-5 text-gray-500">No history available</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+  <!-- Move pagination inside the container -->
+  {% if page_obj.has_other_pages %}
+    <div id="pagination-container" class="flex justify-center gap-2 mt-4">
 
-    {% if page_obj.has_previous %}
-      <button class="pagination-btn bg-white px-3 py-1 rounded text-light-gray1 text-sm" data-page="{{ page_obj.previous_page_number }}">« Previous</button>
-    {% endif %}
-
-    {% for num in page_obj.paginator.page_range %}
-      {% if num == 1 or num == page_obj.paginator.num_pages or num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
-        
-        {% if page_obj.number == num %}
-          <button class="pagination-btn px-3 py-1.5 rounded-lg text-sm text-white bg-violet-sky" data-page="{{ num }}">{{ num }}</button>
-        {% else %}
-          <button class="pagination-btn px-3 py-1.5 rounded-lg text-sm bg-pagination" data-page="{{ num }}">{{ num }}</button>
-        {% endif %}
-
-      {% elif num == 2 or num == page_obj.paginator.num_pages|add:-1 %}
-        <span class="px-2">...</span>
+      {% if page_obj.has_previous %}
+        <button class="pagination-btn bg-white px-3 py-1 rounded text-light-gray1 text-sm" data-page="{{ page_obj.previous_page_number }}">« Previous</button>
       {% endif %}
-    {% endfor %}
 
-    {% if page_obj.has_next %}
-      <button class="pagination-btn bg-white px-3 py-1 rounded text-light-gray1 text-sm" data-page="{{ page_obj.next_page_number }}">Next »</button>
-    {% endif %}
+      {% for num in page_obj.paginator.page_range %}
+        {% if num == 1 or num == page_obj.paginator.num_pages or num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
+          
+          {% if page_obj.number == num %}
+            <button class="pagination-btn px-3 py-1.5 rounded-lg text-sm text-white bg-{{ primary_bg }}" data-page="{{ num }}">{{ num }}</button>
+          {% else %}
+            <button class="pagination-btn px-3 py-1.5 rounded-lg text-sm bg-pagination" data-page="{{ num }}">{{ num }}</button>
+          {% endif %}
 
-  </div>
-{% endif %}
+        {% elif num == 2 or num == page_obj.paginator.num_pages|add:-1 %}
+          <span class="px-2">...</span>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <button class="pagination-btn bg-white px-3 py-1 rounded text-light-gray1 text-sm" data-page="{{ page_obj.next_page_number }}">Next »</button>
+      {% endif %}
+
+    </div>
+  {% endif %}
+</div>

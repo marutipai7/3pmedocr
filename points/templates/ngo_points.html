@@ -8,10 +8,10 @@
       <!-- Main Content -->
       <div class="h-full flex-1 flex flex-col gap-8 p-6 overflow-y-auto scroll bg-slate-white relative transition-all duration-300 main-content">
            <div
-            class="show-sidebar-toggle hidden absolute top-10 left-0 z-50 h-10 w-10 bg-light-gray items-center justify-center rounded-r-md cursor-pointer"
+            class="show-sidebar-toggle hidden absolute top-10 left-0 z-50 h-10 w-10 bg-{{ secondary_bg }} items-center justify-center rounded-r-md cursor-pointer"
           >
             <span
-              class="material-symbols-outlined text-living-coral font-bold text-2xl"
+              class="material-symbols-outlined text-{{ text }} font-bold text-2xl"
             >
               arrow_forward_ios
             </span>
@@ -50,34 +50,30 @@
               </div>
               
               <!-- Tabs -->
-              <div
-                class="flex gap-4 sm:gap-5 whitespace-nowrap mt-8 overflow-x-auto no-scrollbar"
-              >
-                <button
-                  class=" tab-btn-ngo active-tab-ngo text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
-                  data-tab="points"
-                >
+              <div class="tabs-section flex gap-6 sm:gap-8 whitespace-nowrap mt-8 overflow-x-auto no-scrollbar">
+                <button 
+                  class="{{ tab_class }} {% if active_tab == 'points' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
+                  data-tab="points">
                   Points
                 </button>
-                <button
-                  class="tab-btn-ngo text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
-                  data-tab="points-history"
-                >
+
+                <button 
+                  class="{{ tab_class }} {% if active_tab == 'points-history' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer text-{{ text }}"
+                  data-tab="points-history">
                   Points History
                 </button>
-                <button
-                  class="tab-btn-ngo text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
-                  data-tab="all-rewards"
-                >
+
+                <button 
+                  class="{{ tab_class }} {% if active_tab == 'all-rewards' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer text-{{ text }}"
+                  data-tab="all-rewards">
                   All Rewards
                 </button>
-                <button
-                  class="tab-btn-ngo text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
-                  data-tab="rewards-claimed"
-                >
+
+                <button 
+                  class="{{ tab_class }} {% if active_tab == 'rewards-claimed' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer text-{{ text }}"
+                  data-tab="rewards-claimed">
                   Rewards Claimed
                 </button>
-                
               </div>
 
               <!--Points Tab content-->
@@ -93,7 +89,7 @@
                       <label class="flex items-center gap-4 cursor-pointer">
                         <input
                           type="checkbox"
-                          class="legend-checkbox focus:outline-none focus:ring-0 focus:ring-offset-0 rounded-xs text-violet-sky text-2xl w-5 h-5 cursor-pointer"
+                          class="legend-checkbox focus:outline-none focus:ring-0 focus:ring-offset-0 rounded-xs text-{{ text }} text-2xl w-5 h-5 cursor-pointer"
                           data-index="{{ forloop.counter0 }}"
                           {% if value > 0 %}checked{% endif %}
                         />
@@ -141,16 +137,16 @@
                       <div
                         class="filterDropdown absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10"
                       >
-                      
-                        <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-violet-sky hover:text-white rounded">
+
+                        <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-{{ secondary_bg }} hover:text-white rounded">
                           Custom date<span class="material-symbols-outlined calendar-icon"
                             >calendar_today</span
                           >
                           
                         </div>
-                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer" >1 Week</div>
-                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Month</div>
-                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Year</div>
+                        <div class="p-2 pl-4 hover:bg-{{ secondary_bg }} hover:text-white rounded cursor-pointer" >1 Week</div>
+                        <div class="p-2 pl-4 hover:bg-{{ secondary_bg }} hover:text-white rounded cursor-pointer">1 Month</div>
+                        <div class="p-2 pl-4 hover:bg-{{ secondary_bg }} hover:text-white rounded cursor-pointer">1 Year</div>
                         
                       </div>
                       <div class="datepicker-container hidden px-4 pb-3 absolute  right-43 z-100">
@@ -173,15 +169,15 @@
                         class="filterDropdown absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10"
                       >
                       
-                        <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-violet-sky hover:text-white rounded">
+                        <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-{{ secondary_bg }} hover:text-white rounded">
                           Custom date<span class="material-symbols-outlined calendar-icon"
                             >calendar_today</span
                           >
                           
                         </div>
-                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer" >1 Week</div>
-                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Month</div>
-                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Year</div>
+                        <div class="p-2 pl-4 hover:bg-{{ secondary_bg }} hover:text-white rounded cursor-pointer" >1 Week</div>
+                        <div class="p-2 pl-4 hover:bg-{{ secondary_bg }} hover:text-white rounded cursor-pointer">1 Month</div>
+                        <div class="p-2 pl-4 hover:bg-{{ secondary_bg }} hover:text-white rounded cursor-pointer">1 Year</div>
                         
                       </div>
                       <div class="datepicker-container hidden px-4 pb-3 absolute  right-43 z-100">
@@ -190,28 +186,28 @@
                   </div>
                 </div>
 
-                <div class="bg-light-violet-sky w-full rounded-md h-28 mt-4 shadow-lg relative">
+                <div class="bg-{{ secondary_bg }} w-full rounded-md h-28 mt-4 shadow-lg relative">
                   <div
                     class="flex flex-col items-center justify-center gap-4 pt-4"
                   >
                     <p class="font-bold text-xl">Total Points</p>
-                    <p class="font-bold text-4xl text-violet-sky">{{ total_points }}</p>
+                    <p class="font-bold text-4xl text-{{ text }}">{{ total_points }}</p>
                   </div>
-                  <img src="/static/images/trophy-ngo.svg" alt="trophy" class="absolute right-10 top-8">
+                  <img src="/static/images/{{ trophy }}" alt="trophy" class="absolute right-10 top-8">
                 </div>
-                <div class="flex items-center gap-4 pt-4 flex-col lg:flex-row">
+                <div class="flex flex-wrap items-center gap-4 pt-4">
                     {% for label, value in action_points.items %}
-                      <div class="bg-light-violet-sky rounded-md shadow-lg p-4 w-full sm:w-64">
+                      <div class="bg-{{ secondary_bg }} rounded-md shadow-lg p-4 flex-1 min-w-[200px]">
                         <div class="flex flex-col gap-3 items-center justify-center">
                           <p class="font-bold text-xl">{{ label }}</p>
-                          <p class="font-bold text-3xl text-violet-sky">{{ value }}</p>
+                          <p class="font-bold text-3xl text-{{ text }}">{{ value }}</p>
                         </div>
                       </div>
                     {% endfor %}
                 </div>
 
 
-                <div class="bg-pale-lavender mt-4 p-4 rounded-md shadow-lg">
+                <div class="bg-{{ secondary_bg }} mt-4 p-4 rounded-md shadow-lg">
                   <p class="font-semibold text-sm lg:text-lg text-jet-black">
                     Unlock exclusive benefits and upgrade your status through referrals, purchases, sharing & Donation points!
                   </p>
@@ -237,7 +233,7 @@
 
                           </div>
                           <div class="flex flex-col">
-                            <p class="font-semibold text-lg text-violet-sky tracking-widest">
+                            <p class="font-semibold text-lg text-{{ text }} tracking-widest">
                               {{ badge.name|upper }}
                             </p>
                             <div class="badge-description font-semibold text-base mt-2 whitespace-pre-line">
@@ -248,7 +244,7 @@
                           </div>
                         </div>
                         <div>
-                          <p class="font-normal text-lg text-violet-sky">
+                          <p class="font-normal text-lg text-{{ text }}">
                             {% if badge.max_points %}
                               {{ badge.min_points }} to {{ badge.max_points }} points
                             {% else %}
@@ -307,12 +303,12 @@
                           <span class="material-symbols-outlined flex justify-center items-center">tune</span>
                         </button>
                         <div class="filterDropdown absolute hidden allRewardsCoupons right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026]  rounded-md w-44 z-10">
-                          <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-violet-sky hover:text-white rounded">
+                          <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-{{ hover_bg }} hover:text-white rounded">
                             Custom date<span class="material-symbols-outlined calendar-icon">calendar_today</span>
                           </div>
-                          <div data-range="1 Week" class="daterange dateFilter p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer" >1 Week</div>
-                          <div data-range="1 Month" class="daterange dateFilter p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Month</div>
-                          <div data-range="1 Year" class="daterange dateFilter p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Year</div>
+                          <div data-range="1 Week" class="daterange dateFilter p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded cursor-pointer" >1 Week</div>
+                          <div data-range="1 Month" class="daterange dateFilter p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded cursor-pointer">1 Month</div>
+                          <div data-range="1 Year" class="daterange dateFilter p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded cursor-pointer">1 Year</div>
                         </div>
                         <div class="datepicker-container hidden px-4 pb-3 absolute right-43 z-100">
                           <div class="datepicker-inline" inline-datepicker data-date="06/23/2025"></div>
@@ -335,7 +331,7 @@
                 <!--Popular Coupons section-->
                 <div class="flex justify-between items-center pt-6">
                   <p class="font-semibold text-lg">Popular Coupons</p>
-                  <!-- <a href="#" class="font-bold text-lg text-violet-sky underline">View more</a> -->
+                  <a href="#" class="font-bold text-lg text-{{ text }} underline">View more</a>
                 </div>
               
                 <div id="popular-coupons"></div>
@@ -377,16 +373,16 @@
                         class="filterDropdown rewardsClaimed absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10"
                       >
                       
-                        <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-violet-sky hover:text-white rounded">
+                        <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-{{ hover_bg }} hover:text-white rounded">
                           Custom date<span class="material-symbols-outlined calendar-icon"
                             >calendar_today</span
                           >
                           
                         </div>
-                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded dateFilter cursor-pointer" data-range="1 Week">1 Week</div>
-                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded dateFilter cursor-pointer" data-range="1 Month">1 Month</div>
-                        <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded dateFilter cursor-pointer" data-range="1 Year">1 Year</div>
-                        
+                        <div class="p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded dateFilter cursor-pointer" data-range="1 Week">1 Week</div>
+                        <div class="p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded dateFilter cursor-pointer" data-range="1 Month">1 Month</div>
+                        <div class="p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded dateFilter cursor-pointer" data-range="1 Year">1 Year</div>
+
                       </div>
                       <div class="datepicker-container hidden px-4 pb-3 absolute  right-43 z-100">
                         <div class="datepicker-inline" inline-datepicker data-date="06/23/2025"></div>
@@ -400,7 +396,7 @@
                   <table
                     class="min-w-full table-auto  docTable"
                   >
-                    <thead class="bg-violet-sky text-white text-sm sm:text-18-b">
+                    <thead class="bg-{{ table }} text-white text-sm sm:text-18-b">
                       <tr>
                         <th class="text-center px-4 py-6 border-r border-white">
                           <div class="flex items-center justify-center gap-2">
@@ -457,15 +453,18 @@
                       <input type="date" name="end_date" id="endDateInput" class="hidden" style="display: none;">
                     </form>
                     <div class="filter-dropdown-option dropdown-option absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44">
-                      <div onclick="applyDateFilter('custom')" class="p-2 pl-4 flex justify-between items-center hover:bg-violet-sky hover:text-white rounded cursor-pointer">
+                      <div onclick="applyDateFilter('custom')" class="p-2 pl-4 flex justify-between items-center hover:bg-{{ hover_bg }} hover:text-white rounded cursor-pointer">
                         Custom date
                         <span class="material-symbols-outlined">calendar_today</span>
                       </div>
-                      <div onclick="applyDateFilter('last_week')" class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Week</div>
+                      <div onclick="applyDateFilter('last_week')" class="p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded cursor-pointer">1 Week</div>
 
-                      <div onclick="applyDateFilter('last_month')" class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Month</div>
+                      <div onclick="applyDateFilter('last_month')" class="p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded cursor-pointer">1 Month</div>
 
-                      <div onclick="applyDateFilter('last_year')" class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Year</div>
+                      <div onclick="applyDateFilter('last_year')" class="p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded cursor-pointer">1 Year</div>
+                    </div>
+                    <div class="datepicker-container hidden px-4 pb-3 absolute  right-43 z-100">
+                      <div class="datepicker-inline" inline-datepicker data-date="06/23/2025"></div>
                     </div>
                   </div>
               </div>

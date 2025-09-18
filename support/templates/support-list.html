@@ -31,7 +31,7 @@
           class="filterDropdown absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10"
         >
           <div
-            class="help-filter-option p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-violet-sky hover:text-white rounded"
+            class="help-filter-option p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-{{ border }} hover:text-white rounded"
             data-filter="custom"
           >
             Custom date<span class="material-symbols-outlined calendar-icon"
@@ -39,19 +39,19 @@
             >
           </div>
           <div
-            class="help-filter-option p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer"
+            class="help-filter-option p-2 pl-4 hover:bg-{{ border }} hover:text-white rounded cursor-pointer"
             data-filter="1week"
           >
             1 Week
           </div>
           <div
-            class="help-filter-option p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer"
+            class="help-filter-option p-2 pl-4 hover:bg-{{ border }} hover:text-white rounded cursor-pointer"
             data-filter="1month"
           >
             1 Month
           </div>
           <div
-            class="help-filter-option p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer"
+            class="help-filter-option p-2 pl-4 hover:bg-{{ border }} hover:text-white rounded cursor-pointer"
             data-filter="1year"
           >
             1 Year
@@ -74,7 +74,7 @@
   <!-- Table -->
   <div class="relative overflow-x-auto docTable">
     <table class="min-w-full text-sm text-dark-gray whitespace-nowrap">
-      <thead class="bg-living-coral text-white">
+      <thead class="bg-{{ table }} text-white">
         <tr>
           <th class="text-center px-4 py-4 border-r border-white">
             Date & Time
@@ -118,7 +118,7 @@
       </button>
       <div class="paginationBtns flex gap-4">
         <button
-          class="page-btn px-3 py-1.5 rounded-lg text-sm bg-violet-sky text-white"
+          class="page-btn px-3 py-1.5 rounded-lg text-sm bg-{{ border }} text-white"
           fdprocessedid="r46ep"
         >
           1</button

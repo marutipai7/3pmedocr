@@ -12,7 +12,7 @@
           <!-- Buttons -->
           <div class="relative">
             <button
-              class="flex items-center gap-2 border border-living-coral rounded-md text-living-coral p-[0.3rem] open-share-modal cursor-pointer">
+              class="flex items-center gap-2 border border-{{ border }} rounded-md text-{{ text }} p-[0.3rem] open-share-modal cursor-pointer">
               <p>HEALTH2025</p>
               <span class="material-symbols-outlined">
                 share
@@ -20,7 +20,7 @@
             </button>
             <!--Share Popup-->
             <div id="shareModal"
-              class="hidden absolute right-0 mt-2 bg-white shadow-lg rounded-md z-50 w-130 border border-living-coral">
+              class="hidden absolute right-0 mt-2 bg-white shadow-lg rounded-md z-50 w-130 border border-{{ border }}">
               <div class="bg-white w-130 rounded-lg shadow-lg p-6 relative">
                 <div class="flex justify-between items-center">
                   <p class="font-semibold text-xl">Share</p>
@@ -28,29 +28,29 @@
                     close
                   </span>
                 </div>
-                <hr class="text-living-coral mt-4" />
+                <hr class="text-{{ text }} mt-4" />
                 <div class="flex justify-between pt-4">
-                  <div class="flex flex-col items-center gap-2 w-20 text-center">
+                  <div class="flex flex-col items-center gap-2 w-20 text-center share-app" data-app="whatsapp">
                     <img src="/static/images/whatsappicon.svg" alt="whatsapp logo" class="w-10 h-10 cursor-pointer" />
                     <p class="font-normal text-base text-dark-gray">Whatsapp</p>
                   </div>
 
-                  <div class="flex flex-col items-center gap-2 w-20 text-center">
+                  <div class="flex flex-col items-center gap-2 w-20 text-center share-app" data-app="telegram">
                     <img src="/static/images/telegramicon.svg" alt="telegram logo" class="w-10 h-10 cursor-pointer" />
                     <p class="font-normal text-base text-dark-gray">Telegram</p>
                   </div>
 
-                  <div class="flex flex-col items-center gap-2 w-20 text-center">
+                  <div class="flex flex-col items-center gap-2 w-20 text-center share-app" data-app="facebook">
                     <img src="/static/images/facebookicon.svg" alt="facebook logo" class="w-10 h-10 cursor-pointer" />
                     <p class="font-normal text-base text-dark-gray">Facebook</p>
                   </div>
 
-                  <div class="flex flex-col items-center gap-2 w-20 text-center">
+                  <div class="flex flex-col items-center gap-2 w-20 text-center share-app" data-app="sms">
                     <img src="/static/images/smsicon.svg" alt="sms logo" class="w-10 h-10 cursor-pointer" />
                     <p class="font-normal text-base text-dark-gray">Message</p>
                   </div>
 
-                  <div class="flex flex-col items-center gap-2 w-20 text-center">
+                  <div class="flex flex-col items-center gap-2 w-20 text-center share-app" data-app="gmail">
                     <img src="/static/images/gmailicon.svg" alt="gmail logo" class="w-10 h-10 cursor-pointer" />
                     <p class="font-normal text-base text-dark-gray">E-mail</p>
                   </div>
@@ -59,7 +59,7 @@
                   <input type="text" id="share-link" value="https://avatar.com/shorts/cZKr0CtLuYU?si=RHci"
                     class="w-full rounded-md p-4 font-normal text-sm" disabled />
                   <button type="button"
-                    class="copy-btn absolute right-3 top-6 bg-living-coral text-white rounded-md p-2 cursor-pointer"
+                    class="copy-btn absolute right-3 top-6 bg-{{ border }} text-white rounded-md p-2 cursor-pointer"
                     data-target="#share-link">
                     Copy
                   </button>
@@ -71,14 +71,14 @@
       <a href="{% url 'map_view' %}" class="relative">
         <img src="{% static 'images/map.svg' %}" alt="map" class="cursor-pointer has-tooltip" />
         <div
-          class="absolute py-1 px-1.5 text-start text-xs tooltip -bottom-7 right-1 z-10 bg-white border rounded-md border-living-coral font-normal">
+          class="absolute py-1 px-1.5 text-start text-xs tooltip -bottom-7 right-1 z-10 bg-white border rounded-md border-{{ border }} font-normal">
           Map
         </div>
       </a>
       <a href="{% url 'saved' %}" class="relative">
         <img src="{% static 'images/star.svg' %}" alt="star" class="cursor-pointer has-tooltip" />
         <div
-          class="absolute py-1 px-1.5 text-start text-xs tooltip -bottom-7 right-1 z-10 bg-white border rounded-md border-living-coral font-normal">
+          class="absolute py-1 px-1.5 text-start text-xs tooltip -bottom-7 right-1 z-10 bg-white border rounded-md border-{{ border }} font-normal">
           Saved
         </div>
       </a>
@@ -86,7 +86,7 @@
       <a href="{% url 'advertiser-advance' %}" class="relative">
         <img src="{% static 'images/walleticon.svg' %}" alt="star" class="cursor-pointer has-tooltip" />
         <div
-          class="absolute py-1 px-1.5 text-start text-xs tooltip -bottom-7 right-1 z-10 bg-white border rounded-md border-living-coral font-normal">
+          class="absolute py-1 px-1.5 text-start text-xs tooltip -bottom-7 right-1 z-10 bg-white border rounded-md border-{{ border }} font-normal">
           Wallet
         </div>
       </a>
@@ -95,7 +95,7 @@
       <a href="{% url 'cart' %}" class="relative">
         <img src="{% static 'images/cart.svg' %}" alt="star" title="Cart" class="cursor-pointer has-tooltip" />
          <div
-          class="absolute py-1 px-1.5 text-start text-xs tooltip -bottom-7 right-1 z-10 bg-white border rounded-md border-living-coral font-normal">
+          class="absolute py-1 px-1.5 text-start text-xs tooltip -bottom-7 right-1 z-10 bg-white border rounded-md border-{{ border }} font-normal">
           Cart
         </div>
       </a>
@@ -103,7 +103,7 @@
       <div class="relative">
         <img src="{% static 'images/bell.svg' %}" alt="bell" class="cursor-pointer has-tooltip" id="bell-icon" />
         <div
-          class="absolute py-1 px-1.5 text-start text-xs tooltip -bottom-7 right-1 z-10 bg-white border rounded-md border-living-coral font-normal">
+          class="absolute py-1 px-1.5 text-start text-xs tooltip -bottom-7 right-1 z-10 bg-white border rounded-md border-{{ border }} font-normal">
           Notifications
         </div>
         <!-- Notification Dropdown -->
@@ -124,11 +124,11 @@
         <button class="profile-btn has-tooltip">
           <img src="{% static 'images/user.svg' %}" alt="User" loading="lazy" class="w-8 h-8"/>
         </button>
-        <div class="absolute py-1 px-1.5 text-start text-xs tooltip -bottom-6 right-3 z-10 bg-white border rounded-md border-living-coral font-normal">
+        <div class="absolute py-1 px-1.5 text-start text-xs tooltip -bottom-6 right-3 z-10 bg-white border rounded-md border-{{ border }} font-normal">
           Profile
         </div>
         <!-- Dropdown -->
-        <div class="profile-dropdown border border-living-coral">
+        <div class="profile-dropdown border border-{{ border }}">
           <a href="/settings/">
           <div class="px-4 py-3 flex items-center space-x-3 cursor-pointer">
             <img src="{% static 'images/user.svg' %}" alt="User" loading="lazy" class="w-8 h-8 rounded-full" />

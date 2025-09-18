@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
         messageDiv.classList.add('p-2', 'rounded-lg', 'max-w-[75%]', 'my-2');
 
         if (sender === 'user') {
-            messageDiv.classList.add('bg-violet-sky', 'text-white', 'ml-auto'); // User messages align right
+            messageDiv.classList.add('bg-living-coral', 'text-white', 'ml-auto'); // User messages align right
         } else {
             messageDiv.classList.add('bg-gray-200', 'text-gray-800'); // Bot messages align left
         }
@@ -118,8 +118,8 @@ document.addEventListener('DOMContentLoaded', function() {
         options.forEach(option => {
             const button = document.createElement('button');
             button.classList.add(
-                'bg-violet-sky', 'text-white', 'px-3', 'py-2', 'rounded-md',
-                'hover:bg-violet-700', 'transition', 'duration-200', 'ease-in-out',
+                'bg-living-coral', 'text-white', 'px-3', 'py-2', 'rounded-md',
+                'hover:bg-transparent-living-coral-500', 'transition', 'duration-200', 'ease-in-out',
                 'flex', 'items-center', 'gap-2', 'text-sm', 'text-left', 'flex-grow', 'sm:flex-grow-0'
             );
             
@@ -192,8 +192,8 @@ document.addEventListener('DOMContentLoaded', function() {
             case 'log_ticket_redirect':
                 displayMessage(option.question || "Please describe your issue.", 'bot');
                 setTimeout(() => {
-                    alert("Redirecting to support ticket page.");
-                    window.location.href = option.url || "support.html";
+                    toastr.success("Redirecting to support ticket page.");
+                    window.location.href = option.url || "/support";
                 }, 1000);
                 break;
 
@@ -307,3 +307,68 @@ document.addEventListener('DOMContentLoaded', function() {
         messageContainer.scrollTop = messageContainer.scrollHeight; 
     }
 });
+
+// Handle custom query submit
+document.getElementById('submit-custom-query-btn')?.addEventListener('click', function () {
+    const query = customQueryTextarea.value.trim();
+    if (!query) return;
+    displayMessage(query, 'user');
+    customQueryTextarea.value = '';
+
+    // Fake response for now (replace with API call if needed)
+    setTimeout(() => {
+        displayMessage("Thanks for your query! Our support team will respond shortly.", 'bot');
+        displayOptions([{ label: "Go Back", icon: "⬅️", action: "reset_bot" }], initialOptionsArea);
+        customQueryInputArea.classList.add('hidden');
+    }, 500);
+});
+
+// Ticket chat send button
+sendTicketMessageBtn?.addEventListener('click', function () {
+    const msg = ticketChatInput.value.trim();
+    if (!msg) return;
+    displayMessage(msg, 'user');
+    ticketChatInput.value = '';
+    // Fake reply
+    setTimeout(() => displayMessage("Support team received your message.", 'bot'), 700);
+});
+
+// Back to tickets button
+backToTicketsBtn?.addEventListener('click', function () {
+    ticketChatArea.classList.add('hidden');
+    fetchUserTickets('/support/get-user-tickets/'); // or dynamic endpoint
+});
+
+// Adjust displayOptions to allow emojis
+function displayOptions(options, container) {
+    clearOptions(container);
+
+    options.forEach(option => {
+        const button = document.createElement('button');
+        button.classList.add(
+            'bg-living-coral', 'text-white', 'px-3', 'py-2', 'rounded-md',
+            'hover:bg-transparent-living-coral-500', 'transition', 'duration-200',
+            'flex', 'items-center', 'gap-2', 'text-sm'
+        );
+
+        if (option.icon) {
+            const iconSpan = document.createElement('span');
+            if (/[\u{1F300}-\u{1FAFF}]/u.test(option.icon)) {
+                // It's an emoji
+                iconSpan.textContent = option.icon;
+            } else {
+                // Material symbol
+                iconSpan.classList.add('material-symbols-outlined');
+                iconSpan.textContent = option.icon;
+            }
+            button.appendChild(iconSpan);
+        }
+
+        const labelSpan = document.createElement('span');
+        labelSpan.textContent = option.label;
+        button.appendChild(labelSpan);
+
+        button.onclick = () => handleOptionClick(option);
+        container.appendChild(button);
+    });
+}
