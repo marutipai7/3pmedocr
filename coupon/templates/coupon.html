@@ -27,15 +27,15 @@
           <div>
             <div class="flex gap-4 sm:gap-4 whitespace-nowrap overflow-x-auto no-scrollbar">
               <button
-                class="tab-btn-adv active-tab-adv text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+                class="{{ tab_class }} {% if active_tab == 'new-coupon' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
                 data-tab="new-coupon">
                 Add New Coupon
               </button>
-              <button class="tab-btn-adv text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+              <button class="{{ tab_class }} {% if active_tab == 'coupon-history' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
                 data-tab="coupon-history">
                 Coupon History
               </button>
-              <button class="tab-btn-adv text-sm sm:text-16-nr px-4 py-1.5 cursor-pointer text-light-gray1 font-light"
+              <button class="{{ tab_class }} {% if active_tab == 'saved-coupon-history' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
                 data-tab="saved-coupon-history">
                 Saved Coupon
               </button>

@@ -171,7 +171,7 @@ $(document).ready(function () {
       $('.edit-toggle').show();
     }
   });
-
+  $(".tab-btn-ngo").eq(0).click();
 
   $(".tab-btn-client").click(function () {
     var target = $(this).data("tab");

@@ -83,11 +83,6 @@ def get_common_context(request, user):
     "advertiser": "tab-btn-advertiser",
     "client": "tab-btn-client",
     "provider": "tab-btn-pharmacy",
-    }
-    tab_class_map = {
-    "advertiser": "tab-btn-advertiser",
-    "client": "tab-btn-client",
-    "provider": "tab-btn-pharmacy",
     "ngo": "tab-btn-ngo",
     }
 

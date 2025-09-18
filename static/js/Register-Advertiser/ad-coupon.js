@@ -505,38 +505,51 @@ $(document).ready(function () {
 
         $('.required-field').removeClass('error');
         
+        $('.required-field').each(function () {
+            const $this = $(this);
+            const isDropdown = $this.hasClass('dropdown-input');
 
+            if (isDropdown) {
+                const $wrapper = $this.closest('.dropdown-wrapper');
+                const selectedID = $wrapper.find('.dropdown-input-hidden').val().trim();
+                const val = $this.val().trim();
 
-        $('.required-field').each(function() {
-            const val = $(this).val().trim();
-            if (!val || val === 'Select') {   // ⬅️ added "custom"
-                valid = false;
-                $(this).addClass('error');
+                if (selectedID === 'custom') {
+                    if (val === '') {
+                        valid = false;
+                        $this.addClass('error');
+                        toastr.error('You selected "Custom". Please type a value.');
+                        return false;
+                    }
+                } else {
+                    if (!selectedID) {
+                        valid = false;
+                        $this.addClass('error');
+                        toastr.error('Please Type a Valid value');
+                        return false;
+                    }
+                }
+            } else {
+                if ($this.val().trim() === '') {
+                    valid = false;
+                    $this.addClass('error');
+                    toastr.error('Please fill all required fields.');
+                    return false;
+                }
             }
         });
-
-        const $wrapper = $('.dropdown-wrapper');
-        const selectedID = $wrapper.find('.dropdown-input-hidden').val();
-        const inputVal = $wrapper.find('.dropdown-input').val().trim();
-
-        if (selectedID === "custom" && inputVal === "") {
-            valid = false;
-            toastr.error("Please enter a value for custom option.");
-            $wrapper.find('.dropdown-input').addClass('error').focus();
-        }
 
         const imageFile = $('.upload-input')[0]?.files[0];
         if (!imageFile) {
             valid = false;
             $('.upload-area').addClass('error');
+            toastr.error('Please upload an image.');
+            return;
         } else {
             $('.upload-area').removeClass('error');
         }
 
-        if (!valid) {
-            toastr.error('Please fill all required fields.');
-            return;
-        }
+        if (!valid) return;
 
         if (imageFile) {
             const reader = new FileReader();

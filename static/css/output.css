@@ -2534,6 +2534,12 @@
   .bg-violet-sky {
     background-color: var(--color-violet-sky);
   }
+  .bg-transparent-violet-sky {
+    background-color: var(--color-transparent-violet-sky);
+  }
+  .bg-very-light-transparent-violet-sky {
+    background-color: var(--color-very-light-transparent-violet-sky);
+  }
   .bg-vivid-coral {
     background-color: var(--color-vivid-coral);
   }
