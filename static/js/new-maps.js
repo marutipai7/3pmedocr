@@ -1,6 +1,12 @@
-// Default color
-let selectedColor = 'violet-sky';
-let bgColor ='#6B79F5';
+const colorHexMap = {
+  "living-coral": "#FF6F61",
+  "dark-blue": "#123456",
+  "violet-sky": "#6B79F5",
+  "light-sea-green": "#3AAFA9"
+};
+
+let selectedColor = colorHexMap[window.colorData.primary_bg];
+let bgColor = colorHexMap[window.colorData.text];
 
 /******Initializes map, geolocation, icons, and utility functions for fetching and displaying healthcare amenities.******/
 

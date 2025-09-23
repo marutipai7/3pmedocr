@@ -3532,6 +3532,21 @@
       background-color: var(--color-violet-sky);
     }
   }
+  .peer-checked\:bg-living-coral {
+    &:is(:where(.peer):checked ~ *) {
+      background-color: var(--color-living-coral);
+    }
+  }
+  .peer-checked\:bg-dark-blue {
+    &:is(:where(.peer):checked ~ *) {
+      background-color: var(--color-dark-blue);
+    }
+  }
+  .peer-checked\:bg-light-sea-green {
+    &:is(:where(.peer):checked ~ *) {
+      background-color: var(--color-light-sea-green);
+    }
+  }
   .peer-placeholder-shown\:top-3 {
     &:is(:where(.peer):placeholder-shown ~ *) {
       top: calc(var(--spacing) * 3);

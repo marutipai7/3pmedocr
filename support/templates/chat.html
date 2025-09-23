@@ -9,10 +9,10 @@
 </button>
 
 <div id="chat-popup" class="bg-black/30 chat-popup hidden fixed inset-0 flex items-end justify-end right-4 bg-opacity-70 z-50">
-  <div class="bg-white w-[90%] max-w-md shadow-lg p-4 rounded-lg text-black backdrop-blur-sm flex flex-col h-[650px] sm:h-[700px]">
+  <div class="bg-white w-full max-w-sm shadow-lg p-4 rounded-lg text-black backdrop-blur-sm flex flex-col h-[500px]">
 
     <div class="chat-header bg-{{ border }} text-white p-4 w-full rounded-t-lg relative">
-      <button onclick="toggleChat()" class="absolute top-3 right-3 text-white text-xl font-bold focus:outline-none">×</button>
+      <button onclick="toggleChat()" class="absolute top-3 right-3 text-white text-xl font-bold focus:outline-none cursor-pointer">×</button>
       <p class="font-semibold text-xl">Hi there!</p>
       <p class="font-semibold text-xl">I am PharmaBot</p>
       <p id="initial-bot-message" class="text-base font-normal text-white mt-3 mb-5"></p>
@@ -22,7 +22,7 @@
     <div id="message-container" class="flex-1 overflow-y-auto px-4 py-2 bg-white text-black custom-scrollbar"></div>
 
     <!-- Chat Options -->
-    <div class="chat-options-area p-4 w-full mt-auto flex flex-col gap-3">
+    <div class="chat-options-area px-4 w-3/4 mt-auto flex flex-col gap-3">
       <div id="initial-options-area" class="flex flex-col gap-3"></div>
       <div id="sub-options-area" class="flex flex-col gap-3 hidden"></div>
 
