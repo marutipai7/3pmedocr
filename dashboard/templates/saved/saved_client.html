@@ -73,12 +73,15 @@
 
     {% include 'client/view-donate-history.html' %}
 
+    {% include 'saved/share-popup.html' %}
+
 </div>
 </div>
 
 {% endblock %}
 
 {% block extra_js %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="/static/js/table-pagination.js"></script>
     <script src="/static/js/tabs.js"></script>
     <script src="/static/js/client/cards-pagination.js"></script>
