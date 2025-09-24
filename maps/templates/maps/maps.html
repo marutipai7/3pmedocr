@@ -13,8 +13,8 @@
 {% block content %}
     <!-- Main Content -->
     <div class="bg-snow-gray relative transition-all duration-300 text-dark-gray main-content h-full flex-1 flex flex-col gap-8 overflow-y-auto scroll">
-        <div class="show-sidebar-toggle hidden absolute top-24 left-0 z-50 h-10 w-10 bg-light-gray items-center justify-center rounded-r-md cursor-pointer">
-            <span class="material-symbols-outlined text-violet-sky font-bold text-2xl">
+        <div class="show-sidebar-toggle hidden absolute top-24 left-0 z-50 h-10 w-10 bg-{{ secondary_bg }} items-center justify-center rounded-r-md cursor-pointer">
+            <span class="material-symbols-outlined text-{{ text }} font-bold text-2xl">
             arrow_forward_ios
             </span>
         </div>
@@ -28,7 +28,7 @@
                 <label class="inline-flex items-center cursor-pointer relative">
                     <input type="checkbox" class="sr-only peer view-toggle" checked>
                     <div
-                    class="w-11 h-[1.55rem] bg-gray-color peer-focus:outline-none rounded-full peer peer-checked:bg-violet-sky transition duration-300">
+                    class="w-11 h-[1.55rem] bg-gray-color peer-focus:outline-none rounded-full peer peer-checked:bg-{{ primary_bg }} transition duration-300">
                     </div>
                     <div
                     class="absolute w-5 h-5 mr-[0.20rem] bg-white rounded-full transition-all duration-300 transform peer-checked:translate-x-5">
@@ -39,10 +39,10 @@
             </div>
             <div
                 class="bg-pale-lavender backdrop-blur-sm shadow-[4px_4px_10px_2px_#00000026] rounded-md flex flex-wrap">
-                <button class="map-search-btn rounded-l-md hover:bg-violet-sky">Doctor</button>
-                <button class="map-search-btn hover:bg-violet-sky">Hospital</button>
-                <button class="map-search-btn hover:bg-violet-sky">Pharmacy</button>
-                <button class="map-search-btn rounded-r-md hover:bg-violet-sky">Lab</button>
+                <button class="map-search-btn rounded-l-md hover:bg-{{ primary_bg }}">Doctor</button>
+                <button class="map-search-btn hover:bg-{{ primary_bg }}">Hospital</button>
+                <button class="map-search-btn hover:bg-{{ primary_bg }}">Pharmacy</button>
+                <button class="map-search-btn rounded-r-md hover:bg-{{ primary_bg }}">Lab</button>
             </div>
             <div
                 class="h-10 bg-pale-lavender backdrop-blur-sm shadow-[4px_4px_10px_2px_#00000026] rounded-md flex relative">
@@ -50,7 +50,7 @@
                 <input type="text" placeholder="Search by name"
                 class="w-full pl-10 pr-16 bg-transparent border-none focus:ring-0 focus:outline-none z-50 map-search rounded-md" />
                 <span
-                class="material-symbols-outlined absolute right-10 top-2 border-l border-violet-sky pl-1 z-50 bookmark-icon cursor-pointer">
+                class="material-symbols-outlined absolute right-10 top-2 border-l border-{{ border }} pl-1 z-50 bookmark-icon cursor-pointer">
                 bookmark </span>
                 <span class="material-symbols-outlined absolute right-0 top-2 pr-2 z-50 history-icon cursor-pointer">
                 history </span>
@@ -76,7 +76,7 @@
                 <label class="inline-flex items-center cursor-pointer relative">
                     <input type="checkbox" class="sr-only peer view-toggle">
                     <div
-                    class="w-11 h-[1.55rem] bg-pale-lavender border border-dark-gray peer-focus:outline-none rounded-full peer peer-checked:bg-violet-sky transition duration-300">
+                    class="w-11 h-[1.55rem] bg-pale-lavender border border-dark-gray peer-focus:outline-none rounded-full peer peer-checked:bg-{{ primary_bg }} transition duration-300">
                     </div>
                     <div
                     class="absolute w-5 h-5 bg-dark-gray ml-[0.20rem] rounded-full transition-all duration-300 transform peer-checked:translate-x-5">
@@ -99,12 +99,12 @@
                     <span class="material-symbols-outlined flex justify-center items-center">tune</span>
                     </button>
                     <div class="filterDropdown mt-2 absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10">
-                    <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-violet-sky hover:text-white rounded">
+                    <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-{{ primary_bg }} hover:text-white rounded">
                         Custom date<span class="material-symbols-outlined calendar-icon">calendar_today</span>
                     </div>
-                    <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer" >1 Week</div>
-                    <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Month</div>
-                    <div class="p-2 pl-4 hover:bg-violet-sky hover:text-white rounded cursor-pointer">1 Year</div>
+                    <div class="p-2 pl-4 hover:bg-{{ primary_bg }} hover:text-white rounded cursor-pointer" >1 Week</div>
+                    <div class="p-2 pl-4 hover:bg-{{ primary_bg }} hover:text-white rounded cursor-pointer">1 Month</div>
+                    <div class="p-2 pl-4 hover:bg-{{ primary_bg }} hover:text-white rounded cursor-pointer">1 Year</div>
                     </div>
                     <div class="datepicker-container hidden px-4 pb-3 absolute  right-43 z-100">
                     <div class="datepicker-inline border border-black rounded-md" inline-datepicker data-date="06/23/2025"></div>
@@ -115,13 +115,13 @@
             <div class="flex flex-wrap gap-5 items-center justify-end xl:justify-start w-full">
                 <div
                 class="w-full xl:w-auto bg-pale-lavender backdrop-blur-sm shadow-[4px_4px_10px_2px_#00000026] rounded-md flex flex-wrap justify-between gap-1">
-                <button class="list-search-btn rounded-l-md hover:bg-violet-sky" data-type="Doctor">Doctor</button>
-                <button class="list-search-btn hover:bg-violet-sky" data-type="Hospital">Hospital</button>
-                <button class="list-search-btn hover:bg-violet-sky" data-type="Pharmacy">Pharmacy</button>
-                <button class="list-search-btn hover:bg-violet-sky" data-type="Lab">Lab</button>
-                <button class="list-saved-btn p-2 px-4 xl:px-6 2xl:px-8 cursor-pointer hover:text-white flex gap-2 items-center hover:bg-violet-sky bookmark-icon"data-view="list"><span
+                <button class="list-search-btn rounded-l-md hover:bg-{{ primary_bg }}" data-type="Doctor">Doctor</button>
+                <button class="list-search-btn hover:bg-{{ primary_bg }}" data-type="Hospital">Hospital</button>
+                <button class="list-search-btn hover:bg-{{ primary_bg }}" data-type="Pharmacy">Pharmacy</button>
+                <button class="list-search-btn hover:bg-{{ primary_bg }}" data-type="Lab">Lab</button>
+                <button class="list-saved-btn p-2 px-4 xl:px-6 2xl:px-8 cursor-pointer hover:text-white flex gap-2 items-center hover:bg-{{ primary_bg }} bookmark-icon"data-view="list"><span
                     class="material-symbols-outlined"> bookmark </span>Saved</button>
-                <button class="list-saved-btn p-2 px-4 xl:px-6 2xl:px-8 cursor-pointer hover:text-white flex gap-2 items-center rounded-r-md hover:bg-violet-sky history-icon" data-view="list"><span
+                <button class="list-saved-btn p-2 px-4 xl:px-6 2xl:px-8 cursor-pointer hover:text-white flex gap-2 items-center rounded-r-md hover:bg-{{ primary_bg }} history-icon" data-view="list"><span
                     class="material-symbols-outlined"> history </span>Recent</button>
                 </div>
                 <div
@@ -131,16 +131,16 @@
                     class="w-full pl-8 bg-transparent border-none focus:ring-0 focus:outline-none z-50" />
                 </div>
                 <div class="dropdown relative">
-                    <button class="filterToggle activity-buttons w-full max-w-[114px] p-2 h-[40px] border border-violet-sky rounded-[10px] text-violet-sky flex items-center justify-center gap-1 cursor-pointer group hover:bg-violet-sky hover:text-white">
-                        <span class="material-symbols-outlined text-violet-sky group-hover:text-white">
+                    <button class="filterToggle activity-buttons w-full max-w-[114px] p-2 h-[40px] border border-{{ border }} rounded-[10px] text-{{ text }} flex items-center justify-center gap-1 cursor-pointer group hover:bg-{{ primary_bg }} hover:text-white">
+                        <span class="material-symbols-outlined text-{{ text }} group-hover:text-white">
                         keyboard_arrow_down
                         </span>
                         <span class="">View</span>
                     </button>
                     <div class="filterDropdown absolute right-0 top-12 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-20 z-1000">
-                        <div class="p-2 pl-4 cursor-pointer hover:bg-violet-sky hover:text-white rounded">1 Week</div>
-                        <div class="p-2 pl-4 cursor-pointer hover:bg-violet-sky hover:text-white rounded">2 Week</div>
-                        <div class="p-2 pl-4 cursor-pointer hover:bg-violet-sky hover:text-white rounded">3 Week</div>
+                        <div class="p-2 pl-4 cursor-pointer hover:bg-{{ text }} hover:text-white rounded">1 Week</div>
+                        <div class="p-2 pl-4 cursor-pointer hover:bg-{{ text }} hover:text-white rounded">2 Week</div>
+                        <div class="p-2 pl-4 cursor-pointer hover:bg-{{ text }} hover:text-white rounded">3 Week</div>
                     </div>
                 </div>
             </div>
@@ -155,15 +155,20 @@
             </div>
         </div>
     </div>
-    
 {% endblock %}
 
 {% block extra_js %}
+<script>
+    window.colorData = {
+        primary_bg: "{{ primary_bg|escapejs }}",
+        text: "{{ text|escapejs }}",
+        border: "{{ border|escapejs }}"
+    };
+</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"
     integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="{% static 'js/new-maps.js' %}"></script>
-
 {% endblock %}

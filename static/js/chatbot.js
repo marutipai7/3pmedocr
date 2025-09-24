@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
             button.classList.add(
                 'bg-living-coral', 'text-white', 'px-3', 'py-2', 'rounded-md',
                 'hover:bg-transparent-living-coral-500', 'transition', 'duration-200', 'ease-in-out',
-                'flex', 'items-center', 'gap-2', 'text-sm', 'text-left', 'flex-grow', 'sm:flex-grow-0'
+                'flex', 'items-center', 'gap-2', 'text-sm', 'text-left', 'flex-grow', 'sm:flex-grow-0','cursor-pointer'
             );
             
             // Add icon if present

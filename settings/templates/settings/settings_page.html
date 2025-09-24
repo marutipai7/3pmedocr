@@ -545,11 +545,10 @@
             <!-- Quiet Hours Setting -->
             <div class="pt-6">
                 <p class="font-semibold text-lg">Quiet Hours Setting</p>
-                <div class="flex flex-col lg:flex-row lg:justify-between gap-4 pt-4">
-                <div class="flex flex-col md:flex-row justify-between gap-2">
+                <div class="flex flex-col md:flex-row justify-between gap-4">
                     <p class="text-base font-normal">Set Quite Mode</p>
-                    <label class="inline-flex items-center gap-3 cursor-pointer">
-                    <p class="font-normal text-sm text-medium-gray">
+                    <label class="inline-flex gap-3 cursor-pointer">
+                    <p class="font-normal mt-0.5 text-sm text-medium-gray">
                         Enable/Disable
                     </p>
                     <input type="checkbox" name="quite_mode" data-field="quite_mode" class="sr-only peer" {% if quite_mode %}checked{% endif %} />
@@ -558,6 +557,7 @@
                     </div>
                     </label>
                 </div>
+                <div class="flex flex-col lg:flex-row lg:justify-between gap-4 pt-6">
                 <p class="text-base font-normal">
                     Pick Time to start Quiet Mode
                 </p>

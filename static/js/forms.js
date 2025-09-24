@@ -20,10 +20,10 @@ $(document).ready(function () {
   });
 
   // Form submit for edit details
-  $(document).off("submit").on("submit", "#editForm", function (e) {
+$(".save-btn").on("click", function (e) {
     e.preventDefault();
 
-    const $form = $(this);
+    const $form = $("#editForm");
     const actionUrl = $form.attr("action");
     const method = $form.attr("method").toUpperCase();
     const formData = $form.serialize();

@@ -35,14 +35,14 @@ $(document).ready(function () {
 
 
     //Code For copying referral code to clipboard
-    $('.copy-btn').on('click',function(){
-        const code=$("#referral-code").text().trim();
-        navigator.clipboard.writeText(code).then(function(){
-            console.log("Copied to Clipboard" + code)
-        }).catch(function(err){
-            console.log("Failed to copy",err)
-        })
-    })
+    // $('.copy-btn').on('click',function(){
+    //     const code=$("#referral-code").text().trim();
+    //     navigator.clipboard.writeText(code).then(function(){
+    //         console.log("Copied to Clipboard" + code)
+    //     }).catch(function(err){
+    //         console.log("Failed to copy",err)
+    //     })
+    // })
 
     // Copy Code Functionality
 $('.copy-btn').click(async function (e) {
