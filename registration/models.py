@@ -56,7 +56,6 @@ class MedicalProviderWorkingDays(models.Model):
         return self.name
     class Meta:
             db_table = 'medical_provider_workingdays'
-
 class User(models.Model):
     USER_TYPE_CHOICES = [
         ('advertiser', 'Advertiser'),
@@ -82,20 +81,32 @@ class User(models.Model):
     quite_mode_end_time = models.TimeField(blank=True, null=True, default=time(6, 0))
     is_active = models.BooleanField(default=True)
     last_login = models.DateTimeField(blank=True, null=True)
+    last_login_ip = models.CharField(max_length=45, blank=True, null=True, default=None)
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255, blank=True, null=True)
+    age = models.IntegerField(null=True, blank=True)
     dob = models.DateField(blank=True, null=True)
     gender = models.CharField(max_length=16, blank=True, null=True)
-    address = models.TextField(blank=True, null=True)
-    city = models.CharField(max_length=128, blank=True, null=True)
-    state = models.CharField(max_length=128, blank=True, null=True)
-    pincode = models.CharField(max_length=20, blank=True, null=True)
-    country = models.CharField(max_length=128, blank=True, null=True)
+    pan_number = models.CharField(max_length=32, blank=True, null=True)
+    profile_photo_path = models.CharField(max_length=255, blank=True, null=True)
     referral_code = models.CharField(max_length=64, blank=True, null=True)
     otp = models.CharField(max_length=16, blank=True, null=True)
 
+class UserAddress(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='addresses')
+    address_type = models.CharField(max_length=64, blank=True, null=True)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255, blank=True, null=True)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
+    country = models.CharField(max_length=128, blank=True, null=True)
+    city = models.CharField(max_length=128, blank=True, null=True)
+    state = models.CharField(max_length=128, blank=True, null=True)
+    pincode = models.CharField(max_length=20, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+    
 class AdvertiserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     company_name = models.CharField(max_length=255)

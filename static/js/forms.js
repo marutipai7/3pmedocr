@@ -89,10 +89,6 @@ $(".save-btn").on("click", function (e) {
     });
   });
 
- 
-
-
-
   // Input validation clearing for edit form
   $("#pharmacyName").on("input", function () {
     if ($(this).val().trim() !== "") {

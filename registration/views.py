@@ -513,15 +513,7 @@ def save_advertiser(request):
     elif password != confirm_password:
         errors["confirm_password"] = "Passwords do not match."
         
-    otp_token = data.get("otp_token")
-    # if not otp_token:
-    #     errors["otp1"] = "Please refresh the page."
-    email_otp = data.get("otp1")  # from HTML field "otp1"
-    # if not email_otp:
-    #     errors["otp1"] = "OTP is required."
-    # otp_verification = verify_otp(email, email_otp, otp_token)
-    # if not otp_verification["success"]:
-    #     errors["otp1"] = otp_verification["message"]
+    email_otp = data.get("otp1")
 
     # Phone
     phone_country_code = "+91"
@@ -550,8 +542,6 @@ def save_advertiser(request):
             errors["ad_service_req"] = "Invalid ad services selected."
     
     website = data.get("website")
-    if not website:
-        errors["website"] = "Website is required."
 
     address = data.get("address")
     city = data.get("city")
@@ -766,8 +756,6 @@ def save_client(request):
             errors["company_service"] = "Invalid company service."
 
     website = data.get("website")
-    if not website:
-        errors["website"] = "Website is required."
     address = data.get("address")
     city = data.get("city")
     state = data.get("state")

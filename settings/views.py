@@ -383,7 +383,7 @@ def update_advertiser_profile(request):
     
     validate_email_phone(post_data, errors)
     
-    required_fields = ["company_name", "city", "state", "country", "pincode"]
+    required_fields = ["company_name", "phone","address", "city", "state", "country", "pincode", "contact_name", "contact_phone_number", "contact_role"]
     for field in required_fields:
         if not post_data.get(field):
             errors[field] = f"{field.replace('_', ' ').capitalize()} is required."
@@ -394,7 +394,7 @@ def update_advertiser_profile(request):
     try:
         with transaction.atomic():
             # --- Update User ---
-            user.email = post_data.get('email')
+            # user.email = post_data.get('email')
             user.phone_country_code = post_data.get("countryCodes")
             user.phone_number = post_data.get("phone")
             user.save()
@@ -405,6 +405,7 @@ def update_advertiser_profile(request):
             advertiser_profile.advertiser_type = AdvertiserType.objects.get(name=post_data.get("advertiser_type"))
             advertiser_profile.ad_services_required = AdServiceReq.objects.get(name=post_data.get("company_services") )
             advertiser_profile.website_url = post_data.get("website_url")
+            advertiser_profile.address = post_data.get("address")
             advertiser_profile.city = post_data.get("city")
             advertiser_profile.state = post_data.get("state")
             advertiser_profile.country = post_data.get("country")
