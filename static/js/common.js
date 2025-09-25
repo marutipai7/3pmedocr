@@ -33,18 +33,53 @@ $(document).ready(function () {
         $(".deleteModal").removeClass("flex").addClass("hidden");
     });
 
+// Copy Code Functionality
+// $('.copy-btn').click(async function (e) {
+//   e.preventDefault();
 
-    //Code For copying referral code to clipboard
-    // $('.copy-btn').on('click',function(){
-    //     const code=$("#referral-code").text().trim();
-    //     navigator.clipboard.writeText(code).then(function(){
-    //         console.log("Copied to Clipboard" + code)
-    //     }).catch(function(err){
-    //         console.log("Failed to copy",err)
-    //     })
-    // })
+//   const targetSelector = $(this).data('target');
+//   const $target = $(targetSelector);
 
-    // Copy Code Functionality
+//   if ($target.length === 0) {
+//     console.log('Target not found!');
+//     return;
+//   }
+
+//   try {
+//     await navigator.clipboard.writeText($target.val());
+
+//     // Change button text for feedback
+//     const $btn = $(this);
+//     const originalText = $btn.text();
+
+//     $btn.text('Copied');
+//     toastr.success('Code copied!');
+//     setTimeout(() => {
+//       $btn.text(originalText);
+//     }, 2000);
+
+//   } catch (err) {
+//     console.error('Failed to copy text: ', err);
+//   }
+
+
+//   let textToCopy = '';
+//   if ($target.is('input') || $target.is('textarea')) {
+//     textToCopy = $target.val();
+//   } else {
+//     textToCopy = $target.text();
+//   }
+
+//   try {
+//     await navigator.clipboard.writeText(textToCopy);
+//     console.log('Copied: ' + textToCopy);
+//   } catch (err) {
+//     console.error('Failed to copy: ', err);
+   
+//   }
+// });
+
+// Copy Code Functionality
 $('.copy-btn').click(async function (e) {
   e.preventDefault();
 
@@ -56,24 +91,6 @@ $('.copy-btn').click(async function (e) {
     return;
   }
 
-  try {
-    await navigator.clipboard.writeText($target.val());
-
-    // Change button text for feedback
-    const $btn = $(this);
-    const originalText = $btn.text();
-
-    $btn.text('Copied');
-    toastr.success('Code copied!');
-    setTimeout(() => {
-      $btn.text(originalText);
-    }, 2000);
-
-  } catch (err) {
-    console.error('Failed to copy text: ', err);
-  }
-
-
   let textToCopy = '';
   if ($target.is('input') || $target.is('textarea')) {
     textToCopy = $target.val();
@@ -82,11 +99,29 @@ $('.copy-btn').click(async function (e) {
   }
 
   try {
-    await navigator.clipboard.writeText(textToCopy);
-    console.log('Copied: ' + textToCopy);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(textToCopy);
+      toastr.success('Code copied!');
+    } else {
+      // Fallback method
+      const $temp = $('<textarea>');
+      $('body').append($temp);
+      $temp.val(textToCopy).select();
+      document.execCommand('copy');
+      $temp.remove();
+      toastr.success('Copied using fallback method!');
+    }
+
+    // Feedback on button
+    const $btn = $(this);
+    const originalText = $btn.text();
+    $btn.text('Copied');
+    setTimeout(() => {
+      $btn.text(originalText);
+    }, 2000);
+
   } catch (err) {
     console.error('Failed to copy: ', err);
-   
   }
 });
 
@@ -116,6 +151,69 @@ $('.share-app').click(function () {
   if (url) {
     window.open(url, '_blank'); // open in new tab / app
   }
+});
+let generatedPdfUrl = null; // Variable to hold the Blob URL of the generated PDF
+
+// Generate PDF on clicking the share button
+$(".share-btn").click(function() {
+    console.log("share")
+    const element = $(this).closest('.popup').find('.download-container');
+
+    // Set up html2pdf options
+    var opt = {
+        margin: 1,
+        filename: 'share-pdf.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { dpi: 192, letterRendering: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    // Generate the PDF asynchronously
+    html2pdf().from(element[0]).set(opt).toPdf().get('pdf').then(function(pdf) {
+        // Convert the PDF into a Blob
+        var pdfBlob = pdf.output('blob');
+        
+        // Create a Blob URL for sharing
+        generatedPdfUrl = URL.createObjectURL(pdfBlob);
+        
+        // Show the share popup
+        $("#sharePopup").removeClass("hidden").addClass("flex");
+    });
+});
+
+// Close the share popup
+$(".close-share-popup").click(function() {
+    $("#sharePopup").addClass("hidden").removeClass("flex");
+});
+
+// Share the generated PDF when the user clicks on a share button
+$('.share-pdf').click(function() {
+    if (generatedPdfUrl) {
+        const app = $(this).data('app');
+
+        // Share via the appropriate app
+        switch (app) {
+            case 'whatsapp':
+                window.open(`https://wa.me/?text=${encodeURIComponent(generatedPdfUrl)}`, '_blank');
+                break;
+            case 'telegram':
+                window.open(`https://t.me/share/url?url=${encodeURIComponent(generatedPdfUrl)}`, '_blank');
+                break;
+            case 'facebook':
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(generatedPdfUrl)}`, '_blank');
+                break;
+            case 'sms':
+                window.open(`sms:?body=${encodeURIComponent(generatedPdfUrl)}`, '_blank');
+                break;
+            case 'gmail':
+                window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=&su=Share%20Pdf&body=${encodeURIComponent(generatedPdfUrl)}`, '_blank');
+                break;
+            default:
+                break;
+        }
+    } else {
+        alert('Please generate the PDF first by clicking the share button.');
+    }
 });
     // Scan Virus Functionality
     const checkbox = $('.scan-toggle');

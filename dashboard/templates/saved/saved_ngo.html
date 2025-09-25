@@ -1325,9 +1325,12 @@
 
       {% include 'ngo/view-saved-post-history.html' %}
 
+      {% include 'saved/share-popup.html' %}
+
 {% endblock%}
 
 {% block extra_js %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="{% static 'js/tabs.js' %}"></script>
     <script src="{% static 'js/table-paginationjs' %}"></script>
     <script src="{% static 'js/NGO/card-pagination.js' %}"></script>

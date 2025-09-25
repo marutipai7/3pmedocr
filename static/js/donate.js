@@ -753,9 +753,3 @@ function closeExpandedView() {
   document.getElementById("expandedViewModal").classList.add("hidden");
   document.getElementById("expandedViewContent").innerHTML = "";
 }
-$(".share-btn").click(function(){
-  $("#sharePopup").removeClass("hidden").addClass("flex");
-});
-$(".close-share-popup").click(function(){
-  $("#sharePopup").addClass("hidden").removeClass("flex");
-});
