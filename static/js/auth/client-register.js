@@ -346,5 +346,128 @@ $(document).ready(function () {
         }
         });
     });
+
+  // Open popup when camera icon is clicked
+  $('#selfie-icon').on('click', function () {
+    $('#camera-popup').removeClass('hidden');
+    startCamera();
+    $('#capture-btn').next("p").text('Capture'); 
+  });
+
+  // Close popup when X button is clicked
+  $('#close-popup').on('click', function () {
+    $('#camera-popup').addClass('hidden');
+    stopCamera();
+    resetCapture(); 
+  });
+
+  $('#upload-btn').on('click', function() {
+    $('#upload-input').click();
+    });
+
+  // Handle file upload
+  $('#upload-input').on('change', function (event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        $('#captured-photo').attr('src', e.target.result);
+        $('#uploaded-photo').removeClass('hidden');
+        $('#save-btn').removeClass('hidden');
+        $(".capture-polygon").hide();
+        $('#capture-btn').next("p").text('Camera');
+        // Stop camera and hide video
+        stopCamera();
+        $('#video').hide();
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Capture the photo
+  $('#capture-btn').on('click', function () {
+    if ($(this).next("p").text() === 'Capture') {
+      const video = document.getElementById('video');
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      
+      // Set canvas size to match the video dimensions
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      
+      // Draw the current frame from the video onto the canvas
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      
+      // Get the image data URL from the canvas
+      const dataURL = canvas.toDataURL('image/png');
+      $('#captured-photo').attr('src', dataURL);
+      $('#uploaded-photo').removeClass('hidden');
+      $('#save-btn').removeClass('hidden');
+
+      // Stop camera and hide video
+      stopCamera();
+      $('#video').hide();
+      
+      // Change button text to 'Retake'
+      $('#capture-btn').next("p").text('Retake');
+      $(".capture-polygon").hide();
+    } else if ($(this).next("p").text() === 'Retake' || $(this).next("p").text() === 'Camera') {
+      // If the button says 'Retake', start the camera and reset the form
+      $('#captured-photo').attr('src', ''); // Clear previous photo
+      $('#uploaded-photo').addClass('hidden');
+      $('#save-btn').addClass('hidden');
+      $('#capture-btn').next("p").text('Capture');
+      $(".capture-polygon").show();
+      $('#video').show();
+      startCamera();  // Start camera again
+    }
+  });
+
+  // Save the captured/uploaded photo and show the filename in the label
+  $('#save-btn').on('click', function () {
+    const fileName = $('#upload-input')[0]?.files[0]?.name || 'Captured Photo';
+    $('#selfie-label').text(`${fileName}`).addClass("!text-green-400");
+    $('#camera-popup').addClass('hidden');
+    stopCamera();
+  });
+
+  // Start the camera
+  function startCamera() {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function (stream) {
+          const video = document.getElementById('video');
+          video.srcObject = stream;
+          video.play();
+        })
+        .catch(function (err) {
+          console.log('Error accessing the camera: ' + err);
+        });
+    } else {
+      alert('Camera not supported on this device.');
+    }
+  }
+
+  // Stop the camera
+  function stopCamera() {
+    const video = document.getElementById('video');
+    const stream = video.srcObject;
+    const tracks = stream?.getTracks();
+    if (tracks) {
+      tracks.forEach(track => track.stop());
+    }
+    video.srcObject = null;
+  }
+
+  // Reset the capture state for next use
+  function resetCapture() {
+    $('#upload-input').val('');
+    $('#captured-photo').attr('src', '');
+    $('#uploaded-photo').addClass('hidden');
+    $('#save-btn').addClass('hidden');
+    $('#capture-btn').text('Capture');
+    $('#video').show();
+  }
+
 });
 

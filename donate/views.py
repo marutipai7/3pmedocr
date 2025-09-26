@@ -39,6 +39,14 @@ def donate_view(request):
                      donation_query in (d.ngopost.post_type.name.lower() if d.ngopost and d.ngopost.post_type else '') or
                      donation_query in (d.ngopost.user.ngoprofile.ngo_name.lower() if d.ngopost and d.ngopost.user and hasattr(d.ngopost.user, 'ngoprofile') and d.ngopost.user.ngoprofile.ngo_name else '')]
     context = get_common_context(request, request.user_obj)
+    color_hex_map = {
+        "living-coral": "#FF6F61",
+        "dark-blue": "#123456",
+        "violet-sky": "#6B79F5",
+        "light-sea-green": "#3AAFA9",
+    }
+    primary_bg = context.get("primary_bg")
+    context["hexcolor"] = color_hex_map.get(primary_bg)
     context.update({
         "donations": donations,
         "donation_query": donation_query,
