@@ -93,7 +93,7 @@ class UserProfile(models.Model):
     pan_number = models.CharField(max_length=32, blank=True, null=True)
     profile_photo_path = models.CharField(max_length=255, blank=True, null=True)
     referral_code = models.CharField(max_length=64, blank=True, null=True)
-    otp = models.CharField(max_length=16, blank=True, null=True)
+    otp = models.CharField(max_length=64, blank=True, null=True)
 
 class UserAddress(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='addresses')
