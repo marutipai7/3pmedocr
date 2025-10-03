@@ -56,6 +56,7 @@ class MedicalProviderWorkingDays(models.Model):
         return self.name
     class Meta:
             db_table = 'medical_provider_workingdays'
+            
 class User(models.Model):
     USER_TYPE_CHOICES = [
         ('advertiser', 'Advertiser'),
@@ -88,12 +89,13 @@ class UserProfile(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255, blank=True, null=True)
     age = models.IntegerField(null=True, blank=True)
-    dob = models.DateField(blank=True, null=True)
     gender = models.CharField(max_length=16, blank=True, null=True)
     pan_number = models.CharField(max_length=32, blank=True, null=True)
     profile_photo_path = models.CharField(max_length=255, blank=True, null=True)
     referral_code = models.CharField(max_length=64, blank=True, null=True)
     otp = models.CharField(max_length=64, blank=True, null=True)
+    payment_notifications = models.BooleanField(default=True)
+    location_notification = models.BooleanField(default=True)
 
 class UserAddress(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='addresses')

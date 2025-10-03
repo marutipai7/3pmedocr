@@ -45,7 +45,7 @@ class PointsBadge(models.Model):
     def _str_(self):
         if self.max_points:
             return f"{self.name} ({self.min_points} - {self.max_points} pts)"
-        return f"{self.name} ({self.min_points}+ pts)"
+        return f"{self.name} ({self.min_points}+ pts)"
     
 class CouponClaimed(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='claimed_coupons')
