@@ -82,7 +82,7 @@
           Saved
         </div>
       </a>
-      {% if user.user_type == 'advertiser' or user.user_type == 'provider' %}
+      {% if user.user_type == 'advertiser' or user.user_type == 'pharmacy' %}
       <a href="{% url 'advertiser-advance' %}" class="relative">
         <img src="{% static 'images/walleticon.svg' %}" alt="star" class="cursor-pointer has-tooltip" />
         <div

@@ -237,8 +237,8 @@ def post_detail(request, post_id):
             if profile:
                 name = profile.company_name
                 city = profile.city
-        elif user.user_type == 'provider':
-            profile = getattr(user, 'medicalproviderprofile', None)
+        elif user.user_type == 'pharmacy':
+            profile = getattr(user, 'Pharmacyprofile', None)
             if profile:
                 name = profile.company_name
                 city = profile.city

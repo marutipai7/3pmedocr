@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 {% load static %}
-{% block title %}Register as Medical Provider{% endblock %}
+{% block title %}Register as Pharmacy{% endblock %}
 
 {% block content %}
 <body class="min-h-screen flex flex-col scroll">
@@ -19,8 +19,8 @@
   <!-- Main content -->
   <div class="flex-1 z-10">
     <div class="max-w-3xl xl:max-w-4xl 2xl:max-w-7xl mx-auto p-10 pt-40 sm:py-20 text-primary-color">
-      <h1 class="text-4xl font-bold text-center">Register as Medical Provider</h1>
-      <form id="register-form" class="mt-10 flex flex-col gap-4" action="{% url 'save_medical_provider' %}" method="post" enctype="multipart/form-data">
+      <h1 class="text-4xl font-bold text-center">Register as Pharmacy</h1>
+      <form id="register-form" class="mt-10 flex flex-col gap-4" action="{% url 'save_medical_pharmacy' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <!-- Email -->
         <div class="flex flex-col sm:flex-row gap-4">
@@ -58,21 +58,21 @@
         <div class="flex flex-col sm:flex-row gap-4">
           <div class="flex flex-col gap-4 w-full sm:w-1/2">
             <div class="dropdown relative inline-block">
-              <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Type Of Medical Provider</label>
+              <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Type Of Pharmacy</label>
               <div
                 class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
-                <span class="mr-2 selected-value selected-provider-type">select</span>
+                <span class="mr-2 selected-value selected-pharmacy-type">select</span>
                 <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
               </div>
               <div
                 class="dropdown-option absolute left-0 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-full mt-0.5 z-20 max-h-44 overflow-y-auto scroll">
-                {% for type in medical_provider_types %}
+                {% for type in pharmacy_types %}
                 <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
                 <label value="{{ type.id }}" class="flex-1">{{ type.name }}</label>
                 </div>
                 {% endfor %}
               </div>
-              <input type="hidden" name="provider_type" id="provider_type_input">
+              <input type="hidden" name="pharmacy_type" id="pharmacy_type_input">
             </div>
           </div>
           <div class="flex flex-col gap-4 w-full sm:w-1/2">
@@ -86,7 +86,7 @@
               </div>
               <div
                 class="dropdown-option absolute left-0 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-full mt-0.5 z-20 max-h-44 overflow-y-auto scroll">
-                {% for service in medical_provider_services %}
+                {% for service in medical_pharmacy_services %}
                 <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
                 <label value="{{ service.id }}" class="flex-1">{{ service.name }}</label>
                 </div>
@@ -115,7 +115,7 @@
               </div>
               <div
                 class="dropdown-option absolute left-0 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-full mt-0.5 z-20 max-h-44 overflow-y-auto scroll">
-                {% for days in medical_provider_workingdays %}
+                {% for days in medical_pharmacy_workingdays %}
                   <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
                   <label value="{{ days.id }}" class="flex-1">{{ days.name }}</label>
                   </div>

@@ -6,7 +6,7 @@ from bson import ObjectId
 from django.conf import settings
 from django.http import JsonResponse
 from .models import SavedLocation, SearchHistory, PincodeLocation
-from registration.models import NGOProfile, AdvertiserProfile, ClientProfile, MedicalProviderProfile
+from registration.models import NGOProfile, AdvertiserProfile, ClientProfile, PharmacyProfile
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from math import radians, cos, sin, sqrt, atan2
@@ -22,8 +22,8 @@ def map_view(request):
         profile = AdvertiserProfile.objects.filter(user=user).first()
     elif user.user_type == 'client':
         profile = ClientProfile.objects.filter(user=user).first()
-    elif user.user_type == 'provider':
-        profile = MedicalProviderProfile.objects.filter(user=user).first()
+    elif user.user_type == 'pharmacy':
+        profile = PharmacyProfile.objects.filter(user=user).first()
     else:
         pass
 

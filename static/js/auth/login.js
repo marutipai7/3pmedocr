@@ -123,7 +123,7 @@ $('.role-option').on('click', function () {
 
   const redirects = {
     customer: '/src/auth/register_user.html',
-    medicalProvider: '/src/auth/medical-provider-register.html',
+    Pharmacy: '/src/auth/medical-pharmacy-register.html',
     client: '/src/auth/client-register.html',
     advertiser: '/src/auth/advertiser_register.html',
     ngoOwner: '/src/auth/ngo_register.html',
@@ -143,7 +143,7 @@ $('.continueBtn').on('click', function () {
 
   const redirects = {
     customer: '/src/auth/register_user.html',
-    medicalProvider: '/src/auth/medical-provider-register.html',
+    Pharmacy: '/src/auth/medical-pharmacy-register.html',
     client: '/src/auth/client-register.html',
     advertiser: '/src/auth/advertiser_register.html',
     ngoOwner: '/src/auth/ngo_register.html',

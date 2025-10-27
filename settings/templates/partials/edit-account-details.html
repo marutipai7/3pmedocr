@@ -339,8 +339,8 @@
             </div>
         </div>
     </form>
-{% elif user.user_type == 'provider' %}
-    <form id="editForm" method="POST" action="{% url 'update_provider_profile' %}" class="submit-formgrid grid-cols-1 gap-x-6 md:gap-x-12 gap-y-6 px-4 sm:px-6 pt-6 text-sm">
+{% elif user.user_type == 'pharmacy' %}
+    <form id="editForm" method="POST" action="{% url 'update_pharmacy_profile' %}" class="submit-formgrid grid-cols-1 gap-x-6 md:gap-x-12 gap-y-6 px-4 sm:px-6 pt-6 text-sm">
         {% csrf_token %}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm mb-2">
             <!-- Email + Phone -->
@@ -400,18 +400,18 @@
         <span class="error company_nameError text-red-500 text-sm mt-1 hidden"></span>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm mb-3">
-            <!--Provider Type-->
+            <!--P Type-->
             <div class="issue-type-wrapper w-full rounded-[6px] text-dark-gray border border-slate-gray pl-0.5 text-sm flex items-center justify-between relative">
                 <!-- Dropdown options -->
-                <select name="provider_type" class="border rounded px-3 py-2 w-full" data-selected="{{provider_type}}">
+                <select name="pharmacy_type" class="border rounded px-3 py-2 w-full" data-selected="{{pharmacy_type}}">
                     {% for type in all_types %}
                         <option value="{{ type }}"
-                            {% if type == provider_type %}selected{% endif %}>
+                            {% if type == pharmacy_type %}selected{% endif %}>
                             {{ type }}
                         </option>
                     {%endfor%}
                 </select>
-                <span class="error provider_typeError text-red-500 text-sm mt-1 hidden"></span>
+                <span class="error pharmacy_typeError text-red-500 text-sm mt-1 hidden"></span>
             </div>
             <!--Services Offered-->
             <div class="issue-type-wrapper w-full  rounded-[6px] text-dark-gray border border-slate-gray pl-0.5 text-sm flex items-center justify-between relative">

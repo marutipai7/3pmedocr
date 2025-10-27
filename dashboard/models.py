@@ -6,7 +6,7 @@ USER_TYPE_CHOICES = [
     ('advertiser', 'Advertiser'),
     ('client', 'Client'),
     ('ngo', 'NGO'),
-    ('provider', 'Medical Provider'),
+    ('pharmacy', 'Pharmacy'),
     ('user', 'User'),
 ]
 

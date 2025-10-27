@@ -477,7 +477,7 @@
         </p>
     </div>
 </div>
-{% elif user.user_type == 'provider' %}
+{% elif user.user_type == 'pharmacy' %}
 <div class="grid sm:grid-cols-2 gap-x-6 sm:gap-x-10 lg:gap-x-20 gap-y-6">
     <!-- Email -->
     <div class="flex flex-col">
@@ -526,10 +526,10 @@
     <!-- Company Type -->
     <div class="flex flex-col">
         <p class="font-semibold text-base text-jet-black md:text-lg">
-         Type Of Medical Provider
+         Type Of Pharmacy
         </p>
         <p class="font-normal text-sm md:text-md text-medium-gray">
-        {{provider_type}}
+        {{pharmacy_type}}
         </p>
     </div>
 

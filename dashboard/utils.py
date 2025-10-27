@@ -4,7 +4,7 @@ from registration.models import User
 from points.models import PointsActionType, PointsHistory, PointsBadge
 from .models import SettingMenu
 from django.db.models import Sum, Q
-from registration.models import AdvertiserProfile, ClientProfile, MedicalProviderProfile, NGOProfile
+from registration.models import AdvertiserProfile, ClientProfile, PharmacyProfile, NGOProfile
 from settings.models import UserColorScheme
 import logging
 from django.http import JsonResponse
@@ -40,9 +40,9 @@ def get_common_context(request, user):
     elif user_type == "advertiser":
         chart_action_types = ["Map", "Referral", "Coupon", "Donate"]
         user_profile = AdvertiserProfile.objects.filter(user=user).first()
-    elif user_type == "provider":
+    elif user_type == "pharmacy":
         chart_action_types = ["Map", "Referral", "Share", "Donate"]
-        user_profile = MedicalProviderProfile.objects.filter(user=user).first()
+        user_profile = PharmacyProfile.objects.filter(user=user).first()
     else:
         chart_action_types = []
         user_profile = None
@@ -77,19 +77,19 @@ def get_common_context(request, user):
         trophy = "trophy-client.svg"
     elif user_type == "advertiser":
         trophy = "trophy-advertiser.svg"
-    elif user_type == "provider":
+    elif user_type == "pharmacy":
         trophy = "trophy-pharmacy.svg"
     tab_class_map = {
     "advertiser": "tab-btn-advertiser",
     "client": "tab-btn-client",
-    "provider": "tab-btn-pharmacy",
+    "pharmacy": "tab-btn-pharmacy",
     "ngo": "tab-btn-ngo",
     }
 
     active_tab_class_map = {
         "advertiser": "active-tab-advertiser",
         "client": "active-tab-client",
-        "provider": "active-tab-pharmacy",
+        "pharmacy": "active-tab-pharmacy",
         "ngo": "active-tab-ngo",
     }
     context = {

@@ -26,13 +26,13 @@
               <div id="location" class="font-normal text-base flex items-centeer gap-2 sm:text-20-normal">
                 <span class="material-symbols-outlined"> location_on </span>
                 <span id="location-text">
-                  {{ provider_profile.city|default:"Your City" }}, {{ provider_profile.state|default:"Your State" }}
+                  {{ pharmacy_profile.city|default:"Your City" }}, {{ pharmacy_profile.state|default:"Your State" }}
                 </span>
               </div>
             </div>
           </div>
           <div class="-mt-8">
-            <h2 class="text-lg font-semibold">{{ provider_profile.company_name }}</h2>
+            <h2 class="text-lg font-semibold">{{ pharmacy_profile.company_name }}</h2>
           </div>
           <div class="flex flex-col gap-4">
             <!-- Chart Controls -->

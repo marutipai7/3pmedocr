@@ -33,36 +33,36 @@ class NGOService(models.Model):
     def __str__(self):
         return self.name
 
-class MedicalProviderType(models.Model):
+class PharmacyType(models.Model):
     name = models.CharField(max_length=100, unique=True)
     is_active = models.BooleanField(default=True)
     def __str__(self):
         return self.name
     class Meta:
-            db_table = 'medical_provider_type'
+            db_table = 'pharmacy_type'
             
-class MedicalProviderServices(models.Model):
+class PharmacyServices(models.Model):
     name = models.CharField(max_length=100, unique=True)
     is_active = models.BooleanField(default=True)
     def __str__(self):
         return self.name
     class Meta:
-            db_table = 'medical_provider_services'
+            db_table = 'pharmacy_services'
 
-class MedicalProviderWorkingDays(models.Model):
+class PharmacyWorkingDays(models.Model):
     name = models.CharField(max_length=100, unique=True)
     is_active = models.BooleanField(default=True)
     def __str__(self):
         return self.name
     class Meta:
-            db_table = 'medical_provider_workingdays'
+            db_table = 'pharmacy_workingdays'
             
 class User(models.Model):
     USER_TYPE_CHOICES = [
         ('advertiser', 'Advertiser'),
         ('client', 'Client'),
         ('ngo', 'NGO'),
-        ('provider', 'Medical Provider'),
+        ('pharmacy', 'Pharmacy'),
         ('user', 'User'),
     ]
     email = models.EmailField(unique=True)
@@ -203,13 +203,13 @@ class NGOProfile(models.Model):
     email_otp = models.CharField(max_length=16, blank=True, null=True)
     referral_code = models.CharField(max_length=64, blank=True, null=True)
 
-class MedicalProviderProfile(models.Model):
+class PharmacyProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     company_name = models.CharField(max_length=255)
-    provider_type = models.ForeignKey(MedicalProviderType, on_delete=models.CASCADE, blank=True, null=True)
-    services_offered = models.ForeignKey(MedicalProviderServices, on_delete=models.CASCADE, blank=True, null=True)
+    pharmacy_type = models.ForeignKey(PharmacyType, on_delete=models.CASCADE, blank=True, null=True)
+    services_offered = models.ForeignKey(PharmacyServices, on_delete=models.CASCADE, blank=True, null=True)
     website_url = models.CharField(max_length=255, blank=True, null=True)
-    working_days = models.ForeignKey(MedicalProviderWorkingDays, on_delete=models.CASCADE, blank=True, null=True)
+    working_days = models.ForeignKey(PharmacyWorkingDays, on_delete=models.CASCADE, blank=True, null=True)
     opening_time = models.CharField(max_length=16, blank=True, null=True)
     closing_time = models.CharField(max_length=16, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
@@ -242,7 +242,7 @@ class ContactPerson(models.Model):
         ('advertiser', 'Advertiser'),
         ('client', 'Client'),
         ('ngo', 'NGO'),
-        ('provider', 'Medical Provider'),
+        ('pharmacy', 'Pharmacy'),
     ]
     profile_type = models.CharField(max_length=32, choices=PROFILE_TYPE_CHOICES)
     profile_id = models.ForeignKey(User, on_delete=models.CASCADE)

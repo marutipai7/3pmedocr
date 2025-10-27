@@ -76,7 +76,7 @@ def settings_page(request):
         'ngo': handle_ngo_profile,
         'client': handle_client_profile,
         'advertiser': handle_advertiser_profile,
-        'provider': handle_provider_profile,
+        'pharmacy': handle_pharmacy_profile,
     }
     handler_func = user_type_handlers.get(user.user_type)
     if handler_func:
@@ -206,14 +206,14 @@ def handle_ngo_profile(user):
     data.update(handle_contact_person(user.user_type, user))
     return data
 
-def handle_provider_profile(user):
-    profile = MedicalProviderProfile.objects.filter(user=user).first()
-    all_types = MedicalProviderType.objects.filter(is_active=True)
-    all_services = MedicalProviderServices.objects.filter(is_active=True)
-    all_workingdays = MedicalProviderWorkingDays.objects.filter(is_active=True)
+def handle_pharmacy_profile(user):
+    profile = PharmacyProfile.objects.filter(user=user).first()
+    all_types = PharmacyType.objects.filter(is_active=True)
+    all_services = PharmacyServices.objects.filter(is_active=True)
+    all_workingdays = PharmacyWorkingDays.objects.filter(is_active=True)
     data = {
         'company_name': profile.company_name,
-        'provider_type': profile.provider_type,
+        'pharmacy_type': profile.pharmacy_type,
         'all_types': all_types,
         'services_offered': profile.services_offered,
         'all_services': all_services,
@@ -295,7 +295,7 @@ def update_user_document(request):
         'ngo': NGOProfile,
         'advertiser': AdvertiserProfile,
         'client': ClientProfile,
-        'provider': MedicalProviderProfile,
+        'pharmacy': PharmacyProfile,
     }.get(user_type)
 
     if not profile_model:
@@ -491,7 +491,7 @@ def update_client_profile(request):
 
 @require_POST
 @dashboard_login_required
-def update_provider_profile(request):
+def update_pharmacy_profile(request):
     post_data = request.POST
     errors = {}
     user = request.user_obj  
@@ -514,34 +514,34 @@ def update_provider_profile(request):
             user.phone_number = post_data.get("phone")
             user.save()
 
-            # --- Update ProviderProfile ---
-            provider_profile = get_object_or_404(MedicalProviderProfile, user=user)
-            provider_profile.company_name = post_data.get("company_name")
-            provider_profile.website_url = post_data.get("website_url")
-            provider_profile.address = post_data.get("address")
-            provider_profile.city = post_data.get("city")
-            provider_profile.state = post_data.get("state")
-            provider_profile.country = post_data.get("country")
-            provider_profile.pincode = post_data.get("pincode")
+            # --- Update Pharmacy Profile ---
+            pharmacy_profile = get_object_or_404(PharmacyProfile, user=user)
+            pharmacy_profile.company_name = post_data.get("company_name")
+            pharmacy_profile.website_url = post_data.get("website_url")
+            pharmacy_profile.address = post_data.get("address")
+            pharmacy_profile.city = post_data.get("city")
+            pharmacy_profile.state = post_data.get("state")
+            pharmacy_profile.country = post_data.get("country")
+            pharmacy_profile.pincode = post_data.get("pincode")
 
-            provider_type_value = post_data.get("provider_type")
-            if provider_type_value:
-                provider_profile.provider_type = get_object_or_404(MedicalProviderType, name=provider_type_value)
+            pharmacy_type_value = post_data.get("pharmacy_type")
+            if pharmacy_type_value:
+                pharmacy_profile.pharmacy_type = get_object_or_404(PharmacyType, name=pharmacy_type_value)
             services_offered_value = post_data.get("services_offered")
             if services_offered_value:
-                provider_profile.services_offered = get_object_or_404(MedicalProviderServices, name=services_offered_value)
+                pharmacy_profile.services_offered = get_object_or_404(PharmacyServices, name=services_offered_value)
             working_days_value = post_data.get("working_days")
             if working_days_value:
-                provider_profile.working_days = get_object_or_404(MedicalProviderWorkingDays, name=working_days_value)
+                pharmacy_profile.working_days = get_object_or_404(PharmacyWorkingDays, name=working_days_value)
 
-            provider_profile.save()
+            pharmacy_profile.save()
 
             # --- Update or Create ContactPerson ---
             contact_name = post_data.get("contact_name")
             contact_phone = post_data.get("contact_phone_number")
             if contact_name or contact_phone:
                 contact, _ = ContactPerson.objects.get_or_create(
-                    profile_type="provider",
+                    profile_type="pharmacy",
                     profile_id=user
                 )
                 contact.name = contact_name
@@ -550,7 +550,7 @@ def update_provider_profile(request):
                 contact.phone_number = contact_phone
                 contact.save()
 
-        return JsonResponse({'success': True, 'message': 'Provider profile updated successfully'})
+        return JsonResponse({'success': True, 'message': 'Pharmacy profile updated successfully'})
     
     except Exception as e:
         return JsonResponse({"success": False, "message": str(e)}, status=500)
@@ -591,7 +591,7 @@ def clear_saved_data(request):
     if user.user_type == 'ngo':
         NGOPost.objects.filter(user=user, saved=True).update(saved=False)
 
-    if user.user_type == "provider":
+    if user.user_type == "pharmacy":
         Donation.objects.filter(user=user, saved=True).update(saved=False)
 
     return JsonResponse({'status': 'saved data cleared'})

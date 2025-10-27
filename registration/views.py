@@ -25,7 +25,7 @@ ROLE_TO_TEMPLATE = {
     "login": "login/login.html",
     "customer": "registration/register_user.html",
     "ngoOwner": "registration/ngo_register.html",
-    "medicalProvider": "registration/medical_provider_register.html",
+    "Pharmacy": "registration/pharmacy_register.html",
     "client": "registration/client_register.html",
     "advertiser": "registration/advertiser_register.html",
 }
@@ -99,10 +99,10 @@ def register_by_role(request, role):
     elif role == "ngoOwner":
         context["ngo_services"] = NGOService.objects.filter(is_active=True)
 
-    elif role == "medicalProvider":
-        context["medical_provider_types"] = MedicalProviderType.objects.filter(is_active=True)
-        context["medical_provider_services"] = MedicalProviderServices.objects.filter(is_active=True)
-        context["medical_provider_workingdays"] = MedicalProviderWorkingDays.objects.filter(is_active=True)
+    elif role == "Pharmacy":
+        context["pharmacy_types"] = PharmacyType.objects.filter(is_active=True)
+        context["medical_pharmacy_services"] = PharmacyServices.objects.filter(is_active=True)
+        context["medical_pharmacy_workingdays"] = PharmacyWorkingDays.objects.filter(is_active=True)
     return render(request, tpl, context)
 
 ALLOWED_EXTENSIONS = {'.pdf', '.jpg', '.jpeg', '.png'}
@@ -890,7 +890,7 @@ def save_client(request):
 
 @csrf_protect
 @require_POST
-def save_medical_provider(request):
+def save_medical_pharmacy(request):
     data = request.POST
     files = request.FILES
     errors = {}
@@ -946,30 +946,30 @@ def save_medical_provider(request):
         errors["company-name"] = "Company name is required."
 
     # Get foreign key instances from IDs
-    provider_type_id = data.get("provider_type")
+    pharmacy_type_id = data.get("pharmacy_type")
     services_offered_id = data.get("services_offered")
     working_days_id = data.get("working_days")
     
     # Convert to model instances
-    provider_type = None
+    pharmacy_type = None
     services_offered = None
     working_days = None
     
-    if provider_type_id:
+    if pharmacy_type_id:
         try:
-            provider_type = MedicalProviderType.objects.get(name=provider_type_id)
+            pharmacy_type = PharmacyType.objects.get(name=pharmacy_type_id)
         except Exception as e:
-            errors["provider_type"] = "Invalid provider type selected."
+            errors["pharmacy_type"] = "Invalid pharmacy type selected."
     
     if services_offered_id:
         try:
-            services_offered = MedicalProviderServices.objects.get(name=services_offered_id)
+            services_offered = PharmacyServices.objects.get(name=services_offered_id)
         except Exception as e:
             errors["services_offered"] = "Invalid service selected."
     
     if working_days_id:
         try:
-            working_days = MedicalProviderWorkingDays.objects.get(name=working_days_id)
+            working_days = PharmacyWorkingDays.objects.get(name=working_days_id)
         except Exception as e:
             errors["working_days"] = "Invalid working days selected."
     
@@ -1004,7 +1004,7 @@ def save_medical_provider(request):
     incorporation_number = data.get("incorporation_number")
     if not incorporation_number:
         errors["incorporation_number"] = "Incorporation number is required."
-    incorporation_doc_path, err = validate_and_save_file(files.get("incorporation_doc"), "incorporation", "Incorporation Document",user_type="provider")
+    incorporation_doc_path, err = validate_and_save_file(files.get("incorporation_doc"), "incorporation", "Incorporation Document",user_type="pharmacy")
     if not incorporation_doc_path:
         errors["incorporation_doc"] = "Upload incorporation document."
     if err:
@@ -1014,7 +1014,7 @@ def save_medical_provider(request):
     gst_number = data.get("gst_number")
     if not gst_number:
         errors["gst_number"] = "GST number is required."
-    gst_doc_path, err = validate_and_save_file(files.get("gst_doc"), "gst", "GST Document",user_type="provider")
+    gst_doc_path, err = validate_and_save_file(files.get("gst_doc"), "gst", "GST Document",user_type="pharmacy")
     if not gst_doc_path:
         errors["gst_doc"] = "Upload GST document."
     if err:
@@ -1024,7 +1024,7 @@ def save_medical_provider(request):
     pan_number = data.get("pan_number")
     if not pan_number:
         errors["pan_number"] = "PAN number is required."
-    pan_doc_path, err = validate_and_save_file(files.get("pan_doc"), "pan", "PAN Document",user_type="provider")
+    pan_doc_path, err = validate_and_save_file(files.get("pan_doc"), "pan", "PAN Document",user_type="pharmacy")
     if not pan_doc_path:
         errors["pan_doc"] = "Upload PAN document."
     if err:
@@ -1034,7 +1034,7 @@ def save_medical_provider(request):
     tan_number = data.get("tan_number")
     if not tan_number:
         errors["tan_number"] = "TAN number is required."
-    tan_doc_path, err = validate_and_save_file(files.get("tan_doc"), "tan", "TAN Document",user_type="provider")
+    tan_doc_path, err = validate_and_save_file(files.get("tan_doc"), "tan", "TAN Document",user_type="pharmacy")
     if not tan_doc_path:
         errors["tan_doc"] = "Upload TAN document."
     if err:
@@ -1044,14 +1044,14 @@ def save_medical_provider(request):
     medical_license_number = data.get("medical_license_number")
     if not medical_license_number:
         errors["medical_license_number"] = "Medical License number is required."
-    medical_license_doc_path, err = validate_and_save_file(files.get("medical_license_doc"), "medical_license", "Medical License Document",user_type="provider")
+    medical_license_doc_path, err = validate_and_save_file(files.get("medical_license_doc"), "medical_license", "Medical License Document",user_type="pharmacy")
     if not medical_license_doc_path:
         errors["medical_license_doc"] = "Upload Medical License document."
     if err:
         errors["medical_license_doc"] = err
 
     # Brand Image
-    storefront_image_path, err = validate_and_save_file(files.get("store_front"), "store_front", "Storefront Image",user_type="provider")
+    storefront_image_path, err = validate_and_save_file(files.get("store_front"), "store_front", "Storefront Image",user_type="pharmacy")
     if err:
         errors["store_front"] = err
 
@@ -1081,14 +1081,14 @@ def save_medical_provider(request):
         phone_country_code=phone_country_code,
         phone_number=phone_number,
         password=make_password(password),
-        user_type="provider"
+        user_type="pharmacy"
     )
 
     # Create AdvertiserProfile
-    provider = MedicalProviderProfile.objects.create(
+    pharmacy = PharmacyProfile.objects.create(
         user=user,
         company_name=company_name,
-        provider_type=provider_type,
+        pharmacy_type=pharmacy_type,
         services_offered=services_offered,
         website_url=website,
         working_days = working_days,
@@ -1123,7 +1123,7 @@ def save_medical_provider(request):
     # Create ContactPerson if present
     if contact_name and contact_phone:
         ContactPerson.objects.create(
-            profile_type='provider',
+            profile_type='pharmacy',
             profile_id=user,
             name=contact_name,
             phone_country_code=phone_country_code,
@@ -1133,8 +1133,8 @@ def save_medical_provider(request):
             referral_code=referral_code,
             email_otp=email_otp
         )
-    logger.info("Medical provider registration completed successfully")
-    return JsonResponse({"success": True, "message": "Medical provider registered successfully."})
+    logger.info("Medical pharmacy registration completed successfully")
+    return JsonResponse({"success": True, "message": "Medical pharmacy registered successfully."})
 
 @csrf_protect
 def forgot_password(request):
@@ -1154,8 +1154,8 @@ def forgot_password(request):
             company_name = user.clientprofile.company_name
         elif user.user_type == "ngo":
             company_name = user.ngoprofile.ngo_name
-        elif user.user_type == "provider":
-            company_name = user.medicalproviderprofile.company_name
+        elif user.user_type == "pharmacy":
+            company_name = user.Pharmacyprofile.company_name
 
         result = async_to_sync(send_forgot_password_email)(user, company_name, "http://localhost:8002")
         return JsonResponse(result)

@@ -149,8 +149,8 @@ def get_bot_content_api(request):
         user_type = 'advertiser'
     elif hasattr(user, 'clientprofile') and user.clientprofile is not None:
         user_type = 'client'
-    elif hasattr(user = 'medicalproviderprofile') and user.medicalproviderprofile is not None:
-        user_type = 'provider'
+    elif hasattr(user = 'Pharmacyprofile') and user.Pharmacyprofile is not None:
+        user_type = 'pharmacy'
 
     #logger.info(f"Chatbot content requested for user: {user.email}, determined type: {user_type}") #debugging
 

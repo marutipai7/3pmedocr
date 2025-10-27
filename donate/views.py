@@ -16,7 +16,7 @@ from dashboard.utils import dashboard_login_required
 from registration.views import validate_and_save_file
 from points.models import PointsActionType, PointsHistory
 from django.views.decorators.http import require_POST, require_GET
-from registration.models import NGOProfile, AdvertiserProfile, ClientProfile, MedicalProviderProfile, ContactPerson
+from registration.models import NGOProfile, AdvertiserProfile, ClientProfile, PharmacyProfile, ContactPerson
 
 logger = logging.getLogger(__name__)
 
@@ -28,8 +28,8 @@ def donate_view(request):
         user_profile = AdvertiserProfile.objects.filter(user=user).first()
     elif user.user_type == 'client':
         user_profile = ClientProfile.objects.filter(user=user).first()
-    elif user.user_type == 'provider':
-        user_profile = MedicalProviderProfile.objects.filter(user=user).first()
+    elif user.user_type == 'pharmacy':
+        user_profile = PharmacyProfile.objects.filter(user=user).first()
 
     donation_query = request.GET.get('donation_query', '').strip().lower()
 

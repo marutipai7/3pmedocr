@@ -18,7 +18,7 @@ from django.views.decorators.http import require_GET, require_POST
 from .utils import dashboard_login_required, get_common_context, get_theme_colors
 from .models import SettingMenu, CouponPerformance,  CalendarEvent, TrendingCoupon
 from django.db.models import Sum, Count, Q, Max, F, ExpressionWrapper, DurationField
-from registration.models import MedicalProviderProfile, NGOProfile, ClientProfile, AdvertiserProfile, ContactPerson
+from registration.models import PharmacyProfile, NGOProfile, ClientProfile, AdvertiserProfile, ContactPerson
 
 logger = logging.getLogger(__name__)
 
@@ -119,17 +119,17 @@ def dashboard_home(request):
             })
             return render(request, "dashboard/home_advertiser.html", context)
 
-        elif user_type == 'provider':
-            provider_profile = MedicalProviderProfile.objects.get(user=user)
+        elif user_type == 'pharmacy':
+            pharmacy_profile = PharmacyProfile.objects.get(user=user)
             events = CalendarEvent.objects.all().order_by('date')
             
             context.update({
-                'provider_profile': provider_profile,
-                'user_display_name': provider_profile.company_name,
+                'pharmacy_profile': pharmacy_profile,
+                'user_display_name': pharmacy_profile.company_name,
                 'events': events,
                 'user': user,
             })
-            return render(request, "dashboard/home_provider.html", context)
+            return render(request, "dashboard/home_pharmacy.html", context)
 
     except Exception as e:
         return render(request, "dashboard/not_found.html")
@@ -281,15 +281,15 @@ def saved(request):
         })
         return render(request, "saved/saved_advertiser.html", context)
     
-    elif user.user_type == 'provider':
-        provider_profile = MedicalProviderProfile.objects.get(user=user)
+    elif user.user_type == 'pharmacy':
+        pharmacy_profile = PharmacyProfile.objects.get(user=user)
         context.update({
-            'provider_profile': provider_profile,
-            'user_display_name': provider_profile.company_name,
+            'pharmacy_profile': pharmacy_profile,
+            'user_display_name': pharmacy_profile.company_name,
             'user_profile': user,
             'user': user
         })
-        return render(request, "saved/saved_provider.html", context)
+        return render(request, "saved/saved_pharmacy.html", context)
     
     elif user.user_type == 'client':
         client_profile = ClientProfile.objects.get(user=user)
@@ -482,8 +482,8 @@ def get_donation_history(request):
             "donation_history": page_obj.object_list,
             'today': date.today(),
         })
-    elif user.user_type == 'provider':
-        html = render_to_string("provider/partials/donate-history.html", {
+    elif user.user_type == 'pharmacy':
+        html = render_to_string("pharmacy/partials/donate-history.html", {
             "donation_history": page_obj.object_list,
             'today': date.today(),
         })
@@ -697,19 +697,19 @@ def advertiser_advance(request):
 
         return render(request, "advertiser/advertiser_advance.html", context)
     elif user.user_type == 'ngo':
-        provider_profile = NGOProfile.objects.get(user=user)
+        pharmacy_profile = NGOProfile.objects.get(user=user)
         context.update({
-            'provider_profile': provider_profile,
-            'user_display_name': provider_profile.company_name,
+            'pharmacy_profile': pharmacy_profile,
+            'user_display_name': pharmacy_profile.company_name,
             'user_profile': user,
             'user':user
         })
         return render(request, "advertiser/advertiser_advance.html", context)
-    elif user.user_type == 'provider':
-        provider_profile = MedicalProviderProfile.objects.get(user=user)
+    elif user.user_type == 'pharmacy':
+        pharmacy_profile = PharmacyProfile.objects.get(user=user)
         context.update({
-            'provider_profile': provider_profile,
-            'user_display_name': provider_profile.company_name,
+            'pharmacy_profile': pharmacy_profile,
+            'user_display_name': pharmacy_profile.company_name,
             'user_profile': user,
             'user':user
         })
@@ -736,11 +736,11 @@ def cart(request):
         })
 
         return render(request, "dashboard/cart.html", context)
-    elif user.user_type == 'provider':
-        provider_profile = MedicalProviderProfile.objects.get(user=user)
+    elif user.user_type == 'pharmacy':
+        pharmacy_profile = PharmacyProfile.objects.get(user=user)
         context.update({
-            'provider_profile': provider_profile,
-            'user_display_name': provider_profile.company_name,
+            'pharmacy_profile': pharmacy_profile,
+            'user_display_name': pharmacy_profile.company_name,
             'user_profile': user,
             'user':user
         })

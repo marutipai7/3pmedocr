@@ -361,19 +361,19 @@ $('#register-form').on('submit', function(e) {
         $('input[name="advertiser_type"]').val(selectValue);
         let adServiceValue = $('.ad-service-selected').text().trim();
         $('input[name="ad_service_req"]').val(adServiceValue);
-    } else if (formUrl == '/user/save/medical_provider') {
-        // var providerType = $('#provider_type_input').val();
+    } else if (formUrl == '/user/save/medical_pharmacy') {
+        // var pharmacyType = $('#pharmacy_type_input').val();
         // var servicesOffered = $('#services_offered_input').val();
         // var workingDays = $('#working_days_input').val();
         // var openingTime = $('#opening_time').val();
         // var closingTime = $('#closing_time').val();
         // var valid = true;
         // // Remove previous errors
-        // $('.field-error.provider_type, .field-error.services_offered, .field-error.working_days, .field-error.opening_time, .field-error.closing_time').remove();
-        // if (!providerType) {
+        // $('.field-error.pharmacy_type, .field-error.services_offered, .field-error.working_days, .field-error.opening_time, .field-error.closing_time').remove();
+        // if (!pharmacyType) {
         //     valid = false;
-        //     $('<span class="field-error provider_type text-xs text-dark-red">Please select a provider type.</span>')
-        //         .insertAfter($('#provider_type_input'));
+        //     $('<span class="field-error pharmacy_type text-xs text-dark-red">Please select a pharmacy type.</span>')
+        //         .insertAfter($('#pharmacy_type_input'));
         // }
         // if (!servicesOffered) {
         //     valid = false;
@@ -402,8 +402,8 @@ $('#register-form').on('submit', function(e) {
         // }
         let selectService = $('.selected-services').text().trim();
         $('input[name="services_offered"]').val(selectService);
-        let selectProviderType = $('.selected-provider-type').text().trim();
-        $('input[name="provider_type"]').val(selectProviderType);
+        let selectPharmacyType = $('.selected-pharmacy-type').text().trim();
+        $('input[name="pharmacy_type"]').val(selectPType);
         let selectWorkingDays = $('.selected-working-days').text().trim();
         $('input[name="working_days"]').val(selectWorkingDays);
     } else if (formUrl == '/user/save/client') {
