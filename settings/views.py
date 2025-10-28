@@ -104,8 +104,8 @@ def get_base_context(user):
     }
     return context
 
-def handle_contact_person(profile_type, profile_id):
-    contact = ContactPerson.objects.filter(profile_type=profile_type, profile_id=profile_id).first()
+def handle_contact_person(profile_type, profile):
+    contact = ContactPerson.objects.filter(profile_type=profile_type, profile=profile).first()
     return {
         'contact_name': contact.name,
         'contact_phone_country_code': contact.phone_country_code,
@@ -363,7 +363,7 @@ def update_ngo_profile(request):
                 setattr(ngo_profile, field, data.get(field))
             ngo_profile.ngo_services = NGOService.objects.get(name=data.get("ngo_services"))
             ngo_profile.save()
-        contact_person = ContactPerson.objects.filter(profile_type='ngo', profile_id=user).first()
+        contact_person = ContactPerson.objects.filter(profile_type='ngo', profile=user).first()
 
         if contact_person:
             contact_person.name = request.POST.get('contact_name')
@@ -418,7 +418,7 @@ def update_advertiser_profile(request):
             if contact_name or contact_phone:
                 contact, _ = ContactPerson.objects.get_or_create(
                     profile_type="advertiser",
-                    profile_id=user
+                    profile=user
                 )
                 contact.name = contact_name
                 contact.role = post_data.get("contact_role")
@@ -475,7 +475,7 @@ def update_client_profile(request):
             if contact_name or contact_phone:
                 contact, _ = ContactPerson.objects.get_or_create(
                     profile_type="advertiser",
-                    profile_id=user
+                    profile=user
                 )
                 contact.name = contact_name
                 contact.role = post_data.get("contact_role")
@@ -542,7 +542,7 @@ def update_pharmacy_profile(request):
             if contact_name or contact_phone:
                 contact, _ = ContactPerson.objects.get_or_create(
                     profile_type="pharmacy",
-                    profile_id=user
+                    profile=user
                 )
                 contact.name = contact_name
                 contact.role = post_data.get("contact_role")

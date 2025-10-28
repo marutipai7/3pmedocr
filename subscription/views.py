@@ -245,7 +245,7 @@ def subscription_invoice(request, history_id):
         return JsonResponse({"error": "Invoice not found"}, status=404)
 
     try:
-        contact_person = ContactPerson.objects.filter(profile_type="client", profile_id=user.id).first()
+        contact_person = ContactPerson.objects.filter(profile_type="client", profile=user.id).first()
     except ContactPerson.DoesNotExist:
         contact_person = None
 

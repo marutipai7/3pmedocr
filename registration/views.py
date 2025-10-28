@@ -473,7 +473,7 @@ def save_ngo(request):
         from .models import ContactPerson
         ContactPerson.objects.create(
             profile_type='ngo',
-            profile_id=user,
+            profile=user,
             name=contact_person_name,
             phone_country_code=phone_country_code,
             phone_number=contact_person_phone,
@@ -675,7 +675,7 @@ def save_advertiser(request):
     if contact_name and contact_phone:
         ContactPerson.objects.create(
             profile_type='advertiser',
-            profile_id=user,
+            profile=user,
             name=contact_name,
             phone_country_code=phone_country_code,
             phone_number=contact_phone,
@@ -877,7 +877,7 @@ def save_client(request):
     if contact_name and contact_phone:
         ContactPerson.objects.create(
             profile_type='client',
-            profile_id=user,
+            profile=user,
             name=contact_name,
             phone_country_code=phone_country_code,
             phone_number=contact_phone,
@@ -1124,7 +1124,7 @@ def save_medical_pharmacy(request):
     if contact_name and contact_phone:
         ContactPerson.objects.create(
             profile_type='pharmacy',
-            profile_id=user,
+            profile=user,
             name=contact_name,
             phone_country_code=phone_country_code,
             phone_number=contact_phone,

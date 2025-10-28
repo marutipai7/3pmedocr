@@ -268,7 +268,7 @@ def get_donate_bill(request, donation_id):
     ngo_profile = NGOProfile.objects.filter(user=ngo_user).first()
     contact_person = ContactPerson.objects.filter(
         profile_type=user.user_type,
-        profile_id=user
+        profile=user
     ).first()  
 
 
@@ -297,7 +297,7 @@ def get_platform_bill(request, donation_id):
     ngo_profile = NGOProfile.objects.filter(user=ngo_user).first()
     contact_person = ContactPerson.objects.filter(
         profile_type=user.user_type,
-        profile_id=user
+        profile=user
     ).first()
 
 
