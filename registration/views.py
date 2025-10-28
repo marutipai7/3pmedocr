@@ -102,7 +102,7 @@ def register_by_role(request, role):
     elif role == "Pharmacy":
         context["pharmacy_types"] = PharmacyType.objects.filter(is_active=True)
         context["medical_pharmacy_services"] = PharmacyServices.objects.filter(is_active=True)
-        context["medical_pharmacy_workingdays"] = PharmacyWorkingDays.objects.filter(is_active=True)
+        context["medical_pharmacy_timing"] = PharmacyTiming.objects.filter(is_active=True)
     return render(request, tpl, context)
 
 ALLOWED_EXTENSIONS = {'.pdf', '.jpg', '.jpeg', '.png'}
@@ -948,12 +948,10 @@ def save_medical_pharmacy(request):
     # Get foreign key instances from IDs
     pharmacy_type_id = data.get("pharmacy_type")
     services_offered_id = data.get("services_offered")
-    working_days_id = data.get("working_days")
     
     # Convert to model instances
     pharmacy_type = None
     services_offered = None
-    working_days = None
     
     if pharmacy_type_id:
         try:
@@ -966,36 +964,21 @@ def save_medical_pharmacy(request):
             services_offered = PharmacyServices.objects.get(name=services_offered_id)
         except Exception as e:
             errors["services_offered"] = "Invalid service selected."
-    
-    if working_days_id:
-        try:
-            working_days = PharmacyWorkingDays.objects.get(name=working_days_id)
-        except Exception as e:
-            errors["working_days"] = "Invalid working days selected."
-    
+
     website = data.get("website-url")
-    opening_hours = data.get("opening_time")
-    closing_hours = data.get("closing_time")
     address = data.get("address")
     city = data.get("city")
     state = data.get("state")
     pincode = data.get("pincode")
-    country = data.get("country")
     if not pincode or not re.match(r"^\d{4,10}$", pincode):
         errors["pincode"] = "Enter a valid pincode."
 
-    if not opening_hours:
-        errors["opening_time"] = "Opening time is required."
-    if not closing_hours:
-        errors["closing_time"] = "Closing time is required."
     if not address:
         errors["address"] = "Address is required."
     if not city:
         errors["city"] = "City is required."
     if not state:
         errors["state"] = "State is required."
-    if not country:
-        errors["country"] = "Country is required."
     if not pincode or not re.match(r"^\d{4,10}$", pincode):
         errors["pincode"] = "Enter a valid pincode."
         
@@ -1091,13 +1074,9 @@ def save_medical_pharmacy(request):
         pharmacy_type=pharmacy_type,
         services_offered=services_offered,
         website_url=website,
-        working_days = working_days,
-        opening_time = opening_hours,
-        closing_time = closing_hours,
         address=address,
         city=city,
         state=state,
-        country=country,
         pincode=pincode,
         incorporation_number=incorporation_number,
         incorporation_doc_path=incorporation_doc_path,

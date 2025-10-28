@@ -210,20 +210,18 @@ def handle_pharmacy_profile(user):
     profile = PharmacyProfile.objects.filter(user=user).first()
     all_types = PharmacyType.objects.filter(is_active=True)
     all_services = PharmacyServices.objects.filter(is_active=True)
-    all_workingdays = PharmacyWorkingDays.objects.filter(is_active=True)
+    all_workingdays = PharmacyTiming.objects.filter(is_active=True)
     data = {
         'company_name': profile.company_name,
         'pharmacy_type': profile.pharmacy_type,
         'all_types': all_types,
         'services_offered': profile.services_offered,
         'all_services': all_services,
-        'working_days': profile.working_days,
         'all_workingdays': all_workingdays,
         'website_url': profile.website_url,
         'address': profile.address,
         'city': profile.city,
         'state': profile.state,
-        'country': profile.country,
         'pincode': profile.pincode,
         'referral_code': profile.referral_code or '',
         'incorporation_number': profile.incorporation_number,
@@ -498,7 +496,7 @@ def update_pharmacy_profile(request):
 
     # --- Validate ---
     validate_email_phone(post_data, errors)
-    required_fields = ["company_name", "city", "state", "country", "pincode"]
+    required_fields = ["company_name", "city", "state", "pincode"]
     for field in required_fields:
         if not post_data.get(field):
             errors[field] = f"{field.replace('_', ' ').capitalize()} is required."
@@ -521,7 +519,6 @@ def update_pharmacy_profile(request):
             pharmacy_profile.address = post_data.get("address")
             pharmacy_profile.city = post_data.get("city")
             pharmacy_profile.state = post_data.get("state")
-            pharmacy_profile.country = post_data.get("country")
             pharmacy_profile.pincode = post_data.get("pincode")
 
             pharmacy_type_value = post_data.get("pharmacy_type")
@@ -530,9 +527,6 @@ def update_pharmacy_profile(request):
             services_offered_value = post_data.get("services_offered")
             if services_offered_value:
                 pharmacy_profile.services_offered = get_object_or_404(PharmacyServices, name=services_offered_value)
-            working_days_value = post_data.get("working_days")
-            if working_days_value:
-                pharmacy_profile.working_days = get_object_or_404(PharmacyWorkingDays, name=working_days_value)
 
             pharmacy_profile.save()
 

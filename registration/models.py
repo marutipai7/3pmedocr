@@ -49,13 +49,20 @@ class PharmacyServices(models.Model):
     class Meta:
             db_table = 'pharmacy_services'
 
-class PharmacyWorkingDays(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    is_active = models.BooleanField(default=True)
+class PharmacyTiming(models.Model):
+    pharmacy = models.ForeignKey("PharmacyProfile", on_delete=models.CASCADE, related_name="timings")
+    day_of_week = models.CharField(max_length=20)  # e.g. Monday, Tuesday
+    opening_time = models.TimeField(blank=True, null=True)
+    closing_time = models.TimeField(blank=True, null=True)
+    is_open = models.BooleanField(default=True)
+
     def __str__(self):
-        return self.name
+        return f"{self.pharmacy.company_name} - {self.day_of_week}: {self.opening_time} to {self.closing_time}"
+
     class Meta:
-            db_table = 'pharmacy_workingdays'
+        db_table = 'pharmacy_timing'
+        unique_together = ('pharmacy', 'day_of_week')
+
             
 class User(models.Model):
     USER_TYPE_CHOICES = [
@@ -205,18 +212,28 @@ class NGOProfile(models.Model):
 
 class PharmacyProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    # --- Personal Details ---
+    first_name = models.CharField(max_length=100, blank=True, null=True)
+    last_name = models.CharField(max_length=100, blank=True, null=True)
+    gender = models.CharField(max_length=20, blank=True, null=True)
+    age = models.PositiveIntegerField(blank=True, null=True)
+    personal_email = models.CharField(max_length=255, blank=True, null=True)
+    personal_phone_number = models.CharField(max_length=20, blank=True, null=True)
+    personal_pan_number = models.CharField(max_length=50, blank=True, null=True)
+
+    # --- Company Details ---
     company_name = models.CharField(max_length=255)
     pharmacy_type = models.ForeignKey(PharmacyType, on_delete=models.CASCADE, blank=True, null=True)
     services_offered = models.ForeignKey(PharmacyServices, on_delete=models.CASCADE, blank=True, null=True)
     website_url = models.CharField(max_length=255, blank=True, null=True)
-    working_days = models.ForeignKey(PharmacyWorkingDays, on_delete=models.CASCADE, blank=True, null=True)
-    opening_time = models.CharField(max_length=16, blank=True, null=True)
-    closing_time = models.CharField(max_length=16, blank=True, null=True)
+    timing_info = models.ManyToManyField('PharmacyTiming', blank=True, related_name='pharmacies')
     address = models.TextField(blank=True, null=True)
     city = models.CharField(max_length=128, blank=True, null=True)
     state = models.CharField(max_length=128, blank=True, null=True)
     pincode = models.CharField(max_length=20, blank=True, null=True)
-    country = models.CharField(max_length=128, blank=True, null=True)
+
+    # --- Company Documents ---
     incorporation_number = models.CharField(max_length=128, blank=True, null=True)
     incorporation_doc_path = models.CharField(max_length=255, blank=True, null=True)
     incorporation_doc_virus_scanned = models.BooleanField(default=False)
@@ -234,8 +251,18 @@ class PharmacyProfile(models.Model):
     medical_license_doc_virus_scanned = models.BooleanField(default=False)
     storefront_image_path = models.CharField(max_length=255, blank=True, null=True)
     storefront_image_virus_scanned = models.BooleanField(default=False)
+
+    # --- App Lock Selfie ---
+    selfie_path_for_applock = models.CharField(max_length=255, blank=True, null=True)
+    selfie_virus_scanned = models.BooleanField(default=False)
+
+    # --- Misc ---
     email_otp = models.CharField(max_length=16, blank=True, null=True)
     referral_code = models.CharField(max_length=64, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.company_name} ({self.user.username})"
+
 
 class ContactPerson(models.Model):
     PROFILE_TYPE_CHOICES = [

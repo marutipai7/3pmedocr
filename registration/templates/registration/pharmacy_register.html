@@ -115,7 +115,7 @@
               </div>
               <div
                 class="dropdown-option absolute left-0 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-full mt-0.5 z-20 max-h-44 overflow-y-auto scroll">
-                {% for days in medical_pharmacy_workingdays %}
+                {% for days in medical_pharmacy_timing %}
                   <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
                   <label value="{{ days.id }}" class="flex-1">{{ days.name }}</label>
                   </div>
@@ -123,6 +123,7 @@
               </div>
             </div>
           <!-- Opening Time Dropdown -->
+
             <div class="dropdown relative inline-block flex-1">
               <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Opening Time</label>
               <div
