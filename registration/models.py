@@ -50,20 +50,11 @@ class PharmacyServices(models.Model):
             db_table = 'pharmacy_services'
 
 class PharmacyTiming(models.Model):
-    pharmacy = models.ForeignKey("PharmacyProfile", on_delete=models.CASCADE, related_name="timings")
-    day_of_week = models.CharField(max_length=20)  # e.g. Monday, Tuesday
-    opening_time = models.TimeField(blank=True, null=True)
-    closing_time = models.TimeField(blank=True, null=True)
-    is_open = models.BooleanField(default=True)
-
-    def __str__(self):
-        return f"{self.pharmacy.company_name} - {self.day_of_week}: {self.opening_time} to {self.closing_time}"
-
+    day_of_week = models.CharField(max_length=20)
+    is_active = models.BooleanField(default=True)
     class Meta:
         db_table = 'pharmacy_timing'
-        unique_together = ('pharmacy', 'day_of_week')
 
-            
 class User(models.Model):
     USER_TYPE_CHOICES = [
         ('advertiser', 'Advertiser'),
@@ -84,6 +75,8 @@ class User(models.Model):
     push_notifications = models.BooleanField(default=True)
     regulatory_alerts = models.BooleanField(default=True)
     promotions_and_offers = models.BooleanField(default=True)
+    payment_notifications = models.BooleanField(default=True)
+    location_notification = models.BooleanField(default=True)
     quite_mode = models.BooleanField(default=False)
     quite_mode_start_time = models.TimeField(blank=True, null=True, default=time(22, 0))
     quite_mode_end_time = models.TimeField(blank=True, null=True, default=time(6, 0))
@@ -101,8 +94,6 @@ class UserProfile(models.Model):
     profile_photo_path = models.CharField(max_length=255, blank=True, null=True)
     referral_code = models.CharField(max_length=64, blank=True, null=True)
     otp = models.CharField(max_length=64, blank=True, null=True)
-    payment_notifications = models.BooleanField(default=True)
-    location_notification = models.BooleanField(default=True)
 
 class UserAddress(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='addresses')
@@ -227,7 +218,7 @@ class PharmacyProfile(models.Model):
     pharmacy_type = models.ForeignKey(PharmacyType, on_delete=models.CASCADE, blank=True, null=True)
     services_offered = models.ForeignKey(PharmacyServices, on_delete=models.CASCADE, blank=True, null=True)
     website_url = models.CharField(max_length=255, blank=True, null=True)
-    timing_info = models.ManyToManyField('PharmacyTiming', blank=True, related_name='pharmacies')
+    pharmacy_timing = models.ForeignKey(PharmacyTiming, on_delete=models.CASCADE, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     city = models.CharField(max_length=128, blank=True, null=True)
     state = models.CharField(max_length=128, blank=True, null=True)
@@ -257,12 +248,11 @@ class PharmacyProfile(models.Model):
     selfie_virus_scanned = models.BooleanField(default=False)
 
     # --- Misc ---
-    email_otp = models.CharField(max_length=16, blank=True, null=True)
+    otp = models.CharField(max_length=64, blank=True, null=True)
     referral_code = models.CharField(max_length=64, blank=True, null=True)
 
     def __str__(self):
         return f"{self.company_name} ({self.user.username})"
-
 
 class ContactPerson(models.Model):
     PROFILE_TYPE_CHOICES = [
