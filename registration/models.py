@@ -40,7 +40,7 @@ class PharmacyType(models.Model):
         return self.name
     class Meta:
             db_table = 'pharmacy_type'
-            
+    
 class PharmacyServices(models.Model):
     name = models.CharField(max_length=100, unique=True)
     is_active = models.BooleanField(default=True)
@@ -55,6 +55,25 @@ class PharmacyTiming(models.Model):
     class Meta:
         db_table = 'pharmacy_timing'
 
+class LabServices(models.Model):
+    name = models.CharField(max_length=100, unique=True, null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    class Meta:
+        db_table = 'lab_service'
+    
+class LabFacility(models.Model):
+    name = models.CharField(max_length=100, unique=True, null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    class Meta:
+        db_table = 'lab_facility'        
+    
+class LabTiming(models.Model):
+    open_time = models.TimeField(null=True, blank=True)
+    close_time = models.TimeField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    class Meta:
+        db_table = 'lab_timing'   
+    
 class User(models.Model):
     USER_TYPE_CHOICES = [
         ('advertiser', 'Advertiser'),
@@ -212,19 +231,16 @@ class PharmacyProfile(models.Model):
     personal_email = models.CharField(max_length=255, blank=True, null=True)
     personal_phone_number = models.CharField(max_length=20, blank=True, null=True)
     personal_pan_number = models.CharField(max_length=50, blank=True, null=True)
-
-    # --- Company Details ---
+    
     company_name = models.CharField(max_length=255)
     pharmacy_type = models.ForeignKey(PharmacyType, on_delete=models.CASCADE, blank=True, null=True)
     services_offered = models.ForeignKey(PharmacyServices, on_delete=models.CASCADE, blank=True, null=True)
-    website_url = models.CharField(max_length=255, blank=True, null=True)
     pharmacy_timing = models.ForeignKey(PharmacyTiming, on_delete=models.CASCADE, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     city = models.CharField(max_length=128, blank=True, null=True)
     state = models.CharField(max_length=128, blank=True, null=True)
     pincode = models.CharField(max_length=20, blank=True, null=True)
 
-    # --- Company Documents ---
     incorporation_number = models.CharField(max_length=128, blank=True, null=True)
     incorporation_doc_path = models.CharField(max_length=255, blank=True, null=True)
     incorporation_doc_virus_scanned = models.BooleanField(default=False)
@@ -234,25 +250,111 @@ class PharmacyProfile(models.Model):
     gst_number = models.CharField(max_length=32, blank=True, null=True)
     gst_doc_path = models.CharField(max_length=255, blank=True, null=True)
     gst_doc_virus_scanned = models.BooleanField(default=False)
-    tan_number = models.CharField(max_length=32, blank=True, null=True)
-    tan_doc_path = models.CharField(max_length=255, blank=True, null=True)
-    tan_doc_virus_scanned = models.BooleanField(default=False)
+    # tan_number = models.CharField(max_length=32, blank=True, null=True)
+    # tan_doc_path = models.CharField(max_length=255, blank=True, null=True)
+    # tan_doc_virus_scanned = models.BooleanField(default=False)
     medical_license_number = models.CharField(max_length=128, blank=True, null=True)
     medical_license_doc_path = models.CharField(max_length=255, blank=True, null=True)
     medical_license_doc_virus_scanned = models.BooleanField(default=False)
     storefront_image_path = models.CharField(max_length=255, blank=True, null=True)
     storefront_image_virus_scanned = models.BooleanField(default=False)
-
-    # --- App Lock Selfie ---
     selfie_path_for_applock = models.CharField(max_length=255, blank=True, null=True)
     selfie_virus_scanned = models.BooleanField(default=False)
 
     # --- Misc ---
-    otp = models.CharField(max_length=64, blank=True, null=True)
+    is_verified = models.BooleanField(default=False)
+    verification_status = models.CharField(max_length=20, default='pending')  # e.g., pending, approved, rejected
+    rejection_reason = models.TextField(blank=True, null=True)
+    verified_at = models.DateTimeField(blank=True, null=True)
     referral_code = models.CharField(max_length=64, blank=True, null=True)
+    otp = models.CharField(max_length=64, blank=True, null=True)
 
     def __str__(self):
         return f"{self.company_name} ({self.user.username})"
+
+class LabProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, db_column="user_id", related_name="lab_profile",)
+
+    lab_name = models.CharField(max_length=255, null=True, blank=True)
+    owner_name = models.CharField(max_length=255, null=True, blank=True)
+    email = models.CharField(max_length=255)
+    contact_number = models.CharField(max_length=50, null=True, blank=True)
+    alt_contact_number = models.CharField(max_length=50, null=True, blank=True)
+    lab_registration_number = models.CharField(max_length=100, null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
+    city = models.CharField(max_length=128, null=True, blank=True)
+    state = models.CharField(max_length=128, null=True, blank=True)
+    pincode = models.CharField(max_length=20, null=True, blank=True)
+    lab_timing = models.ForeignKey(LabTiming, on_delete=models.SET_NULL, null=True, blank=True, db_column="lab_timing_id", related_name="lab_profiles")
+
+    lab_certificate_number = models.CharField(max_length=100, null=True, blank=True)
+    lab_certificate_path = models.CharField(max_length=255, null=True, blank=True)
+    lab_certificate_virus_scanned = models.BooleanField(default=False)
+    identity_proof_aadhar_number = models.CharField(max_length=100, null=True, blank=True)
+    identity_proof_aadhar_path = models.CharField(max_length=255, null=True, blank=True)
+    identity_proof_aadhar_virus_scanned = models.BooleanField(default=False)
+    identity_proof_pan_number = models.CharField(max_length=100, null=True, blank=True)
+    identity_proof_pan_path = models.CharField(max_length=255, null=True, blank=True)
+    identity_proof_pan_virus_scanned = models.BooleanField(default=False)
+    gov_license_number = models.CharField(max_length=100, null=True, blank=True)
+    gov_license_path = models.CharField(max_length=255, null=True, blank=True)
+    gov_license_virus_scanned = models.BooleanField(default=False)
+    lab_photo_path = models.CharField(max_length=255, null=True, blank=True)
+    lab_photo_virus_scanned = models.BooleanField(default=False)
+
+    is_verified = models.BooleanField(default=False)
+    verification_status = models.CharField(max_length=20, default="pending")
+    rejection_reason = models.TextField(null=True, blank=True)
+    verified_at = models.DateTimeField(null=True, blank=True)
+    otp = models.CharField(max_length=64, null=True, blank=True)
+    referral_code = models.CharField(max_length=64, null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "registration_labprofile"
+
+class HospitalProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, db_column="user_id", related_name="hospital_profile",)
+
+    hospital_name = models.CharField(max_length=255, null=True, blank=True)
+    owner_name = models.CharField(max_length=255, null=True, blank=True)
+    email = models.CharField(max_length=255, null=True, blank=True)
+    contact_no = models.CharField(max_length=20, null=True, blank=True)
+    alternate_contact_no = models.CharField(max_length=20, null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
+    city = models.CharField(max_length=128, null=True, blank=True)
+    state = models.CharField(max_length=128, null=True, blank=True)
+    pincode = models.CharField(max_length=20, null=True, blank=True)
+    hospital_timing = models.CharField(max_length=100, null=True, blank=True)
+    home_visit = models.BooleanField(default=False)
+
+    registration_no = models.CharField(max_length=128, null=True, blank=True)
+    registration_certificate_path = models.CharField(max_length=255, null=True, blank=True)
+    registration_doc_virus_scanned = models.BooleanField(default=False)
+    aadhar_card_no = models.CharField(max_length=20, null=True, blank=True)
+    aadhar_doc_path = models.CharField(max_length=255, null=True, blank=True)
+    aadhar_doc_virus_scanned = models.BooleanField(default=False)
+    pan_card_no = models.CharField(max_length=20, null=True, blank=True)
+    pan_doc_path = models.CharField(max_length=255, null=True, blank=True)
+    pan_doc_virus_scanned = models.BooleanField(default=False)
+    hospital_logo_path = models.CharField(max_length=255, null=True, blank=True)
+    hospital_logo_virus_scanned = models.BooleanField(default=False)
+    hospital_photo_path = models.CharField(max_length=255, null=True, blank=True)
+    hospital_photo_virus_scanned = models.BooleanField(default=False)
+
+    phone_for_otp = models.CharField(max_length=20, null=True, blank=True)
+    is_verified = models.BooleanField(default=False)
+    verification_status = models.CharField(max_length=20, default="pending")
+    rejection_reason = models.TextField(null=True, blank=True)
+    verified_at = models.DateTimeField(null=True, blank=True)
+    otp = models.CharField(max_length=64, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "registration_hospitalprofile"
 
 class ContactPerson(models.Model):
     PROFILE_TYPE_CHOICES = [
