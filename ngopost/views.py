@@ -2,6 +2,7 @@ from django.shortcuts import render
 from datetime import datetime, date
 from .models import (
     NGOPost, 
+    Status,
     PostTypeOption, 
     DonationFrequencyOption, 
     CountryOption, 
@@ -69,12 +70,12 @@ def post_view(request):
 
     # Update post status and attach donations
     for post in post_history:
-        if post.status == post.Status.ONGOING and post.end_date < datetime.now().date():
+        if post.status == Status.ONGOING and post.end_date < datetime.now().date():
             post.update_status_if_needed()
         post.donation_list = Donation.objects.filter(ngopost=post).select_related('user').order_by('-payment_date')
     
     for post in saved_posts:
-        if post.status == post.Status.ONGOING and post.end_date < datetime.now().date():
+        if post.status == Status.ONGOING and post.end_date < datetime.now().date():
             post.update_status_if_needed()
         post.donation_list = Donation.objects.filter(ngopost=post).select_related('user').order_by('-payment_date')
 

@@ -99,14 +99,14 @@ class NGOPost(models.Model):
         return self.header
 
     def update_status_if_needed(self):
-        if self.status == self.Status.ONGOING and self.end_date < timezone.now().date():
-            self.status = self.Status.CLOSED
+        if self.status == Status.ONGOING and self.end_date < timezone.now().date():
+            self.status = Status.CLOSED
             self.save(update_fields=['status', 'updated_at'])
 
     @classmethod
     def bulk_auto_close(cls):
         now = timezone.now().date()
-        cls.objects.filter(status=cls.Status.ONGOING, end_date__lt=now).update(status=cls.Status.CLOSED)
+        cls.objects.filter(status=Status.ONGOING, end_date__lt=now).update(status=Status.CLOSED)
 
 
 
