@@ -19,8 +19,10 @@ from .models import (
 )
 from points.models import PointsActionType, PointsHistory
 from registration.views import validate_and_save_file
-# Load .env file
+
+
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 logger = logging.getLogger(__name__)
@@ -243,7 +245,7 @@ def coupon_detail(request, coupon_id):
             'redeemed_count': getattr(coupon, 'redeemed_count', 0),
             'validity': coupon.validity.strftime('%d/%m/%y,%H:%M') if getattr(coupon, 'validity', None) else '',
             'status': 'Active' if getattr(coupon, 'validity', None) and coupon.validity > timezone.now().date() else 'Expired',
-            'image_url': coupon.image.url if getattr(coupon, 'image', None) else '',
+            'image_url': coupon.image if coupon.image else '',
             'age_group': getattr(coupon.age_group, 'name', '') if hasattr(coupon, 'age_group') and coupon.age_group else '',
             'gender': getattr(coupon.gender, 'name', '') if hasattr(coupon, 'gender') and coupon.gender else '',
             'city': getattr(coupon.city, 'name', '') if hasattr(coupon, 'city') and coupon.city else '',
@@ -342,7 +344,7 @@ def get_coupon_history(request):
             end_date = datetime.strptime(end, "%Y-%m-%d")
             filters &= Q(created_at__range=(start_date, end_date))
         except Exception:
-            pass  # Invalid format, ignore or handle as needed
+            pass
 
     coupons = Coupon.objects.filter(filters).order_by('-created_at')
     paginator = Paginator(coupons, limit)

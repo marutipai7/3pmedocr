@@ -1,12 +1,9 @@
 from django.db import models
 from registration.models import User
-from datetime import datetime
+from django.utils import timezone
 from mongoengine import (
     FloatField, DateTimeField,
-    EmbeddedDocument, EmbeddedDocumentField,
-    ListField, IntField,
-    Document, StringField,
-    EmbeddedDocumentListField, PointField)
+    EmbeddedDocument)
 
 
 class SavedLocation(models.Model):
@@ -48,7 +45,18 @@ class PincodeLocation(models.Model):
     class Meta:
         unique_together = ('pincode', 'latitude', 'longitude')
         ordering = ['pincode']
+        
+class LocationSearchHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='location_search_history')
+    query = models.CharField(max_length=255, null=False, blank=False)
+    latitude = models.CharField(max_length=64, null=True, blank=True)
+    longitude = models.CharField(max_length=64, null=True, blank=True)
+    result_label = models.CharField(max_length=512, null=True, blank=True)
+    searched_at = models.DateTimeField(default=timezone.now)
 
+    class Meta:
+        db_table = 'location_search_history'
+        
 # class NavigationHistory(Document):
 #     user_id = StringField(required=True)
 #     session_id = StringField(required=True, unique=True)

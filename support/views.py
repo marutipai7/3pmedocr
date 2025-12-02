@@ -8,21 +8,20 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
 from django.core.serializers.json import DjangoJSONEncoder
+from registration.views import validate_and_save_file
 from rest_framework import serializers
 import logging
-logger = logging.getLogger(__name__) #for debugging purposes
+logger = logging.getLogger(__name__)
 
 @dashboard_login_required
 @require_http_methods(["GET", "POST"])
 def support_view(request):
-    user = request.user_obj  # ✅ Make sure this is a real user
+    user = request.user_obj
     context = get_common_context(request, user)
     issue_types = IssueType.objects.all()
     search_query = request.GET.get('search', '').strip()
 
     issue_types = IssueType.objects.exclude(name='chatbot_query').all()
-
-    # 🔍 Ticket filtering — do NOT run this if user is anonymous
     tickets = SupportTicket.objects.filter(user_id=user.id).order_by('-created_at')
 
     if search_query:
@@ -41,7 +40,6 @@ def support_view(request):
     })
     return render(request, 'support.html', context)
 
-# 🔄 AJAX: Load options for a given issue type (used in dropdown)
 @dashboard_login_required
 def get_issue_options(request):
     issue_type_id = request.GET.get('issue_type_id')
@@ -50,7 +48,6 @@ def get_issue_options(request):
     return JsonResponse({'options': data})
 
 
-# no use for now
 @require_POST
 @dashboard_login_required
 def log_custom_query(request):
@@ -64,8 +61,8 @@ def log_custom_query(request):
             return JsonResponse({'message': 'Query text is required.'}, status=400)
         
         if not user:
-             logger.error("log_custom_query: Unauthenticated user attempted to submit custom query.")
-             return JsonResponse({'message': 'User not authenticated.'}, status=401)
+            logger.error("log_custom_query: Unauthenticated user attempted to submit custom query.")
+            return JsonResponse({'message': 'User not authenticated.'}, status=401)
         
         try:
             chatbot_issue_option = IssueOption.objects.get(
@@ -142,7 +139,7 @@ def get_user_tickets(request):
 def get_bot_content_api(request):
     user = request.user_obj
     user_type = 'user'
-   
+    
     if hasattr(user, 'ngoprofile') and user.ngoprofile is not None:
         user_type = 'ngo'
     elif hasattr(user, 'advertiserprofile') and user.advertiserprofile is not None:
@@ -151,8 +148,6 @@ def get_bot_content_api(request):
         user_type = 'client'
     elif hasattr(user = 'Pharmacyprofile') and user.Pharmacyprofile is not None:
         user_type = 'pharmacy'
-
-    #logger.info(f"Chatbot content requested for user: {user.email}, determined type: {user_type}") #debugging
 
     try:
         chat_group = ChatOptionGroup.objects.get(user_type=user_type, is_active=True)
@@ -181,7 +176,6 @@ def get_bot_content_api(request):
             {"initial_message": "Sorry, an unexpected error occurred. Please try again later."},
             status=500)
 
-
 # store support/tickets form data 
 @dashboard_login_required 
 def submit_support_ticket(request):
@@ -191,7 +185,18 @@ def submit_support_ticket(request):
         issue_type_id = request.POST.get('issue_type')
         issue_option_id = request.POST.get('select_issue')
         description = request.POST.get('description')
-        image = request.FILES.get('image')
+        image_file = request.FILES.get('image')
+        
+        image_path = None
+        if image_file:
+            image_path, error = validate_and_save_file(
+                image_file,
+                subdir='support_issues',
+                field_label='Support Ticket Image',
+                user_type='user'
+            )
+            if error:
+                return JsonResponse({'success': False, 'message': error}, status=400)
 
         if issue_type_id and issue_option_id:
             try:
@@ -201,13 +206,9 @@ def submit_support_ticket(request):
                     created_by=user,
                     issue_option=issue_option,
                     description=description,
-                    image=image
+                    image=image_path,
                 )
-                return JsonResponse({
-                    'success': True,
-                    'ticket_id': ticket.ticket_id(),
-                    'message': 'Ticket created successfully.'
-                })
+                return JsonResponse({'success': True, 'ticket_id': ticket.ticket_id(), 'message': 'Ticket created successfully.'})
             except IssueOption.DoesNotExist:
                 return JsonResponse({'success': False, 'message': 'Invalid issue type or option'}, status=400)
 
@@ -277,14 +278,12 @@ def ticket_details(request):
             data = json.loads(request.body)
             ticket_id = data.get("ticket_id", "")
 
-            # Convert "#10000012" → 12
             db_id = int(ticket_id.replace("#", "")) - 10000000
 
             ticket = SupportTicket.objects.select_related(
                 "issue_option__issue_type", "created_by"
             ).get(id=db_id)
             
-            # Format datetime with AM/PM
             created_at = ticket.created_at.strftime("%d/%m/%Y, %I:%M %p")  
             updated_at = ticket.updated_at.strftime("%d/%m/%Y, %I:%M %p")  
 
@@ -297,7 +296,7 @@ def ticket_details(request):
                 "issue_type": ticket.issue_option.issue_type.name if ticket.issue_option else "N/A",
                 "status": ticket.get_status_display(),
                 "description": ticket.description,
-                "img": ticket.image.url if ticket.image else "",
+                "img": ticket.image if ticket.image else "",
             })
 
         except Exception as e:
@@ -322,14 +321,12 @@ def filter_tickets(request):
         except Exception:
             return JsonResponse({"error": "Invalid date format"})
 
-        # If both from and to date provided (range)
         if to_date:
             tickets = SupportTicket.objects.filter(
                 created_at__date__gte=from_date,
                 created_at__date__lte=to_date
             ).order_by("-created_at")
         else:
-            # For exact custom date selection
             tickets = SupportTicket.objects.filter(
                 created_at__date=from_date
             ).order_by("-created_at")
@@ -361,7 +358,6 @@ def filter_tickets_old(request):
         except Exception:
             return JsonResponse({"error": "Invalid date format"})
 
-        # INCLUSIVE range: from_date to to_date
         tickets = SupportTicket.objects.filter(
             created_at__date__gte=from_date,
             created_at__date__lte=to_date,
@@ -420,18 +416,17 @@ def send_support_email(request):
             return JsonResponse({'error': 'Missing fields'}, status=400)
 
         try:
-            # Prepare context for your email template
             context = {
                 'email': email,
                 'description': description,
             }
 
             send_custom_email(
-                to_email='laxmi.kumari@aibuzz.net',  # ✅ recipient
+                to_email='laxmi.kumari@aibuzz.net',
                 subject=f"Support Request from {email}",
-                template_name='emails/email-template.html',  # ✅ your HTML template
+                template_name='emails/email-template.html',
                 context=context,
-                from_email=email  # Optional
+                from_email=email
             )
 
             return JsonResponse({'message': 'Email sent successfully!'})

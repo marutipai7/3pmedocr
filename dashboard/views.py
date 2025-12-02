@@ -371,7 +371,7 @@ def coupon_detail(request, coupon_id):
             'redeemed_count': getattr(coupon, 'redeemed_count', 0),
             'validity': coupon.validity.strftime('%d/%m/%y,%H:%M') if getattr(coupon, 'validity', None) else '',
             'status': 'Active' if getattr(coupon, 'validity', None) and coupon.validity > timezone.now().date() else 'Expired',
-            'image_url': coupon.image.url if getattr(coupon, 'image', None) else '',
+            'image_url': coupon.image if coupon.image else '',
             'age_group': getattr(coupon.age_group, 'name', '') if hasattr(coupon, 'age_group') and coupon.age_group else '',
             'gender': getattr(coupon.gender, 'name', '') if hasattr(coupon, 'gender') and coupon.gender else '',
             'city': getattr(coupon.city, 'name', '') if hasattr(coupon, 'city') and coupon.city else '',

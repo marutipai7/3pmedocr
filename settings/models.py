@@ -1,5 +1,6 @@
 from django.db import models
-from django.db.models import JSONField
+from registration.models import User
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 USER_TYPE = [

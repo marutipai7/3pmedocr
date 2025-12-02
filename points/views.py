@@ -2,13 +2,8 @@ import json
 import datetime
 from django.shortcuts import render
 from dashboard.utils import dashboard_login_required, get_common_context
-from .models import (
-    PointsHistory,
-    PointsActionType,
-    PointsBadge,
-    CouponClaimed
-    )
-from coupon.models import Coupon
+from .models import PointsHistory, PointsActionType, PointsBadge
+from coupon.models import Coupon, CouponClaimed
 from collections import defaultdict
 from django.http import JsonResponse
 from django.template.loader import render_to_string

@@ -151,18 +151,20 @@ def donate_pay_view(request, post_id=None):
         amount = float(request.POST.get('donation_amount', 0))
         if amount < 100:
             return JsonResponse({'error': 'Minimum donation is ₹100'}, status=400)
-        # Prevent donations exceeding target amount
+
         if (post.donation_received or Decimal('0.00')) + Decimal(str(amount)) > post.target_donation:
             return JsonResponse({'error': 'Donation exceeds the target amount for this post.'}, status=400)
-        # Enforce donation frequency
+        
         freq = post.donation_frequency.lower()
         user_donations_count = Donation.objects.filter(ngopost=post, user=user).count()
         allowed = 1 if 'one' in freq else 2 if 'two' in freq else 3 if 'three' in freq else 1
         if user_donations_count >= allowed:
             return JsonResponse({'error': f'You can donate only {allowed} time(s) to this post.'}, status=400)
+        
         platform_fee = round(amount * 0.02, 2)
         gst = round(platform_fee * 0.18, 2)
         amount_to_ngo = round(amount - platform_fee - gst, 2)
+        
         pan_number = request.POST.get('pan_number', '')
         pan_document_file = request.FILES.get('pan_document')
         if not pan_number or len(pan_number) != 10:
@@ -170,6 +172,7 @@ def donate_pay_view(request, post_id=None):
         pan_document_path, error = validate_and_save_file(pan_document_file, 'donation_docs', 'PAN Document', user_type='common')
         if error:
             return JsonResponse({'error': error}, status=400)
+        
         order_id = str(uuid.uuid4().hex[:8])
         transaction_id = str(uuid.uuid4().hex[:8])
         donation = Donation.objects.create(
@@ -192,18 +195,11 @@ def donate_pay_view(request, post_id=None):
         post.save(update_fields=['donation_received'])
         try:
             action_type_obj = PointsActionType.objects.get(action_type='Donate')
-            PointsHistory.objects.create(
-                user=user,
-                action_type=action_type_obj,
-                points=action_type_obj.default_points
-            )
+            PointsHistory.objects.create(user=user, action_type=action_type_obj, points=action_type_obj.default_points)
         except PointsActionType.DoesNotExist:
             logger.warning("PointsActionType for 'Donate' does not exist. No points awarded.")
         return JsonResponse({'success': True, 'order_id': order_id, 'transaction_id': transaction_id})
-    context.update({
-    "post": post,
-    "ngo_profile": ngo_profile
-    })
+    context.update({ "post": post, "ngo_profile": ngo_profile})
     return render(request, "advertiser/donate-pay.html", context)
 
 

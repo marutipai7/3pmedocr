@@ -27,10 +27,10 @@ class Donation(models.Model):
     transaction_id = models.CharField(max_length=64, unique=True, blank=True, null=True, help_text="Transaction ID (alphanumeric)")
     payment_method = models.CharField(max_length=32, choices=PAYMENT_METHOD_CHOICES, default='UPI')
     pan_number = models.CharField(max_length=32, blank=True, null=True)
-    pan_document = models.FileField(upload_to='common_docs/donation_docs/', blank=True, null=True)
+    pan_document = models.CharField(max_length=255, null=True, blank=True)
     payment_status = models.CharField(max_length=16, choices=PAYMENT_STATUS_CHOICES, default='Success')
     saved = models.BooleanField(default=False, help_text="Whether the donation is saved/bookmarked by the user")
-    created_at = models.DateTimeField(auto_now_add=True) ## Order ID, Payment date, gst, platform fee, amount to ngo, transaction id(alphanumeric), etc.
+    created_at = models.DateTimeField(auto_now_add=True) 
 
     def __str__(self):
         return f"Donation by {self.user_id} to post {self.ngopost_id} - {self.amount}"

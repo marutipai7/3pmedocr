@@ -152,7 +152,7 @@ def save_ngo_post(request):
     if request.method != "POST":
         return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-    user = request.user_obj  # set in middleware
+    user = request.user_obj
 
     data = request.POST
     files = request.FILES.getlist('creatives[]')
@@ -213,15 +213,13 @@ def post_detail(request, post_id):
         post = NGOPost.objects.get(id=post_id)
     except NGOPost.DoesNotExist:
         raise Http404('Post not found')
-    # Get donations for this post
     donations = Donation.objects.filter(ngopost=post).select_related('user')
     donation_list = []
     for d in donations:
         user = d.user
         profile = None
-        name = user.email  # fallback
+        name = user.email  
         city = ''
-        # Dynamically get the correct profile and name/city fields
         if user.user_type == 'user':
             profile = getattr(user, 'userprofile', None)
             if profile:
