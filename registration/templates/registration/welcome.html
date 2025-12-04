@@ -48,7 +48,7 @@
     </div>
     <!-- Mobile Heading -->
     <p class="font-bold text-3xl text-primary-color text-center sm:hidden pt-6 pb-6">Choose Your Role</p>
-    <div class="pt-2 flex flex-col gap-6 md:gap-4 items-center">
+    <div class="pt-2 flex flex-col gap-6 md:gap-4 items-center mainRoles">
       <!-- Role Options -->
       <div
         data-role="customer"
@@ -59,7 +59,17 @@
           I want to buy medicine or use health services
         </span>
       </div>
-      <div
+      <div data-role="medicalProvider"
+        class="w-85 sm:w-full role-option group border-2 border-primary-color px-4 py-2 rounded-lg cursor-pointer hover:bg-primary-color hover:text-white active:bg-primary-color active:text-white transition">
+        <p class="font-semibold text-sm sm:text-base md:text-lg text-nowrap">
+          I’m a Medical Provider (Doctor,Pharmacy & Labs)
+        </p>
+        <span
+          class="text-nowrap font-normal text-sm md:text-lg text-blue-teal group-hover:text-white/80 group-active:text-white/80">
+          I want to provide medical services
+        </span>
+      </div>
+      {% comment %} <div
         data-role="Pharmacy"
         class="w-85 sm:w-full role-option group border-2 border-primary-color px-4 py-2 rounded-lg cursor-pointer hover:bg-primary-color hover:text-white active:bg-primary-color active:text-white transition"
       >
@@ -69,7 +79,7 @@
         <span class="text-nowrap font-normal text-sm md:text-lg text-blue-teal group-hover:text-white/80 group-active:text-white/80">
           I want to provide medical services
         </span>
-      </div>
+      </div> {% endcomment %}
       <div
         data-role="client"
         class="w-85 sm:w-full role-option group border-2 border-primary-color px-4 py-2 rounded-lg cursor-pointer hover:bg-primary-color hover:text-white active:bg-primary-color active:text-white transition"
@@ -99,6 +109,50 @@
       </div>
     </div>
 
+    <!--Medical Provider sub roles-->
+    <div class="pt-2 flex flex-col gap-6 md:gap-4! items-center medicalProviderRoles hidden">
+      <!-- Role Option -->
+      <div data-role="doctor"
+        class="w-85 sm:w-full role-option group border-2 border-primary-color px-4 py-2 rounded-lg cursor-pointer hover:bg-primary-color hover:text-white active:bg-primary-color active:text-white transition">
+        <p class="font-semibold text-base md:text-lg">I'm a Doctor</p>
+        <span
+          class="text-nowrap font-normal text-sm md:text-lg text-blue-teal group-hover:text-white/80 group-active:text-white/80">
+          I want to purchase medicines or access healthcare services.
+        </span>
+      </div>
+
+      <!-- Role Option -->
+      <div data-role="Pharmacy"
+        class="w-85 sm:w-full role-option group border-2 border-primary-color px-4 py-2 rounded-lg cursor-pointer hover:bg-primary-color hover:text-white active:bg-primary-color active:text-white transition">
+        <p class="font-semibold text-sm sm:text-base md:text-lg text-nowrap">
+          I’m a Pharmacy Owner
+        </p>
+        <span
+          class="text-nowrap font-normal text-sm md:text-lg text-blue-teal group-hover:text-white/80 group-active:text-white/80">
+          I want to offer medical products and services.
+        </span>
+      </div>
+
+      <!-- Role Option -->
+      <div data-role="hospital"
+        class="w-85 sm:w-full role-option group border-2 border-primary-color px-4 py-2 rounded-lg cursor-pointer hover:bg-primary-color hover:text-white active:bg-primary-color active:text-white transition">
+        <p class="font-semibold text-base md:text-lg">I'm a Hospital Admin</p>
+        <span
+          class="font-normal text-sm md:text-lg text-blue-teal group-hover:text-white/80 group-active:text-white/80">
+          I want to onboard my hospital or clinic to the platform.
+        </span>
+      </div>
+
+      <!-- Role Option -->
+      <div data-role="lab"
+        class="w-85 sm:w-full role-option group border-2 border-primary-color px-4 py-2 rounded-lg cursor-pointer hover:bg-primary-color hover:text-white active:bg-primary-color active:text-white transition">
+        <p class="font-semibold text-base md:text-lg">I'm a Lab Technician</p>
+        <span
+          class="font-normal text-sm md:text-lg text-blue-teal group-hover:text-white/80 group-active:text-white/80">
+          I want to showcase my laboratory products and services to users.
+        </span>
+      </div>
+    </div>
     <!--Login Button Mobile-->
     <div class="flex items-center gap-2 pt-4 sm:hidden">
       <hr class="flex-1 border-t-2 border-primary-color ml-10" />
@@ -113,6 +167,16 @@
     <a href="{% url 'login' %}">
       <span class="hidden sm:flex justify-end font-normal text-xs pr-2 pt-2">Already have an account?</span>
     </a>
+    <div class="hidden sm:flex justify-center items-center gap-3 pt-6">
+      <button
+        class="hidden border border-primary-color text-primary-color w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-3 backBtn rounded-lg cursor-pointer transform transition duration-200 hover:-translate-y-1 hover:shadow-md">
+        Back
+      </button>
+      <button
+        class="bg-primary-color text-white w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-3 continueBtn rounded-lg cursor-pointer transform transition duration-200 hover:-translate-y-1 hover:shadow-md">
+        Continue
+      </button>
+    </div>
     
   </div>
 </div>
@@ -128,10 +192,10 @@ $(document).ready(function() {
     }, 2000);
 
     // Dynamic routing for role selection
-    $(".role-option").on("click", function() {
-        var role = $(this).data("role");
-        window.location.href = "/user/register/" + role;
-    });
+    //$(".role-option").on("click", function() {
+    //    var role = $(this).data("role");
+    //    window.location.href = "/user/register/" + role;
+    //});
 });
 </script>
 {% endblock %}

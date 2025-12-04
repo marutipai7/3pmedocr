@@ -104,53 +104,144 @@ $(document).ready(function () {
     });
   });
 
-  let selectedRole = null;
+let selectedRole = null;
+let isMedicalProviderSubRole = false;
 
-$('.role-option').on('click', function () {
-  // Reset all options
-  $('.role-option')
-    .removeClass('bg-primary-color text-white')
-    .find('span')
-    .removeClass('text-white/80');
+// Check on page load if we need to show medical provider roles
+$(document).ready(function() {
+  const showMedicalProviderRoles = sessionStorage.getItem('showMedicalProviderRoles');
+  
+  if (showMedicalProviderRoles === 'true') {
+    // Show medical provider sub-roles
+    $(".mainRoles").hide();
+    $(".medicalProviderRoles").removeClass("hidden");
+    $(".bottomDesign").removeClass("-bottom-41").addClass("-bottom-62");
+    $(".backBtn").removeClass("hidden");
+    isMedicalProviderSubRole = true;
+    
+    // Clear the flag
+    sessionStorage.removeItem('showMedicalProviderRoles');
+  }
+});
+
+// Handle clicks on main roles
+$(".mainRoles .role-option").on("click", function () {
+  // Reset all options in main roles
+  $(".mainRoles .role-option")
+    .removeClass("bg-primary-color text-white")
+    .find("span")
+    .removeClass("text-white/80");
 
   // Highlight selected
   $(this)
-    .addClass('bg-primary-color text-white')
-    .find('span')
-    .addClass('text-white/80');
+    .addClass("bg-primary-color text-white")
+    .find("span")
+    .addClass("text-white/80");
 
-  selectedRole = $(this).data('role');
+  selectedRole = $(this).data("role");
 
   const redirects = {
-    customer: '/src/auth/register_user.html',
-    Pharmacy: '/src/auth/medical-pharmacy-register.html',
-    client: '/src/auth/client-register.html',
-    advertiser: '/src/auth/advertiser_register.html',
-    ngoOwner: '/src/auth/ngo_register.html',
+    customer: "/user/register/customer",
+    client: "/user/register/client",
+    advertiser: "/user/register/advertiser",
+    ngoOwner: "/user/register/ngoOwner",
+    medicalProvider: null,
   };
 
-  // Auto-redirect on mobile (less than 640px width)
-  if (window.innerWidth < 640) {
-    window.location.href = redirects[selectedRole] || '/';
+  // Auto-redirect on mobile (less than 640px width) - except for medical provider
+  if (window.innerWidth < 640 && selectedRole !== "medicalProvider") {
+    window.location.href = redirects[selectedRole] || "/";
   }
 });
 
-$('.continueBtn').on('click', function () {
+// Handle clicks on medical provider sub-roles
+$(".medicalProviderRoles .role-option").on("click", function () {
+  // Reset all options in sub-roles
+  $(".medicalProviderRoles .role-option")
+    .removeClass("bg-primary-color text-white")
+    .find("span")
+    .removeClass("text-white/80");
+
+  // Highlight selected
+  $(this)
+    .addClass("bg-primary-color text-white")
+    .find("span")
+    .addClass("text-white/80");
+
+  selectedRole = $(this).data("role");
+
+  const redirects = {
+    doctor: "#",
+    Pharmacy: "/user/register/Pharmacy",
+    hospital: "#",
+    lab: "#",
+  };
+
+  // Auto-redirect on mobile
+  if (window.innerWidth < 640) {
+    // Set flag before redirect
+    sessionStorage.setItem('fromMedicalProviderRoles', 'true');
+    window.location.href = redirects[selectedRole] || "/user/register";
+  }
+});
+
+$(".continueBtn").on("click", function () {
   if (!selectedRole) {
-    toastr.error('Please select a role before continuing.');
+    toastr.error("error", "Please select a role before continuing.");
     return;
   }
 
-  const redirects = {
-    customer: '/src/auth/register_user.html',
-    Pharmacy: '/src/auth/medical-pharmacy-register.html',
-    client: '/src/auth/client-register.html',
-    advertiser: '/src/auth/advertiser_register.html',
-    ngoOwner: '/src/auth/ngo_register.html',
+  // If medical provider is selected and we're not in sub-role view yet
+  if (selectedRole === "medicalProvider" && !isMedicalProviderSubRole) {
+    // Hide main roles and show medical provider sub-roles
+    $(".mainRoles").hide();
+    $(".medicalProviderRoles").removeClass("hidden");
+    $(".bottomDesign").removeClass("-bottom-41").addClass("-bottom-62");
+    $(".backBtn").removeClass("hidden");
+    isMedicalProviderSubRole = true;
+    selectedRole = null; // Reset selection for sub-role
+    return;
+  }
+
+  // Handle main roles
+  const mainRoleRedirects = {
+    customer: "/user/register/customer",
+    client: "/user/register/client",
+    advertiser: "/user/register/advertiser",
+    ngoOwner: "/user/register/ngoOwner",
+    medicalProvider: null,
   };
 
-  window.location.href = redirects[selectedRole] || '/';
+  // Handle medical provider sub-roles
+  const medicalProviderRedirects = {
+    doctor: "#",
+    Pharmacy: "/user/register/Pharmacy",
+    hospital: "#",
+    lab: "#",
+  };
+
+  const redirectUrl = isMedicalProviderSubRole
+    ? medicalProviderRedirects[selectedRole]
+    : mainRoleRedirects[selectedRole];
+
+  // Set flag before redirect if going to medical provider form
+  if (isMedicalProviderSubRole) {
+    sessionStorage.setItem('fromMedicalProviderRoles', 'true');
+  }
+
+  window.location.href = redirectUrl || "/";
 });
+
+$(".backBtn").on("click", function () {
+  $(".mainRoles").show();
+  $(".medicalProviderRoles").addClass("hidden");
+  $(".bottomDesign").removeClass("-bottom-62").addClass("-bottom-41");
+  $(".backBtn").addClass("hidden");
+  isMedicalProviderSubRole = false;
+  
+  // Clear the flag
+  sessionStorage.removeItem('fromMedicalProviderRoles');
+});  // Set placeholder dynamically based on screen size
 
 // Set placeholder dynamically based on screen size
 function setPlaceholder() {

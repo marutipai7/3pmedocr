@@ -13,6 +13,7 @@ env/
 *.ipynb
 staticfiles/
 */migrations
+seller_frontend/
 # Node.js
 node_modules/
 npm-debug.log*
