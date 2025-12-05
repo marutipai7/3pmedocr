@@ -14,6 +14,8 @@
     --color-teal-tropical:#3AAFA9E5;
     --color-teal-medium:#3AAFA912;
     --color-soft-teal: #DCEFEF;
+    --color-dodger-blue: #007BFF;
+    --color-light-dodger-blue: #EEF6FF;
     --color-frosted-cloud: #F8FAFC;
     --color-powder-cyan: #F7FFFF;
     --color-strong-red: #B00020;
@@ -346,8 +348,37 @@ body {
 .active-tab1{
     @apply text-living-coral border-b-3 border-living-coral;
 }
+.primary-btn-donate {
+  @apply flex items-center justify-center cursor-pointer gap-2 w-[133px] px-2 h-[48px] rounded-[10px] bg-dodger-blue text-white text-18-nr
+}
 
+.primary-btn-lab {
+  @apply flex items-center justify-center cursor-pointer gap-2 w-[133px] px-2 h-[48px] rounded-[10px] bg-dodger-blue text-white text-18-nr
+}
+.active-tab-points {
+  @apply text-dodger-blue border-b-3 border-dodger-blue font-semibold;
 
+}
+.active-tab-donate{
+     @apply text-dodger-blue border-b-3 border-dodger-blue font-semibold;
+
+}
+.active-tab-hospital {
+  @apply text-dodger-blue border-b-3 border-dodger-blue font-semibold;
+
+}
+
+.active-tab-donate {
+  @apply text-dodger-blue border-b-3 border-dodger-blue font-semibold;
+
+}
+.active-tab-support {
+  @apply text-dodger-blue border-b-3 border-dodger-blue font-semibold;
+
+}
+.active-tab-main {
+  @apply font-semibold text-dodger-blue
+}
 .active-tab-pharmacy{
      @apply text-light-sea-green border-b-3 border-light-sea-green;
 

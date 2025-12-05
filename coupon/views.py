@@ -15,7 +15,7 @@ from django.views.decorators.http import require_GET, require_http_methods
 from dashboard.utils import dashboard_login_required, get_common_context
 from .models import (
     Coupon, CategoryOption, BrandOption, OfferTypeOption, CountryOption,
-    StateOption, CityOption, PincodeOption, AgeOption, GenderOption, SpendingPowerOption
+    StateOption, CityOption, PincodeOption, AgeOption, GenderOption, SpendingPowerOption, PaymentStatusEnum
 )
 from points.models import PointsActionType, PointsHistory
 from registration.views import validate_and_save_file
@@ -180,12 +180,13 @@ def coupon_view(request):
                 image=image_path,
                 displays_per_coupon=displays_per_coupon_int,
                 rate_per_display=rate_per_display_float,
-                payment_method=payment_method,
-                payment_status="Pending",
+                payment_method=payment_method.upper(),
+                payment_status=PaymentStatusEnum.PENDING,
                 payment_details="",
                 final_paid_amount=final_paid_amount_float,
                 gst_amount=gst_amount_float,
             )
+            print(1234567890, coupon)
             coupon.save()
 
             # --- Award points ---

@@ -107,10 +107,10 @@ def get_base_context(user):
 def handle_contact_person(profile_type, profile):
     contact = ContactPerson.objects.filter(profile_type=profile_type, profile=profile).first()
     return {
-        'contact_name': contact.name,
-        'contact_phone_country_code': contact.phone_country_code,
-        'contact_phone_number': contact.phone_number,
-        'contact_role': contact.role
+        'contact_name': contact.name if contact else '',
+        'contact_phone_country_code': contact.phone_country_code if contact else '',
+        'contact_phone_number': contact.phone_number if contact else '',
+        'contact_role': contact.role if contact else ''
     }
 
 def handle_advertiser_profile(user):
@@ -218,7 +218,7 @@ def handle_pharmacy_profile(user):
         'services_offered': profile.services_offered,
         'all_services': all_services,
         'all_workingdays': all_workingdays,
-        'website_url': profile.website_url,
+        # 'website_url': profile.website_url,
         'address': profile.address,
         'city': profile.city,
         'state': profile.state,
@@ -232,8 +232,8 @@ def handle_pharmacy_profile(user):
         'medical_license_doc_path': os.path.basename(profile.medical_license_doc_path) if profile.medical_license_doc_path else "",
         'pan_number': profile.pan_number,
         'pan_doc_path': os.path.basename(profile.pan_doc_path) if profile.pan_doc_path else "",
-        'tan_number': profile.tan_number,
-        'tan_doc_path': os.path.basename(profile.tan_doc_path) if profile.tan_doc_path else "",
+        # 'tan_number': profile.tan_number,
+        # 'tan_doc_path': os.path.basename(profile.tan_doc_path) if profile.tan_doc_path else "",
         'storefront_image_path': os.path.basename(profile.storefront_image_path) if profile.storefront_image_path else "",
     }
     data.update(handle_contact_person(user.user_type, user))

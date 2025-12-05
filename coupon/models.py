@@ -79,9 +79,9 @@ class PaymentMethodEnum(models.TextChoices):
     OTHER = "Other"
 
 class PaymentStatusEnum(models.TextChoices):
-    PENDING = "pending"
-    SUCCESS = "success"
-    FAILED = "failed"
+    PENDING = "PENDING"
+    SUCCESS = "SUCCESS"
+    FAILED = "FAILED"
     
 class Coupon(models.Model):
     advertiser = models.ForeignKey(User, on_delete=models.CASCADE, related_name='coupons')
