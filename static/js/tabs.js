@@ -191,3 +191,37 @@ $(document).ready(function () {
   $(".tab-btn-client").eq(0).click();
 
 });
+
+  $(".tab-btn-hospital").click(function () {
+    var target = $(this).data("tab");
+    $(".tab-btn-hospital")
+      .removeClass(
+        "active-tab-hospital font-semibold border-b-2 border-dark-blue text-dark-gray"
+      )
+      .addClass("font-medium text-light-gray1");
+    $(this)
+      .addClass(
+        "active-tab-hospital font-semibold border-b-2 border-dark-blue text-dark-gray"
+      )
+      .removeClass("font-medium text-light-gray1");
+    $(".tab-content").addClass("hidden");
+    $("." + target).removeClass("hidden");
+    if (target === "points") {
+      $(".diamond-user").show();
+    } else {
+      $(".diamond-user").hide();
+    }
+
+    if (target === "documents") {
+      $(".editIcon").hide();
+      $(".fileLimit").removeClass("hidden");
+    } else {
+      $(".editIcon").show();
+      $(".fileLimit").addClass("hidden");
+    }
+    if (target === "notification-control") {
+      $(".edit-toggle").hide();
+    } else {
+      $(".edit-toggle").show();
+    }
+  });

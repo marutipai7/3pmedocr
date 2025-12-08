@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from dashboard.models import SettingMenu
 from dashboard.utils import dashboard_login_required, get_common_context, get_theme_colors
-
+from .models import LabAppointments, AppointmentStatus, LabAutoBidSettings, LabBidStatus, LabBidding, LabSubscription
 
 @dashboard_login_required
 def appointment_view(request):

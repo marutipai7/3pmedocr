@@ -726,7 +726,16 @@ def advertiser_advance(request):
             'user':user
         })
         return render(request, "advertiser/advertiser_advance.html", context)
-
+    elif user.user_type == 'lab':
+        lab_profile = LabProfile.objects.get(user=user)
+        context.update({
+            'lab_profile': lab_profile,
+            'user_display_name': lab_profile.lab_name,
+            'user_profile': user,
+            'user':user
+        })
+        return render(request, "lab/lab_advance.html", context)
+    
 @dashboard_login_required
 def advertiser_advance_history(request):
     user = request.user_obj
