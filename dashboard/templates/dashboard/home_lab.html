@@ -47,17 +47,20 @@
           <!--Hospital Image and Admin Details-->
           <div class="flex flex-col lg:flex-row gap-2  pt-5 ml-3">
             <div class="relative">
-              <img src="/static/images/lab-bg.png" alt="Lab" class="w-[880px] h-[330px] object-cover rounded-lg">
+              <img src="{{ lab_profile.lab_photo_path|default:'/static/images/lab-bg.png' }}" alt="Lab" class="w-[880px] h-[330px] object-cover rounded-lg">
               <div class="absolute inset-0 flex items-end">
                 <div class=" bg-semi-transparent-black backdrop-blur-sm w-full text-white px-6 py-3 rounded-lg">
                   <div class="flex flex-col gap-2">
                     <div class="flex items-center gap-2">
                       <span class="material-symbols-outlined">home</span>
-                      <p class="text-base font-semibold">HealthPlus Diagnostic Center</p>
+                      <p class="text-base font-semibold">{{ lab_profile.lab_name|default:"Your Lab Name" }}</p>
                     </div>
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                      <p class="font-semibold text-sm">221/A, 2nd Floor, Shanti Nagar Road, Sector 10, Andheri
-                        East, <br> Mumbai, Maharashtra – 400093
+                      <p class="font-semibold text-sm">
+                        {{ lab_profile.address|default:"Address not available" }},
+                        {{ lab_profile.city|default:"" }},
+                        {{ lab_profile.state|default:"" }} –
+                        {{ lab_profile.pincode|default:"" }}
                       </p>
                       <div class="bg-pale-azure rounded-lg p-2 flex items-center justify-center">
                         <span class="font-semibold text-xs text-dodger-blue">Active Bids: 7</span>
