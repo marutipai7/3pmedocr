@@ -25,3 +25,5 @@ build/
 # package files
 package.json
 package-lock.json
+
+medocr_crm/
