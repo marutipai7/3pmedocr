@@ -97,7 +97,7 @@ class LabAppointments(models.Model):
     address = models.ForeignKey(
         "registration.UserAddress",
         on_delete=models.CASCADE,
-        related_name="lab_appointments"
+        related_name="lab_appointments",
     )
 
     test_type = models.ForeignKey(

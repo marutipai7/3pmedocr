@@ -190,8 +190,6 @@ $(document).ready(function () {
   });
   $(".tab-btn-client").eq(0).click();
 
-});
-
   $(".tab-btn-hospital").click(function () {
     var target = $(this).data("tab");
     $(".tab-btn-hospital")
@@ -225,3 +223,5 @@ $(document).ready(function () {
       $(".edit-toggle").show();
     }
   });
+  $(".tab-btn-hospital").eq(0).click();
+});

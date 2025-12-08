@@ -79,11 +79,14 @@ def get_common_context(request, user):
         trophy = "trophy-advertiser.svg"
     elif user_type == "pharmacy":
         trophy = "trophy-pharmacy.svg"
+    elif user_type == "lab":
+        trophy = "trophy-hospital.svg"
     tab_class_map = {
     "advertiser": "tab-btn-advertiser",
     "client": "tab-btn-client",
     "pharmacy": "tab-btn-pharmacy",
     "ngo": "tab-btn-ngo",
+    "lab": "tab-btn-hospital",
     }
 
     active_tab_class_map = {
@@ -91,6 +94,7 @@ def get_common_context(request, user):
         "client": "active-tab-client",
         "pharmacy": "active-tab-pharmacy",
         "ngo": "active-tab-ngo",
+        "lab": "active-tab-hospital",
     }
     context = {
         "user_profile": user,

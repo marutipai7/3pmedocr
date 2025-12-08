@@ -16,7 +16,7 @@ from dashboard.utils import dashboard_login_required
 from registration.views import validate_and_save_file
 from points.models import PointsActionType, PointsHistory
 from django.views.decorators.http import require_POST, require_GET
-from registration.models import NGOProfile, AdvertiserProfile, ClientProfile, PharmacyProfile, ContactPerson
+from registration.models import NGOProfile, AdvertiserProfile, ClientProfile, PharmacyProfile, ContactPerson, LabProfile
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +30,8 @@ def donate_view(request):
         user_profile = ClientProfile.objects.filter(user=user).first()
     elif user.user_type == 'pharmacy':
         user_profile = PharmacyProfile.objects.filter(user=user).first()
+    elif user.user_type == 'lab':
+        user_profile = LabProfile.objects.filter(user=user).first()
 
     donation_query = request.GET.get('donation_query', '').strip().lower()
 
@@ -47,11 +49,18 @@ def donate_view(request):
     }
     primary_bg = context.get("primary_bg")
     context["hexcolor"] = color_hex_map.get(primary_bg)
-    context.update({
+    if user.user_type == "lab":
+        context.update({
         "donations": donations,
         "donation_query": donation_query,
-        'user_display_name': user_profile.company_name,
+        'user_display_name': user_profile.lab_name,
     })
+    else:
+        context.update({
+            "donations": donations,
+            "donation_query": donation_query,
+            'user_display_name': user_profile.company_name,
+        })
     return render(request, "advertiser/donate.html", context)
 
 @dashboard_login_required
@@ -276,8 +285,8 @@ def get_donate_bill(request, donation_id):
         "amount": f"₹{donation.amount}",
         "pay_mode": f"{donation.payment_method}",
         "address": f"{ngo_profile.address}, {ngo_profile.city}, {ngo_profile.state}, {ngo_profile.pincode}",
-        "name": contact_person.name,
-        "email": user.email,
+        "name": contact_person.name if contact_person else "",
+        "email": user.email if user.email else "",
     }
 
     return JsonResponse(response_data)
@@ -306,8 +315,8 @@ def get_platform_bill(request, donation_id):
         "amount": f"₹{donation.amount}",
         "pay_mode": f"₹{donation.payment_method}",
         "address": f"{ngo_profile.address}, {ngo_profile.city}, {ngo_profile.state}, {ngo_profile.pincode}",
-        "name": contact_person.name,
-        "email": user.email,
+        "name": contact_person.name if contact_person else "",
+        "email": user.email if user.email else "",
         "finalTotal": f"{(donation.amount + donation.gst):.2f}",
     }
 
