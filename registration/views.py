@@ -104,12 +104,18 @@ def register_by_role(request, role):
 
     elif role == "Pharmacy":
         context["pharmacy_types"] = PharmacyType.objects.filter(is_active=True)
-        context["medical_pharmacy_services"] = PharmacyServices.objects.filter(is_active=True)
-        context["medical_pharmacy_timing"] = PharmacyTiming.objects.filter(is_active=True)
+        context["pharmacy_services"] = PharmacyServices.objects.filter(is_active=True)
+        context["pharmacy_timing"] = PharmacyTiming.objects.filter(is_active=True)
     
     elif role == "lab":
-        context["medical_lab_services"] = LabService.objects.filter(is_active=True)
-        context["medical_lab_timing"] = LabTiming.objects.filter(is_active=True)
+        context["lab_services"] = LabService.objects.filter(is_active=True)
+        context["lab_facilities"] = LabFacility.objects.filter(is_active=True)
+        context["lab_timing"] = LabTiming.objects.filter(is_active=True)
+
+    elif role == "doctor":
+        context["doctor_speciality"] = DoctorSpeciality.objects.all()
+        context["doctor_experience"] = DoctorExperience.objects.all()
+        context["doctor_education"] = DoctorEducation.objects.all()
 
     return render(request, tpl, context)
 
@@ -1124,28 +1130,389 @@ def save_medical_pharmacy(request):
     return JsonResponse({"success": True, "message": "Medical pharmacy registered successfully."})
 
 @csrf_protect
+@require_POST
+def save_lab(request):
+    data = request.POST
+    files = request.FILES
+    errors = {}
+
+    # Basic fields
+    email = data.get("email", "").strip()
+    password = data.get("password", "").strip()
+    confirm_password = data.get("confirm_password", "").strip()
+    phone_country_code = "+91"
+    phone_number = data.get("phone")
+
+    # Email Validation
+    if not email:
+        errors["email"] = "Email is required."
+    else:
+        try:
+            validate_email(email)
+        except ValidationError:
+            errors["email"] = "Enter a valid email address."
+        if User.objects.filter(email=email).exists():
+            errors["email"] = "Email already registered."
+
+    # Password Validation
+    if not password or len(password) < 8:
+        errors["password"] = "Password must be at least 8 chars."
+    if password != confirm_password:
+        errors["confirm_password"] = "Passwords do not match."
+
+    # Required Lab Fields
+    lab_name = data.get("lab_name")
+    if not lab_name:
+        errors["lab_name"] = "Lab name is required."
+
+    address = data.get("address")
+    city = data.get("city")
+    state = data.get("state")
+    pincode = data.get("pincode")
+
+    if not address: errors["address"] = "Address is required."
+    if not city: errors["city"] = "City is required."
+    if not state: errors["state"] = "State is required."
+    if not pincode or not re.match(r"^\d{4,10}$", pincode):
+        errors["pincode"] = "Enter valid pincode."
+
+    # Documents
+    lab_certificate_path, err = validate_and_save_file(files.get("lab_certificate"), "lab_certificate", "Lab Certificate", "lab")
+    if err: errors["lab_certificate"] = err
+
+    aadhar_path, err = validate_and_save_file(files.get("aadhar_doc"), "aadhar", "Aadhar Document", "lab")
+    if err: errors["aadhar_doc"] = err
+
+    pan_doc_path, err = validate_and_save_file(files.get("pan_doc"), "pan", "PAN Document", "lab")
+    if err: errors["pan_doc"] = err
+
+    lab_photo, err = validate_and_save_file(files.get("lab_photo"), "lab_photo", "Lab Photo", "lab")
+    if err: errors["lab_photo"] = err
+
+    # Contact Person
+    contact_name = data.get("contact_name")
+    contact_phone = data.get("contact_phone")
+
+    if not contact_name: errors["contact_name"] = "Contact person name required."
+    if not contact_phone: errors["contact_phone"] = "Contact person phone required."
+
+    if errors:
+        return JsonResponse({"success": False, "errors": errors}, status=400)
+
+    # User Create
+    user = User.objects.create(
+        email=email,
+        phone_country_code=phone_country_code,
+        phone_number=phone_number,
+        password=make_password(password),
+        user_type="lab"
+    )
+
+    # Profile Create
+    lab = LabProfile.objects.create(
+        user=user,
+        lab_name=lab_name,
+        address=address,
+        city=city,
+        state=state,
+        pincode=pincode,
+        lab_certificate_path=lab_certificate_path,
+        lab_certificate_virus_scanned=bool(lab_certificate_path),
+        identity_proof_aadhar_path=aadhar_path,
+        identity_proof_aadhar_virus_scanned=bool(aadhar_path),
+        identity_proof_pan_path=pan_doc_path,
+        identity_proof_pan_virus_scanned=bool(pan_doc_path),
+        lab_photo_path=lab_photo,
+        lab_photo_virus_scanned=bool(lab_photo),
+    )
+
+    # Contact
+    ContactPerson.objects.create(
+        profile_type='lab',
+        profile=user,
+        name=contact_name,
+        phone_number=contact_phone
+    )
+
+    return JsonResponse({"success": True, "message": "Lab registered successfully!"})
+
+@csrf_protect
+@require_POST
+def save_hospital(request):
+    data = request.POST
+    files = request.FILES
+    errors = {}
+
+    # Basic Validation
+    email = data.get("email", "").strip()
+    password = data.get("password", "").strip()
+    confirm_password = data.get("confirm_password", "").strip()
+    phone_country_code = "+91"
+    phone_number = data.get("phone")
+
+    if not email:
+        errors["email"] = "Email is required."
+    else:
+        try:
+            validate_email(email)
+        except ValidationError:
+            errors["email"] = "Invalid email format."
+        if User.objects.filter(email=email).exists():
+            errors["email"] = "This email is already registered."
+
+    if not password or len(password) < 8:
+        errors["password"] = "Password must be at least 8 characters."
+    if password != confirm_password:
+        errors["confirm_password"] = "Passwords do not match."
+
+    # Hospital fields
+    hospital_name = data.get("hospital_name")
+    if not hospital_name:
+        errors["hospital_name"] = "Hospital name is required."
+
+    address = data.get("address")
+    city = data.get("city")
+    state = data.get("state")
+    pincode = data.get("pincode")
+
+    if not address: errors["address"] = "Address is required."
+    if not city: errors["city"] = "City is required."
+    if not state: errors["state"] = "State is required."
+    if not pincode or not re.match(r"^\d{4,10}$", pincode):
+        errors["pincode"] = "Enter valid pincode."
+
+    # Required Documents
+    reg_doc_path, err = validate_and_save_file(files.get("registration_doc"), "registration", "Registration Certificate", "hospital")
+    if err: errors["registration_doc"] = err
+    if not reg_doc_path: errors["registration_doc"] = "Registration document is required."
+
+    aadhar_doc_path, err = validate_and_save_file(files.get("aadhar_doc"), "aadhar", "Aadhar Document", "hospital")
+    if err: errors["aadhar_doc"] = err
+    if not aadhar_doc_path: errors["aadhar_doc"] = "Aadhar document is required."
+
+    pan_doc_path, err = validate_and_save_file(files.get("pan_doc"), "pan", "PAN Document", "hospital")
+    if err: errors["pan_doc"] = err
+    if not pan_doc_path: errors["pan_doc"] = "PAN document is required."
+
+    logo_path, err = validate_and_save_file(files.get("logo"), "hospital_logo", "Hospital Logo", "hospital")
+    if err: errors["logo"] = err
+    if not logo_path: errors["logo"] = "Hospital logo is required."
+
+    photo_path, err = validate_and_save_file(files.get("photo"), "hospital_photo", "Hospital Photo", "hospital")
+    if err: errors["photo"] = err
+    if not photo_path: errors["photo"] = "Hospital photo is required."
+
+    # Contact Person
+    contact_name = data.get("contact_name")
+    contact_phone = data.get("contact_phone")
+    contact_role = data.get("contact_role")
+
+    if not contact_name: errors["contact_name"] = "Contact person name required."
+    if not contact_phone: errors["contact_phone"] = "Contact person phone required."
+    if not contact_role: errors["contact_role"] = "Role required."
+
+    if errors:
+        return JsonResponse({"success": False, "errors": errors}, status=400)
+
+    # Create User
+    user = User.objects.create(
+        email=email,
+        phone_country_code=phone_country_code,
+        phone_number=phone_number,
+        password=make_password(password),
+        user_type="hospital"
+    )
+
+    # Profile
+    hospital = HospitalProfile.objects.create(
+        user=user,
+        hospital_name=hospital_name,
+        address=address,
+        city=city,
+        state=state,
+        pincode=pincode,
+        registration_certificate_path=reg_doc_path,
+        registration_doc_virus_scanned=True,
+        aadhar_doc_path=aadhar_doc_path,
+        aadhar_doc_virus_scanned=True,
+        pan_doc_path=pan_doc_path,
+        pan_doc_virus_scanned=True,
+        hospital_logo_path=logo_path,
+        hospital_logo_virus_scanned=True,
+        hospital_photo_path=photo_path,
+        hospital_photo_virus_scanned=True,
+    )
+
+    ContactPerson.objects.create(
+        profile_type='hospital',
+        profile=user,
+        name=contact_name,
+        phone_number=contact_phone,
+        role=contact_role
+    )
+
+    return JsonResponse({"success": True, "message": "Hospital registered successfully!"})
+
+@csrf_protect
+@require_POST
+def save_doctor(request):
+    data = request.POST
+    files = request.FILES
+    errors = {}
+
+    email = data.get("email", "").strip()
+    password = data.get("password", "").strip()
+    confirm_password = data.get("confirm_password", "").strip()
+    phone_country_code = "+91"
+    phone_number = data.get("phone")
+
+    if not email:
+        errors["email"] = "Email is required."
+    else:
+        try:
+            validate_email(email)
+        except ValidationError:
+            errors["email"] = "Invalid email."
+        if User.objects.filter(email=email).exists():
+            errors["email"] = "This email is already registered."
+
+    if not password or len(password) < 8:
+        errors["password"] = "Password must be min 8 chars."
+    if password != confirm_password:
+        errors["confirm_password"] = "Passwords do not match."
+
+    full_name = data.get("full_name")
+    if not full_name: errors["full_name"] = "Doctor name is required."
+
+    address = data.get("address")
+    city = data.get("city")
+    state = data.get("state")
+    pincode = data.get("pincode")
+
+    if not address: errors["address"] = "Address required."
+    if not city: errors["city"] = "City required."
+    if not state: errors["state"] = "State required."
+    if not pincode or not re.match(r"^\d{4,10}$", pincode):
+        errors["pincode"] = "Enter valid pincode."
+
+    # Related fields (FK)
+    specialty_id = data.get("specialty")
+    education_id = data.get("education")
+    experience_id = data.get("experience")
+
+    try: specialty = DoctorSpeciality.objects.get(id=specialty_id)
+    except: errors["specialty"] = "Specialty required."
+
+    try: education = DoctorEducation.objects.get(id=education_id)
+    except: errors["education"] = "Education required."
+
+    try: experience = DoctorExperience.objects.get(id=experience_id)
+    except: errors["experience"] = "Experience required."
+
+    # Required Docs
+    registration_doc_path, err = validate_and_save_file(files.get("registration_doc"), "doctor_reg", "Registration Certificate", "doctor")
+    if err or not registration_doc_path: errors["registration_doc"] = "Registration doc required."
+
+    aadhar_path, err = validate_and_save_file(files.get("aadhar_doc"), "aadhar", "Aadhar Document", "doctor")
+    if err or not aadhar_path: errors["aadhar_doc"] = "Aadhar required."
+
+    pan_path, err = validate_and_save_file(files.get("pan_doc"), "pan", "PAN Document", "doctor")
+    if err or not pan_path: errors["pan_doc"] = "PAN required."
+
+    photo_path, err = validate_and_save_file(files.get("clinic_photo"), "clinic_photo", "Clinic Photo", "doctor")
+    if err or not photo_path: errors["clinic_photo"] = "Clinic photo required."
+
+    logo_path, err = validate_and_save_file(files.get("clinic_logo"), "clinic_logo", "Clinic Logo", "doctor")
+    if err or not logo_path: errors["clinic_logo"] = "Clinic logo required."
+
+    contact_name = data.get("contact_name")
+    contact_role = data.get("contact_role")
+
+    if not contact_name: errors["contact_name"] = "Contact name required."
+    if not contact_role: errors["contact_role"] = "Contact role required."
+
+    if errors:
+        return JsonResponse({"success": False, "errors": errors}, status=400)
+
+    # Create User
+    user = User.objects.create(
+        email=email,
+        phone_country_code=phone_country_code,
+        phone_number=phone_number,
+        password=make_password(password),
+        user_type="doctor"
+    )
+
+    # Profile
+    DoctorProfile.objects.create(
+        user=user,
+        full_name=full_name,
+        specialty=specialty,
+        education=education,
+        experience=experience,
+        full_address=address,
+        city=city,
+        state=state,
+        pincode=pincode,
+        registration_certificate_path=registration_doc_path,
+        registration_certificate_virus_scanned=True,
+        aadhar_doc_path=aadhar_path,
+        aadhar_doc_virus_scanned=True,
+        pan_doc_path=pan_path,
+        pan_doc_virus_scanned=True,
+        clinic_photo_path=photo_path,
+        clinic_photo_virus_scanned=True,
+        clinic_logo_path=logo_path,
+        clinic_logo_virus_scanned=True,
+    )
+
+    ContactPerson.objects.create(
+        profile_type='doctor',
+        profile=user,
+        name=contact_name,
+        role=contact_role,
+    )
+
+    return JsonResponse({"success": True, "message": "Doctor registered successfully!"})
+
+@csrf_protect
 def forgot_password(request):
     if request.method == "POST":
         email = request.POST.get("email")
         if not email:
             return JsonResponse({"success": False, "errors": {"email": "Email is required"}}, status=400)
+
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
             return JsonResponse({"success": False, "errors": {"email": "User not found"}}, status=404)
-        
-        company_name = "Account"
-        if user.user_type == "advertiser":
-            company_name = user.advertiserprofile.company_name
-        elif user.user_type == "client":
-            company_name = user.clientprofile.company_name
-        elif user.user_type == "ngo":
-            company_name = user.ngoprofile.ngo_name
-        elif user.user_type == "pharmacy":
-            company_name = user.Pharmacyprofile.company_name
 
-        result = async_to_sync(send_forgot_password_email)(user, company_name, "http://localhost:8002")
+        company_name = "Account"
+
+        if user.user_type == "advertiser" and hasattr(user, "advertiserprofile"):
+            company_name = user.advertiserprofile.company_name
+
+        elif user.user_type == "client" and hasattr(user, "clientprofile"):
+            company_name = user.clientprofile.company_name
+
+        elif user.user_type == "ngo" and hasattr(user, "ngoprofile"):
+            company_name = user.ngoprofile.ngo_name
+
+        elif user.user_type == "pharmacy" and hasattr(user, "pharmacyprofile"):
+            company_name = user.pharmacyprofile.company_name
+
+        elif user.user_type == "hospital" and hasattr(user, "hospital_profile"):
+            company_name = user.hospital_profile.hospital_name
+
+        elif user.user_type == "lab" and hasattr(user, "lab_profile"):
+            company_name = user.lab_profile.lab_name
+
+        elif user.user_type == "doctor" and hasattr(user, "doctor_profile"):
+            company_name = user.doctor_profile.clinic_name
+
+        result = async_to_sync(send_forgot_password_email)(user, company_name, "http://localhost:5000")
         return JsonResponse(result)
+
     return render(request, "login/forgot_password.html")
 
 @csrf_protect

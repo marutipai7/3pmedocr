@@ -401,36 +401,6 @@ class HospitalProfile(models.Model):
     class Meta:
         db_table = "registration_hospitalprofile"
 
-class ContactPerson(models.Model):
-    PROFILE_TYPE_CHOICES = [
-        ('advertiser', 'Advertiser'),
-        ('client', 'Client'),
-        ('ngo', 'NGO'),
-        ('pharmacy', 'Pharmacy'),
-    ]
-    profile_type = models.CharField(max_length=32, choices=PROFILE_TYPE_CHOICES)
-    profile = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-    phone_country_code = models.CharField(max_length=8, blank=True, null=True)
-    phone_number = models.CharField(max_length=20, blank=True, null=True)
-    role = models.CharField(max_length=128, blank=True, null=True)
-    otp = models.CharField(max_length=16, blank=True, null=True)
-    referral_code = models.CharField(max_length=64, blank=True, null=True)
-    email_otp = models.CharField(max_length=16, blank=True, null=True)
-
-class PasswordResetToken(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    token = models.CharField(max_length=128, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    @staticmethod
-    def create_token(user):
-        token = secrets.token_urlsafe(32)
-        return PasswordResetToken.objects.create(user=user, token=token)
-    
-    def is_valid(self):
-        return (timezone.now() - self.created_at).total_seconds() < 1800
-    
 class DoctorProfile(models.Model):
     user = models.OneToOneField(
         User,
@@ -498,3 +468,33 @@ class DoctorProfile(models.Model):
         db_table = "registration_doctorprofile"
     def __str__(self):
         return self.full_name or f"Doctor #{self.id}"
+
+class ContactPerson(models.Model):
+    PROFILE_TYPE_CHOICES = [
+        ('advertiser', 'Advertiser'),
+        ('client', 'Client'),
+        ('ngo', 'NGO'),
+        ('pharmacy', 'Pharmacy'),
+    ]
+    profile_type = models.CharField(max_length=32, choices=PROFILE_TYPE_CHOICES)
+    profile = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    phone_country_code = models.CharField(max_length=8, blank=True, null=True)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
+    role = models.CharField(max_length=128, blank=True, null=True)
+    otp = models.CharField(max_length=16, blank=True, null=True)
+    referral_code = models.CharField(max_length=64, blank=True, null=True)
+    email_otp = models.CharField(max_length=16, blank=True, null=True)
+
+class PasswordResetToken(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    token = models.CharField(max_length=128, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    @staticmethod
+    def create_token(user):
+        token = secrets.token_urlsafe(32)
+        return PasswordResetToken.objects.create(user=user, token=token)
+    
+    def is_valid(self):
+        return (timezone.now() - self.created_at).total_seconds() < 1800
