@@ -77,12 +77,13 @@ def settings_page(request):
         'client': handle_client_profile,
         'advertiser': handle_advertiser_profile,
         'pharmacy': handle_pharmacy_profile,
+        'lab': handle_lab_profile,
+        'hospital': handle_hospital_profile,
     }
     handler_func = user_type_handlers.get(user.user_type)
     if handler_func:
         context.update(handler_func(user))
     context['country_codes'] = load_country_codes()
-    # print(context)
     return render(request, 'settings/settings_page.html', context)
 
 def get_base_context(user):
@@ -98,6 +99,8 @@ def get_base_context(user):
         'push_notifications': user.push_notifications,
         'regulatory_alerts': user.regulatory_alerts,
         'promotions_and_offers': user.promotions_and_offers,
+        'payment_notifications': user.payment_notifications,
+        'location_notification': user.location_notification,
         'quite_mode': user.quite_mode,
         'quite_mode_start_time': user.quite_mode_start_time,
         'quite_mode_end_time': user.quite_mode_end_time,
@@ -218,7 +221,6 @@ def handle_pharmacy_profile(user):
         'services_offered': profile.services_offered,
         'all_services': all_services,
         'all_workingdays': all_workingdays,
-        # 'website_url': profile.website_url,
         'address': profile.address,
         'city': profile.city,
         'state': profile.state,
@@ -232,11 +234,76 @@ def handle_pharmacy_profile(user):
         'medical_license_doc_path': os.path.basename(profile.medical_license_doc_path) if profile.medical_license_doc_path else "",
         'pan_number': profile.pan_number,
         'pan_doc_path': os.path.basename(profile.pan_doc_path) if profile.pan_doc_path else "",
-        # 'tan_number': profile.tan_number,
-        # 'tan_doc_path': os.path.basename(profile.tan_doc_path) if profile.tan_doc_path else "",
         'storefront_image_path': os.path.basename(profile.storefront_image_path) if profile.storefront_image_path else "",
     }
     data.update(handle_contact_person(user.user_type, user))
+    return data
+
+def handle_lab_profile(user):
+    profile = LabProfile.objects.filter(user=user).first()
+    all_timings = LabTiming.objects.filter(is_active=True)
+    data = {
+        'lab_name' : profile.lab_name,
+        'owner_name': profile.owner_name,
+        'email': profile.email,
+        'contact_number': profile.contact_number,
+        'alt_contact_number': profile.alt_contact_number,
+        'lab_registration_number': profile.lab_registration_number,
+        'address': profile.address,
+        'city': profile.city,
+        'state': profile.state,
+        'pincode': profile.pincode,
+        'all_timings': all_timings,
+        'lab_timing': profile.lab_timing,
+        'lab_certificate_number': profile.lab_certificate_number,
+        'lab_certificate_path': os.path.basename(profile.lab_certificate_path) if profile.lab_certificate_path else "",
+        'identity_proof_aadhar_number': profile.identity_proof_aadhar_number,
+        'identity_proof_aadhar_path': os.path.basename(profile.identity_proof_aadhar_path) if profile.identity_proof_aadhar_path else "",
+        'identity_proof_pan_number': profile.identity_proof_pan_number,
+        'identity_proof_pan_path': os.path.basename(profile.identity_proof_pan_path) if profile.identity_proof_pan_path else "",
+        'gov_license_number': profile.gov_license_number,
+        'gov_license_path': os.path.basename(profile.gov_license_path) if profile.gov_license_path else "",
+        'lab_photo_path': os.path.basename(profile.lab_photo_path) if profile.lab_photo_path else "",
+        'is_verified': profile.is_verified,
+        'verification_status': profile.verification_status,
+        'rejection_reason': profile.rejection_reason,
+        'verified_at': profile.verified_at,
+        'referral_code': profile.referral_code or '',
+        'created_at': profile.created_at,
+        'updated_at': profile.updated_at,        
+    }
+    return data
+
+def handle_hospital_profile(user):
+    profile = HospitalProfile.objects.filter(user=user).first()
+    data = {
+        'hospital_name' : profile.hospital_name,
+        'owner_name': profile.owner_name,
+        'email': profile.email,
+        'contact_no': profile.contact_no,
+        'alternate_contact_no': profile.alternate_contact_no,
+        'address': profile.address,
+        'city': profile.city,
+        'state': profile.state,
+        'pincode': profile.pincode,
+        'hospital_timing': profile.hospital_timing,
+        'home_visit': profile.home_visit,
+        'registration_no': profile.registration_no,
+        'registration_certificate_path': os.path.basename(profile.registration_certificate_path) if profile.registration_certificate_path else "",
+        'aadhar_card_no': profile.aadhar_card_no,
+        'aadhar_doc_path': os.path.basename(profile.aadhar_doc_path) if profile.aadhar_doc_path else "",
+        'pan_card_no': profile.pan_card_no,
+        'pan_doc_path': os.path.basename(profile.pan_doc_path) if profile.pan_doc_path else "",-
+        'hospital_logo_path': os.path.basename(profile.hospital_logo_path) if profile.hospital_logo_path else "",
+        'hospital_photo_path': os.path.basename(profile.hospital_photo_path) if profile.hospital_photo_path else "",
+        'phone_for_otp': profile.phone_for_otp,
+        'is_verified': profile.is_verified,
+        'verification_status': profile.verification_status,
+        'rejection_reason': profile.rejection_reason,
+        'verified_at': profile.verified_at,
+        'created_at': profile.created_at,
+        'updated_at': profile.updated_at,        
+    }
     return data
 
 def logout_view(request):

@@ -55,7 +55,7 @@ class PharmacyTiming(models.Model):
     class Meta:
         db_table = 'pharmacy_timing'
 
-class LabServices(models.Model):
+class LabService(models.Model):
     name = models.CharField(max_length=100, unique=True, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     class Meta:
@@ -313,6 +313,8 @@ class LabProfile(models.Model):
     state = models.CharField(max_length=128, null=True, blank=True)
     pincode = models.CharField(max_length=20, null=True, blank=True)
     lab_timing = models.ForeignKey(LabTiming, on_delete=models.SET_NULL, null=True, blank=True, db_column="lab_timing_id", related_name="lab_profiles")
+    services = models.ManyToManyField(LabService, through="LabProfileServices", related_name="labs")
+    facilities = models.ManyToManyField(LabFacility, through="LabProfileFacilities", related_name="labs")
 
     lab_certificate_number = models.CharField(max_length=100, null=True, blank=True)
     lab_certificate_path = models.CharField(max_length=255, null=True, blank=True)
@@ -341,6 +343,22 @@ class LabProfile(models.Model):
 
     class Meta:
         db_table = "registration_labprofile"
+
+class LabProfileFacilities(models.Model):
+    lab = models.ForeignKey(LabProfile, on_delete=models.CASCADE, db_column="lab_id")
+    facility = models.ForeignKey(LabFacility, on_delete=models.CASCADE, db_column="facility_id")
+
+    class Meta:
+        db_table = "lab_profile_facilities"
+        unique_together = ("lab", "facility")
+        
+class LabProfileServices(models.Model):
+    lab = models.ForeignKey(LabProfile, on_delete=models.CASCADE, db_column="lab_id")
+    service = models.ForeignKey(LabService, on_delete=models.CASCADE, db_column="service_id")
+
+    class Meta:
+        db_table = "lab_profile_services"
+        unique_together = ("lab", "service")
 
 class HospitalProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, db_column="user_id", related_name="hospital_profile",)

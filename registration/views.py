@@ -108,12 +108,9 @@ def register_by_role(request, role):
         context["medical_pharmacy_timing"] = PharmacyTiming.objects.filter(is_active=True)
     
     elif role == "lab":
-        context["medical_lab_services"] = LabServices.objects.filter(is_active=True)
+        context["medical_lab_services"] = LabService.objects.filter(is_active=True)
         context["medical_lab_timing"] = LabTiming.objects.filter(is_active=True)
 
-    elif role == "hospital":
-        context["medical_hospital_services"] = HospitalServices.objects.filter(is_active=True)
-        context["medical_hospital_timing"] = HospitalTiming.objects.filter(is_active=True)
     return render(request, tpl, context)
 
 ALLOWED_EXTENSIONS = {'.pdf', '.jpg', '.jpeg', '.png'}

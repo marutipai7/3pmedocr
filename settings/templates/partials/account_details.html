@@ -648,4 +648,339 @@
         </p>
     </div>
 </div>
+{% elif user.user_type == 'lab' %}
+    <div class="grid lg:grid-cols-2 gap-x-6 sm:gap-x-10 lg:gap-x-20 gap-y-6">
+        <!-- Email -->
+        <div class="flex flex-col">
+            <p class="font-semibold text-lg">
+                Email Address
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+                {{email}}
+            </p>
+        </div>
+
+        <!-- Country Code + Phone -->
+        <div class="flex flex-col sm:flex-row sm:items-start gap-20">
+            <div class="flex flex-col">
+                <p class="font-semibold  text-jet-black text-lg">
+                    Country Code
+                </p>
+                <p class="font-normal text-base text-medium-gray">
+                    {{country_code}}
+                </p>
+            </div>
+            <div class="flex flex-col">
+                <p class="font-semibold  text-jet-black text-lg">
+                    Phone No.
+                </p>
+                <p class="font-normal text-base text-medium-gray">
+                    {{contact_number}}
+                </p>
+            </div>
+        </div>
+        <!-- Lab Name -->
+        <div class="flex flex-col">
+            <p class="font-semibold  text-jet-black text-lg">
+                Lab Name
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+                {{lab_name}}
+            </p>
+        </div>
+
+
+        <!-- Lab Registration No. -->
+        <div class="flex flex-col">
+            <p class="font-semibold  text-jet-black text-lg">
+                Lab Registration No.
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+                {{lab_registration_number}}
+            </p>
+        </div>
+
+        <!--Services-->
+        <div class="flex flex-col">
+            <p class="font-semibold  text-jet-black text-lg">
+                Services
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+                {{services_offered}}
+            </p>
+        </div>
+
+        <!--Available Facilities-->
+        <div class="flex flex-col">
+            <p class="font-semibold  text-jet-black text-lg">
+                Available Facilities
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+                {{facilities_offered}}
+            </p>
+        </div>
+
+        <!--Website URL -->
+        <div class="flex flex-col">
+            <p class="font-semibold  text-jet-black text-lg">
+                Website URL
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+                {{website_url}}
+            </p>
+        </div>
+        <!--Working Hours -->
+        <div class="flex flex-col">
+            <p class="font-semibold text-lg">
+                Working Hours
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+                Monday Open at 9:00 AM Close at 5:00 PM
+            </p>
+        </div>
+        <!--Address-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-lg">Address</p>
+            <p class="font-normal text-base text-medium-gray">
+                {{address}}
+            </p>
+        </div>
+        <div></div>
+        <!--City, Town, District-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-lg">
+                City, Town, District
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+                {{city}}
+            </p>
+        </div>
+        <!--State-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-lg">State</p>
+            <p class="font-normal text-base text-medium-gray">
+                {{state}}
+            </p>
+        </div>
+        <!--Country-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-lg">Country</p>
+            <p class="font-normal text-base text-medium-gray">
+                {{country}}
+            </p>
+        </div>
+        <!--Pincode-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-lg">Pincode</p>
+            <p class="font-normal text-base text-medium-gray">
+                {{pincode}}
+            </p>
+        </div>
+        <!--Admin  name-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-lg">
+                Admin Name
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+                {{user_name}}
+            </p>
+        </div>
+        <!--Designation-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-lg">Designation</p>
+            <p class="font-normal text-base text-medium-gray">
+                {{designation}}
+            </p>
+        </div>
+        <!-- Country Code + Phone -->
+        <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+            <div class="flex flex-col">
+                <p class="font-semibold  text-jet-black text-lg">
+                    Country Code
+                </p>
+                <p class="font-normal text-base text-medium-gray">
+                    {{country_code}}
+                </p>
+            </div>
+            <div class="flex flex-col">
+                <p class="font-semibold  text-jet-black text-lg">
+                    Phone No.
+                </p>
+                <p class="font-normal text-base text-medium-gray">
+                    {{phone_no}}
+                </p>
+            </div>
+        </div>
+        <!--Referral Code-->
+        <div class="flex items-center gap-4">
+            <p class="font-semibold text-lg">
+                Referral Code
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+                {{referral_code}}
+            </p>
+        </div>
+    </div>
+{% elif user.user_type == 'hospital' %}
+    <div class="grid lg:grid-cols-2 gap-x-6 sm:gap-x-10 lg:gap-x-20 gap-y-6">
+        <!-- Email -->
+        <div class="flex flex-col">
+            <p class="font-semibold text-lg">
+                Email Address
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+                monicasingh@gmail.com
+            </p>
+        </div>
+
+        <!-- Country Code + Phone -->
+        <div class="flex flex-col sm:flex-row sm:items-start gap-20">
+            <div class="flex flex-col">
+                <p class="font-semibold  text-jet-black text-lg">
+                    Country Code
+                </p>
+                <p class="font-normal text-base text-medium-gray">
+                    +91
+                </p>
+            </div>
+            <div class="flex flex-col">
+                <p class="font-semibold  text-jet-black text-lg">
+                    Phone No.
+                </p>
+                <p class="font-normal text-base text-medium-gray">
+                    9945956316
+                </p>
+            </div>
+        </div>
+        <!-- Hospital Name -->
+        <div class="flex flex-col">
+            <p class="font-semibold  text-jet-black text-lg">
+                Hospital Name
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+                ABC Pvt. Ltd
+            </p>
+        </div>
+        <div></div>
+
+        <!-- Type Of Hospital -->
+        <div class="flex flex-col">
+            <p class="font-semibold  text-jet-black text-lg">
+                Type Of Hospital
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+                Lorem
+            </p>
+        </div>
+
+        <!--Services-->
+        <div class="flex flex-col">
+            <p class="font-semibold  text-jet-black text-lg">
+                Services
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+                Lorem,Lorem,Lorem
+            </p>
+        </div>
+        <!--Website URL -->
+        <div class="flex flex-col">
+            <p class="font-semibold  text-jet-black text-lg">
+                Website URL
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+                (Optional)
+            </p>
+        </div>
+        <!--Working Hours -->
+        <div class="flex flex-col">
+            <p class="font-semibold text-lg">
+                Working Hours
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+                Monday Open at 9:00 AM Close at 5:00 PM
+            </p>
+        </div>
+        <!--Address-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-lg">Address</p>
+            <p class="font-normal text-base text-medium-gray">
+                12 MG Road, Near City Hospital
+            </p>
+        </div>
+        <div></div>
+        <!--City, Town, District-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-lg">
+                City, Town, District
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+                Pune
+            </p>
+        </div>
+        <!--State-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-lg">State</p>
+            <p class="font-normal text-base text-medium-gray">
+                Maharashtra
+            </p>
+        </div>
+        <!--Country-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-lg">Country</p>
+            <p class="font-normal text-base text-medium-gray">
+                India
+            </p>
+        </div>
+        <!--Pincode-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-lg">Pincode</p>
+            <p class="font-normal text-base text-medium-gray">
+                585103
+            </p>
+        </div>
+        <!--Admin  name-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-lg">
+                Admin Name
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+                Rahul Mehta
+            </p>
+        </div>
+        <!--Designation-->
+        <div class="flex flex-col">
+            <p class="font-semibold text-lg">Designation</p>
+            <p class="font-normal text-base text-medium-gray">
+                Lorem
+            </p>
+        </div>
+        <!-- Country Code + Phone -->
+        <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+            <div class="flex flex-col">
+                <p class="font-semibold  text-jet-black text-lg">
+                    Country Code
+                </p>
+                <p class="font-normal text-base text-medium-gray">
+                    +91
+                </p>
+            </div>
+            <div class="flex flex-col">
+                <p class="font-semibold  text-jet-black text-lg">
+                    Phone No.
+                </p>
+                <p class="font-normal text-base text-medium-gray">
+                    9945956316
+                </p>
+            </div>
+        </div>
+        <!--Referral Code-->
+        <div class="flex items-center gap-4">
+            <p class="font-semibold text-lg">
+                Referral Code
+            </p>
+            <p class="font-normal text-base text-medium-gray">
+                Hyuoiipp
+            </p>
+        </div>
+    </div>
 {% endif %}
