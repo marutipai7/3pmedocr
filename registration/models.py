@@ -304,7 +304,6 @@ class LabProfile(models.Model):
 
     lab_name = models.CharField(max_length=255, null=True, blank=True)
     owner_name = models.CharField(max_length=255, null=True, blank=True)
-    email = models.CharField(max_length=255)
     contact_number = models.CharField(max_length=50, null=True, blank=True)
     alt_contact_number = models.CharField(max_length=50, null=True, blank=True)
     lab_registration_number = models.CharField(max_length=100, null=True, blank=True)
@@ -338,9 +337,6 @@ class LabProfile(models.Model):
     otp = models.CharField(max_length=64, null=True, blank=True)
     referral_code = models.CharField(max_length=64, null=True, blank=True)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
     class Meta:
         db_table = "registration_labprofile"
 
@@ -365,7 +361,6 @@ class HospitalProfile(models.Model):
 
     hospital_name = models.CharField(max_length=255, null=True, blank=True)
     owner_name = models.CharField(max_length=255, null=True, blank=True)
-    email = models.CharField(max_length=255, null=True, blank=True)
     contact_no = models.CharField(max_length=20, null=True, blank=True)
     alternate_contact_no = models.CharField(max_length=20, null=True, blank=True)
     address = models.TextField(null=True, blank=True)
@@ -395,8 +390,6 @@ class HospitalProfile(models.Model):
     rejection_reason = models.TextField(null=True, blank=True)
     verified_at = models.DateTimeField(null=True, blank=True)
     otp = models.CharField(max_length=64, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = "registration_hospitalprofile"
@@ -433,7 +426,6 @@ class DoctorProfile(models.Model):
     profile_photo_virus_scanned = models.BooleanField(default=False)
     clinic_name = models.CharField(max_length=255, null=True, blank=True)
     owner_name = models.CharField(max_length=255, null=True, blank=True)
-    email = models.CharField(max_length=255, null=True, blank=True)
     contact_number = models.CharField(max_length=50, null=True, blank=True)
     alt_contact_number = models.CharField(max_length=50, null=True, blank=True)
     full_address = models.TextField(null=True, blank=True)
@@ -462,8 +454,6 @@ class DoctorProfile(models.Model):
     verified_at = models.DateTimeField(null=True, blank=True)
     otp = models.CharField(max_length=64, null=True, blank=True)
     referral_code = models.CharField(max_length=64, null=True, blank=True)
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)
     class Meta:
         db_table = "registration_doctorprofile"
     def __str__(self):

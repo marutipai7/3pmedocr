@@ -706,7 +706,9 @@
                 Services
             </p>
             <p class="font-normal text-base text-medium-gray">
-                {{services_offered}}
+                {% for s in services_selected %}
+                    {{ s.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
             </p>
         </div>
 
@@ -716,7 +718,9 @@
                 Available Facilities
             </p>
             <p class="font-normal text-base text-medium-gray">
-                {{facilities_offered}}
+                {% for f in facilities_selected %}
+                    {{ f.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
             </p>
         </div>
 

@@ -242,6 +242,9 @@ def handle_pharmacy_profile(user):
 def handle_lab_profile(user):
     profile = LabProfile.objects.filter(user=user).first()
     all_timings = LabTiming.objects.filter(is_active=True)
+    all_services = LabService.objects.filter(is_active=True)
+    all_facilities = LabFacility.objects.filter(is_active=True)
+
     data = {
         'lab_name' : profile.lab_name,
         'owner_name': profile.owner_name,
@@ -253,8 +256,13 @@ def handle_lab_profile(user):
         'city': profile.city,
         'state': profile.state,
         'pincode': profile.pincode,
+        'website_url': profile.website_url if profile.website_url else "",
         'all_timings': all_timings,
         'lab_timing': profile.lab_timing,
+        'services_selected': profile.services.all(),
+        'all_services': all_services,
+        'facilities_selected': profile.facilities.all(),
+        'all_facilities': all_facilities,
         'lab_certificate_number': profile.lab_certificate_number,
         'lab_certificate_path': os.path.basename(profile.lab_certificate_path) if profile.lab_certificate_path else "",
         'identity_proof_aadhar_number': profile.identity_proof_aadhar_number,
