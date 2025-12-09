@@ -4,7 +4,7 @@ from registration.models import User
 from points.models import PointsActionType, PointsHistory, PointsBadge
 from .models import SettingMenu
 from django.db.models import Sum, Q
-from registration.models import AdvertiserProfile, ClientProfile, PharmacyProfile, NGOProfile
+from registration.models import AdvertiserProfile, ClientProfile, PharmacyProfile, NGOProfile, LabProfile, DoctorProfile, HospitalProfile
 from settings.models import UserColorScheme
 import logging
 from django.http import JsonResponse
@@ -41,8 +41,17 @@ def get_common_context(request, user):
         chart_action_types = ["Map", "Referral", "Coupon", "Donate"]
         user_profile = AdvertiserProfile.objects.filter(user=user).first()
     elif user_type == "pharmacy":
-        chart_action_types = ["Map", "Referral", "Share", "Donate"]
+        chart_action_types = ["Referral", "Share", "Donate", "Orders"]
         user_profile = PharmacyProfile.objects.filter(user=user).first()
+    elif user_type == "lab":
+        chart_action_types = ["Referral", "Appointment", "Donate"]
+        user_profile = LabProfile.objects.filter(user=user).first()
+    elif user_type == "doctor":
+        chart_action_types = ["Referral", "Appointment", "Donate"]
+        user_profile = DoctorProfile.objects.filter(user=user).first()
+    elif user_type == "hospital":
+        chart_action_types = ["Referral", "Appointment", "Donate"]
+        user_profile = HospitalProfile.objects.filter(user=user).first()
     else:
         chart_action_types = []
         user_profile = None
@@ -66,6 +75,12 @@ def get_common_context(request, user):
 
     if user_type == "ngo":
         user_display_name = user_profile.ngo_name if user_profile else "Unknown"
+    elif user_type == "doctor":
+        user_display_name = (user_profile.clinic_name if user_profile else "Unknown")
+    elif user_type == "hospital":
+        user_display_name = (user_profile.hospital_name if user_profile else "Unknown")
+    elif user_type == "lab":
+        user_display_name = (user_profile.lab_name if user_profile else "Unknown")
     else:
         user_display_name = (
             user_profile.company_name if user_profile else "Unknown"
@@ -81,12 +96,18 @@ def get_common_context(request, user):
         trophy = "trophy-pharmacy.svg"
     elif user_type == "lab":
         trophy = "trophy-hospital.svg"
+    elif user_type == "doctor":
+        trophy = "trophy-hospital.svg"
+    elif user_type == "hospital":
+        trophy = "trophy-hospital.svg"
     tab_class_map = {
     "advertiser": "tab-btn-advertiser",
     "client": "tab-btn-client",
     "pharmacy": "tab-btn-pharmacy",
     "ngo": "tab-btn-ngo",
     "lab": "tab-btn-hospital",
+    "doctor": "tab-btn-hospital",
+    "hospital": "tab-btn-hospital",
     }
 
     active_tab_class_map = {
@@ -95,6 +116,8 @@ def get_common_context(request, user):
         "pharmacy": "active-tab-pharmacy",
         "ngo": "active-tab-ngo",
         "lab": "active-tab-hospital",
+        "doctor": "active-tab-hospital",
+        "hospital": "active-tab-hospital",
     }
     context = {
         "user_profile": user,

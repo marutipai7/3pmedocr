@@ -6,7 +6,7 @@ from bson import ObjectId
 from django.conf import settings
 from django.http import JsonResponse
 from .models import SavedLocation, SearchHistory, PincodeLocation
-from registration.models import NGOProfile, AdvertiserProfile, ClientProfile, PharmacyProfile, LabProfile
+from registration.models import NGOProfile, AdvertiserProfile, ClientProfile, PharmacyProfile, LabProfile, DoctorProfile, HospitalProfile
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from math import radians, cos, sin, sqrt, atan2
@@ -26,6 +26,10 @@ def map_view(request):
         profile = PharmacyProfile.objects.filter(user=user).first()
     elif user.user_type == 'lab':
         profile = LabProfile.objects.filter(user=user).first()
+    elif user.user_type == 'doctor':
+        profile = DoctorProfile.objects.filter(user=user).first()
+    elif user.user_type == 'hospital':
+        profile = HospitalProfile.objects.filter(user=user).first()
     else:
         pass
 
@@ -33,7 +37,7 @@ def map_view(request):
         context = get_common_context(request, user)
         context.update({
             'user': user,
-            'address': profile.address,
+            'address': profile.address if hasattr(profile, 'address') else '',
             'city': profile.city,
             'state': profile.state,
             'pincode': profile.pincode,

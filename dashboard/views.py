@@ -324,17 +324,6 @@ def saved(request):
             'user': user
         })
         return render(request, "saved/saved_client.html", context)
-    
-    elif user.user_type == 'lab':
-        lab_profile = LabProfile.objects.get(user=user)
-        context.update({
-            'lab_profile': lab_profile,
-            'user_display_name': lab_profile.lab_name,
-            'user_profile': user,
-            'user': user
-        })
-        return render(request, "saved/saved_pharmacy.html", context)
-
 
 @require_GET
 @dashboard_login_required
