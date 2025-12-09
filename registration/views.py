@@ -28,6 +28,9 @@ ROLE_TO_TEMPLATE = {
     "Pharmacy": "registration/pharmacy_register.html",
     "client": "registration/client_register.html",
     "advertiser": "registration/advertiser_register.html",
+    'lab': "registration/lab_register.html",
+    'hospital': "registration/hospital_register.html",
+    'doctor': "registration/doctor_register.html",
 }
 
 @require_POST
@@ -103,6 +106,14 @@ def register_by_role(request, role):
         context["pharmacy_types"] = PharmacyType.objects.filter(is_active=True)
         context["medical_pharmacy_services"] = PharmacyServices.objects.filter(is_active=True)
         context["medical_pharmacy_timing"] = PharmacyTiming.objects.filter(is_active=True)
+    
+    elif role == "lab":
+        context["medical_lab_services"] = LabServices.objects.filter(is_active=True)
+        context["medical_lab_timing"] = LabTiming.objects.filter(is_active=True)
+
+    elif role == "hospital":
+        context["medical_hospital_services"] = HospitalServices.objects.filter(is_active=True)
+        context["medical_hospital_timing"] = HospitalTiming.objects.filter(is_active=True)
     return render(request, tpl, context)
 
 ALLOWED_EXTENSIONS = {'.pdf', '.jpg', '.jpeg', '.png'}

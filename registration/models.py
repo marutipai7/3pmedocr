@@ -73,6 +73,33 @@ class LabTiming(models.Model):
     is_active = models.BooleanField(default=True)
     class Meta:
         db_table = 'lab_timing'   
+
+class DoctorSpeciality(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    class Meta:
+        db_table = "doctor_speciality"
+
+    def __str__(self):
+        return self.name
+
+class DoctorEducation(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    class Meta:
+        db_table = "doctor_education"
+
+    def __str__(self):
+        return self.name
+
+class DoctorExperience(models.Model):
+    years = models.IntegerField(unique=True)
+
+    class Meta:
+        db_table = "doctor_experience"
+
+    def __str__(self):
+        return f"{self.years} Years"
     
 class User(models.Model):
     USER_TYPE_CHOICES = [
@@ -385,3 +412,71 @@ class PasswordResetToken(models.Model):
     
     def is_valid(self):
         return (timezone.now() - self.created_at).total_seconds() < 1800
+    
+class DoctorProfile(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name="doctor_profile",
+        db_column="user_id"
+    )
+    full_name = models.CharField(max_length=255, null=True, blank=True)
+    gender = models.CharField(max_length=20, null=True, blank=True)
+    age = models.IntegerField(null=True, blank=True)
+    specialty = models.ForeignKey(
+        DoctorSpeciality,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name="doctors"
+    )
+    education = models.ForeignKey(
+        DoctorEducation,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name="doctors"
+    )
+    experience = models.ForeignKey(
+        DoctorExperience,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name="doctors"
+    )
+    profile_photo_path = models.CharField(max_length=255, null=True, blank=True)
+    profile_photo_virus_scanned = models.BooleanField(default=False)
+    clinic_name = models.CharField(max_length=255, null=True, blank=True)
+    owner_name = models.CharField(max_length=255, null=True, blank=True)
+    email = models.CharField(max_length=255, null=True, blank=True)
+    contact_number = models.CharField(max_length=50, null=True, blank=True)
+    alt_contact_number = models.CharField(max_length=50, null=True, blank=True)
+    full_address = models.TextField(null=True, blank=True)
+    state = models.CharField(max_length=128, null=True, blank=True)
+    city = models.CharField(max_length=128, null=True, blank=True)
+    pincode = models.CharField(max_length=20, null=True, blank=True)
+    clinic_timing_from = models.CharField(max_length=20, null=True, blank=True)
+    clinic_timing_to = models.CharField(max_length=20, null=True, blank=True)
+    home_visit_available = models.BooleanField(default=False)
+    registration_number = models.CharField(max_length=100, null=True, blank=True)
+    registration_certificate_path = models.CharField(max_length=255, null=True, blank=True)
+    registration_certificate_virus_scanned = models.BooleanField(default=False)
+    aadhar_number = models.CharField(max_length=100, null=True, blank=True)
+    aadhar_doc_path = models.CharField(max_length=255, null=True, blank=True)
+    aadhar_doc_virus_scanned = models.BooleanField(default=False)
+    pan_number = models.CharField(max_length=100, null=True, blank=True)
+    pan_doc_path = models.CharField(max_length=255, null=True, blank=True)
+    pan_doc_virus_scanned = models.BooleanField(default=False)
+    clinic_logo_path = models.CharField(max_length=255, null=True, blank=True)
+    clinic_logo_virus_scanned = models.BooleanField(default=False)
+    clinic_photo_path = models.CharField(max_length=255, null=True, blank=True)
+    clinic_photo_virus_scanned = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=False)
+    verification_status = models.CharField(max_length=20, default="pending")
+    rejection_reason = models.TextField(null=True, blank=True)
+    verified_at = models.DateTimeField(null=True, blank=True)
+    otp = models.CharField(max_length=64, null=True, blank=True)
+    referral_code = models.CharField(max_length=64, null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+    class Meta:
+        db_table = "registration_doctorprofile"
+    def __str__(self):
+        return self.full_name or f"Doctor #{self.id}"

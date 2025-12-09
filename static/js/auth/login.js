@@ -171,10 +171,10 @@ $(".medicalProviderRoles .role-option").on("click", function () {
   selectedRole = $(this).data("role");
 
   const redirects = {
-    doctor: "#",
+    doctor: "/user/register/doctor",
     Pharmacy: "/user/register/Pharmacy",
-    hospital: "#",
-    lab: "#",
+    hospital: "/user/register/hospital",
+    lab: "/user/register/lab",
   };
 
   // Auto-redirect on mobile
@@ -214,10 +214,10 @@ $(".continueBtn").on("click", function () {
 
   // Handle medical provider sub-roles
   const medicalProviderRedirects = {
-    doctor: "#",
+    doctor: "/user/register/doctor",
     Pharmacy: "/user/register/Pharmacy",
-    hospital: "#",
-    lab: "#",
+    hospital: "/user/register/hospital",
+    lab: "/user/register/lab",
   };
 
   const redirectUrl = isMedicalProviderSubRole
