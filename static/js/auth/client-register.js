@@ -58,25 +58,25 @@ $(document).ready(function () {
         });
     });
     // dropdown js
-    $('.dropdown-btn').on('click', function (e) {
-        e.stopPropagation(); 
-        const $dropdown = $(this).closest('.dropdown');
-        $('.dropdown-option').not($dropdown.find('.dropdown-option')).hide(); 
-        $dropdown.find('.dropdown-option').toggle(); 
-        $(this).find(".dropdown-arrow").toggleClass("rotate-180");
-    });    
+    // $('.dropdown-btn').on('click', function (e) {
+    //     e.stopPropagation(); 
+    //     const $dropdown = $(this).closest('.dropdown');
+    //     $('.dropdown-option').not($dropdown.find('.dropdown-option')).hide(); 
+    //     $dropdown.find('.dropdown-option').toggle(); 
+    //     $(this).find(".dropdown-arrow").toggleClass("rotate-180");
+    // });    
     
-    $('.dropdown-option div').on('click', function() {
-        const selectedText = $(this).text();
-        $(this).closest('.dropdown').find('.dropdown-btn .selected-value').text(selectedText);
-        $(this).closest('.dropdown').find('.select-dropdown').val(selectedText);
-        $('.dropdown-option').hide();
-        $(".dropdown-arrow").removeClass("rotate-180");
-    });
-    $(document).on('click', function () {
-        $('.dropdown-option').hide();
-        $(".dropdown-arrow").removeClass("rotate-180");
-    });
+    // $('.dropdown-option div').on('click', function() {
+    //     const selectedText = $(this).text();
+    //     $(this).closest('.dropdown').find('.dropdown-btn .selected-value').text(selectedText);
+    //     $(this).closest('.dropdown').find('.select-dropdown').val(selectedText);
+    //     $('.dropdown-option').hide();
+    //     $(".dropdown-arrow").removeClass("rotate-180");
+    // });
+    // $(document).on('click', function () {
+    //     $('.dropdown-option').hide();
+    //     $(".dropdown-arrow").removeClass("rotate-180");
+    // });
     // resend
     $('.resend').on('click', function () {
         toastr.success("OTP Resent on Mail");
@@ -264,20 +264,182 @@ $(document).ready(function () {
     });
 
     // Toggle dropdown time trigger visibility
-    document.querySelectorAll(".dropdown-btn").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-        const dropdown = this.closest(".dropdown");
-        const options = dropdown.querySelector(".dropdown-option");
-        options.classList.toggle("hidden");
+//Dropdowns code
+  const dropdownConfig = {
+  singleSelect: ["Timing", "Opening Time", "Closing Time", "Opening Days", "Type of Medical Provider", "Home Visit", "Experience", "Gender", "Specialization","Advertiser Type"],
+  multiSelect: ["Services", "Facilities"],
+};
+function isSingleSelect($dropdown) {
+  const labelText = $dropdown.find("> label").text();
+  return dropdownConfig.singleSelect.some((keyword) =>
+    labelText.includes(keyword)
+  );
+}
+function getPlaceholderText($dropdown) {
+  const labelText = $dropdown.find("> label").text();
+  if (labelText.includes("Timing") || labelText.includes("Time")) {
+    return "Select Time";
+  }
+  if (labelText.includes("Services") || labelText.includes("Service")) {
+    return "Select Service";
+  }
+  if (labelText.includes("Facilities") || labelText.includes("Facility")) {
+    return "Select Facility";
+  }
+  return "Select Option";
+}
+$(".dropdown-btn").on("click", function (e) {
+  e.stopPropagation();
+  const $dropdown = $(this).closest(".dropdown");
+  const $currentOption = $dropdown.find(".dropdown-option");
+  $(".dropdown-option").not($currentOption).hide();
+  $(".dropdown-arrow")
+    .not($(this).find(".dropdown-arrow"))
+    .removeClass("rotate-180");
+  $currentOption.toggle();
+  $(this).find(".dropdown-arrow").toggleClass("rotate-180");
+});
 
-        // Close other open dropdowns
-        document.querySelectorAll(".dropdown-option").forEach(function (option) {
-            if (option !== options) {
-            option.classList.add("hidden");
-            }
-        });
-        });
-    });
+// Handle checkbox selection
+$(document).on("change", ".dropdown-option input[type='checkbox']", function (e) {
+  e.stopPropagation();
+  const $dropdown = $(this).closest(".dropdown");
+  if (isSingleSelect($dropdown)) {
+    $dropdown.find("input[type='checkbox']").not(this).prop("checked", false);
+  }
+
+  updateSelectedText($dropdown);
+});
+
+
+$(".dropdown-option").on("click", function (e) {
+  e.stopPropagation();
+});
+$(document).on("click", ".dropdown-option label", function (e) {
+  e.stopPropagation();
+  if ($(this).text().trim() === "Type...") {
+    showCustomInput($(this).closest(".dropdown"));
+    return;
+  }
+  let checkbox = $(this).prev('input[type="checkbox"]');
+  if (checkbox.length === 0) {
+    checkbox = $(this).next('input[type="checkbox"]');
+  }
+  if (checkbox.length) {
+    checkbox.prop("checked", !checkbox.prop("checked")).trigger("change");
+  }
+});
+function showCustomInput($dropdown) {
+  const $typeOption = $dropdown.find("label:contains('Type...')").parent();
+  if ($typeOption.find("input[type='text']").length > 0) {
+    $typeOption.find("input[type='text']").focus();
+    return;
+  }
+  const $input = $(
+    '<input type="text" class="custom-input flex-1 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:border-Royal-indigo" placeholder="Enter custom service...">'
+  );
+
+  $typeOption.html("").append($input);
+  $input.focus();
+  $input.on("blur keypress", function (e) {
+    if (e.type === "blur" || (e.type === "keypress" && e.which === 13)) {
+      const value = $(this).val().trim();
+
+      if (value) {
+        const customId = "custom_" + Date.now();
+        const $newOption = $(`
+          <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer custom-service">
+            <input type="checkbox" id="${customId}" class="mr-2 accent-Royal-indigo" checked>
+            <label for="${customId}" class="flex-1">${value}</label>
+            <span class="material-symbols-outlined text-sm text-red-500 remove-custom cursor-pointer">close</span>
+          </div>
+        `);
+        $typeOption.before($newOption);
+        $typeOption.html('<label class="flex-1">Type...</label>');
+        attachCustomOptionHandlers($newOption, $dropdown);
+        updateSelectedText($dropdown);
+      } else {
+        $typeOption.html('<label class="flex-1">Type...</label>');
+      }
+    }
+  });
+
+  // Prevent input click from closing dropdown
+  $input.on("click", function (e) {
+    e.stopPropagation();
+  });
+}
+
+// Attach handlers to custom options
+function attachCustomOptionHandlers($option, $dropdown) {
+  $option.find("input[type='checkbox']").on("change", function (e) {
+    e.stopPropagation();
+    if (isSingleSelect($dropdown)) {
+      $dropdown
+        .find("input[type='checkbox']")
+        .not(this)
+        .prop("checked", false);
+    }
+
+    updateSelectedText($dropdown);
+  });
+
+  // Handle label click
+  $option.find("label").on("click", function (e) {
+    e.stopPropagation();
+    let checkbox = $(this).prev('input[type="checkbox"]');
+    if (checkbox.length === 0) {
+      checkbox = $(this).next('input[type="checkbox"]');
+    }
+    if (checkbox.length) {
+      checkbox.prop("checked", !checkbox.prop("checked")).trigger("change");
+    }
+  });
+
+  // Handle remove button
+  $option.find(".remove-custom").on("click", function (e) {
+    e.stopPropagation();
+    $option.remove();
+    updateSelectedText($dropdown);
+  });
+}
+
+// Update selected text based on checked items
+function updateSelectedText($dropdown) {
+  const $checkedBoxes = $dropdown.find(
+    ".dropdown-option input[type='checkbox']:checked"
+  );
+  const $selectedValue = $dropdown.find(".dropdown-btn .selected-value");
+
+  if ($checkedBoxes.length === 0) {
+    $selectedValue.text(getPlaceholderText($dropdown));
+  } else if ($checkedBoxes.length === 1) {
+    let labelText = $checkedBoxes.first().prev("label").text().trim();
+    if (!labelText) {
+      labelText = $checkedBoxes.first().next("label").text().trim();
+    }
+    $selectedValue.text(labelText);
+  } else {
+    $selectedValue.text($checkedBoxes.length + " selected");
+  }
+}
+
+// Handle simple dropdown (non-checkbox) selection
+$('.dropdown-option div:not(:has(input[type="checkbox"]))').on('click', function(e) {
+  e.stopPropagation();
+  const selectedText = $(this).text().trim();
+  const $dropdown = $(this).closest('.dropdown');
+  $dropdown.find('.dropdown-btn .selected-value').text(selectedText);
+  $dropdown.find('.select-dropdown').val(selectedText);
+  $dropdown.find('.dropdown-option').hide();
+  $dropdown.find(".dropdown-arrow").removeClass("rotate-180");
+});
+
+// Close dropdowns when clicking outside
+$(document).on("click", function () {
+  $(".dropdown-option").hide();
+  $(".dropdown-arrow").removeClass("rotate-180");
+});
 
     // Time picker trigger
     document.querySelectorAll(".trigger-time").forEach(function (trigger) {

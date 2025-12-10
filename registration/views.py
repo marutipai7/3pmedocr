@@ -113,9 +113,9 @@ def register_by_role(request, role):
         context["lab_timing"] = LabTiming.objects.filter(is_active=True)
 
     elif role == "doctor":
-        context["doctor_speciality"] = DoctorSpeciality.objects.all()
-        context["doctor_experience"] = DoctorExperience.objects.all()
-        context["doctor_education"] = DoctorEducation.objects.all()
+        context["doctor_speciality"] = DoctorSpeciality.objects.filter(is_active=True)
+        context["doctor_experience"] = DoctorExperience.objects.filter(is_active=True)
+        context["doctor_education"] = DoctorEducation.objects.filter(is_active=True)
 
     return render(request, tpl, context)
 
@@ -1136,102 +1136,126 @@ def save_lab(request):
     files = request.FILES
     errors = {}
 
-    # Basic fields
+    # Required text fields
+    required_fields = {
+        "email": "Email",
+        "password": "Password",
+        "confirm_password": "Confirm Password",
+        "phone": "Phone Number",
+        "lab_name": "Lab Name",
+        "owner_name": "Owner Name",
+        "lab_registration_number": "Lab Registration Number",
+        "lab_timing": "Lab Timing",
+        "address": "Address",
+        "city": "City",
+        "state": "State",
+        "pincode": "Pincode",
+        "country": "Country",
+        "lab_certificate_number": "Lab Certificate Number",
+        "aadhaar_number": "Aadhaar Number",
+        "pan_number": "PAN Number",
+        "gov_license_number": "Gov License Number",
+        "contact_name": "Contact Person Name",
+        "contact_phone": "Contact Person Phone",
+    }
+
+    for field, label in required_fields.items():
+        if not data.get(field) or data.get(field).strip() == "":
+            errors[field] = f"{label} is required."
+
+    # File required fields
+    required_files = {
+        "lab_certificate": "Lab Certificate",
+        "aadhar_doc": "Aadhar Document",
+        "pan_doc": "PAN Document",
+        "gov_license": "Gov License Document",
+        "lab_photo": "Lab Photo",
+    }
+
+    for field, label in required_files.items():
+        if field not in files:
+            errors[field] = f"{label} is required."
+
+    # Multi-select dropdown validations
+    services = data.getlist("services")
+    facilities = data.getlist("facilities")
+
+    if len(services) == 0:
+        errors["services"] = "Select at least one Lab Service."
+
+    if len(facilities) == 0:
+        errors["facilities"] = "Select at least one Lab Facility."
+
+    # Email existence check
     email = data.get("email", "").strip()
-    password = data.get("password", "").strip()
-    confirm_password = data.get("confirm_password", "").strip()
-    phone_country_code = "+91"
-    phone_number = data.get("phone")
+    if User.objects.filter(email=email).exists():
+        errors["email"] = "Email already registered."
 
-    # Email Validation
-    if not email:
-        errors["email"] = "Email is required."
-    else:
-        try:
-            validate_email(email)
-        except ValidationError:
-            errors["email"] = "Enter a valid email address."
-        if User.objects.filter(email=email).exists():
-            errors["email"] = "Email already registered."
-
-    # Password Validation
-    if not password or len(password) < 8:
-        errors["password"] = "Password must be at least 8 chars."
-    if password != confirm_password:
+    # Password match
+    if data.get("password") != data.get("confirm_password"):
         errors["confirm_password"] = "Passwords do not match."
-
-    # Required Lab Fields
-    lab_name = data.get("lab_name")
-    if not lab_name:
-        errors["lab_name"] = "Lab name is required."
-
-    address = data.get("address")
-    city = data.get("city")
-    state = data.get("state")
-    pincode = data.get("pincode")
-
-    if not address: errors["address"] = "Address is required."
-    if not city: errors["city"] = "City is required."
-    if not state: errors["state"] = "State is required."
-    if not pincode or not re.match(r"^\d{4,10}$", pincode):
-        errors["pincode"] = "Enter valid pincode."
-
-    # Documents
-    lab_certificate_path, err = validate_and_save_file(files.get("lab_certificate"), "lab_certificate", "Lab Certificate", "lab")
-    if err: errors["lab_certificate"] = err
-
-    aadhar_path, err = validate_and_save_file(files.get("aadhar_doc"), "aadhar", "Aadhar Document", "lab")
-    if err: errors["aadhar_doc"] = err
-
-    pan_doc_path, err = validate_and_save_file(files.get("pan_doc"), "pan", "PAN Document", "lab")
-    if err: errors["pan_doc"] = err
-
-    lab_photo, err = validate_and_save_file(files.get("lab_photo"), "lab_photo", "Lab Photo", "lab")
-    if err: errors["lab_photo"] = err
-
-    # Contact Person
-    contact_name = data.get("contact_name")
-    contact_phone = data.get("contact_phone")
-
-    if not contact_name: errors["contact_name"] = "Contact person name required."
-    if not contact_phone: errors["contact_phone"] = "Contact person phone required."
 
     if errors:
         return JsonResponse({"success": False, "errors": errors}, status=400)
 
-    # User Create
+    # Save uploaded files
+    lab_certificate_path, _ = validate_and_save_file(files["lab_certificate"], "lab_certificate", "", "lab")
+    aadhar_path, _ = validate_and_save_file(files["aadhar_doc"], "aadhaar", "", "lab")
+    pan_path, _ = validate_and_save_file(files["pan_doc"], "pan", "", "lab")
+    license_path, _ = validate_and_save_file(files["gov_license"], "license", "", "lab")
+    lab_photo_path, _ = validate_and_save_file(files["lab_photo"], "lab_photo", "", "lab")
+
+    # Create User
     user = User.objects.create(
         email=email,
-        phone_country_code=phone_country_code,
-        phone_number=phone_number,
-        password=make_password(password),
+        phone_country_code="+91",
+        phone_number=data.get("phone"),
+        password=make_password(data.get("password")),
         user_type="lab"
     )
 
-    # Profile Create
+    # Create Lab Profile
     lab = LabProfile.objects.create(
         user=user,
-        lab_name=lab_name,
-        address=address,
-        city=city,
-        state=state,
-        pincode=pincode,
+        lab_name=data.get("lab_name"),
+        owner_name=data.get("owner_name"),
+        contact_number=data.get("phone"),
+        alt_contact_number=data.get("alt_phone"),
+        lab_registration_number=data.get("lab_registration_number"),
+        lab_certificate_number=data.get("lab_certificate_number"),
+        identity_proof_aadhar_number=data.get("aadhaar_number"),
+        identity_proof_pan_number=data.get("pan_number"),
+        gov_license_number=data.get("gov_license_number"),
+        address=data.get("address"),
+        city=data.get("city"),
+        state=data.get("state"),
+        pincode=data.get("pincode"),
+        country=data.get("country"),
+        lab_timing_id=data.get("lab_timing"),
         lab_certificate_path=lab_certificate_path,
-        lab_certificate_virus_scanned=bool(lab_certificate_path),
         identity_proof_aadhar_path=aadhar_path,
-        identity_proof_aadhar_virus_scanned=bool(aadhar_path),
-        identity_proof_pan_path=pan_doc_path,
-        identity_proof_pan_virus_scanned=bool(pan_doc_path),
-        lab_photo_path=lab_photo,
-        lab_photo_virus_scanned=bool(lab_photo),
+        identity_proof_pan_path=pan_path,
+        gov_license_path=license_path,
+        lab_photo_path=lab_photo_path,
+        referral_code=data.get("referral_code") if data.get("referral_code") else None,
     )
 
-    # Contact
+    # Many-to-Many — Services
+    for sid in services:
+        LabProfileServices.objects.create(lab=lab, service_id=sid)
+
+    # Many-to-Many — Facilities
+    for fid in facilities:
+        LabProfileFacilities.objects.create(lab=lab, facility_id=fid)
+
+    # Contact Person
     ContactPerson.objects.create(
-        profile_type='lab',
+        profile_type="lab",
         profile=user,
-        name=contact_name,
-        phone_number=contact_phone
+        name=data.get("contact_name"),
+        phone_country_code="+91",
+        role=data.get("contact_designation"),
+        phone_number=data.get("contact_phone"),
     )
 
     return JsonResponse({"success": True, "message": "Lab registered successfully!"})

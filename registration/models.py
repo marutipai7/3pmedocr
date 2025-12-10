@@ -345,14 +345,17 @@ class LabProfile(models.Model):
         db_table = "registration_labprofile"
 
 class LabProfileFacilities(models.Model):
+    id = models.AutoField(primary_key=True)
     lab = models.ForeignKey(LabProfile, on_delete=models.CASCADE, db_column="lab_id")
     facility = models.ForeignKey(LabFacility, on_delete=models.CASCADE, db_column="facility_id")
 
     class Meta:
         db_table = "lab_profile_facilities"
         unique_together = ("lab", "facility")
-        
+
+
 class LabProfileServices(models.Model):
+    id = models.AutoField(primary_key=True)
     lab = models.ForeignKey(LabProfile, on_delete=models.CASCADE, db_column="lab_id")
     service = models.ForeignKey(LabService, on_delete=models.CASCADE, db_column="service_id")
 
@@ -452,6 +455,9 @@ class ContactPerson(models.Model):
         ('client', 'Client'),
         ('ngo', 'NGO'),
         ('pharmacy', 'Pharmacy'),
+        ('hospital', 'Hospital'),
+        ('doctor', 'Doctor'),
+        ('lab', 'Lab Technician'),
     ]
     profile_type = models.CharField(max_length=32, choices=PROFILE_TYPE_CHOICES)
     profile = models.ForeignKey(User, on_delete=models.CASCADE)

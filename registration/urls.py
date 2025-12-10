@@ -15,4 +15,7 @@ urlpatterns = [
     path("otp/verify", views.verify_otp, name="verify_otp"),
     path('forgot-password', views.forgot_password, name='forgot_password'),
     path("reset-password/<str:token>/", views.reset_password, name="reset_password"),
+    path("save/lab", views.save_lab, name="save_lab"),
+    path("save/doctor", views.save_doctor, name="save_doctor"),
+    path("save/hospital", views.save_hospital, name="save_hospital"),
 ]
