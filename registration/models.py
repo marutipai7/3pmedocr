@@ -76,6 +76,7 @@ class LabTiming(models.Model):
 
 class DoctorSpeciality(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         db_table = "doctor_speciality"
@@ -85,6 +86,7 @@ class DoctorSpeciality(models.Model):
 
 class DoctorEducation(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         db_table = "doctor_education"
@@ -94,6 +96,7 @@ class DoctorEducation(models.Model):
 
 class DoctorExperience(models.Model):
     years = models.IntegerField(unique=True)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         db_table = "doctor_experience"

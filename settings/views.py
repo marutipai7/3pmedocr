@@ -298,7 +298,7 @@ def handle_hospital_profile(user):
         'aadhar_card_no': profile.aadhar_card_no,
         'aadhar_doc_path': os.path.basename(profile.aadhar_doc_path) if profile.aadhar_doc_path else "",
         'pan_card_no': profile.pan_card_no,
-        'pan_doc_path': os.path.basename(profile.pan_doc_path) if profile.pan_doc_path else "",-
+        'pan_doc_path': os.path.basename(profile.pan_doc_path) if profile.pan_doc_path else "",
         'hospital_logo_path': os.path.basename(profile.hospital_logo_path) if profile.hospital_logo_path else "",
         'hospital_photo_path': os.path.basename(profile.hospital_photo_path) if profile.hospital_photo_path else "",
         'phone_for_otp': profile.phone_for_otp,
@@ -306,7 +306,7 @@ def handle_hospital_profile(user):
         'verification_status': profile.verification_status,
         'rejection_reason': profile.rejection_reason,
         'verified_at': profile.verified_at,
-        'referral_code': profile.referral_code,
+        'referral_code': profile.referral_code or '',
     }
     return data
 
