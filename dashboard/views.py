@@ -18,7 +18,14 @@ from django.views.decorators.http import require_GET, require_POST
 from .utils import dashboard_login_required, get_common_context, get_theme_colors
 from .models import SettingMenu, CouponPerformance,  CalendarEvent, TrendingCoupon
 from django.db.models import Sum, Count, Q, Max, F, ExpressionWrapper, DurationField
-from registration.models import PharmacyProfile, NGOProfile, ClientProfile, AdvertiserProfile, ContactPerson, LabProfile, DoctorProfile
+from registration.models import (PharmacyProfile, 
+                                 NGOProfile, 
+                                 ClientProfile, 
+                                 AdvertiserProfile, 
+                                 ContactPerson, 
+                                 LabProfile, 
+                                 DoctorProfile, 
+                                 HospitalProfile)
 
 logger = logging.getLogger(__name__)
 
@@ -154,6 +161,18 @@ def dashboard_home(request):
                 'user': user,
             })
             return render(request, "dashboard/home_doctor.html", context)
+        
+        elif user_type == 'hospital':
+            hospital_profile = HospitalProfile.objects.get(user=user)
+            events = CalendarEvent.objects.all().order_by('date')
+            
+            context.update({
+                'hospital_profile': hospital_profile,
+                'user_display_name': hospital_profile.hospital_name,
+                'events': events,
+                'user': user,
+            })
+            return render(request, "dashboard/home_hospital.html", context)
 
     except Exception as e:
         return render(request, "dashboard/not_found.html")
@@ -324,17 +343,6 @@ def saved(request):
             'user': user
         })
         return render(request, "saved/saved_client.html", context)
-    
-    elif user.user_type == 'lab':
-        lab_profile = LabProfile.objects.get(user=user)
-        context.update({
-            'lab_profile': lab_profile,
-            'user_display_name': lab_profile.lab_name,
-            'user_profile': user,
-            'user': user
-        })
-        return render(request, "saved/saved_pharmacy.html", context)
-
 
 @require_GET
 @dashboard_login_required

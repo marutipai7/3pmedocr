@@ -16,7 +16,7 @@ from dashboard.utils import dashboard_login_required
 from registration.views import validate_and_save_file
 from points.models import PointsActionType, PointsHistory
 from django.views.decorators.http import require_POST, require_GET
-from registration.models import NGOProfile, AdvertiserProfile, ClientProfile, PharmacyProfile, ContactPerson, LabProfile
+from registration.models import NGOProfile, AdvertiserProfile, ClientProfile, PharmacyProfile, ContactPerson, LabProfile, DoctorProfile, HospitalProfile
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +32,10 @@ def donate_view(request):
         user_profile = PharmacyProfile.objects.filter(user=user).first()
     elif user.user_type == 'lab':
         user_profile = LabProfile.objects.filter(user=user).first()
+    elif user.user_type == 'doctor':
+        user_profile = DoctorProfile.objects.filter(user=user).first()
+    elif user.user_type == 'hospital':
+        user_profile = HospitalProfile.objects.filter(user=user).first()
 
     donation_query = request.GET.get('donation_query', '').strip().lower()
 
@@ -55,6 +59,18 @@ def donate_view(request):
         "donation_query": donation_query,
         'user_display_name': user_profile.lab_name,
     })
+    elif user.user_type == "doctor":
+        context.update({
+            "donations": donations,
+            "donation_query": donation_query,
+            'user_display_name': user_profile.clinic_name,
+        })
+    elif user.user_type == "hospital":
+        context.update({
+            "donations": donations,
+            "donation_query": donation_query,
+            'user_display_name': user_profile.hospital_name,
+        })
     else:
         context.update({
             "donations": donations,
