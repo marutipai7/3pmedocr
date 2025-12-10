@@ -103,6 +103,21 @@ class DoctorExperience(models.Model):
 
     def __str__(self):
         return f"{self.years} Years"
+
+class HospitalTiming(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=255)
+    open_time = models.TimeField(null=True, blank=True)
+    close_time = models.TimeField(null=True, blank=True)
+    days = models.CharField(max_length=50)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = "hospital_timing"
+        ordering = ["id"]
+
+    def __str__(self):
+        return self.name
     
 class User(models.Model):
     USER_TYPE_CHOICES = [
@@ -375,7 +390,7 @@ class HospitalProfile(models.Model):
     state = models.CharField(max_length=128, null=True, blank=True)
     pincode = models.CharField(max_length=20, null=True, blank=True)
     country = models.CharField(max_length=128, blank=True, null=True, default='India')
-    hospital_timing = models.CharField(max_length=100, null=True, blank=True)
+    hospital_timing = models.ForeignKey(HospitalTiming, on_delete=models.SET_NULL, null=True, db_column="hospital_timing_id")
     home_visit = models.BooleanField(default=False)
 
     registration_no = models.CharField(max_length=128, null=True, blank=True)

@@ -28,7 +28,7 @@
                     <div class="flex flex-col gap-4 w-full sm:w-1/2">
                         <div class="relative w-full">
                             <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Hospital Name</label>
-                            <input type="text" name="name" placeholder="John Doe"
+                            <input type="text" name="hospital_name" placeholder="John Doe"
                                 class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
                         </div>
                     </div>
@@ -44,7 +44,7 @@
                 </div>
                 <div class="relative w-full">
                     <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Owner Name</label>
-                    <input type="text" name="company-name" placeholder="ABC  Pvt. Ltd"
+                    <input type="text" name="owner_name" placeholder="ABC  Pvt. Ltd"
                         class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
                 </div>
                 <div class="flex flex-col sm:flex-row gap-4">
@@ -64,7 +64,7 @@
                             </div>
                             <div class="relative w-full">
                                 <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Phone Number</label>
-                                <input type="text" name="phone-number1" placeholder="9876543210"
+                                <input type="text" name="phone" placeholder="9876543210"
                                     class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
                             </div>
                         </div>
@@ -85,7 +85,7 @@
                             <div class="relative w-full">
                                 <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Alternate Phone
                                     Number</label>
-                                <input type="text" name="phone-number1" placeholder="9876543210"
+                                <input type="text" name="alt_phone" placeholder="9876543210"
                                     class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
                             </div>
                         </div>
@@ -94,8 +94,42 @@
 
                 <div class="flex flex-col sm:flex-row gap-4">
 
-
                     <div class="flex flex-col gap-4 w-full sm:w-1/2">
+                        <!-- Home Visit -->
+                        <div class="dropdown relative inline-block">
+                            <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Home Visit</label>
+
+                            <!-- Visible Button -->
+                            <div
+                                class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
+                                <span class="mr-2 selected-value">Select</span>
+                                <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
+                            </div>
+
+                            <!-- Actual Selected Value (hidden input for backend) -->
+                            <input type="hidden" name="home_visit" id="home_visit" value="">
+
+                            <!-- Options -->
+                            <div
+                                class="dropdown-option absolute left-0 border border-primary-color bg-white text-blue-teal 
+                                shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-full mt-0.5 z-20 max-h-44 overflow-y-auto scroll">
+
+                                <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer home-visit-option"
+                                    data-value="Available">
+                                    <input type="checkbox" name="home_visit_temp" class="mr-2 accent-Royal-indigo">
+                                    <label class="flex-1">Available</label>
+                                </div>
+
+                                <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer home-visit-option"
+                                    data-value="Unavailable">
+                                    <input type="checkbox" name="home_visit_temp" class="mr-2 accent-Royal-indigo">
+                                    <label class="flex-1">Unavailable</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% comment %} <div class="flex flex-col gap-4 w-full sm:w-1/2">
                         <!-- Home Visit-->
                         <div class="dropdown relative inline-block">
                             <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Home Visit</label>
@@ -120,7 +154,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> {% endcomment %}
 
                     <!-- Hospital Timing -->
                     <div class="dropdown relative inline-block flex-1">
@@ -132,56 +166,19 @@
                         </div>
                         <div
                             class="dropdown-option absolute left-0 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-full mt-0.5 z-20 max-h-44 overflow-y-auto scroll">
-
+                            {% for timing in hospital_timing %}
                             <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
-                                <input type="checkbox" id="monday" class="mr-2 accent-Royal-indigo">
-                                <label for="monday" class="flex-1">
-                                    Monday — Opens at 9:00 AM — Closes at 5:00 PM
+                                <input type="checkbox" name="hospital_timing"
+                                    value="{{ timing.id }}"
+                                    id="hospital_timing_{{ timing.id }}"
+                                    class="mr-2 accent-Royal-indigo timing-radio"
+                                >
+
+                                <label for="hospital_timing_{{ timing.id }}" class="flex-1">
+                                    {{ timing.name }}
                                 </label>
                             </div>
-
-                            <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
-                                <input type="checkbox" id="tuesday" class="mr-2 accent-Royal-indigo">
-                                <label for="tuesday" class="flex-1">
-                                    Tuesday — Opens at 9:00 AM — Closes at 5:00 PM
-                                </label>
-                            </div>
-
-                            <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
-                                <input type="checkbox" id="wednesday" class="mr-2 accent-Royal-indigo">
-                                <label for="wednesday" class="flex-1">
-                                    Wednesday — Opens at 9:00 AM — Closes at 5:00 PM
-                                </label>
-                            </div>
-
-                            <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
-                                <input type="checkbox" id="thursday" class="mr-2 accent-Royal-indigo">
-                                <label for="thursday" class="flex-1">
-                                    Thursday — Opens at 9:00 AM — Closes at 5:00 PM
-                                </label>
-                            </div>
-
-                            <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
-                                <input type="checkbox" id="friday" class="mr-2 accent-Royal-indigo">
-                                <label for="friday" class="flex-1">
-                                    Friday — Opens at 9:00 AM — Closes at 5:00 PM
-                                </label>
-                            </div>
-
-                            <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
-                                <input type="checkbox" id="saturday" class="mr-2 accent-Royal-indigo">
-                                <label for="saturday" class="flex-1">
-                                    Saturday — Opens at 10:00 AM — Closes at 2:00 PM
-                                </label>
-                            </div>
-
-                            <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
-                                <input type="checkbox" id="sunday" class="mr-2 accent-Royal-indigo">
-                                <label for="sunday" class="flex-1">
-                                    Sunday — Closed
-                                </label>
-                            </div>
-
+                            {% endfor %}
                         </div>
 
                     </div>
@@ -198,7 +195,7 @@
                         <div class="relative w-full">
                             <label
                                 class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">City,Town,District</label>
-                            <input type="text" name="dist" placeholder="Pune"
+                            <input type="text" name="city" placeholder="Pune"
                                 class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
                         </div>
                         <!-- State -->
@@ -232,7 +229,7 @@
                             </label>
 
                             <div class="flex items-center gap-2 w-full mt-2">
-                                <input type="text" placeholder="U85110MH2022PTC123456"
+                                <input type="text" name="registration_no" placeholder="U85110MH2022PTC123456"
                                     class="flex-1 border border-primary-color rounded-md outline-none text-sm px-4 py-4" />
                                 <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
                                     <span class="material-symbols-outlined text-dark-blue !text-base">close</span>
@@ -245,7 +242,7 @@
                                         class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
                                 </div>
 
-                                <input type="file" accept="image/*" class="uploadInput hidden" />
+                                <input type="file" name="registration_doc" accept="image/*" class="uploadInput hidden" />
                             </div>
                         </div>
 
@@ -264,7 +261,7 @@
                             </label>
 
                             <div class="flex items-center gap-2 w-full mt-2">
-                                <input type="text" placeholder="AABCM1234F"
+                                <input type="text" name="pan_card_no" placeholder="AABCM1234F"
                                     class="flex-1 border border-primary-color rounded-md outline-none text-sm px-4 py-4" />
 
                                 <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
@@ -278,7 +275,7 @@
                                         class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
                                 </div>
 
-                                <input type="file" accept="image/*" class="uploadInput hidden" />
+                                <input type="file" name="pan_doc" accept="image/*" class="uploadInput hidden" />
                             </div>
                         </div>
                         <div class="flex items-center justify-end">
@@ -298,7 +295,7 @@
                                 class="flex items-center border-2 border-dashed border-primary-color rounded-md px-4 py-4 mt-2 relative">
                                 <input type="text" class="flex-1 border-none outline-none text-sm bg-transparent"
                                     readonly />
-                                <input type="file" accept="image/*" class="uploadInput hidden" />
+                                <input type="file" name="logo" accept="image/*" class="uploadInput hidden" />
                                 <div
                                     class="absolute inset-0 flex items-center justify-center cursor-pointer uploadTrigger">
                                     <span class="material-symbols-outlined text-primary-color text-2xl">upload</span>
@@ -314,7 +311,7 @@
                         <!-- Confirm Password -->
                         <div class="relative w-full">
                             <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Confirm Password</label>
-                            <input id="ConfPassword" type="password" name="confirm-password"
+                            <input id="ConfPassword" type="password" name="confirm_password"
                                 placeholder="***************"
                                 class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" /><span
                                 data-target="ConfPassword"
@@ -322,10 +319,7 @@
                                 visibility
                             </span>
                         </div>
-
-
                         <!-- Send OTP -->
-
                         <div>
                             <div
                                 class="bg-primary-color cursor-pointer rounded-md p-[0.95rem] w-full text-white text-center mt-[2.0 rem] send-otp">
@@ -348,15 +342,13 @@
                             <input type="text" name="country" placeholder="India"
                                 class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
                         </div>
-
                         <!-- Aadhar Number & Document -->
                         <div class="upload-section relative w-full">
                             <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
                                 Aadhar Number & Document
                             </label>
-
                             <div class="flex items-center gap-2 w-full mt-2">
-                                <input type="text" placeholder="431383635177"
+                                <input type="text" name="aadhar_card_no" placeholder="431383635177"
                                     class="flex-1 border border-primary-color rounded-md outline-none text-sm px-4 py-4" />
 
                                 <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
@@ -370,7 +362,7 @@
                                         class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
                                 </div>
 
-                                <input type="file" accept="image/*" class="uploadInput hidden" />
+                                <input type="file" name="aadhar_doc" accept="image/*" class="uploadInput hidden" />
                             </div>
                         </div>
 
@@ -392,7 +384,7 @@
                                 <input type="text" class="flex-1 border-none outline-none text-sm bg-transparent"
                                     readonly />
 
-                                <input type="file" accept="image/*" class="uploadInput hidden" />
+                                <input type="file" name="photo" accept="image/*" class="uploadInput hidden" />
 
 
                                 <div
@@ -436,17 +428,15 @@
                     </div>
                 </div>
                 <h1 class="text-3xl font-semibold">Contact person</h1>
-
                 <div class="flex flex-col sm:flex-row gap-4 otp-div">
                     <div class="flex flex-col gap-4 w-full sm:w-1/2">
                         <!-- Name -->
                         <div class="relative w-full">
                             <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Name</label>
-                            <input type="text" name="name" placeholder="Rahul Mehta"
+                            <input type="text" name="contact_name" placeholder="Rahul Mehta"
                                 class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
                         </div>
                         <!-- Designation -->
-
                         <div class="flex items-center gap-2">
                             <div class="dropdown code-dropdown relative inline-block">
                                 <div
@@ -460,12 +450,10 @@
                             </div>
                             <div class="relative w-full">
                                 <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Phone Number</label>
-                                <input type="text" name="phone-number2" placeholder="9876543210"
+                                <input type="text" name="contact_phone" placeholder="9876543210"
                                     class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
                             </div>
                         </div>
-
-
                         <div>
                             <div
                                 class="bg-primary-color rounded-md p-[0.95rem] w-full text-white text-center mt-6 send-otp">
@@ -480,12 +468,12 @@
                         <!-- Role-->
                         <div class="relative w-full">
                             <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Role</label>
-                            <input type="text" name="name"
+                            <input type="text" name="contact_role" placeholder="Manager"
                                 class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
                         </div>
                         <div class="relative w-full ">
                             <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Referral Code</label>
-                            <input type="text" name="otp1" placeholder="(optional)"
+                            <input type="text" name="referral_code" placeholder="(optional)"
                                 class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
                             <p class="text-xs mt-1 ">Have a referral code? Enter it here to unlock benefits</p>
                         </div>
@@ -527,8 +515,111 @@
             <div class="bg-golden-orange w-9 h-9 rounded-full mb-24"></div>
         </div>
     </div>
-
-
 </body>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const hospitalFieldMappings = {
+        // Hospital Basic Info
+        hospital_name: ".relative",
+        email: ".relative",
+        owner_name: ".relative",
+        phone: ".relative",
+        alt_phone: ".relative",
+        address: ".relative",
+        city: ".relative",
+        state: ".relative",
+        pincode: ".relative",
+        country: ".relative",
+
+        // Dropdowns
+        hospital_timing: ".dropdown",
+        home_visit: ".dropdown",
+
+        // Password Fields
+        password: ".relative",
+        confirm_password: ".relative",
+
+        // OTP Fields
+        otp1: ".relative",
+        otp2: ".relative",
+
+        // File Inputs
+        registration_no: ".upload-section",
+        aadhar_card_no: ".upload-section",
+        pan_card_no: ".upload-section",
+        logo: ".upload-section",
+        photo: ".upload-section",
+
+        // Contact Person
+        contact_name: ".relative",
+        contact_phone: ".relative",
+        contact_role: ".relative",
+
+        // Terms Checkbox
+        terms: ".flex"
+    };
+
+    Object.entries(hospitalFieldMappings).forEach(([field, selector]) => {
+        let element = document.querySelector(`[name="${field}"]`);
+
+        if (element) {
+            let wrapper = element.closest(selector);
+            if (wrapper && !wrapper.parentElement.querySelector(`span[data-error-for="${field}"]`)) {
+                const span = document.createElement("span");
+                span.setAttribute("data-error-for", field);
+                span.classList.add("text-xs", "text-dark-red", "mt-1", "block");
+                wrapper.insertAdjacentElement("afterend", span);
+            }
+        } else {
+            // Handle grouped items like checkboxes/radios
+            let group = document.querySelectorAll(`input[name="${field}"]`);
+            if (group.length > 0) {
+                let wrapper = group[0].closest(selector);
+                if (wrapper && !wrapper.parentElement.querySelector(`span[data-error-for="${field}"]`)) {
+                    const span = document.createElement("span");
+                    span.setAttribute("data-error-for", field);
+                    span.classList.add("text-xs", "text-dark-red", "mt-1", "block");
+                    wrapper.insertAdjacentElement("afterend", span);
+                }
+            }
+        }
+    });
+});
+document.addEventListener("DOMContentLoaded", function () {
+
+    const homeVisitOptions = document.querySelectorAll(".home-visit-option");
+
+    homeVisitOptions.forEach(option => {
+        option.addEventListener("click", function () {
+            // Remove selection from all
+            homeVisitOptions.forEach(opt => {
+                opt.querySelector("input").checked = false;
+            });
+
+            // Select clicked one
+            const checkbox = this.querySelector("input");
+            checkbox.checked = true;
+
+            // Get value
+            const selectedValue = this.getAttribute("data-value");
+            const booleanValue = selectedValue === "Available" ? "true" : "false";
+
+            // Update label text in dropdown
+            this.closest(".dropdown")
+                .querySelector(".selected-value")
+                .textContent = selectedValue;
+
+            // Set hidden input field value
+            document.getElementById("home_visit").value = booleanValue;
+
+            // Close dropdown after select
+            this.closest(".dropdown").querySelector(".dropdown-option").classList.add("hidden");
+
+            console.log("🏥 Home Visit Selected:", selectedValue, "→ Boolean:", booleanValue);
+        });
+    });
+});
+</script>
 
 {% endblock %}

@@ -302,125 +302,189 @@ const csrftoken = getCookie('csrftoken');
 
 $('#register-form').on('submit', function (e) {
     e.preventDefault();
-
-    // Reset previous errors
-    $(".border-dark-red").removeClass("border-dark-red");
-    $(".placeholder\\:text-semi-transparent-red").removeClass("placeholder:text-semi-transparent-red");
-    $("label.text-dark-red").removeClass("text-dark-red");
-    $(".field-error").remove();
-    $("[data-error-for]").text(""); 
+    console.clear(); // cleaner debugging console
+    console.log("===== 📤 SUBMITTING FORM =====");
+    resetFormErrors();
 
     let pwd = $('[name="password"]').val();
     let cpwd = $('[name="confirm_password"]').val();
+    console.log("Password Match:", pwd === cpwd);
 
-    // Password Match Check
     if (pwd !== cpwd) {
-        let $field = $('[name="confirm_password"]');
-        showError($field, "Passwords do not match.");
+        showError($('[name="confirm_password"]'), "Passwords do not match.");
         toastr.error("Passwords do not match.");
         return;
     }
 
-    // Terms Check
-    let $terms = $('[name="terms"]');
-    if (!$terms.is(":checked")) {
-        showError($terms, "You must agree to the terms.");
+    let terms = $('[name="terms"]');
+    if (terms.length && !terms.is(":checked")) {
+        showError(terms, "You must agree to the terms.");
         toastr.error("You must agree to the terms.");
         return;
     }
 
     let formUrl = $(this).attr("action");
+    console.log("➡️ URL:", formUrl);
+    if (formUrl == '/user/save/advertiser') {
 
-    if (formUrl == "/user/save/lab") {
-        let selectedTiming = $("input[name='lab_timing']:checked").val();
-        $("input[name='lab_timing']").val(selectedTiming || "");
+        let selectValue = $('.advertiser-type-selected').text().trim();
+        $('input[name="advertiser_type"]').val(selectValue);
 
-        let selectedServices = $("input[name='services']:checked")
-            .map(function () { return this.value; }).get();
-        $("input[name='services']").val(selectedServices.join(","));
+        let adServiceValue = $('.ad-service-selected').text().trim();
+        $('input[name="ad_service_req"]').val(adServiceValue);
 
-        let selectedFacilities = $("input[name='facilities']:checked")
-            .map(function () { return this.value; }).get();
-        $("input[name='facilities']").val(selectedFacilities.join(","));
+    } else if (formUrl == '/user/save/medical_pharmacy') {
+
+        let selectService = $('.selected-services').text().trim();
+        $('input[name="services_offered"]').val(selectService);
+
+        let selectPharmacyType = $('.selected-pharmacy-type').text().trim();
+        $('input[name="pharmacy_type"]').val(selectPharmacyType);
+
+        let selectWorkingDays = $('.selected-working-days').text().trim();
+        $('input[name="working_days"]').val(selectWorkingDays);
+
+    } else if (formUrl == '/user/save/client') {
+
+        let selectValue = $('.company-type-selected').text().trim();
+        $('input[name="company_type"]').val(selectValue);
+
+        let adServiceValue = $('.company-service-selected').text().trim();
+        $('input[name="company_service"]').val(adServiceValue);
+
+    } else if (formUrl == '/user/save/ngo') {
+
+        let selectValue = $('.ngo-service-selected').text().trim();
+        $('input[name="ngo_service"]').val(selectValue);
     }
 
-    var formData = new FormData(this);
+    // LAB SPECIFIC TRANSFORMS
+    else if (formUrl.includes("/save/lab")) {
+        let selectedTiming = $("input[name='lab_timing']:checked").val();
+        if (selectedTiming) {
+            $("input[name='lab_timing']").val(selectedTiming);
+        }
 
+        $("input[name='services']").val(
+            $("input[name='services']:checked").map(function () {
+                return this.value;
+            }).get().join(",")
+        );
+
+        $("input[name='facilities']").val(
+            $("input[name='facilities']:checked").map(function () {
+                return this.value;
+            }).get().join(",")
+        );
+    }
+
+    // HOSPITAL SPECIFIC TRANSFORMS
+    else if (formUrl.includes("/save/hospital")) {
+        console.log("📌 Processing Hospital Fields");
+        let selectedTiming = $("input[name='hospital_timing']:checked").val();
+        console.log("Hospital Timing:", selectedTiming);
+        if (selectedTiming) {
+            $("input[name='hospital_timing']").val(selectedTiming);
+        }
+
+        // Home Visit → Boolean
+        let homeVisit = $(".home-visit-option input:checked").attr("id") === "Available" ? "Available" : "Unavailable";
+        console.log("Home Visit:", homeVisit);
+        $("<input>").attr({
+            type: "hidden",
+            name: "home_visit",
+            value: homeVisit
+        }).appendTo("#register-form");
+    }
+
+    let formData = new FormData(this);
+    console.log("===== 🧾 FormData Preview =====");
+    for (var pair of formData.entries()) {
+        console.log(pair[0] + " ➜ " + pair[1]);
+    }
     $.ajax({
         url: formUrl,
         type: "POST",
-        headers: { "X-CSRFToken": csrftoken },
+        headers: {"X-CSRFToken": csrftoken},
         data: formData,
         processData: false,
         contentType: false,
         success: function (resp) {
+            console.log("🎯 SUCCESS RESPONSE:", resp);
             if (resp.success) {
                 toastr.success(resp.message || "Registration successful!");
-                setTimeout(() => location.href = "login", 1200);
-            } 
-            else if (resp.errors) {
+                setTimeout(() => location.href = "/user/login", 1200);
+            } else if (resp.errors) {
                 showErrors(resp.errors);
-                toastr.error("Please correct the highlighted errors.");
-            } 
-            else {
-                toastr.error(resp.error || "Registration failed.");
+                toastr.error("Please correct highlighted errors.");
+            } else {
+                toastr.error("Registration failed.");
             }
         },
         error: function (xhr) {
+            console.log("❌ ERROR RESPONSE RAW:", xhr);
+            console.log("❌ ERROR RESPONSE JSON:", xhr.responseJSON);
+
             if (xhr.responseJSON?.errors) {
                 showErrors(xhr.responseJSON.errors);
-                toastr.error("Please correct the highlighted errors.");
-            } 
-            else {
+                toastr.error("Please correct highlighted errors.");
+            } else {
                 toastr.error("Server error. Try again.");
             }
         }
     });
+
 });
 
-//------------------------------------------------
-// Helper Functions for Displaying Errors
-//------------------------------------------------
+function resetFormErrors() {
+    $(".border-dark-red").removeClass("border-dark-red");
+    $("label.text-dark-red").removeClass("text-dark-red");
+    $(".placeholder\\:text-semi-transparent-red").removeClass("placeholder:text-semi-transparent-red");
+    $("[data-error-for]").text("");
+}
+
 function showError($input, message) {
+    if (!$input.length) {
+        console.warn("⚠️ showError() input missing:", message);
+        return;
+    }
     let name = $input.attr("name");
-    let $label = $input.prev("label");
+    let $label = $input.closest(".relative").find("label").first();
     let $span = $(`[data-error-for="${name}"]`);
 
     if ($input.closest(".dropdown").length) {
-        let dropdownBtn = $input.closest(".dropdown").find(".dropdown-btn");
-        dropdownBtn.addClass("border-dark-red").removeClass("border-primary-color");
+        $input.closest(".dropdown").find(".dropdown-btn")
+            .addClass("border-dark-red").removeClass("border-primary-color");
     } else {
         $input.addClass("border-dark-red placeholder:text-semi-transparent-red")
-              .removeClass("border-primary-color placeholder:text-blue-teal");
+            .removeClass("border-primary-color placeholder:text-blue-teal");
     }
 
-    if ($label.length) $label.addClass("text-dark-red");
-
+    $label.addClass("text-dark-red");
     $span.text(message).addClass("text-dark-red");
 }
 
 function showErrors(errors) {
+    console.log("🛑 Backend Validation Errors:", errors);
     $.each(errors, (field, message) => {
         let $input = $(`[name="${field}"]`);
         if ($input.length) {
             showError($input, message);
+        } else {
+            console.warn("⚠️ Field not found in DOM:", field);
         }
     });
 
-    // Scroll to first error automatically
     let firstError = $(".text-dark-red").first();
     if (firstError.length) {
-        $("html, body").animate({ scrollTop: firstError.offset().top - 150 }, 500);
+        $("html, body").animate({scrollTop: firstError.offset().top - 150}, 500);
     }
 }
 
-//------------------------------------------------
-// Remove errors on user correction (Live Fix)
-//------------------------------------------------
 $("#register-form input, #register-form textarea").on("input change", function () {
     let $input = $(this);
     let name = $input.attr("name");
-    let $label = $input.prev("label");
+    let $label = $input.closest(".relative").find("label").first();
     let $span = $(`[data-error-for="${name}"]`);
 
     $input.removeClass("border-dark-red placeholder:text-semi-transparent-red")

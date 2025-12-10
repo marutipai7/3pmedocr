@@ -117,6 +117,9 @@ def register_by_role(request, role):
         context["doctor_experience"] = DoctorExperience.objects.filter(is_active=True)
         context["doctor_education"] = DoctorEducation.objects.filter(is_active=True)
 
+    elif role == "hospital":
+        context["hospital_timing"] = HospitalTiming.objects.filter(is_active=True)
+
     return render(request, tpl, context)
 
 ALLOWED_EXTENSIONS = {'.pdf', '.jpg', '.jpeg', '.png'}
@@ -1267,112 +1270,140 @@ def save_hospital(request):
     files = request.FILES
     errors = {}
 
-    # Basic Validation
-    email = data.get("email", "").strip()
-    password = data.get("password", "").strip()
-    confirm_password = data.get("confirm_password", "").strip()
-    phone_country_code = "+91"
-    phone_number = data.get("phone")
+    required_fields = {
+        "hospital_name": "Hospital Name",
+        "email": "Email",
+        "password": "Password",
+        "confirm_password": "Confirm Password",
+        "owner_name": "Owner Name",
+        "phone": "Phone Number",
+        "address": "Address",
+        "city": "City",
+        "state": "State",
+        "pincode": "Pincode",
+        "country": "Country",
+        "hospital_timing": "Hospital Timing",
+        "registration_no": "Registration Number",
+        "aadhar_card_no": "Aadhar Number",
+        "pan_card_no": "PAN Number",
+        "contact_name": "Contact Person Name",
+        "contact_phone": "Contact Person Phone",
+        "contact_role": "Contact Person Role",
+    }
 
+    for field, label in required_fields.items():
+        if not data.get(field):
+            errors[field] = f"{label} is required."
+
+    if data.get("password") != data.get("confirm_password"):
+        errors["confirm_password"] = "Passwords do not match."
+
+    email = data.get("email", "").strip()
     if not email:
         errors["email"] = "Email is required."
     else:
-        try:
-            validate_email(email)
-        except ValidationError:
-            errors["email"] = "Invalid email format."
         if User.objects.filter(email=email).exists():
-            errors["email"] = "This email is already registered."
+            errors["email"] = "Email already registered."
 
-    if not password or len(password) < 8:
-        errors["password"] = "Password must be at least 8 characters."
-    if password != confirm_password:
-        errors["confirm_password"] = "Passwords do not match."
+    pincode = data.get("pincode", "")
+    if pincode and not re.match(r"^\d{4,10}$", pincode):
+        errors["pincode"] = "Enter a valid pincode."
 
-    # Hospital fields
-    hospital_name = data.get("hospital_name")
-    if not hospital_name:
-        errors["hospital_name"] = "Hospital name is required."
+    reg_doc_path, reg_err = validate_and_save_file(
+        files.get("registration_doc"),
+        "registration",
+        "Registration Document",
+        "hospital",
+    )
+    if reg_err:
+        errors["registration_doc"] = reg_err
 
-    address = data.get("address")
-    city = data.get("city")
-    state = data.get("state")
-    pincode = data.get("pincode")
+    aadhar_doc_path, aad_err = validate_and_save_file(
+        files.get("aadhar_doc"),
+        "aadhar",
+        "Aadhar Document",
+        "hospital",
+    )
+    if aad_err:
+        errors["aadhar_doc"] = aad_err
 
-    if not address: errors["address"] = "Address is required."
-    if not city: errors["city"] = "City is required."
-    if not state: errors["state"] = "State is required."
-    if not pincode or not re.match(r"^\d{4,10}$", pincode):
-        errors["pincode"] = "Enter valid pincode."
+    pan_doc_path, pan_err = validate_and_save_file(
+        files.get("pan_doc"),
+        "pan",
+        "PAN Document",
+        "hospital",
+    )
+    if pan_err:
+        errors["pan_doc"] = pan_err
 
-    # Required Documents
-    reg_doc_path, err = validate_and_save_file(files.get("registration_doc"), "registration", "Registration Certificate", "hospital")
-    if err: errors["registration_doc"] = err
-    if not reg_doc_path: errors["registration_doc"] = "Registration document is required."
+    logo_path, logo_err = validate_and_save_file(
+        files.get("logo"),
+        "hospital_logo",
+        "Hospital Logo",
+        "hospital",
+    )
+    if logo_err:
+        errors["logo"] = logo_err
 
-    aadhar_doc_path, err = validate_and_save_file(files.get("aadhar_doc"), "aadhar", "Aadhar Document", "hospital")
-    if err: errors["aadhar_doc"] = err
-    if not aadhar_doc_path: errors["aadhar_doc"] = "Aadhar document is required."
-
-    pan_doc_path, err = validate_and_save_file(files.get("pan_doc"), "pan", "PAN Document", "hospital")
-    if err: errors["pan_doc"] = err
-    if not pan_doc_path: errors["pan_doc"] = "PAN document is required."
-
-    logo_path, err = validate_and_save_file(files.get("logo"), "hospital_logo", "Hospital Logo", "hospital")
-    if err: errors["logo"] = err
-    if not logo_path: errors["logo"] = "Hospital logo is required."
-
-    photo_path, err = validate_and_save_file(files.get("photo"), "hospital_photo", "Hospital Photo", "hospital")
-    if err: errors["photo"] = err
-    if not photo_path: errors["photo"] = "Hospital photo is required."
-
-    # Contact Person
-    contact_name = data.get("contact_name")
-    contact_phone = data.get("contact_phone")
-    contact_role = data.get("contact_role")
-
-    if not contact_name: errors["contact_name"] = "Contact person name required."
-    if not contact_phone: errors["contact_phone"] = "Contact person phone required."
-    if not contact_role: errors["contact_role"] = "Role required."
+    photo_path, photo_err = validate_and_save_file(
+        files.get("photo"),
+        "hospital_photo",
+        "Hospital Photo",
+        "hospital",
+    )
+    if photo_err:
+        errors["photo"] = photo_err
 
     if errors:
         return JsonResponse({"success": False, "errors": errors}, status=400)
 
-    # Create User
     user = User.objects.create(
         email=email,
-        phone_country_code=phone_country_code,
-        phone_number=phone_number,
-        password=make_password(password),
-        user_type="hospital"
+        phone_country_code="+91",
+        phone_number=data.get("phone"),
+        password=make_password(data.get("password")),
+        user_type="hospital",
     )
 
-    # Profile
+    home_visit_value = data.get("home_visit", "").strip()
+    home_visit_bool = home_visit_value == "Available"
+
     hospital = HospitalProfile.objects.create(
         user=user,
-        hospital_name=hospital_name,
-        address=address,
-        city=city,
-        state=state,
-        pincode=pincode,
+        hospital_name=data.get("hospital_name"),
+        owner_name=data.get("owner_name"),
+        contact_no=data.get("phone"),
+        alternate_contact_no=data.get("alt_phone"),
+        address=data.get("address"),
+        city=data.get("city"),
+        state=data.get("state"),
+        pincode=data.get("pincode"),
+        country=data.get("country"),
+        hospital_timing_id=data.get("hospital_timing"),
+        home_visit=home_visit_bool,
+        registration_no=data.get("registration_no"),
         registration_certificate_path=reg_doc_path,
         registration_doc_virus_scanned=True,
+        aadhar_card_no=data.get("aadhar_card_no"),
         aadhar_doc_path=aadhar_doc_path,
         aadhar_doc_virus_scanned=True,
+        pan_card_no=data.get("pan_card_no"),
         pan_doc_path=pan_doc_path,
         pan_doc_virus_scanned=True,
         hospital_logo_path=logo_path,
         hospital_logo_virus_scanned=True,
         hospital_photo_path=photo_path,
         hospital_photo_virus_scanned=True,
+        referral_code=data.get("referral_code"),
+        phone_for_otp=data.get("phone"),
     )
 
     ContactPerson.objects.create(
-        profile_type='hospital',
+        profile_type="hospital",
         profile=user,
-        name=contact_name,
-        phone_number=contact_phone,
-        role=contact_role
+        name=data.get("contact_name"),
+        phone_number=data.get("contact_phone"),
+        role=data.get("contact_role"),
     )
 
     return JsonResponse({"success": True, "message": "Hospital registered successfully!"})
