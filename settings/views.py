@@ -79,6 +79,7 @@ def settings_page(request):
         'pharmacy': handle_pharmacy_profile,
         'lab': handle_lab_profile,
         'hospital': handle_hospital_profile,
+        'doctor': handle_doctor_profile,
     }
     handler_func = user_type_handlers.get(user.user_type)
     if handler_func:
@@ -248,15 +249,14 @@ def handle_lab_profile(user):
     data = {
         'lab_name' : profile.lab_name,
         'owner_name': profile.owner_name,
-        'email': profile.email,
         'contact_number': profile.contact_number,
         'alt_contact_number': profile.alt_contact_number,
         'lab_registration_number': profile.lab_registration_number,
         'address': profile.address,
         'city': profile.city,
         'state': profile.state,
+        'country': profile.country,
         'pincode': profile.pincode,
-        'website_url': profile.website_url if profile.website_url else "",
         'all_timings': all_timings,
         'lab_timing': profile.lab_timing,
         'services_selected': profile.services.all(),
@@ -277,8 +277,6 @@ def handle_lab_profile(user):
         'rejection_reason': profile.rejection_reason,
         'verified_at': profile.verified_at,
         'referral_code': profile.referral_code or '',
-        'created_at': profile.created_at,
-        'updated_at': profile.updated_at,        
     }
     return data
 
@@ -287,7 +285,6 @@ def handle_hospital_profile(user):
     data = {
         'hospital_name' : profile.hospital_name,
         'owner_name': profile.owner_name,
-        'email': profile.email,
         'contact_no': profile.contact_no,
         'alternate_contact_no': profile.alternate_contact_no,
         'address': profile.address,
@@ -309,8 +306,50 @@ def handle_hospital_profile(user):
         'verification_status': profile.verification_status,
         'rejection_reason': profile.rejection_reason,
         'verified_at': profile.verified_at,
-        'created_at': profile.created_at,
-        'updated_at': profile.updated_at,        
+        'referral_code': profile.referral_code,
+    }
+    return data
+
+def handle_doctor_profile(user):
+    profile = DoctorProfile.objects.filter(user=user).first()
+    all_speciality = DoctorSpeciality.objects.filter(is_active=True)
+    all_education = DoctorEducation.objects.filter(is_active=True)
+    all_experience = DoctorExperience.objects.filter(is_active=True)
+    data = {
+        'full_name': profile.full_name,
+        'gender': profile.gender,
+        'age': profile.age,
+        'specialty': profile.specialty,
+        'all_speciality': all_speciality,
+        'education': profile.education,
+        'all_education': all_education,
+        'experience': profile.experience,
+        'all_experience': all_experience,
+        'profile_photo_path': profile.profile_photo_path,
+        'clinic_name': profile.clinic_name,
+        'owner_name': profile.owner_name,
+        'contact_number': profile.contact_number,
+        'alt_contact_number': profile.alt_contact_number,
+        'address': profile.full_address,
+        'city': profile.city,
+        'state': profile.state,
+        'pincode': profile.pincode,
+        'clinic_timing_from': profile.clinic_timing_from,
+        'clinic_timing_to': profile.clinic_timing_to,
+        'home_visit_available': profile.home_visit_available,
+        'registration_number': profile.registration_number,
+        'registration_certificate_path': os.path.basename(profile.registration_certificate_path) if profile.registration_certificate_path else "",
+        'aadhar_number': profile.aadhar_number,
+        'aadhar_doc_path': os.path.basename(profile.aadhar_doc_path) if profile.aadhar_doc_path else "",
+        'pan_number': profile.pan_number,
+        'pan_doc_path': os.path.basename(profile.pan_doc_path) if profile.pan_doc_path else "",
+        'clinic_logo_path': os.path.basename(profile.clinic_logo_path) if profile.clinic_logo_path else "",
+        'clinic_photo_path': os.path.basename(profile.clinic_photo_path) if profile.clinic_photo_path else "",
+        'is_verified': profile.is_verified,
+        'verification_status': profile.verification_status,
+        'rejection_reason': profile.rejection_reason,
+        'verified_at': profile.verified_at,
+        'referral_code': profile.referral_code or '',
     }
     return data
 
@@ -623,6 +662,21 @@ def update_pharmacy_profile(request):
     
     except Exception as e:
         return JsonResponse({"success": False, "message": str(e)}, status=500)
+
+@require_POST
+@dashboard_login_required
+def update_lab_profile(request):
+    pass
+
+@require_POST
+@dashboard_login_required
+def update_hospital_profile(request):
+    pass
+
+@require_POST
+@dashboard_login_required
+def update_doctor_profile(request):
+    pass
 
 @require_POST
 @dashboard_login_required

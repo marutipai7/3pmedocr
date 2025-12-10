@@ -267,6 +267,7 @@ class PharmacyProfile(models.Model):
     city = models.CharField(max_length=128, blank=True, null=True)
     state = models.CharField(max_length=128, blank=True, null=True)
     pincode = models.CharField(max_length=20, blank=True, null=True)
+    country = models.CharField(max_length=128, blank=True, null=True, default='India')
 
     incorporation_number = models.CharField(max_length=128, blank=True, null=True)
     incorporation_doc_path = models.CharField(max_length=255, blank=True, null=True)
@@ -288,7 +289,6 @@ class PharmacyProfile(models.Model):
     selfie_path_for_applock = models.CharField(max_length=255, blank=True, null=True)
     selfie_virus_scanned = models.BooleanField(default=False)
 
-    # --- Misc ---
     is_verified = models.BooleanField(default=False)
     verification_status = models.CharField(max_length=20, default='pending')  # e.g., pending, approved, rejected
     rejection_reason = models.TextField(blank=True, null=True)
@@ -311,6 +311,7 @@ class LabProfile(models.Model):
     city = models.CharField(max_length=128, null=True, blank=True)
     state = models.CharField(max_length=128, null=True, blank=True)
     pincode = models.CharField(max_length=20, null=True, blank=True)
+    country = models.CharField(max_length=128, blank=True, null=True, default='India')
     lab_timing = models.ForeignKey(LabTiming, on_delete=models.SET_NULL, null=True, blank=True, db_column="lab_timing_id", related_name="lab_profiles")
     services = models.ManyToManyField(LabService, through="LabProfileServices", related_name="labs")
     facilities = models.ManyToManyField(LabFacility, through="LabProfileFacilities", related_name="labs")
@@ -367,6 +368,7 @@ class HospitalProfile(models.Model):
     city = models.CharField(max_length=128, null=True, blank=True)
     state = models.CharField(max_length=128, null=True, blank=True)
     pincode = models.CharField(max_length=20, null=True, blank=True)
+    country = models.CharField(max_length=128, blank=True, null=True, default='India')
     hospital_timing = models.CharField(max_length=100, null=True, blank=True)
     home_visit = models.BooleanField(default=False)
 
@@ -390,38 +392,19 @@ class HospitalProfile(models.Model):
     rejection_reason = models.TextField(null=True, blank=True)
     verified_at = models.DateTimeField(null=True, blank=True)
     otp = models.CharField(max_length=64, null=True, blank=True)
+    referral_code = models.CharField(max_length=64, null=True, blank=True)
 
     class Meta:
         db_table = "registration_hospitalprofile"
 
 class DoctorProfile(models.Model):
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        related_name="doctor_profile",
-        db_column="user_id"
-    )
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="doctor_profile", db_column="user_id")
     full_name = models.CharField(max_length=255, null=True, blank=True)
     gender = models.CharField(max_length=20, null=True, blank=True)
     age = models.IntegerField(null=True, blank=True)
-    specialty = models.ForeignKey(
-        DoctorSpeciality,
-        on_delete=models.SET_NULL,
-        null=True, blank=True,
-        related_name="doctors"
-    )
-    education = models.ForeignKey(
-        DoctorEducation,
-        on_delete=models.SET_NULL,
-        null=True, blank=True,
-        related_name="doctors"
-    )
-    experience = models.ForeignKey(
-        DoctorExperience,
-        on_delete=models.SET_NULL,
-        null=True, blank=True,
-        related_name="doctors"
-    )
+    specialty = models.ForeignKey(DoctorSpeciality, on_delete=models.SET_NULL, null=True, blank=True, related_name="doctors")
+    education = models.ForeignKey(DoctorEducation, on_delete=models.SET_NULL, null=True, blank=True, related_name="doctors")
+    experience = models.ForeignKey(DoctorExperience, on_delete=models.SET_NULL, null=True, blank=True, related_name="doctors")
     profile_photo_path = models.CharField(max_length=255, null=True, blank=True)
     profile_photo_virus_scanned = models.BooleanField(default=False)
     clinic_name = models.CharField(max_length=255, null=True, blank=True)
@@ -432,6 +415,7 @@ class DoctorProfile(models.Model):
     state = models.CharField(max_length=128, null=True, blank=True)
     city = models.CharField(max_length=128, null=True, blank=True)
     pincode = models.CharField(max_length=20, null=True, blank=True)
+    country = models.CharField(max_length=128, blank=True, null=True, default='India')
     clinic_timing_from = models.CharField(max_length=20, null=True, blank=True)
     clinic_timing_to = models.CharField(max_length=20, null=True, blank=True)
     home_visit_available = models.BooleanField(default=False)

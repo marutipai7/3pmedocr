@@ -339,197 +339,6 @@
             </div>
         </div>
     </form>
-{% elif user.user_type == 'pharmacy' %}
-    <form id="editForm" method="POST" action="{% url 'update_pharmacy_profile' %}" class="submit-formgrid grid-cols-1 gap-x-6 md:gap-x-12 gap-y-6 px-4 sm:px-6 pt-6 text-sm">
-        {% csrf_token %}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm mb-2">
-            <!-- Email + Phone -->
-            <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <!-- Email -->
-                <div class="flex flex-col">
-                    <input name="email" type="email" class="border rounded px-3 py-2 w-full"
-                        placeholder="Email Address" value="{{email}}"/>
-                    <span class="error emailError text-red-500 text-sm mt-1 hidden"></span>
-                </div>
-
-                <!-- Country code + Phone -->
-                <div class="flex flex-col lg:flex-row gap-4">
-                    <!-- Country Code -->
-                    <div class="pl-4 lg:w-1/4">
-                        <select name="countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}">
-                            {% for code in country_codes %}
-                                <option value="{{ code.dial_code }}"
-                                    {% if code.dial_code == country_code %}selected{% endif %}>
-                                    {{ code.name }} ({{ code.dial_code }})
-                                </option>
-                            {%endfor%}
-                        </select>
-                        <span class="error countryCodesError text-red-500 text-sm mt-1 hidden"></span>
-                    </div>
-
-                    <!-- Phone -->
-                    <div class="flex-1">
-                        <input name="phone" type="text" class="border rounded px-3 py-2 w-full"
-                        placeholder="Phone Number" value="{{phone_no}}"/>
-                        <span class="error phoneError text-red-500 text-sm mt-1 hidden"></span>
-                    </div>
-                </div>
-                <!-- OTP -->
-
-                <div class="flex-1">
-                    <button type="button"
-                        class="bg-living-coral opacity-50 text-white px-2 py-2.5 rounded mb-1.5 w-full cursor-pointer">
-                        Send Phone OTP
-                    </button>
-                    <span class="text-primary-color text-sm mt-2">Didn't get the code ?
-                        <span class="text-black">Resend</span></span>
-                </div>
-                <div class="flex-1">
-                    <input name="otp1" type="text" class="border rounded px-2 py-2 w-full" placeholder="224584" maxlength="6" 
-                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);"/>
-                    <span class="error phoneError text-red-500 text-sm mt-1 hidden"></span>
-                    <div class="flex items-center gap-2 justify-end">
-                        <span class="material-symbols-outlined material-filled text-bright-green">check_box</span>
-                        <p class="font-normal text-xs text-bright-green">Verified</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--Company Name-->
-        <input name="company_name" type="text" class="w-full rounded px-2 py-2 mb-3" placeholder="Company Name" value="{{company_name}}"/>
-        <span class="error company_nameError text-red-500 text-sm mt-1 hidden"></span>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm mb-3">
-            <!--P Type-->
-            <div class="issue-type-wrapper w-full rounded-[6px] text-dark-gray border border-slate-gray pl-0.5 text-sm flex items-center justify-between relative">
-                <!-- Dropdown options -->
-                <select name="pharmacy_type" class="border rounded px-3 py-2 w-full" data-selected="{{pharmacy_type}}">
-                    {% for type in all_types %}
-                        <option value="{{ type }}"
-                            {% if type == pharmacy_type %}selected{% endif %}>
-                            {{ type }}
-                        </option>
-                    {%endfor%}
-                </select>
-                <span class="error pharmacy_typeError text-red-500 text-sm mt-1 hidden"></span>
-            </div>
-            <!--Services Offered-->
-            <div class="issue-type-wrapper w-full  rounded-[6px] text-dark-gray border border-slate-gray pl-0.5 text-sm flex items-center justify-between relative">
-                <select name="services_offered" class="border rounded px-3 py-2 w-full" data-selected="{{services_offered}}">
-                    {% for service in all_services %}
-                        <option value="{{ service }}"
-                            {% if service == services_offered %}selected{% endif %}>
-                            {{ service }}
-                        </option>
-                    {%endfor%}
-                </select>
-                <span class="error services_offeredError text-red-500 text-sm mt-1 hidden"></span>
-            </div>
-        </div>
-
-        <!--Working Days-->
-        <div class="issue-type-wrapper w-full  rounded-[6px] text-dark-gray border border-slate-gray pl-0.5 text-sm flex items-center justify-between relative mb-3">
-            <select name="working_days" class="border rounded px-3 py-2 w-full" data-selected="{{working_days}}">
-                {% for day in all_workingdays %}
-                    <option value="{{ day }}"
-                        {% if day == working_days %}selected{% endif %}>
-                        {{ day }}
-                    </option>
-                {%endfor%}
-            </select>
-            <span class="error working_daysError text-red-500 text-sm mt-1 hidden"></span>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm">
-            <!--Website URL-->
-            <div class="flex flex-col">
-                <input name="website_url" type="text" class="border rounded px-3 py-2" placeholder="Website URL" value="{{website_url}}"/>
-                <span class="error website_urlError text-red-500 text-sm mt-1 hidden"></span>
-            </div>
-            <!--Address-->
-            <div class="flex flex-col">
-                <input name="address" type="text" class="border rounded px-3 py-2" placeholder="Address" value="{{address}}"/>
-                <span class="error addressError text-red-500 text-sm mt-1 hidden"></span>
-            </div>
-            <!-- City,Town,District -->
-            <div class="flex flex-col">
-                <input name="city" type="text" class="border rounded px-3 py-2" placeholder="City,Town,District" value="{{city}}"/>
-                <span class="error cityError text-red-500 text-sm mt-1 hidden"></span>
-            </div>
-            <!-- State -->
-            <div class="flex flex-col">
-                <input name="state" type="text" class="border rounded px-3 py-2" placeholder="State" value="{{state}}"/>
-                <span class="error stateError text-red-500 text-sm mt-1 hidden"></span>
-            </div>
-            <!-- Country -->
-            <div class="flex flex-col">
-                <input name="country" type="text" class="border rounded px-3 py-2" placeholder="Country" value="{{country}}"/>
-                <span class="error countryError text-red-500 text-sm mt-1 hidden"></span>
-            </div>
-            <!-- Pincode -->
-            <div class="flex flex-col">
-                <input name="pincode" type="text" class="border rounded px-3 py-2" placeholder="Pincode" value="{{pincode}}"/>
-                <span class="error pincodeError text-red-500 text-sm mt-1 hidden"></span>
-            </div>
-            <!-- Contact Person Name -->
-            <div class="flex flex-col">
-                <input name="contact_name" type="text" class="border rounded px-3 py-2" placeholder="Contact Person Name" value="{{contact_name}}"/>
-                <span class="error contact_nameError text-red-500 text-sm mt-1 hidden"></span>
-            </div>
-            <!-- Role -->
-            <div class="flex flex-col">
-                <input name="contact_role" type="text" class="border rounded px-3 py-2" placeholder="Role" value="{{contact_role}}"/>
-                <span class="error contact_roleError text-red-500 text-sm mt-1 hidden"></span>
-            </div>
-            <!-- Contact Person Country code + Phone -->
-            <div class="flex flex-col lg:flex-row gap-4">
-                <!-- Country Code -->
-                <div class="pl-4 lg:w-1/4">
-                    <select name="contact_countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}">
-                        {% for code in country_codes %}
-                            <option value="{{ code.dial_code }}"
-                                {% if code.dial_code == country_code %}selected{% endif %}>
-                                {{ code.name }} ({{ code.dial_code }})
-                            </option>
-                        {%endfor%}
-                    </select>
-                    <span class="error countryCodesError text-red-500 text-sm mt-1 hidden"></span>
-                </div>
-
-                <!-- Phone -->
-                <div class="flex-1">
-                    <input name="contact_phone_number" type="text" class="border rounded px-3 py-2 w-full" placeholder="Contact Phone Number" value="{{contact_phone_number}}"/>
-                    <span class="error contact_phone_numberError text-red-500 text-sm mt-1 hidden"></span>
-                </div>
-            </div>
-            <!--Send OTP for Contact-->
-            <div class="flex items-center gap-2">
-                <div class="flex-1">
-                    <button type="button" class="bg-living-coral opacity-50 text-white px-2 py-2.5 rounded w-full cursor-pointer">
-                        Send Contact Phone OTP
-                    </button>
-                    <span class="text-primary-color text-sm mt-2">Didn't get the code ?
-                        <span class="text-black">Resend</span></span>
-                </div>
-                <div class="flex-1">
-                    <input id="otp2" type="text" class="border rounded px-2 py-2 w-full" placeholder="224584" maxlength="6" 
-                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);"/>
-                    <span class="error phoneError text-red-500 text-sm mt-1 hidden"></span>
-                    <div class="flex items-center gap-2 justify-end">
-                        <span class="material-symbols-outlined material-filled text-bright-green">check_box</span>
-                        <p class="font-normal text-xs text-bright-green">Verified</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Buttons -->
-            <div class="md:col-span-2 flex justify-end pt-4 gap-2 flex-wrap">
-                <button type="button" class="px-4 py-2 rounded-md border text-living-coral font-normal text-lg border-living-coral cancel-btn">Cancel</button>
-                <button type="submit" class="bg-living-coral text-white px-6 py-2 rounded-lg font-normal text-lg cursor-pointer save-btn">
-                Save Changes</button>
-            </div>
-        </div>
-    </form>
 {% elif user.user_type == 'client' %}
     <form id="editForm" method="POST" action="{% url 'update_client_profile' %}" class="submit-form grid grid-cols-1 gap-x-6 md:gap-x-12 gap-y-6 px-4 sm:px-6 pt-6 text-sm">
         {% csrf_token %}
@@ -828,8 +637,1043 @@
             </div>
         </div>
     </form>
+{% elif user.user_type == 'pharmacy' %}
+    <form id="editForm" method="POST" action="{% url 'update_pharmacy_profile' %}" class="submit-formgrid grid-cols-1 gap-x-6 md:gap-x-12 gap-y-6 px-4 sm:px-6 pt-6 text-sm">
+        {% csrf_token %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm mb-2">
+            <!-- Email + Phone -->
+            <div class="md:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <!-- Email -->
+                <div class="flex flex-col">
+                    <input name="email" type="email" class="border rounded px-3 py-2 w-full"
+                        placeholder="Email Address" value="{{email}}"/>
+                    <span class="error emailError text-red-500 text-sm mt-1 hidden"></span>
+                </div>
+
+                <!-- Country code + Phone -->
+                <div class="flex flex-col lg:flex-row gap-4">
+                    <!-- Country Code -->
+                    <div class="pl-4 lg:w-1/4">
+                        <select name="countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}">
+                            {% for code in country_codes %}
+                                <option value="{{ code.dial_code }}"
+                                    {% if code.dial_code == country_code %}selected{% endif %}>
+                                    {{ code.name }} ({{ code.dial_code }})
+                                </option>
+                            {%endfor%}
+                        </select>
+                        <span class="error countryCodesError text-red-500 text-sm mt-1 hidden"></span>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="flex-1">
+                        <input name="phone" type="text" class="border rounded px-3 py-2 w-full"
+                        placeholder="Phone Number" value="{{phone_no}}"/>
+                        <span class="error phoneError text-red-500 text-sm mt-1 hidden"></span>
+                    </div>
+                </div>
+                <!-- OTP -->
+
+                <div class="flex-1">
+                    <button type="button"
+                        class="bg-living-coral opacity-50 text-white px-2 py-2.5 rounded mb-1.5 w-full cursor-pointer">
+                        Send Phone OTP
+                    </button>
+                    <span class="text-primary-color text-sm mt-2">Didn't get the code ?
+                        <span class="text-black">Resend</span></span>
+                </div>
+                <div class="flex-1">
+                    <input name="otp1" type="text" class="border rounded px-2 py-2 w-full" placeholder="224584" maxlength="6" 
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);"/>
+                    <span class="error phoneError text-red-500 text-sm mt-1 hidden"></span>
+                    <div class="flex items-center gap-2 justify-end">
+                        <span class="material-symbols-outlined material-filled text-bright-green">check_box</span>
+                        <p class="font-normal text-xs text-bright-green">Verified</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Company Name-->
+        <input name="company_name" type="text" class="w-full rounded px-2 py-2 mb-3" placeholder="Company Name" value="{{company_name}}"/>
+        <span class="error company_nameError text-red-500 text-sm mt-1 hidden"></span>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm mb-3">
+            <!--P Type-->
+            <div class="issue-type-wrapper w-full rounded-[6px] text-dark-gray border border-slate-gray pl-0.5 text-sm flex items-center justify-between relative">
+                <!-- Dropdown options -->
+                <select name="pharmacy_type" class="border rounded px-3 py-2 w-full" data-selected="{{pharmacy_type}}">
+                    {% for type in all_types %}
+                        <option value="{{ type }}"
+                            {% if type == pharmacy_type %}selected{% endif %}>
+                            {{ type }}
+                        </option>
+                    {%endfor%}
+                </select>
+                <span class="error pharmacy_typeError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!--Services Offered-->
+            <div class="issue-type-wrapper w-full  rounded-[6px] text-dark-gray border border-slate-gray pl-0.5 text-sm flex items-center justify-between relative">
+                <select name="services_offered" class="border rounded px-3 py-2 w-full" data-selected="{{services_offered}}">
+                    {% for service in all_services %}
+                        <option value="{{ service }}"
+                            {% if service == services_offered %}selected{% endif %}>
+                            {{ service }}
+                        </option>
+                    {%endfor%}
+                </select>
+                <span class="error services_offeredError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+        </div>
+
+        <!--Working Days-->
+        <div class="issue-type-wrapper w-full  rounded-[6px] text-dark-gray border border-slate-gray pl-0.5 text-sm flex items-center justify-between relative mb-3">
+            <select name="working_days" class="border rounded px-3 py-2 w-full" data-selected="{{working_days}}">
+                {% for day in all_workingdays %}
+                    <option value="{{ day }}"
+                        {% if day == working_days %}selected{% endif %}>
+                        {{ day }}
+                    </option>
+                {%endfor%}
+            </select>
+            <span class="error working_daysError text-red-500 text-sm mt-1 hidden"></span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm">
+            <!--Website URL-->
+            <div class="flex flex-col">
+                <input name="website_url" type="text" class="border rounded px-3 py-2" placeholder="Website URL" value="{{website_url}}"/>
+                <span class="error website_urlError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!--Address-->
+            <div class="flex flex-col">
+                <input name="address" type="text" class="border rounded px-3 py-2" placeholder="Address" value="{{address}}"/>
+                <span class="error addressError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- City,Town,District -->
+            <div class="flex flex-col">
+                <input name="city" type="text" class="border rounded px-3 py-2" placeholder="City,Town,District" value="{{city}}"/>
+                <span class="error cityError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- State -->
+            <div class="flex flex-col">
+                <input name="state" type="text" class="border rounded px-3 py-2" placeholder="State" value="{{state}}"/>
+                <span class="error stateError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- Country -->
+            <div class="flex flex-col">
+                <input name="country" type="text" class="border rounded px-3 py-2" placeholder="Country" value="{{country}}"/>
+                <span class="error countryError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- Pincode -->
+            <div class="flex flex-col">
+                <input name="pincode" type="text" class="border rounded px-3 py-2" placeholder="Pincode" value="{{pincode}}"/>
+                <span class="error pincodeError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- Contact Person Name -->
+            <div class="flex flex-col">
+                <input name="contact_name" type="text" class="border rounded px-3 py-2" placeholder="Contact Person Name" value="{{contact_name}}"/>
+                <span class="error contact_nameError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- Role -->
+            <div class="flex flex-col">
+                <input name="contact_role" type="text" class="border rounded px-3 py-2" placeholder="Role" value="{{contact_role}}"/>
+                <span class="error contact_roleError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- Contact Person Country code + Phone -->
+            <div class="flex flex-col lg:flex-row gap-4">
+                <!-- Country Code -->
+                <div class="pl-4 lg:w-1/4">
+                    <select name="contact_countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}">
+                        {% for code in country_codes %}
+                            <option value="{{ code.dial_code }}"
+                                {% if code.dial_code == country_code %}selected{% endif %}>
+                                {{ code.name }} ({{ code.dial_code }})
+                            </option>
+                        {%endfor%}
+                    </select>
+                    <span class="error countryCodesError text-red-500 text-sm mt-1 hidden"></span>
+                </div>
+
+                <!-- Phone -->
+                <div class="flex-1">
+                    <input name="contact_phone_number" type="text" class="border rounded px-3 py-2 w-full" placeholder="Contact Phone Number" value="{{contact_phone_number}}"/>
+                    <span class="error contact_phone_numberError text-red-500 text-sm mt-1 hidden"></span>
+                </div>
+            </div>
+            <!--Send OTP for Contact-->
+            <div class="flex items-center gap-2">
+                <div class="flex-1">
+                    <button type="button" class="bg-living-coral opacity-50 text-white px-2 py-2.5 rounded w-full cursor-pointer">
+                        Send Contact Phone OTP
+                    </button>
+                    <span class="text-primary-color text-sm mt-2">Didn't get the code ?
+                        <span class="text-black">Resend</span></span>
+                </div>
+                <div class="flex-1">
+                    <input id="otp2" type="text" class="border rounded px-2 py-2 w-full" placeholder="224584" maxlength="6" 
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);"/>
+                    <span class="error phoneError text-red-500 text-sm mt-1 hidden"></span>
+                    <div class="flex items-center gap-2 justify-end">
+                        <span class="material-symbols-outlined material-filled text-bright-green">check_box</span>
+                        <p class="font-normal text-xs text-bright-green">Verified</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="md:col-span-2 flex justify-end pt-4 gap-2 flex-wrap">
+                <button type="button" class="px-4 py-2 rounded-md border text-living-coral font-normal text-lg border-living-coral cancel-btn">Cancel</button>
+                <button type="submit" class="bg-living-coral text-white px-6 py-2 rounded-lg font-normal text-lg cursor-pointer save-btn">
+                Save Changes</button>
+            </div>
+        </div>
+    </form>
 {% elif user.user_type == 'lab' %}
-    <form id="editForm" class="grid grid-cols-1 gap-x-6 md:gap-x-12 gap-y-6  pt-6 text-sm">
+    <form id="editForm" method="POST" action="{% url 'update_lab_profile' %}" class="grid grid-cols-1 gap-x-6 md:gap-x-12 gap-y-6  pt-6 text-sm">
+        {% csrf_token %}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm">
+            <!-- Email + Phone -->
+
+            <!-- Email -->
+            <div class="flex flex-col">
+                <input id="email" type="email" class="border rounded px-3 py-2 w-full"
+                    placeholder="Email Address" value="{{email}}"/>
+                <span class="error emailError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+
+            <!-- Country code + Phone -->
+            <div class="flex flex-col lg:flex-row gap-4">
+                <!-- Country Code -->
+                <div class="pl-4 lg:w-1/4">
+                    <select name="countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}">
+                        {% for code in country_codes %}
+                            <option value="{{ code.dial_code }}"
+                                {% if code.dial_code == country_code %}selected{% endif %}>
+                                {{ code.name }} ({{ code.dial_code }})
+                            </option>
+                        {%endfor%}
+                    </select>
+                    <span class="error countryCodesError text-red-500 text-sm mt-1 hidden"></span>
+                </div>
+
+                <!-- Phone -->
+                <div class="flex-1">
+                    <input id="phone" type="text" class="border rounded px-3 py-2 w-full"
+                        placeholder="Phone No." value="{{contact_number}}"/>
+                    <span class="error phoneError text-red-500 text-sm mt-1 hidden"></span>
+                </div>
+            </div>
+            <!-- OTP -->
+
+            <div class="flex-1">
+                <button type="submit"
+                    class="bg-baby-blue text-white px-2 py-2.5 rounded mb-1.5 w-full cursor-not-allowed send-otp-btn"
+                    data-target="otp1" data-color-active="bg-dodger-blue"
+                    data-color-inactive="bg-baby-blue">
+                    Send Phone OTP
+                </button>
+                <span class="text-primary-color text-sm mt-2">Didn’t get the code ?
+                    <span class="text-black">Resend</span></span>
+            </div>
+            <div class="flex-1">
+                <input id="otp1" type="text" class="border rounded px-2 py-2 w-full"
+                    placeholder="224584" placeholder="224584" maxlength="6" 
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);" />
+                <span class="error phoneError text-red-500 text-sm mt-1 hidden"></span>
+                <div class="flex items-center gap-2 justify-end">
+                    <span
+                        class="material-symbols-outlined material-filled text-bright-green">check_box</span>
+                    <p class="font-normal text-xs text-bright-green">
+                        Verified
+                    </p>
+                </div>
+            </div>
+
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm">
+            <!-- Lab Name -->
+            <div class="flex flex-col">
+                <input id="adminName" type="text" class="border rounded px-3 py-2"
+                    placeholder="Lab Name" value="{{lab_name}}"/>
+                <span class="error adminNameError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- Lab Registration No. -->
+            <div class="flex flex-col">
+                <input id="state" type="text" class="border rounded px-3 py-2"
+                    placeholder="Lab Registration No." value="{{lab_registration_number}}"/>
+                <span class="error genderError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- Available Facilities-->
+            <div
+                class="issue-type-wrapper w-full  rounded-[6px] text-dark-gray border pl-0.5 text-sm flex items-center justify-between relative">
+
+                <input type="text" placeholder="Available Facilities"
+                    class="issue-type-input w-full focus:outline-none focus:ring-0  rounded px-3 py-2 cursor-pointer"
+                    readonly>
+                <span
+                    class="material-symbols-outlined cursor-pointer">keyboard_arrow_down</span>
+
+                <!-- Dropdown options -->
+
+                <ul
+                    class="issue-type-dropdown absolute top-full left-0 w-full bg-white  rounded-md shadow-md z-50 hidden  border border-dark-gray mt-2  ">
+
+                    <li
+                        class="dropdown-option px-2 py-2 flex mb-2 justify-between items-center hover:bg-dodger-blue hover:text-white  ">
+                        <span class="text-base font-normal">Home Sample Collection</span>
+                        <div class="flex items-center gap-2">
+                            <input type="number"
+                                class="no-spinner price-input hidden w-20 border-none rounded px-1 text-sm text-white focus:border-none focus:ring-0 focus:outline-none"
+                                placeholder="₹0.00" />
+                            <input type="checkbox"
+                                class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
+                                data-type="type1" />
+                        </div>
+
+                    </li>
+                    <li
+                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
+                        <span class="text-base font-normal">Lab Walk-in</span>
+                        <div class="flex items-center gap-2">
+                            <input type="number"
+                                class="no-spinner price-input hidden w-20 border-none rounded px-1 text-sm text-white focus:border-none focus:ring-0 focus:outline-none"
+                                placeholder="₹0.00" />
+                            <input type="checkbox"
+                                class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
+                                data-type="type2" />
+                        </div>
+                    </li>
+                    <li
+                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
+                        <span class="text-base  font-normal">Emergency Testing Services</span>
+                        <div class="flex items-center gap-2">
+                            <input type="number"
+                                class="no-spinner price-input hidden w-20 border-none rounded px-1 text-sm text-white focus:border-none focus:ring-0 focus:outline-none"
+                                placeholder="₹0.00" />
+                            <input type="checkbox"
+                                class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
+                                data-type="type3" />
+                        </div>
+                    </li>
+                </ul>
+
+            </div>
+            <!--Services-->
+            <div
+                class="issue-type-wrapper w-full  rounded-[6px] text-dark-gray border  pl-0.5 text-sm flex items-center justify-between relative">
+
+                <input type="text" placeholder="Services"
+                    class="issue-type-input w-full focus:outline-none focus:ring-0 rounded px-3 py-2 cursor-pointer"
+                    readonly>
+                <span
+                    class="material-symbols-outlined cursor-pointer">keyboard_arrow_down</span>
+
+                <!-- Dropdown options -->
+
+                <ul
+                    class="issue-type-dropdown absolute top-full left-0 w-full bg-white  rounded-md shadow-md z-50 hidden  border border-dark-gray mt-2  ">
+
+                    <li
+                        class="dropdown-option px-2 py-2 flex mb-2 justify-between items-center hover:bg-dodger-blue hover:text-white  ">
+                        <span class="text-base font-normal">Blood Test</span>
+                        <div class="flex items-center gap-2">
+                            <input type="number"
+                                class="no-spinner price-input hidden w-20 border-none rounded px-1 text-sm text-white focus:border-none focus:ring-0 focus:outline-none"
+                                placeholder="₹0.00" />
+                            <input type="checkbox"
+                                class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
+                                data-type="type1" />
+                        </div>
+                    </li>
+                    <li
+                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
+                        <span class="text-base font-normal">RT-PCR</span>
+                        <div class="flex items-center gap-2">
+                            <input type="number"
+                                class="no-spinner price-input hidden w-20 border-none rounded px-1 text-sm text-white focus:border-none focus:ring-0 focus:outline-none"
+                                placeholder="₹0.00" />
+                            <input type="checkbox"
+                                class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
+                                data-type="type2" />
+                        </div>
+                    </li>
+                    <li
+                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
+                        <span class="text-base  font-normal">Thyroid Profile</span>
+                        <div class="flex items-center gap-2">
+                            <input type="number"
+                                class="no-spinner price-input hidden w-20 border-none rounded px-1 text-sm text-white focus:border-none focus:ring-0 focus:outline-none"
+                                placeholder="₹0.00" />
+                            <input type="checkbox"
+                                class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
+                                data-type="type3" />
+                        </div>
+                    </li>
+                    <li
+                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
+                        <span class="text-base font-normal">Lipid Profile</span>
+                        <div class="flex items-center gap-2">
+                            <input type="number"
+                                class="no-spinner price-input hidden w-20 border-none rounded px-1 text-sm text-white focus:border-none focus:ring-0 focus:outline-none"
+                                placeholder="₹0.00" />
+                            <input type="checkbox"
+                                class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
+                                data-type="type4" />
+                        </div>
+                    </li>
+                    <li
+                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
+                        <span class="text-base font-normal">Cholestrol Level</span>
+                        <div class="flex items-center gap-2">
+                            <input type="number"
+                                class="no-spinner price-input hidden w-20 border-none rounded px-1 text-sm text-white focus:border-none focus:ring-0 focus:outline-none"
+                                placeholder="₹0.00" />
+                            <input type="checkbox"
+                                class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
+                                data-type="type5" />
+                        </div>
+                    </li>
+                    <li
+                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
+                        <span class="text-base font-normal">Triglycerides</span>
+                        <div class="flex items-center gap-2">
+                            <input type="number"
+                                class="no-spinner price-input hidden w-20 border-none rounded px-1 text-sm text-white focus:border-none focus:ring-0 focus:outline-none"
+                                placeholder="₹0.00" />
+                            <input type="checkbox"
+                                class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
+                                data-type="type6" />
+                        </div>
+                    </li>
+                    <li
+                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
+                        <span class="text-base font-normal">Urine & Stool Tests</span>
+                        <div class="flex items-center gap-2">
+                            <input type="number"
+                                class="no-spinner price-input hidden w-20 border-none rounded px-1 text-sm text-white focus:border-none focus:ring-0 focus:outline-none"
+                                placeholder="₹0.00" />
+                            <input type="checkbox"
+                                class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
+                                data-type="type7" />
+                        </div>
+                    </li>
+                    <li
+                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
+                        <span class="text-base font-normal">Pregnancy Test</span>
+                        <div class="flex items-center gap-2">
+                            <input type="number"
+                                class="no-spinner price-input hidden w-20 border-none rounded px-1 text-sm text-white focus:border-none focus:ring-0 focus:outline-none"
+                                placeholder="₹0.00" />
+                            <input type="checkbox"
+                                class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
+                                data-type="type8" />
+                        </div>
+                    </li>
+                    <li
+                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
+                        <span class="text-base font-normal">Hormone Testing</span>
+                        <div class="flex items-center gap-2">
+                            <input type="number"
+                                class="no-spinner price-input hidden w-20 border-none rounded px-1 text-sm text-white focus:border-none focus:ring-0 focus:outline-none"
+                                placeholder="₹0.00" />
+                            <input type="checkbox"
+                                class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
+                                data-type="type9" />
+                        </div>
+                    </li>
+                    <li
+                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
+                        <span class="text-base font-normal">HIV,Hepatitis B/C</span>
+                        <div class="flex items-center gap-2">
+                            <input type="number"
+                                class="no-spinner price-input hidden w-20 border-none rounded px-1 text-sm text-white focus:border-none focus:ring-0 focus:outline-none"
+                                placeholder="₹0.00" />
+                            <input type="checkbox"
+                                class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
+                                data-type="type10" />
+                        </div>
+                    </li>
+                    <li
+                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
+                        <span class="text-base font-normal">Full Body Checkup</span>
+                        <div class="flex items-center gap-2">
+                            <input type="number"
+                                class="no-spinner price-input hidden w-20 border-none rounded px-1 text-sm text-white focus:border-none focus:ring-0 focus:outline-none"
+                                placeholder="₹0.00" />
+                            <input type="checkbox"
+                                class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
+                                data-type="type11" />
+                        </div>
+                    </li>
+                    <li
+                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white custom-type-input">
+                        <span class="text-base font-normal">Type....</span>
+
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+        <!--Website URL-->
+        <!-- <input type="text" class="w-full border rounded px-3 py-2" placeholder="Website URL" /> -->
+        <!--WOrking Hours-->
+        <div class="relative issue-type-wrapper">
+            <input type="text" class="border rounded px-3 py-2 w-full issue-type-input"
+                placeholder="Working Hours" readonly />
+            <span class="material-symbols-outlined absolute right-2 top-2  cursor-pointer">
+                keyboard_arrow_down
+            </span>
+
+            <!-- Dropdown -->
+            <ul class="issue-type-dropdown hidden bg-white rounded shadow-md p-1 mt-1 border">
+                <!-- Monday -->
+                <li
+                    class="flex justify-between items-center p-1 hover:bg-dodger-blue hover:text-white">
+                    <div class="flex items-center gap-4">
+                        <input type="checkbox"
+                            class="issue-checkbox w-5 h-5 text-dodger-blue rounded-sm" />
+                        <span class="text-base ">Monday&nbsp;&nbsp;</span>
+                    </div>
+                    <span class="">Opens At 9:00 AM&nbsp;&nbsp;</span>
+                    <span class="">Closes At 5:00 PM&nbsp;&nbsp;</span>
+                </li>
+
+                <!-- Tuesday -->
+                <li
+                    class="flex justify-between items-center p-1 hover:bg-dodger-blue hover:text-white">
+                    <div class="flex items-center gap-4">
+                        <input type="checkbox"
+                            class="issue-checkbox w-5 h-5 text-dodger-blue rounded-sm" />
+                        <span class="text-base ">Tuesday&nbsp;&nbsp;</span>
+                    </div>
+                    <span class="">Opens At 9:00 AM&nbsp;&nbsp;</span>
+                    <span class="">Closes At 5:00 PM&nbsp;&nbsp;</span>
+                </li>
+
+                <!--Wednesday-->
+                <li
+                    class="flex justify-between items-center p-1 hover:bg-dodger-blue hover:text-white">
+                    <div class="flex items-center gap-4">
+                        <input type="checkbox"
+                            class="issue-checkbox w-5 h-5 text-dodger-blue rounded-sm" />
+                        <span class="text-base ">Wednesday&nbsp;&nbsp;</span>
+                    </div>
+                    <span class="pr-6">Opens At 9:00 AM&nbsp;&nbsp;</span>
+                    <span class="">Closes At 5:00 PM&nbsp;&nbsp;</span>
+                </li>
+
+                <!--Thursday-->
+                <li
+                    class="flex justify-between items-center p-1 hover:bg-dodger-blue hover:text-white">
+                    <div class="flex items-center gap-4">
+                        <input type="checkbox"
+                            class="issue-checkbox w-5 h-5 text-dodger-blue rounded-sm" />
+                        <span class="text-base ">Thursday&nbsp;&nbsp;</span>
+                    </div>
+                    <span class="pr-1.5">Opens At 9:00 AM&nbsp;&nbsp;</span>
+                    <span class="">Closes At 5:00 PM&nbsp;&nbsp;</span>
+                </li>
+
+                <!--Friday-->
+                <li
+                    class="flex justify-between items-center p-1 hover:bg-dodger-blue hover:text-white">
+                    <div class="flex items-center gap-4">
+                        <input type="checkbox"
+                            class="issue-checkbox w-5 h-5 text-dodger-blue rounded-sm" />
+                        <span class="text-base ">Friday&nbsp;&nbsp;</span>
+                    </div>
+                    <span class="pl-4.5">Opens At 9:00 AM&nbsp;&nbsp;</span>
+                    <span class="">Closes At 5:00 PM&nbsp;&nbsp;</span>
+                </li>
+
+                <!--Saturday-->
+                <li
+                    class="flex justify-between items-center p-1 hover:bg-dodger-blue hover:text-white">
+                    <div class="flex items-center gap-4">
+                        <input type="checkbox"
+                            class="issue-checkbox w-5 h-5 text-dodger-blue rounded-sm" />
+                        <span class="text-base ">Saturday&nbsp;&nbsp;</span>
+                    </div>
+                    <span class="pr-0.5">Opens At 9:00 AM&nbsp;&nbsp;</span>
+                    <span class="">Closes At 5:00 PM&nbsp;&nbsp;</span>
+                </li>
+
+                <!--Sunday-->
+                <li
+                    class="flex justify-between items-center p-1 hover:bg-dodger-blue hover:text-white">
+                    <div class="flex items-center gap-4">
+                        <input type="checkbox"
+                            class="issue-checkbox w-5 h-5 text-dodger-blue rounded-sm" />
+                        <span class="text-base ">Sunday&nbsp;&nbsp;</span>
+                    </div>
+                    <span class="pl-2.5">Opens At 9:00 AM&nbsp;&nbsp;</span>
+                    <span class="">Closes At 5:00 PM&nbsp;&nbsp;</span>
+                </li>
+            </ul>
+        </div>
+
+        <!--Address-->
+        <input type="text" class="w-full border rounded px-3 py-2" placeholder="Address" value="{{address}}"/>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm">
+            <!-- City,Town,District -->
+            <div class="flex flex-col">
+                <input id="adminName" type="text" class="border rounded px-3 py-2"
+                    placeholder="City,Town,District" value="{{city}}"/>
+                <span class="error adminNameError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- State -->
+            <div class="flex flex-col">
+                <input id="state" type="text" class="border rounded px-3 py-2"
+                    placeholder="State" value="{{state}}"/>
+                <span class="error genderError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- Country -->
+            <div class="flex flex-col">
+                <input id="country" type="text" class="border rounded px-3 py-2"
+                    placeholder="Country" value="{{country}}"/>
+                <span class="error addressError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- Pincode -->
+            <div class="flex flex-col">
+                <input id="license" type="text" class="border rounded px-3 py-2"
+                    placeholder="Pincode" value="{{pincode}}"/>
+                <span class="error licenseError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- Admin Name -->
+            <div class="flex flex-col">
+                <input id="license" type="text" class="border rounded px-3 py-2"
+                    placeholder="Admin Name" value="{{owner_name}}"/>
+                <span class="error licenseError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- Designation -->
+            <!-- <div class="flex flex-col">
+                <input id="license" type="text" class="border rounded px-3 py-2"
+                    placeholder="Designation" />
+                <span class="error licenseError text-red-500 text-sm mt-1 hidden"></span>
+            </div> -->
+            <!-- Country code + Phone -->
+            <div class="flex flex-col lg:flex-row gap-4">
+                <!-- Country Code -->
+                <div class="pl-4 lg:w-1/4">
+                    <select name="countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}">
+                        {% for code in country_codes %}
+                            <option value="{{ code.dial_code }}"
+                                {% if code.dial_code == country_code %}selected{% endif %}>
+                                {{ code.name }} ({{ code.dial_code }})
+                            </option>
+                        {%endfor%}
+                    </select>
+                    <span class="error countryCodesError text-red-500 text-sm mt-1 hidden"></span>
+                </div>
+
+                <!-- Phone -->
+                <div class="flex-1">
+                    <input id="phone" type="text" class="border rounded px-3 py-2 w-full"
+                        placeholder="Phone No." value="{{contact_number}}"/>
+                    <span class="error phoneError text-red-500 text-sm mt-1 hidden"></span>
+                </div>
+            </div>
+            <!--Send OTP-->
+            <div class="flex flex-col lg:flex-row lg:items-center gap-2">
+                <div class="flex-1">
+                    <button type="submit"
+                        class="bg-baby-blue text-white px-2 py-2.5 rounded w-full cursor-not-allowed send-otp-btn"
+                        data-target="otp2" data-color-active="bg-dodger-blue"
+                        data-color-inactive="bg-baby-blue">
+                        Send Phone OTP
+                    </button>
+                    <span class="text-primary-color text-sm mt-2">Didn’t get the code ?
+                        <span class="text-black">Resend</span></span>
+                </div>
+                <div class="flex-1">
+                    <input id="phone" type="text" class="border rounded px-2 py-2 w-full"
+                        placeholder="224584" />
+                    <span class="error phoneError text-red-500 text-sm mt-1 hidden"></span>
+                    <div class="flex items-center gap-2 justify-end">
+                        <span
+                            class="material-symbols-outlined material-filled text-bright-green">check_box</span>
+                        <p class="font-normal text-xs text-bright-green">
+                            Verified
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- Buttons -->
+            <div class="md:col-span-2 flex justify-end pt-4 gap-2 flex-wrap">
+                <button type="submit"
+                    class="px-4 py-2 rounded-md border text-dodger-blue font-normal text-lg border-dodger-blue cancel-btn">
+                    Cancel
+                </button>
+                <button type="submit"
+                    class="bg-dodger-blue text-white px-6 py-2 rounded-lg font-normal text-lg cursor-pointer save-btn">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </form>
+{% elif user.user_type == 'hospital' %}
+    <form id="editForm" method="POST" action="{% url 'update_hospital_profile' %}" class="grid grid-cols-1 gap-x-6 md:gap-x-12 gap-y-6  pt-6 text-sm">
+        {% csrf_token %}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm">
+            <!-- Email + Phone -->
+
+            <!-- Email -->
+            <div class="flex flex-col">
+                <input id="email" type="email" class="border rounded px-3 py-2 w-full"
+                    placeholder="Email Address" value="{{email}}"/>
+                <span class="error emailError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+
+            <!-- Country code + Phone -->
+            <div class="flex flex-col lg:flex-row gap-4">
+                <!-- Country Code -->
+                <div class="pl-4 lg:w-1/4">
+                    <select name="countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}">
+                        {% for code in country_codes %}
+                            <option value="{{ code.dial_code }}"
+                                {% if code.dial_code == country_code %}selected{% endif %}>
+                                {{ code.name }} ({{ code.dial_code }})
+                            </option>
+                        {%endfor%}
+                    </select>
+                    <span class="error countryCodesError text-red-500 text-sm mt-1 hidden"></span>
+                </div>
+
+                <!-- Phone -->
+                <div class="flex-1">
+                    <input id="phone" type="text" class="border rounded px-3 py-2 w-full"
+                        placeholder="Phone No." value="{{contact_no}}"/>
+                    <span class="error phoneError text-red-500 text-sm mt-1 hidden"></span>
+                </div>
+            </div>
+            <!-- OTP -->
+
+            <div class="flex-1">
+                <button type="submit"
+                    class="bg-baby-blue text-white px-2 py-2.5 rounded mb-1.5 w-full cursor-not-allowed send-otp-btn"
+                    data-target="otp1" data-color-active="bg-dodger-blue"
+                    data-color-inactive="bg-baby-blue">
+                    Send Phone OTP
+                </button>
+                <span class="text-primary-color text-sm mt-2">Didn’t get the code ?
+                    <span class="text-black">Resend</span></span>
+            </div>
+            <div class="flex-1">
+                <input id="phone" type="text" class="border rounded px-2 py-2 w-full"
+                    placeholder="224584" />
+                <span class="error phoneError text-red-500 text-sm mt-1 hidden"></span>
+                <div class="flex items-center gap-2 justify-end">
+                    <span
+                        class="material-symbols-outlined material-filled text-bright-green">check_box</span>
+                    <p class="font-normal text-xs text-bright-green">
+                        Verified
+                    </p>
+                </div>
+            </div>
+
+        </div>
+        <!--Hospital Name-->
+        <input type="text" class="w-full border rounded px-3 py-2"
+            placeholder="Hospital Name" value="{{hospital_name}}"/>
+        <!--Types of hopiatl and service-->
+        <!-- <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm">
+            <div
+                class="issue-type-wrapper w-full  rounded-[6px] text-dark-gray border pl-0.5 text-sm flex items-center justify-between relative">
+
+                <input type="text" placeholder="Type of Hospital"
+                    class="issue-type-input w-full focus:outline-none focus:ring-0  rounded px-3 py-2 cursor-pointer"
+                    readonly>
+                <span
+                    class="material-symbols-outlined cursor-pointer">keyboard_arrow_down</span>
+
+                <ul
+                    class="issue-type-dropdown absolute top-full left-0 w-full bg-white  rounded-md shadow-md z-50 hidden  border border-dark-gray mt-2  ">
+
+                    <li
+                        class="dropdown-option px-2 py-2 flex mb-2 justify-between items-center hover:bg-dodger-blue hover:text-white  ">
+                        <span class="text-base font-normal">Public</span>
+                        <input type="checkbox"
+                            class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
+                            data-type="type1" />
+                    </li>
+                    <li
+                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
+                        <span class="text-base font-normal">Private</span>
+                        <input type="checkbox"
+                            class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black  rounded-sm mr-2 "
+                            data-type="type2" />
+                    </li>
+                    <li
+                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
+                        <span class="text-base  font-normal">Charitable</span>
+                        <input type="checkbox"
+                            class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2"
+                            data-type="type3" />
+                    </li>
+                    <li
+                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
+                        <span class="text-base font-normal">Others</span>
+                        <input type="checkbox"
+                            class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black  rounded-sm mr-2 "
+                            data-type="type4" />
+                    </li>
+
+                    <li
+                        class="dropdown-option custom-type-input px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
+                        <span class="text-base font-normal ">Type....</span>
+
+                    </li>
+                </ul>
+
+            </div>
+            <div
+                class="issue-type-wrapper w-full  rounded-[6px] text-dark-gray border  pl-0.5 text-sm flex items-center justify-between relative">
+
+                <input type="text" placeholder="Services"
+                    class="issue-type-input w-full focus:outline-none focus:ring-0 rounded px-3 py-2 cursor-pointer"
+                    readonly>
+                <span
+                    class="material-symbols-outlined cursor-pointer">keyboard_arrow_down</span>
+                <ul
+                    class="issue-type-dropdown absolute top-full left-0 w-full bg-white  rounded-md shadow-md z-50 hidden  border border-dark-gray mt-2  ">
+
+                    <li
+                        class="dropdown-option px-2 py-2 flex mb-2 justify-between items-center hover:bg-dodger-blue hover:text-white  ">
+                        <span class="text-base font-normal">General</span>
+                        <input type="checkbox"
+                            class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
+                            data-type="type1" />
+                    </li>
+                    <li
+                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
+                        <span class="text-base font-normal">Cardiology</span>
+                        <input type="checkbox"
+                            class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black  rounded-sm mr-2 "
+                            data-type="type2" />
+                    </li>
+                    <li
+                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
+                        <span class="text-base  font-normal">Oncology</span>
+                        <input type="checkbox"
+                            class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2"
+                            data-type="type3" />
+                    </li>
+                    <li
+                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
+                        <span class="text-base font-normal">Others</span>
+                        <input type="checkbox"
+                            class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black  rounded-sm mr-2 "
+                            data-type="type6" />
+                    </li>
+                    <li
+                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white custom-type-input">
+                        <span class="text-base font-normal">Type....</span>
+
+                    </li>
+                </ul>
+
+            </div>
+        </div> -->
+        <!--Website URL-->
+        <!-- <input type="text" class="w-full border rounded px-3 py-2" placeholder="Website URL" /> -->
+        <!--WOrking Hours-->
+        <div class="relative issue-type-wrapper">
+            <input type="text" class="border rounded px-3 py-2 w-full issue-type-input"
+                placeholder="Working Hours" readonly />
+            <span class="material-symbols-outlined absolute right-2 top-2  cursor-pointer">
+                keyboard_arrow_down
+            </span>
+
+            <!-- Dropdown -->
+            <ul class="issue-type-dropdown hidden bg-white rounded shadow-md p-1 mt-1 border">
+                <!-- Monday -->
+                <li
+                    class="flex justify-between items-center p-1 hover:bg-dodger-blue hover:text-white">
+                    <div class="flex items-center gap-4">
+                        <input type="checkbox"
+                            class="issue-checkbox w-5 h-5 text-dodger-blue rounded-sm" />
+                        <span class="text-base ">Monday&nbsp;&nbsp;</span>
+                    </div>
+                    <span class="">Opens At 9:00 AM&nbsp;&nbsp;</span>
+                    <span class="">Closes At 5:00 PM&nbsp;&nbsp;</span>
+                </li>
+
+                <!-- Tuesday -->
+                <li
+                    class="flex justify-between items-center p-1 hover:bg-dodger-blue hover:text-white">
+                    <div class="flex items-center gap-4">
+                        <input type="checkbox"
+                            class="issue-checkbox w-5 h-5 text-dodger-blue rounded-sm" />
+                        <span class="text-base ">Tuesday&nbsp;&nbsp;</span>
+                    </div>
+                    <span class="">Opens At 9:00 AM&nbsp;&nbsp;</span>
+                    <span class="">Closes At 5:00 PM&nbsp;&nbsp;</span>
+                </li>
+
+                <!--Wednesday-->
+                <li
+                    class="flex justify-between items-center p-1 hover:bg-dodger-blue hover:text-white">
+                    <div class="flex items-center gap-4">
+                        <input type="checkbox"
+                            class="issue-checkbox w-5 h-5 text-dodger-blue rounded-sm" />
+                        <span class="text-base ">Wednesday&nbsp;&nbsp;</span>
+                    </div>
+                    <span class="pr-6">Opens At 9:00 AM&nbsp;&nbsp;</span>
+                    <span class="">Closes At 5:00 PM&nbsp;&nbsp;</span>
+                </li>
+
+                <!--Thursday-->
+                <li
+                    class="flex justify-between items-center p-1 hover:bg-dodger-blue hover:text-white">
+                    <div class="flex items-center gap-4">
+                        <input type="checkbox"
+                            class="issue-checkbox w-5 h-5 text-dodger-blue rounded-sm" />
+                        <span class="text-base ">Thursday&nbsp;&nbsp;</span>
+                    </div>
+                    <span class="pr-1.5">Opens At 9:00 AM&nbsp;&nbsp;</span>
+                    <span class="">Closes At 5:00 PM&nbsp;&nbsp;</span>
+                </li>
+
+                <!--Friday-->
+                <li
+                    class="flex justify-between items-center p-1 hover:bg-dodger-blue hover:text-white">
+                    <div class="flex items-center gap-4">
+                        <input type="checkbox"
+                            class="issue-checkbox w-5 h-5 text-dodger-blue rounded-sm" />
+                        <span class="text-base ">Friday&nbsp;&nbsp;</span>
+                    </div>
+                    <span class="pl-4.5">Opens At 9:00 AM&nbsp;&nbsp;</span>
+                    <span class="">Closes At 5:00 PM&nbsp;&nbsp;</span>
+                </li>
+
+                <!--Saturday-->
+                <li
+                    class="flex justify-between items-center p-1 hover:bg-dodger-blue hover:text-white">
+                    <div class="flex items-center gap-4">
+                        <input type="checkbox"
+                            class="issue-checkbox w-5 h-5 text-dodger-blue rounded-sm" />
+                        <span class="text-base ">Saturday&nbsp;&nbsp;</span>
+                    </div>
+                    <span class="pr-0.5">Opens At 9:00 AM&nbsp;&nbsp;</span>
+                    <span class="">Closes At 5:00 PM&nbsp;&nbsp;</span>
+                </li>
+
+                <!--Sunday-->
+                <li
+                    class="flex justify-between items-center p-1 hover:bg-dodger-blue hover:text-white">
+                    <div class="flex items-center gap-4">
+                        <input type="checkbox"
+                            class="issue-checkbox w-5 h-5 text-dodger-blue rounded-sm" />
+                        <span class="text-base ">Sunday&nbsp;&nbsp;</span>
+                    </div>
+                    <span class="pl-2.5">Opens At 9:00 AM&nbsp;&nbsp;</span>
+                    <span class="">Closes At 5:00 PM&nbsp;&nbsp;</span>
+                </li>
+            </ul>
+        </div>
+
+        <!--Address-->
+        <input type="text" class="w-full border rounded px-3 py-2" placeholder="Address" value="{{address}}"/>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm">
+            <!-- City,Town,District -->
+            <div class="flex flex-col">
+                <input id="adminName" type="text" class="border rounded px-3 py-2"
+                    placeholder="City,Town,District" value="{{city}}"/>
+                <span class="error adminNameError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- State -->
+            <div class="flex flex-col">
+                <input id="state" type="text" class="border rounded px-3 py-2"
+                    placeholder="State" value="{{state}}"/>
+                <span class="error genderError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- Country -->
+            <div class="flex flex-col">
+                <input id="country" type="text" class="border rounded px-3 py-2"
+                    placeholder="Country" value="{{country}}"/>
+                <span class="error addressError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- Pincode -->
+            <div class="flex flex-col">
+                <input id="license" type="text" class="border rounded px-3 py-2"
+                    placeholder="Pincode" value="{{pincode}}"/>
+                <span class="error licenseError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- Admin Name -->
+            <div class="flex flex-col">
+                <input id="license" type="text" class="border rounded px-3 py-2"
+                    placeholder="Admin Name" value="{{owner_name}}"/>
+                <span class="error licenseError text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+            <!-- Designation -->
+            <!-- <div class="flex flex-col">
+                <input id="license" type="text" class="border rounded px-3 py-2"
+                    placeholder="Designation" />
+                <span class="error licenseError text-red-500 text-sm mt-1 hidden"></span>
+            </div> -->
+            <!-- Country code + Phone -->
+            <div class="flex flex-col lg:flex-row gap-4">
+                <!-- Country Code -->
+                <div class="pl-4 lg:w-1/4">
+                    <select name="countryCodes" class="countryCodes border rounded px-3 py-2 w-full" data-selected="{{country_code}}">
+                        {% for code in country_codes %}
+                            <option value="{{ code.dial_code }}"
+                                {% if code.dial_code == country_code %}selected{% endif %}>
+                                {{ code.name }} ({{ code.dial_code }})
+                            </option>
+                        {%endfor%}
+                    </select>
+                    <span class="error countryCodesError text-red-500 text-sm mt-1 hidden"></span>
+                </div>
+
+                <!-- Phone -->
+                <div class="flex-1">
+                    <input id="phone" type="text" class="border rounded px-3 py-2 w-full"
+                        placeholder="Phone No." value="{{contact_number}}"/>
+                    <span class="error phoneError text-red-500 text-sm mt-1 hidden"></span>
+                </div>
+            </div>
+            <!--Send OTP-->
+            <div class="flex flex-col lg:flex-row lg:items-center gap-2">
+                <div class="flex-1">
+                    <button type="submit"
+                        class="bg-baby-blue text-white px-2 py-2.5 rounded w-full cursor-not-allowed send-otp-btn"
+                        data-target="otp2" data-color-active="bg-dodger-blue"
+                        data-color-inactive="bg-baby-blue">
+                        Send Phone OTP
+                    </button>
+                    <span class="text-primary-color text-sm mt-2">Didn’t get the code ?
+                        <span class="text-black">Resend</span></span>
+                </div>
+                <div class="flex-1">
+                    <input id="phone" type="text" class="border rounded px-2 py-2 w-full"
+                        placeholder="224584" />
+                    <span class="error phoneError text-red-500 text-sm mt-1 hidden"></span>
+                    <div class="flex items-center gap-2 justify-end">
+                        <span
+                            class="material-symbols-outlined material-filled text-bright-green">check_box</span>
+                        <p class="font-normal text-xs text-bright-green">
+                            Verified
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- Buttons -->
+            <div class="md:col-span-2 flex justify-end pt-4 gap-2 flex-wrap">
+                <button type="submit"
+                    class="px-4 py-2 rounded-md border text-dodger-blue font-normal text-lg border-dodger-blue cancel-btn">
+                    Cancel
+                </button>
+                <button type="submit"
+                    class="bg-dodger-blue text-white px-6 py-2 rounded-lg font-normal text-lg cursor-pointer save-btn">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </form>
+{% elif user.user_type == 'doctor' %}
+    <form id="editForm" method="POST" action="{% url 'update_doctor_profile' %}" class="grid grid-cols-1 gap-x-6 md:gap-x-12 gap-y-6  pt-6 text-sm">
+        {% csrf_token %}
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm">
             <!-- Email + Phone -->
 
@@ -1095,358 +1939,6 @@
                                 class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
                                 data-type="type11" />
                         </div>
-                    </li>
-                    <li
-                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white custom-type-input">
-                        <span class="text-base font-normal">Type....</span>
-
-                    </li>
-                </ul>
-
-            </div>
-        </div>
-        <!--Website URL-->
-        <input type="text" class="w-full border rounded px-3 py-2" placeholder="Website URL" />
-        <!--WOrking Hours-->
-        <div class="relative issue-type-wrapper">
-            <input type="text" class="border rounded px-3 py-2 w-full issue-type-input"
-                placeholder="Working Hours" readonly />
-            <span class="material-symbols-outlined absolute right-2 top-2  cursor-pointer">
-                keyboard_arrow_down
-            </span>
-
-            <!-- Dropdown -->
-            <ul class="issue-type-dropdown hidden bg-white rounded shadow-md p-1 mt-1 border">
-                <!-- Monday -->
-                <li
-                    class="flex justify-between items-center p-1 hover:bg-dodger-blue hover:text-white">
-                    <div class="flex items-center gap-4">
-                        <input type="checkbox"
-                            class="issue-checkbox w-5 h-5 text-dodger-blue rounded-sm" />
-                        <span class="text-base ">Monday&nbsp;&nbsp;</span>
-                    </div>
-                    <span class="">Opens At 9:00 AM&nbsp;&nbsp;</span>
-                    <span class="">Closes At 5:00 PM&nbsp;&nbsp;</span>
-                </li>
-
-                <!-- Tuesday -->
-                <li
-                    class="flex justify-between items-center p-1 hover:bg-dodger-blue hover:text-white">
-                    <div class="flex items-center gap-4">
-                        <input type="checkbox"
-                            class="issue-checkbox w-5 h-5 text-dodger-blue rounded-sm" />
-                        <span class="text-base ">Tuesday&nbsp;&nbsp;</span>
-                    </div>
-                    <span class="">Opens At 9:00 AM&nbsp;&nbsp;</span>
-                    <span class="">Closes At 5:00 PM&nbsp;&nbsp;</span>
-                </li>
-
-                <!--Wednesday-->
-                <li
-                    class="flex justify-between items-center p-1 hover:bg-dodger-blue hover:text-white">
-                    <div class="flex items-center gap-4">
-                        <input type="checkbox"
-                            class="issue-checkbox w-5 h-5 text-dodger-blue rounded-sm" />
-                        <span class="text-base ">Wednesday&nbsp;&nbsp;</span>
-                    </div>
-                    <span class="pr-6">Opens At 9:00 AM&nbsp;&nbsp;</span>
-                    <span class="">Closes At 5:00 PM&nbsp;&nbsp;</span>
-                </li>
-
-                <!--Thursday-->
-                <li
-                    class="flex justify-between items-center p-1 hover:bg-dodger-blue hover:text-white">
-                    <div class="flex items-center gap-4">
-                        <input type="checkbox"
-                            class="issue-checkbox w-5 h-5 text-dodger-blue rounded-sm" />
-                        <span class="text-base ">Thursday&nbsp;&nbsp;</span>
-                    </div>
-                    <span class="pr-1.5">Opens At 9:00 AM&nbsp;&nbsp;</span>
-                    <span class="">Closes At 5:00 PM&nbsp;&nbsp;</span>
-                </li>
-
-                <!--Friday-->
-                <li
-                    class="flex justify-between items-center p-1 hover:bg-dodger-blue hover:text-white">
-                    <div class="flex items-center gap-4">
-                        <input type="checkbox"
-                            class="issue-checkbox w-5 h-5 text-dodger-blue rounded-sm" />
-                        <span class="text-base ">Friday&nbsp;&nbsp;</span>
-                    </div>
-                    <span class="pl-4.5">Opens At 9:00 AM&nbsp;&nbsp;</span>
-                    <span class="">Closes At 5:00 PM&nbsp;&nbsp;</span>
-                </li>
-
-                <!--Saturday-->
-                <li
-                    class="flex justify-between items-center p-1 hover:bg-dodger-blue hover:text-white">
-                    <div class="flex items-center gap-4">
-                        <input type="checkbox"
-                            class="issue-checkbox w-5 h-5 text-dodger-blue rounded-sm" />
-                        <span class="text-base ">Saturday&nbsp;&nbsp;</span>
-                    </div>
-                    <span class="pr-0.5">Opens At 9:00 AM&nbsp;&nbsp;</span>
-                    <span class="">Closes At 5:00 PM&nbsp;&nbsp;</span>
-                </li>
-
-                <!--Sunday-->
-                <li
-                    class="flex justify-between items-center p-1 hover:bg-dodger-blue hover:text-white">
-                    <div class="flex items-center gap-4">
-                        <input type="checkbox"
-                            class="issue-checkbox w-5 h-5 text-dodger-blue rounded-sm" />
-                        <span class="text-base ">Sunday&nbsp;&nbsp;</span>
-                    </div>
-                    <span class="pl-2.5">Opens At 9:00 AM&nbsp;&nbsp;</span>
-                    <span class="">Closes At 5:00 PM&nbsp;&nbsp;</span>
-                </li>
-            </ul>
-        </div>
-
-        <!--Address-->
-        <input type="text" class="w-full border rounded px-3 py-2" placeholder="Address" />
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm">
-            <!-- City,Town,District -->
-            <div class="flex flex-col">
-                <input id="adminName" type="text" class="border rounded px-3 py-2"
-                    placeholder="City,Town,District" />
-                <span class="error adminNameError text-red-500 text-sm mt-1 hidden"></span>
-            </div>
-            <!-- State -->
-            <div class="flex flex-col">
-                <input id="state" type="text" class="border rounded px-3 py-2"
-                    placeholder="State" />
-                <span class="error genderError text-red-500 text-sm mt-1 hidden"></span>
-            </div>
-            <!-- Country -->
-            <div class="flex flex-col">
-                <input id="country" type="text" class="border rounded px-3 py-2"
-                    placeholder="Country" />
-                <span class="error addressError text-red-500 text-sm mt-1 hidden"></span>
-            </div>
-            <!-- Pincode -->
-            <div class="flex flex-col">
-                <input id="license" type="text" class="border rounded px-3 py-2"
-                    placeholder="Pincode" />
-                <span class="error licenseError text-red-500 text-sm mt-1 hidden"></span>
-            </div>
-            <!-- Admin Name -->
-            <div class="flex flex-col">
-                <input id="license" type="text" class="border rounded px-3 py-2"
-                    placeholder="Admin Name" />
-                <span class="error licenseError text-red-500 text-sm mt-1 hidden"></span>
-            </div>
-            <!-- Designation -->
-            <div class="flex flex-col">
-                <input id="license" type="text" class="border rounded px-3 py-2"
-                    placeholder="Designation" />
-                <span class="error licenseError text-red-500 text-sm mt-1 hidden"></span>
-            </div>
-            <!-- Country code + Phone -->
-            <div class="flex flex-col lg:flex-row gap-4">
-                <!-- Country Code -->
-                <div class="lg:w-1/4">
-                    <select name="countryCodes"
-                        class="countryCodes border rounded px-3 py-2 w-full"></select>
-                </div>
-
-                <!-- Phone -->
-                <div class="flex-1">
-                    <input id="phone" type="text" class="border rounded px-3 py-2 w-full"
-                        placeholder="Phone No." />
-                    <span class="error phoneError text-red-500 text-sm mt-1 hidden"></span>
-                </div>
-            </div>
-            <!--Send OTP-->
-            <div class="flex flex-col lg:flex-row lg:items-center gap-2">
-                <div class="flex-1">
-                    <button type="submit"
-                        class="bg-baby-blue text-white px-2 py-2.5 rounded w-full cursor-not-allowed send-otp-btn"
-                        data-target="otp2" data-color-active="bg-dodger-blue"
-                        data-color-inactive="bg-baby-blue">
-                        Send Phone OTP
-                    </button>
-                    <span class="text-primary-color text-sm mt-2">Didn’t get the code ?
-                        <span class="text-black">Resend</span></span>
-                </div>
-                <div class="flex-1">
-                    <input id="phone" type="text" class="border rounded px-2 py-2 w-full"
-                        placeholder="224584" />
-                    <span class="error phoneError text-red-500 text-sm mt-1 hidden"></span>
-                    <div class="flex items-center gap-2 justify-end">
-                        <span
-                            class="material-symbols-outlined material-filled text-bright-green">check_box</span>
-                        <p class="font-normal text-xs text-bright-green">
-                            Verified
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <!-- Buttons -->
-            <div class="md:col-span-2 flex justify-end pt-4 gap-2 flex-wrap">
-                <button type="submit"
-                    class="px-4 py-2 rounded-md border text-dodger-blue font-normal text-lg border-dodger-blue cancel-btn">
-                    Cancel
-                </button>
-                <button type="submit"
-                    class="bg-dodger-blue text-white px-6 py-2 rounded-lg font-normal text-lg cursor-pointer save-btn">
-                    Save Changes
-                </button>
-            </div>
-        </div>
-    </form>
-{% elif user.user_type == 'hospital' %}
-    <form id="editForm" class="grid grid-cols-1 gap-x-6 md:gap-x-12 gap-y-6  pt-6 text-sm">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm">
-            <!-- Email + Phone -->
-
-            <!-- Email -->
-            <div class="flex flex-col">
-                <input id="email" type="email" class="border rounded px-3 py-2 w-full"
-                    placeholder="Email Address" />
-                <span class="error emailError text-red-500 text-sm mt-1 hidden"></span>
-            </div>
-
-            <!-- Country code + Phone -->
-            <div class="flex flex-col lg:flex-row gap-4">
-                <!-- Country Code -->
-                <div class=" lg:w-1/4">
-                    <select name="countryCodes"
-                        class="countryCodes border rounded px-3 py-2 w-full"></select>
-                </div>
-
-                <!-- Phone -->
-                <div class="flex-1">
-                    <input id="phone" type="text" class="border rounded px-3 py-2 w-full"
-                        placeholder="Phone No." />
-                    <span class="error phoneError text-red-500 text-sm mt-1 hidden"></span>
-                </div>
-            </div>
-            <!-- OTP -->
-
-            <div class="flex-1">
-                <button type="submit"
-                    class="bg-baby-blue text-white px-2 py-2.5 rounded mb-1.5 w-full cursor-not-allowed send-otp-btn"
-                    data-target="otp1" data-color-active="bg-dodger-blue"
-                    data-color-inactive="bg-baby-blue">
-                    Send Phone OTP
-                </button>
-                <span class="text-primary-color text-sm mt-2">Didn’t get the code ?
-                    <span class="text-black">Resend</span></span>
-            </div>
-            <div class="flex-1">
-                <input id="phone" type="text" class="border rounded px-2 py-2 w-full"
-                    placeholder="224584" />
-                <span class="error phoneError text-red-500 text-sm mt-1 hidden"></span>
-                <div class="flex items-center gap-2 justify-end">
-                    <span
-                        class="material-symbols-outlined material-filled text-bright-green">check_box</span>
-                    <p class="font-normal text-xs text-bright-green">
-                        Verified
-                    </p>
-                </div>
-            </div>
-
-        </div>
-        <!--Hospital Name-->
-        <input type="text" class="w-full border rounded px-3 py-2"
-            placeholder="Hospital Name" />
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6 text-sm">
-            <!-- Type of Hospital-->
-            <div
-                class="issue-type-wrapper w-full  rounded-[6px] text-dark-gray border pl-0.5 text-sm flex items-center justify-between relative">
-
-                <input type="text" placeholder="Type of Hospital"
-                    class="issue-type-input w-full focus:outline-none focus:ring-0  rounded px-3 py-2 cursor-pointer"
-                    readonly>
-                <span
-                    class="material-symbols-outlined cursor-pointer">keyboard_arrow_down</span>
-
-                <!-- Dropdown options -->
-
-                <ul
-                    class="issue-type-dropdown absolute top-full left-0 w-full bg-white  rounded-md shadow-md z-50 hidden  border border-dark-gray mt-2  ">
-
-                    <li
-                        class="dropdown-option px-2 py-2 flex mb-2 justify-between items-center hover:bg-dodger-blue hover:text-white  ">
-                        <span class="text-base font-normal">Public</span>
-                        <input type="checkbox"
-                            class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
-                            data-type="type1" />
-                    </li>
-                    <li
-                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
-                        <span class="text-base font-normal">Private</span>
-                        <input type="checkbox"
-                            class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black  rounded-sm mr-2 "
-                            data-type="type2" />
-                    </li>
-                    <li
-                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
-                        <span class="text-base  font-normal">Charitable</span>
-                        <input type="checkbox"
-                            class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2"
-                            data-type="type3" />
-                    </li>
-                    <li
-                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
-                        <span class="text-base font-normal">Others</span>
-                        <input type="checkbox"
-                            class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black  rounded-sm mr-2 "
-                            data-type="type4" />
-                    </li>
-
-                    <li
-                        class="dropdown-option custom-type-input px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
-                        <span class="text-base font-normal ">Type....</span>
-
-                    </li>
-                </ul>
-
-            </div>
-            <!--Services-->
-            <div
-                class="issue-type-wrapper w-full  rounded-[6px] text-dark-gray border  pl-0.5 text-sm flex items-center justify-between relative">
-
-                <input type="text" placeholder="Services"
-                    class="issue-type-input w-full focus:outline-none focus:ring-0 rounded px-3 py-2 cursor-pointer"
-                    readonly>
-                <span
-                    class="material-symbols-outlined cursor-pointer">keyboard_arrow_down</span>
-
-                <!-- Dropdown options -->
-
-                <ul
-                    class="issue-type-dropdown absolute top-full left-0 w-full bg-white  rounded-md shadow-md z-50 hidden  border border-dark-gray mt-2  ">
-
-                    <li
-                        class="dropdown-option px-2 py-2 flex mb-2 justify-between items-center hover:bg-dodger-blue hover:text-white  ">
-                        <span class="text-base font-normal">General</span>
-                        <input type="checkbox"
-                            class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2 "
-                            data-type="type1" />
-                    </li>
-                    <li
-                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
-                        <span class="text-base font-normal">Cardiology</span>
-                        <input type="checkbox"
-                            class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black  rounded-sm mr-2 "
-                            data-type="type2" />
-                    </li>
-                    <li
-                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
-                        <span class="text-base  font-normal">Oncology</span>
-                        <input type="checkbox"
-                            class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black rounded-sm mr-2"
-                            data-type="type3" />
-                    </li>
-                    <li
-                        class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white">
-                        <span class="text-base font-normal">Others</span>
-                        <input type="checkbox"
-                            class="issue-checkbox form-checkbox cursor-pointer w-5 h-5 text-black  rounded-sm mr-2 "
-                            data-type="type6" />
                     </li>
                     <li
                         class="dropdown-option px-2 py-2 mb-2 flex justify-between items-center hover:bg-dodger-blue hover:text-white custom-type-input">
