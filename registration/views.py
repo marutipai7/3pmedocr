@@ -1414,13 +1414,24 @@ def save_doctor(request):
     data = request.POST
     files = request.FILES
     errors = {}
-
     email = data.get("email", "").strip()
-    password = data.get("password", "").strip()
-    confirm_password = data.get("confirm_password", "").strip()
-    phone_country_code = "+91"
-    phone_number = data.get("phone")
-
+    password = data.get("password")
+    confirm_password = data.get("confirm_password")
+    full_name = data.get("full_name")
+    gender = data.get("gender")
+    age = data.get("age")
+    phone = data.get("phone")
+    alt_phone = data.get("alt_phone")
+    clinic_name = data.get("clinic_name")
+    owner_name = data.get("owner_name")
+    address = data.get("address")
+    city = data.get("city")
+    state = data.get("state")
+    pincode = data.get("pincode")
+    country = data.get("country")
+    timing_from = data.get("clinic_timing_from")
+    timing_to = data.get("clinic_timing_to")
+    home_visit = data.get("home_visit_available") == "true"
     if not email:
         errors["email"] = "Email is required."
     else:
@@ -1429,79 +1440,107 @@ def save_doctor(request):
         except ValidationError:
             errors["email"] = "Invalid email."
         if User.objects.filter(email=email).exists():
-            errors["email"] = "This email is already registered."
-
+            errors["email"] = "Email already registered."
     if not password or len(password) < 8:
-        errors["password"] = "Password must be min 8 chars."
+        errors["password"] = "Password must be at least 8 characters."
     if password != confirm_password:
         errors["confirm_password"] = "Passwords do not match."
-
-    full_name = data.get("full_name")
-    if not full_name: errors["full_name"] = "Doctor name is required."
-
-    address = data.get("address")
-    city = data.get("city")
-    state = data.get("state")
-    pincode = data.get("pincode")
-
-    if not address: errors["address"] = "Address required."
-    if not city: errors["city"] = "City required."
-    if not state: errors["state"] = "State required."
+    if not full_name:
+        errors["full_name"] = "Full name required."
+    if not gender:
+        errors["gender"] = "Gender is required."
+    if not age:
+        errors["age"] = "Age required."
+    if not phone:
+        errors["phone"] = "Phone number required."
+    if not clinic_name:
+        errors["clinic_name"] = "Clinic name required."
+    if not owner_name:
+        errors["owner_name"] = "Owner name required."
+    if not address:
+        errors["address"] = "Address required."
+    if not city:
+        errors["city"] = "City required."
+    if not state:
+        errors["state"] = "State required."
     if not pincode or not re.match(r"^\d{4,10}$", pincode):
         errors["pincode"] = "Enter valid pincode."
-
-    # Related fields (FK)
-    specialty_id = data.get("specialty")
-    education_id = data.get("education")
+    specialty_id = data.get("specialization")
+    education_id = data.get("qualification")
     experience_id = data.get("experience")
 
-    try: specialty = DoctorSpeciality.objects.get(id=specialty_id)
-    except: errors["specialty"] = "Specialty required."
+    try:
+        specialty = DoctorSpeciality.objects.get(id=specialty_id)
+    except:
+        errors["specialization"] = "Specialization is required."
 
-    try: education = DoctorEducation.objects.get(id=education_id)
-    except: errors["education"] = "Education required."
+    try:
+        education = DoctorEducation.objects.get(id=education_id)
+    except:
+        errors["qualification"] = "Qualification is required."
 
-    try: experience = DoctorExperience.objects.get(id=experience_id)
-    except: errors["experience"] = "Experience required."
+    try:
+        experience = DoctorExperience.objects.get(id=experience_id)
+    except:
+        errors["experience"] = "Experience selection required."
 
-    # Required Docs
-    registration_doc_path, err = validate_and_save_file(files.get("registration_doc"), "doctor_reg", "Registration Certificate", "doctor")
-    if err or not registration_doc_path: errors["registration_doc"] = "Registration doc required."
+    reg_number = data.get("registration_number")
+    reg_doc_path, err = validate_and_save_file(files.get("registration_doc"), "doctor_registration", "Registration Certificate", "doctor")
+    if err or not reg_doc_path:
+        errors["registration_doc"] = "Registration certificate required."
 
-    aadhar_path, err = validate_and_save_file(files.get("aadhar_doc"), "aadhar", "Aadhar Document", "doctor")
-    if err or not aadhar_path: errors["aadhar_doc"] = "Aadhar required."
+    aadhar_number = data.get("aadhar_number")
+    aadhar_path, err = validate_and_save_file(files.get("aadhar_doc"), "doctor_aadhar", "Aadhar Document", "doctor")
+    if err or not aadhar_path:
+        errors["aadhar_doc"] = "Aadhar document required."
 
-    pan_path, err = validate_and_save_file(files.get("pan_doc"), "pan", "PAN Document", "doctor")
-    if err or not pan_path: errors["pan_doc"] = "PAN required."
+    pan_number = data.get("pan_number")
+    pan_path, err = validate_and_save_file(files.get("pan_doc"), "doctor_pan", "PAN Document", "doctor")
+    if err or not pan_path:
+        errors["pan_doc"] = "PAN document required."
 
-    photo_path, err = validate_and_save_file(files.get("clinic_photo"), "clinic_photo", "Clinic Photo", "doctor")
-    if err or not photo_path: errors["clinic_photo"] = "Clinic photo required."
+    clinic_logo_path, err = validate_and_save_file(files.get("clinic_logo"), "clinic_logo", "Clinic Logo", "doctor")
+    if err or not clinic_logo_path:
+        errors["clinic_logo"] = "Clinic logo required."
 
-    logo_path, err = validate_and_save_file(files.get("clinic_logo"), "clinic_logo", "Clinic Logo", "doctor")
-    if err or not logo_path: errors["clinic_logo"] = "Clinic logo required."
+    profile_photo_path, err = validate_and_save_file(files.get("profile_photo"), "doctor_profile_photo", "Profile Photo", "doctor")
+    if err or not profile_photo_path:
+        errors["profile_photo"] = "Profile photo required."
 
+    clinic_photo_path, err = validate_and_save_file(files.get("clinic_photo"), "clinic_photo", "Clinic Photo", "doctor")
+    if err or not clinic_photo_path:
+        errors["clinic_photo"] = "Clinic photo required."
     contact_name = data.get("contact_name")
     contact_role = data.get("contact_role")
+    contact_phone = data.get("contact_phone")
+    referral_code = data.get("referral_code")
 
-    if not contact_name: errors["contact_name"] = "Contact name required."
-    if not contact_role: errors["contact_role"] = "Contact role required."
+    if not contact_name:
+        errors["contact_name"] = "Contact person name required."
+
+    if not contact_role:
+        errors["contact_role"] = "Contact person role required."
 
     if errors:
         return JsonResponse({"success": False, "errors": errors}, status=400)
 
-    # Create User
     user = User.objects.create(
         email=email,
-        phone_country_code=phone_country_code,
-        phone_number=phone_number,
+        phone_country_code="+91",
+        phone_number=phone,
         password=make_password(password),
-        user_type="doctor"
+        user_type="doctor",
     )
 
-    # Profile
     DoctorProfile.objects.create(
         user=user,
         full_name=full_name,
+        gender=gender,
+        age=age,
+        clinic_name=clinic_name,
+        owner_name=owner_name,
+        contact_number=phone,
+        alt_contact_number=alt_phone,
         specialty=specialty,
         education=education,
         experience=experience,
@@ -1509,26 +1548,41 @@ def save_doctor(request):
         city=city,
         state=state,
         pincode=pincode,
-        registration_certificate_path=registration_doc_path,
+        country=country,
+        clinic_timing_from=timing_from,
+        clinic_timing_to=timing_to,
+        home_visit_available=home_visit,
+        registration_number=reg_number,
+        registration_certificate_path=reg_doc_path,
         registration_certificate_virus_scanned=True,
+        aadhar_number=aadhar_number,
         aadhar_doc_path=aadhar_path,
         aadhar_doc_virus_scanned=True,
+        pan_number=pan_number,
         pan_doc_path=pan_path,
         pan_doc_virus_scanned=True,
-        clinic_photo_path=photo_path,
-        clinic_photo_virus_scanned=True,
-        clinic_logo_path=logo_path,
+        clinic_logo_path=clinic_logo_path,
         clinic_logo_virus_scanned=True,
+        profile_photo_path=profile_photo_path,
+        profile_photo_virus_scanned=True,
+        clinic_photo_path=clinic_photo_path,
+        clinic_photo_virus_scanned=True,
+        referral_code=referral_code,
+        otp=data.get("otp1")
     )
 
     ContactPerson.objects.create(
-        profile_type='doctor',
+        profile_type="doctor",
         profile=user,
         name=contact_name,
+        phone_number=contact_phone,
         role=contact_role,
+        email_otp=data.get("otp2"),
+        referral_code=referral_code,
     )
 
     return JsonResponse({"success": True, "message": "Doctor registered successfully!"})
+
 
 @csrf_protect
 def forgot_password(request):

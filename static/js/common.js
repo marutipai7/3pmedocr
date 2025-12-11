@@ -397,6 +397,85 @@ $('#register-form').on('submit', function (e) {
         }).appendTo("#register-form");
     }
 
+    // DOCTOR SPECIFIC TRANSFORMS
+    else if (formUrl.includes("/save/doctor")) {
+        console.log("📌 Processing Doctor Fields");
+
+        // -------- Gender (single option)
+        let gender = $("input[name='gender']:checked").val();
+        console.log("Gender:", gender);
+        if (gender) {
+            $("input[name='gender']").val(gender);
+        }
+
+        // -------- Specialization (single FK)
+        let specialization = $("input[name='specialization']:checked").val();
+        console.log("Specialization ID:", specialization);
+        if (specialization) {
+            $("<input>").attr({
+                type: "hidden",
+                name: "specialization",
+                value: specialization
+            }).appendTo("#register-form");
+        }
+
+        // -------- Qualification (single FK)
+        let qualification = $("input[name='qualification']:checked").val();
+        console.log("Qualification ID:", qualification);
+        if (qualification) {
+            $("<input>").attr({
+                type: "hidden",
+                name: "qualification",
+                value: qualification
+            }).appendTo("#register-form");
+        }
+
+        // -------- Experience (single FK)
+        let experience = $("input[name='experience']:checked").val();
+        console.log("Experience ID:", experience);
+        if (experience) {
+            $("<input>").attr({
+                type: "hidden",
+                name: "experience",
+                value: experience
+            }).appendTo("#register-form");
+        }
+
+        // -------- Home Visit (Available/Unavailable → Boolean)
+        let homeVisitRaw = $(".home-visit-option input:checked").attr("id");
+        let homeVisitBoolean = homeVisitRaw === "Available" ? "true" : "false";
+
+        console.log("Home Visit:", homeVisitRaw, "→", homeVisitBoolean);
+
+        $("<input>").attr({
+            type: "hidden",
+            name: "home_visit_available",
+            value: homeVisitBoolean
+        }).appendTo("#register-form");
+
+        // -------- Opening Time Dropdown (text)
+        let openTime = $(".opening-time-option input:checked").val();
+        console.log("Opening Time:", openTime);
+        if (openTime) {
+            $("<input>").attr({
+                type: "hidden",
+                name: "clinic_timing_from",
+                value: openTime
+            }).appendTo("#register-form");
+        }
+
+        // -------- Closing Time Dropdown (text)
+        let closeTime = $(".closing-time-option input:checked").val();
+        console.log("Closing Time:", closeTime);
+        if (closeTime) {
+            $("<input>").attr({
+                type: "hidden",
+                name: "clinic_timing_to",
+                value: closeTime
+            }).appendTo("#register-form");
+        }
+    }
+
     let formData = new FormData(this);
     console.log("===== 🧾 FormData Preview =====");
     for (var pair of formData.entries()) {
