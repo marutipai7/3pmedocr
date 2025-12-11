@@ -46,7 +46,7 @@
           <!--Hospital Image and Admin Details-->
           <div class="flex flex-col lg:flex-row gap-2  pt-5 ml-3">
             <div class="relative">
-              <img src="{{ doctor_profile.clinic_photo_path|default:'/static/images/doctor-bg.png' }}" alt="Doctor" class="w-[880px] h-[330px] object-cover rounded-lg">
+              <img src="{% if doctor_profile.clinic_photo_path %}/document/{{ doctor_profile.clinic_photo_path }}{% else %}/static/images/doctor-bg.png{% endif %}" alt="Doctor" class="w-[880px] h-[330px] object-cover rounded-lg">
               <div class="absolute inset-0 flex items-end">
                 <div class=" bg-semi-transparent-black backdrop-blur-sm w-full text-white px-6 py-3 rounded-lg">
                   <div class="flex flex-col gap-2">

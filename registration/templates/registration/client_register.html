@@ -331,7 +331,64 @@
     </svg>
   </label>
 </div>
+  <!-- Camera Capture Popup (Modal) -->
+  <div id="camera-popup" class="fixed inset-0 bg-opacity-70 bg-black/30 hidden flex items-center justify-center z-50">
+    <div class="bg-white text-dark-gray p-4 rounded-md relative">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h2 class="font-medium">Capture or Upload Your Photo</h2>
+        <button id="close-popup" class="text-xl not-first:cursor-pointer">&times;</button>
+      </div>
 
+      <!-- Camera Preview -->
+      <div id="camera-preview" class="w-full h-80 my-4 flex items-center justify-center relative">
+        <video id="video" class="w-full h-full object-cover" autoplay></video>
+
+        <!-- Photo Display -->
+        <div id="uploaded-photo" class="hidden">
+          <img id="captured-photo" src="" alt="Captured or Uploaded Photo" class="w-100 h-80 object-cover">
+        </div>
+
+        <div class="absolute h-full w-full bg-opacity-40 bg-black/30 flex flex-col justify-between items-center">
+          <div class="relative capture-polygon">
+            <svg width="250" height="250" viewBox="0 0 200 200" class="text-white">
+              <polygon 
+                points="100,20 170,60 170,140 100,180 30,140 30,60" 
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="2"
+              />
+            </svg>
+          </div>
+
+          <div class="flex gap-4 mb-5 mt-auto">
+
+            <!-- Capture Button -->
+            <div class="flex flex-col justify-center items-center text-white">
+              <button id="capture-btn" 
+                      class="rounded-full border-3 border-white flex justify-center items-center h-10 w-10 cursor-pointer">
+                  <span class="material-symbols-outlined">photo_camera</span>
+              </button>
+              <p class="text-xs">Capture</p>
+            </div>
+
+            <!-- Upload Button -->
+            <div class="flex flex-col justify-center items-center text-white">
+              <button id="upload-btn" 
+                      class="rounded-full border-3 border-white flex justify-center items-center h-8 w-8 cursor-pointer">
+                  <span class="material-symbols-outlined">upload</span>
+              </button>
+              <p class="text-xs">Upload</p>
+
+              <!-- ONE input — backend will receive correctly -->
+              <input type="file" id="selfie-input" name="selfie" accept="image/*" class="hidden">
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Save Button -->
+      <button id="save-btn" class="bg-primary-color text-white px-4 py-2 rounded-md w-full hidden cursor-pointer">Save</button>
+    </div>
+  </div>
 
         <!-- Terms of Service -->
         <div class="flex gap-4 items-center">
@@ -344,8 +401,8 @@
           </div>
           <button type="submit"
             class="bg-primary-color text-white rounded-md py-2 px-10 cursor-pointer">Continue</button>
+          </form> 
         </div>
-      </form>
     </div>
   </div>
   <!-- Right curve -->
@@ -368,52 +425,4 @@
       </div>
     </div>
   </div>
-
-<!-- Camera Capture Popup (Modal) -->
-<div id="camera-popup" class="fixed inset-0 bg-opacity-70 bg-black/30 hidden flex items-center justify-center z-50">
-  <div class="bg-white text-dark-gray p-4 rounded-md relative">
-    <div class="flex justify-between items-center border-b pb-2">
-      <h2 class="font-medium">Capture or Upload Your Photo</h2>
-      <button id="close-popup" class="text-xl not-first:cursor-pointer">&times;</button>
-    </div>
-
-    <!-- Camera Preview -->
-    <div id="camera-preview" class="w-full h-80 my-4 flex items-center justify-center relative">
-      <video id="video" class="w-full h-full object-cover" autoplay></video>
-      <!-- Photo Display -->
-      <div id="uploaded-photo" class="hidden">
-        <img id="captured-photo" src="" alt="Captured or Uploaded Photo" class="w-100 h-80 object-cover">
-      </div>
-      <!-- Upload & Capture Options -->
-      <div class="absolute h-full w-full bg-opacity-40 bg-black/30 flex flex-col justify-between items-center">
-        <div class="relative capture-polygon">
-            <svg width="250" height="250" viewBox="0 0 200 200" class="text-white">
-                <polygon 
-                    points="100,20 170,60 170,140 100,180 30,140 30,60" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    stroke-width="2"
-                />
-            </svg>
-        </div>
-        <div class="flex gap-4 mb-5 mt-auto">
-          <div class="flex flex-col justify-center items-center text-white">
-            <button id="capture-btn" class="rounded-full border-3 border-white flex justify-center items-center h-10 w-10 cursor-pointer"><span class="material-symbols-outlined">photo_camera</span></button>
-            <p class="text-xs">Capture</p>
-            <input type="file" id="" class="hidden" accept="image/*">
-          </div>
-          <div class="flex flex-col justify-center items-center text-white">
-            <button id="upload-btn" class="rounded-full border-3 border-white flex justify-center items-center h-8 w-8 cursor-pointer"><span class="material-symbols-outlined">upload</span></button>
-            <p class="text-xs">Upload</p>
-            <input type="file" id="upload-input" class="hidden" accept="image/*">
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Save Button -->
-    <button id="save-btn" class="bg-primary-color text-white px-4 py-2 rounded-md w-full hidden cursor-pointer">Save</button>
-  </div>
-</div>
-
 {% endblock %}
