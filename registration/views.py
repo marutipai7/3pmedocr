@@ -1,6 +1,5 @@
 import os
 import re
-import asyncio
 import pyotp
 from .models import *
 from .email_otp import async_send_otp_email, send_forgot_password_email
@@ -17,9 +16,6 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
 from django.contrib.auth.hashers import make_password, check_password
 from django.utils import timezone
-import logging
-
-logger = logging.getLogger(__name__)
 
 ROLE_TO_TEMPLATE = {
     "login": "login/login.html",
@@ -183,8 +179,6 @@ def login_auth(request):
         else:
             request.session.set_expiry(0)
         dashboard_url = reverse("dashboard")
-        logger.info(f"User {user.email} logged in successfully. Redirecting to {dashboard_url}")
-        logger.info(f"User ID: {user.id}, Email: {user.email}, User Type: {user.user_type}")
         return JsonResponse({"success": True, "redirect": dashboard_url})
     except User.DoesNotExist:
         errors["password"] = "Invalid email or password."

@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from mongoengine import connect
+from pymongo import MongoClient
 
 # Load .env file
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,7 +45,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # For serving static files in production
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -91,7 +93,7 @@ USE_I18N = True
 USE_TZ = True
 
 
-DJANGO_ENV = os.getenv('DJANGO_ENV', 'development')  # Default to dev
+DJANGO_ENV = os.getenv('DJANGO_ENV', 'development')
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -106,20 +108,11 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = '/document/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'document')
+ALLOWED_EXTENSIONS = {'.pdf', '.jpg', '.jpeg', '.png'}
+MAX_FILE_SIZE = 5 * 1024 * 1024
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/'
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {'console': {'class': 'logging.StreamHandler'}},
-    'root': {'handlers': ['console'], 'level': 'INFO'},
-}
-
-# MongoDB (mongoengine and pymongo)
-from mongoengine import connect
-from pymongo import MongoClient
 
 MONGO_DATABASE_NAME = os.getenv('MONGO_DATABASE_NAME')
 MONGO_DATABASE_HOST = os.getenv('MONGO_DATABASE_HOST')
@@ -138,9 +131,17 @@ MONGO_COLLECTIONS = {
     "doctor":   MONGO_DB["Doctors"],
     "lab":      MONGO_DB["Labs"]
 }
+
 PLACES_COORDINATES = MONGO_DB["places"]
 STORE_VALIDATION = MONGO_DB["store_detail_validation"]
 TABLE_VALIDATION = MONGO_DB["table_validation"]
+
+# Company details
+COMPANY_NAME = os.environ.get("COMPANY", "")
+COMPANY_GSTIN = os.environ.get("GSTIN", "")
+COMPANY_ADDRESS = os.environ.get("ADDRESS", "")
+COMPANY_CONTACT = os.environ.get("CONTACT", "")
+COMPANY_EMAIL = os.environ.get("EMAIL", "")
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

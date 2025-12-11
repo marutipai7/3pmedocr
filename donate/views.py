@@ -1,5 +1,4 @@
 import uuid
-import logging
 from decimal import Decimal
 from django.db.models import Q
 from django.utils import timezone
@@ -17,8 +16,6 @@ from registration.views import validate_and_save_file
 from points.models import PointsActionType, PointsHistory
 from django.views.decorators.http import require_POST, require_GET
 from registration.models import NGOProfile, AdvertiserProfile, ClientProfile, PharmacyProfile, ContactPerson, LabProfile, DoctorProfile, HospitalProfile
-
-logger = logging.getLogger(__name__)
 
 @dashboard_login_required
 @require_GET
@@ -124,12 +121,6 @@ def get_organization_posts(request):
             applied_date_filter = f"Explicit Range: {start_date} → {end_date}"
 
     posts = NGOPost.objects.filter(filters).select_related("user").order_by("-created_at")
-    total_count = posts.count()
-
-    logger.info(
-        f"[NGO Posts] Search='{query or 'None'}', Date Filter='{applied_date_filter or 'None'}', "
-        f"Results Found={total_count}"
-    )
 
     paginator = Paginator(posts, 6)
     posts_page = paginator.get_page(page)
@@ -222,11 +213,10 @@ def donate_pay_view(request, post_id=None):
             action_type_obj = PointsActionType.objects.get(action_type='Donate')
             PointsHistory.objects.create(user=user, action_type=action_type_obj, points=action_type_obj.default_points)
         except PointsActionType.DoesNotExist:
-            logger.warning("PointsActionType for 'Donate' does not exist. No points awarded.")
+            print("PointsActionType for 'Donate' does not exist. No points awarded.")
         return JsonResponse({'success': True, 'order_id': order_id, 'transaction_id': transaction_id})
     context.update({ "post": post, "ngo_profile": ngo_profile})
     return render(request, "advertiser/donate-pay.html", context)
-
 
 @dashboard_login_required
 @require_GET
@@ -272,7 +262,6 @@ def get_donation_history(request):
         'today': date.today(),
         **get_common_context(request, request.user_obj),
     })
-    logger.info(f"User {user.id} fetched donation history: {query}")
     return JsonResponse({
         "html": html,
         "current_page": page_obj.number,
@@ -307,8 +296,6 @@ def get_donate_bill(request, donation_id):
 
     return JsonResponse(response_data)
 
-
-# show data on receipt 
 @dashboard_login_required    
 def get_platform_bill(request, donation_id):
     user = request.user_obj
@@ -352,14 +339,11 @@ def toggle_saved_donation(request):
         donation.saved = (action == 'save')
         donation.save()
 
-        logger.info(f"User {request.user_obj} set saved={donation.saved} for donation {donation_id} (action={action})")
         return JsonResponse({'success': True, 'saved': donation.saved, 'text_class': get_theme_colors(request.user_obj.user_type).get("text", "blue-500")})
 
     except Donation.DoesNotExist:
-        logger.warning(f"Donation {donation_id} not found or does not belong to user {request.user_obj}")
         return JsonResponse({'success': False, 'error': 'Donation not found'}, status=404)
 
-# csv 
 @dashboard_login_required
 @require_GET
 def export_donation_history(request):
@@ -371,7 +355,6 @@ def export_donation_history(request):
         "donation_history": donations,
         'today': date.today(),
     })
-    logger.info(f"Exporting donation history for user {user} with {donations.count()} records")
     return JsonResponse({
         "html": html,
         "total_items": donations.count(),  # Add this

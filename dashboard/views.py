@@ -1,7 +1,6 @@
 import os
 import json
 import random
-import logging
 from coupon.models import Coupon
 from django.utils import timezone
 from donate.models import Donation
@@ -18,16 +17,16 @@ from django.views.decorators.http import require_GET, require_POST
 from .utils import dashboard_login_required, get_common_context, get_theme_colors
 from .models import SettingMenu, CouponPerformance,  CalendarEvent, TrendingCoupon
 from django.db.models import Sum, Count, Q, Max, F, ExpressionWrapper, DurationField
-from registration.models import (PharmacyProfile, 
-                                 NGOProfile, 
-                                 ClientProfile, 
-                                 AdvertiserProfile, 
-                                 ContactPerson, 
-                                 LabProfile, 
-                                 DoctorProfile, 
-                                 HospitalProfile)
-
-logger = logging.getLogger(__name__)
+from registration.models import (
+    PharmacyProfile, 
+    NGOProfile, 
+    ClientProfile, 
+    AdvertiserProfile, 
+    ContactPerson, 
+    LabProfile, 
+    DoctorProfile, 
+    HospitalProfile
+)
 
 @dashboard_login_required
 def dashboard_home(request):
@@ -177,7 +176,6 @@ def dashboard_home(request):
     except Exception as e:
         return render(request, "dashboard/not_found.html")
     
-    
 def get_coupon_chart_data(request):
     performances = CouponPerformance.objects.order_by('-date')[:8][::-1]  
     data = {
@@ -269,10 +267,6 @@ def get_upcoming_events(request):
             events_data.append(event_data)
         response_data = {'upcoming_events': events_data}
         return JsonResponse(response_data)
-
-def logout_view(request):
-    request.session.flush() 
-    return redirect('/') 
 
 @dashboard_login_required
 def saved(request):
@@ -420,7 +414,6 @@ def coupon_detail(request, coupon_id):
             'spending_power': getattr(coupon.spending_power, 'name', '') if hasattr(coupon, 'spending_power') and coupon.spending_power else '',
         }
     except Exception as e:
-        logger.error(f"Error building coupon detail data: {e}", exc_info=True)
         return JsonResponse({'error': 'Server error'}, status=500)
     return JsonResponse(data)
 
@@ -469,7 +462,6 @@ def platform_bill(request, coupon_id):
             'address': os.environ.get("ADDRESS", ""),
         }
     except Exception as e:
-        logger.error(f"Error building coupon detail data: {e}", exc_info=True)
         return JsonResponse({'error': 'Server error'}, status=500)
     return JsonResponse(data)
 
@@ -529,15 +521,12 @@ def get_donation_history(request):
             "donation_history": page_obj.object_list,
             'today': date.today(),
         })
-    logger.info(f"User {user.id} fetched donation history: {query}")
-    logger.info(f"user type: {user.user_type} has {donations.count()} donations")
     return JsonResponse({
         "html": html,
         "current_page": page_obj.number,
         "total_pages": paginator.num_pages,
         "total_items": paginator.count,  
     })
-
 
 @dashboard_login_required    
 def get_donate_bill(request, donation_id):
@@ -563,7 +552,6 @@ def get_donate_bill(request, donation_id):
         "email": user.email,
     }
     return JsonResponse(response_data)
-
 
 @dashboard_login_required    
 def get_platform_bill(request, donation_id):
@@ -606,13 +594,10 @@ def toggle_saved_donation(request):
         donation.saved = (action == 'save')
         donation.save()
 
-        logger.info(f"User {request.user_obj} set saved={donation.saved} for donation {donation_id} (action={action})")
         return JsonResponse({'success': True, 'saved': donation.saved})
 
     except Donation.DoesNotExist:
-        logger.warning(f"Donation {donation_id} not found or does not belong to user {request.user_obj}")
         return JsonResponse({'success': False, 'error': 'Donation not found'}, status=404)
-
 
 @dashboard_login_required
 @require_GET
@@ -623,14 +608,11 @@ def export_donation_history(request):
         "donation_history": donations,
         'today': date.today(),
     })
-    logger.info(f"Exporting donation history for user {user} with {donations.count()} records")
     return JsonResponse({
         "html": html,
         "total_items": donations.count(),
     })
 
-
-# ngo graph 
 @require_GET
 @dashboard_login_required
 def get_ngo_graph_data(request):
@@ -691,39 +673,6 @@ def get_ngo_graph_data(request):
         }
     })
     
-
-
-def get_ngo_graph_data_old(request):
-    today = timezone.now().date()
-
-    labels = []
-    total_post = []
-    total_views = []
-    target_donation = []
-    donation_received = []
-
-    for i in range(7):
-        date = today - timezone.timedelta(days=6 - i)
-        posts = NGOPost.objects.filter(created_at__date=date)
-
-        labels.append(date.strftime('%d-%b'))
-
-        total_post.append(posts.count())
-        total_views.append(posts.aggregate(Sum('views'))['views__sum'] or 0)
-        target_donation.append(posts.aggregate(Sum('target_donation'))['target_donation__sum'] or 0)
-        donation_received.append(posts.aggregate(Sum('donation_received'))['donation_received__sum'] or 0)
-
-    return JsonResponse({
-        'labels': labels,
-        'datasets': {
-            'Total Post': total_post,
-            'Total Views': total_views,
-            'Target Donation': target_donation,
-            'Donation Received': donation_received,
-        }
-    })
-
-
 @dashboard_login_required
 def advertiser_advance(request):
     user = request.user_obj
@@ -771,7 +720,6 @@ def advertiser_advance_history(request):
     user = request.user_obj
     context = get_common_context(request, user)
     return render(request, "advertiser/advance-history.html", context)
-
 
 @dashboard_login_required
 def cart(request):

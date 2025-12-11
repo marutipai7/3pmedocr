@@ -12,7 +12,6 @@ from .models import (
     GenderOption, 
     SpendingPowerOption
     )
-import logging
 from datetime import datetime
 from dashboard.utils import dashboard_login_required, get_common_context
 from django.http import JsonResponse, Http404
@@ -23,8 +22,6 @@ from donate.models import Donation
 from django.template.loader import render_to_string
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
 
 
 @dashboard_login_required
@@ -97,8 +94,6 @@ def post_view(request):
     })
     return render(request, 'post.html', context)
 
-
-
 @dashboard_login_required
 def post_history_ajax(request):
     user = request.user_obj
@@ -145,7 +140,6 @@ def post_history_ajax(request):
         "current_page": page_obj.number,
         "total_pages": paginator.num_pages,
     })
-
 
 @dashboard_login_required
 @csrf_exempt
@@ -206,7 +200,6 @@ def save_ngo_post(request):
     except Exception as e:
         return JsonResponse({'error': 'Something went wrong.', 'message': 'NGO Post not Saved.', 'details': str(e)}, status=500)
     
-
 @dashboard_login_required
 @require_GET
 def post_detail(request, post_id):
@@ -279,7 +272,6 @@ def post_detail(request, post_id):
         'creative2': post.creative2.url if post.creative2 else '',
         'donations': donation_list,
     }
-    logger.info(f"AJAX Preview Data for post {post_id}: {data}")
     return JsonResponse(data)
 
 @dashboard_login_required
@@ -296,11 +288,9 @@ def toggle_saved_post(request):
         post.saved = (action == 'save')
         post.save()
 
-        logger.info(f"User {request.user_obj} set saved={post.saved} for post {post_id} (action={action})")
         return JsonResponse({'success': True, 'saved': post.saved})
 
     except NGOPost.DoesNotExist:
-        logger.warning(f"Post {post_id} not found or does not belong to user {request.user_obj}")
         return JsonResponse({'success': False, 'error': 'Post not found'}, status=404)
 
 @dashboard_login_required

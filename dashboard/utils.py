@@ -6,9 +6,6 @@ from .models import SettingMenu
 from django.db.models import Sum, Q
 from registration.models import AdvertiserProfile, ClientProfile, PharmacyProfile, NGOProfile, LabProfile, DoctorProfile, HospitalProfile
 from settings.models import UserColorScheme
-import logging
-from django.http import JsonResponse
-logger = logging.getLogger(__name__)
 
 def dashboard_login_required(view_func):
     @wraps(view_func)
@@ -140,6 +137,5 @@ def get_theme_colors(user_type: str) -> dict:
         color_scheme_obj = UserColorScheme.objects.get(user_type=user_type, is_active=True)
         return color_scheme_obj.color_data
 
-    except Exception as e:
-        logger.error(f"Error fetching color scheme for user type '{user_type}': {e}")    
-        return {}
+    except Exception as e:   
+        return e

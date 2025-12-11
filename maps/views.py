@@ -117,7 +117,6 @@ def get_routes(request):
 
     return JsonResponse({'error': f"All routing servers failed: {last_exception}"}, status=500)
 
-# @dashboard_login_required
 @require_POST
 @csrf_exempt
 def get_amenities(request):
@@ -180,7 +179,6 @@ def get_amenities(request):
 
     return JsonResponse({"amenities": amenities})
 
-# Haversine distance (in km)
 def haversine(lat1, lon1, lat2, lon2):
     R = 6371
     d_lat = radians(lat2 - lat1)

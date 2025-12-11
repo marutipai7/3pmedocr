@@ -7,51 +7,22 @@ from django.shortcuts import render, redirect, get_object_or_404
 from maps.models import SearchHistory, SavedLocation
 from dashboard.utils import dashboard_login_required, get_common_context
 from registration.models import *
+from registration.views import is_file_clean, validate_and_save_file
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.files.storage import default_storage
 from django.views.decorators.http import require_POST
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from django.template.loader import render_to_string
 from django.db import transaction
-import logging
 from coupon.models import Coupon
 from donate.models import Donation
 from ngopost.models import NGOPost
-
-logger = logging.getLogger(__name__)
-
-ALLOWED_EXTENSIONS = {'.pdf', '.jpg', '.jpeg', '.png'}
-MAX_FILE_SIZE = 5 * 1024 * 1024 
 
 def load_country_codes():
     json_path = os.path.join(settings.BASE_DIR, 'static', 'data', 'countryCodes.json')
     with open(json_path, 'r', encoding='utf-8') as f:
         return json.load(f)
     
-def is_file_clean(file_obj):
-    return True
-
-def validate_and_save_file(file_obj, subdir, field_label, user_type='common'):
-    if not file_obj:
-        return '', f"{field_label} is required."
-
-    ext = os.path.splitext(file_obj.name)[1].lower()
-    if ext not in ALLOWED_EXTENSIONS:
-        return '', f"{field_label} must be a PDF or image file."
-
-    if file_obj.size > MAX_FILE_SIZE:
-        return '', f"{field_label} must be under 5MB."
-
-    if not is_file_clean(file_obj):
-        return '', f"{field_label} failed virus scan."
-
-    # 👇 Now user_type is part of the path — flexible for all
-    upload_dir = os.path.join(user_type + '_docs', subdir)
-    os.makedirs(os.path.join(settings.MEDIA_ROOT, upload_dir), exist_ok=True)
-    filename = default_storage.save(os.path.join(upload_dir, file_obj.name), file_obj)
-    return filename, None
-
 def validate_email_phone(post_data, errors):
     email = post_data.get("email", "").strip()
     if not email:
@@ -364,7 +335,7 @@ def update_notification_field(request):
     data = json.loads(request.body)
     field = data.get("field")
     value = data.get("value")
-    if field in ["inapp_notifications", "email_notifications", "push_notifications", "regulatory_alerts", "promotions_and_offers", "quite_mode"]:
+    if field in ["inapp_notifications", "email_notifications", "push_notifications", "regulatory_alerts", "promotions_and_offers", "quite_mode", "payment_notifications", "location_notification"]:
         setattr(user, field, value)
     elif field in ["quite_mode_start_time", "quite_mode_end_time"]:
         setattr(user, field, value if value else None)
@@ -608,7 +579,6 @@ def update_pharmacy_profile(request):
     errors = {}
     user = request.user_obj  
 
-    # --- Validate ---
     validate_email_phone(post_data, errors)
     required_fields = ["company_name", "city", "state", "pincode"]
     for field in required_fields:
@@ -666,17 +636,90 @@ def update_pharmacy_profile(request):
 @require_POST
 @dashboard_login_required
 def update_lab_profile(request):
-    pass
+    post_data = request.POST
+    errors = {}
+    user = request.user_obj  
+    
+    validate_email_phone(post_data, errors)
+    required_fields = ["lab_name", "city", "state", "pincode"]
+    for field in required_fields:
+        if not post_data.get(field):
+            errors[field] = f"{field.replace('_', ' ').capitalize()} is required."
+
+    if errors:
+        return JsonResponse({"success": False, "errors": errors}, status=400)
+    
+    try:
+        with transaction.atomic():
+            user.email = post_data.get('email')
+            user.phone_country_code = post_data.get("countryCodes")
+            user.save()
+            
+            lab_profile = get_object_or_404(LabProfile, user=user)
+            lab_profile.save()
+            
+            return JsonResponse({'success': True, 'message': 'Lab profile updated successfully'})
+
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)}, status=500)
 
 @require_POST
 @dashboard_login_required
 def update_hospital_profile(request):
-    pass
+    post_data = request.POST
+    errors = {}
+    user = request.user_obj  
+    validate_email_phone(post_data, errors)
+    required_fields = ["hospital_name", "city", "state", "pincode"]
+    for field in required_fields:
+        if not post_data.get(field):
+            errors[field] = f"{field.replace('_', ' ').capitalize()} is required."
+
+    if errors:
+        return JsonResponse({"success": False, "errors": errors}, status=400)
+    
+    try:
+        with transaction.atomic():
+            user.email = post_data.get('email')
+            user.phone_country_code = post_data.get("countryCodes")
+            user.save()
+            
+            hospital_profile = get_object_or_404(HospitalProfile, user=user)
+            hospital_profile.save()
+            
+            return JsonResponse({'success': True, 'message': 'Hospital profile updated successfully'})
+
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)}, status=500)
 
 @require_POST
 @dashboard_login_required
 def update_doctor_profile(request):
-    pass
+    post_data = request.POST
+    errors = {}
+    user = request.user_obj  
+    validate_email_phone(post_data, errors)
+    required_fields = ["clinic_name", "city", "state", "pincode"]
+    for field in required_fields:
+        if not post_data.get(field):
+            errors[field] = f"{field.replace('_', ' ').capitalize()} is required."
+
+    if errors:
+        return JsonResponse({"success": False, "errors": errors}, status=400)
+    
+    try:
+        with transaction.atomic():
+            user.email = post_data.get('email')
+            user.phone_country_code = post_data.get("countryCodes")
+            user.save()
+            
+            doctor_profile = get_object_or_404(DoctorProfile, user=user)
+            doctor_profile.save()
+            
+            return JsonResponse({'success': True, 'message': 'Doctor profile updated successfully'})
+
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)}, status=500)
 
 @require_POST
 @dashboard_login_required
@@ -684,7 +727,6 @@ def delete_account(request):
     user = request.user_obj
     data = json.loads(request.body)
     reason = data.get("reason", "No reason provided")
-    logger.info(msg=f"Deleted account {user.email}. Reason: {reason}")
 
     # Soft delete: deactivate user
     user.is_active = False
@@ -711,10 +753,10 @@ def clear_saved_data(request):
         Coupon.objects.filter(user=user, saved=True).update(saved=False)
         Donation.objects.filter(user=user, saved=True).update(saved=False)
 
-    if user.user_type == 'ngo':
+    elif user.user_type == 'ngo':
         NGOPost.objects.filter(user=user, saved=True).update(saved=False)
 
-    if user.user_type == "pharmacy":
+    elif user.user_type == "pharmacy":
         Donation.objects.filter(user=user, saved=True).update(saved=False)
 
     return JsonResponse({'status': 'saved data cleared'})

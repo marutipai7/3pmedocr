@@ -1,6 +1,5 @@
 import re
 import time
-import logging
 import pandas as pd
 from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import (
@@ -12,8 +11,6 @@ from docling.datamodel.settings import settings
 from docling.document_converter import DocumentConverter, PdfFormatOption, WordFormatOption
 from docling.pipeline.simple_pipeline import SimplePipeline
 from core.settings import TABLE_VALIDATION, STORE_VALIDATION
-
-logger = logging.getLogger(__name__)
 
 def load_validation_data(field_type=None):
     """
@@ -48,7 +45,6 @@ def load_validation_data(field_type=None):
             validation_cache = {item.get('standard_variable'): item for item in all_data if item.get('standard_variable')}
             return validation_cache
     except Exception as e:
-        logger.error(f"Error loading validation data: {e}")
         return {} if field_type else {}
 
 # Function to get field aliases from validation collections
@@ -67,7 +63,6 @@ def get_field_aliases(field_type):
         validation_data = load_validation_data(field_type)
         
         if not validation_data:
-            logger.warning(f"No validation data found for field type: {field_type}")
             return []
         
         # Extract aliases from the validation data
@@ -75,7 +70,6 @@ def get_field_aliases(field_type):
         return aliases
         
     except Exception as e:
-        logger.error(f"Error getting aliases for field type {field_type}: {e}")
         return []
     
 
@@ -97,7 +91,6 @@ def validate_pattern(value, field_type):
         # Find the mapping document for this field type
         mapping = collection.find_one({"standard_variable": field_type})
         if not mapping:
-            logger.warning(f"No mapping found for field type: {field_type}")
             return True  # Default to True if no mapping found
         
         # Get patterns from the mapping
@@ -137,7 +130,6 @@ def validate_pattern(value, field_type):
         # If we have patterns but none matched, return False
         return False
     except Exception as e:
-        logger.error(f"Error validating pattern for {field_type}: {e}")
         return True  # Default to True on error
 
 
@@ -163,8 +155,6 @@ def extract_store_details(content):
         5. Standardize values using master data mappings
     """
     field_mappings = list(STORE_VALIDATION.find())
-
-    logger.info(f"Loaded {len(field_mappings)} field mappings from database")
 
     # Define standard fields
     standard_fields = {
@@ -196,15 +186,12 @@ def extract_store_details(content):
     }
     
     lines = content.split('\n')
-    logger.info("Processing content for store details")
     
     # First try MongoDB patterns
     for line in lines:
         line = line.strip()
         if not line:
             continue
-            
-        logger.debug(f"Processing line: {line}")
         
         # Try patterns from MongoDB mappings
         for mapping in field_mappings:
@@ -215,9 +202,7 @@ def extract_store_details(content):
             patterns = mapping.get('patterns', [])
             aliases = mapping.get('aliases', [])
             exclude_patterns = mapping.get('exclude_patterns', [])
-            validation_rules = mapping.get('validation_rules', {})
             standard_values = mapping.get('standard_values', {})
-            logger.info(f"Checking {len(patterns)} patterns for field {standard_variable}")
             # Skip if line matches any exclude pattern
             should_exclude = False
             for exclude_pattern in exclude_patterns:
@@ -237,13 +222,11 @@ def extract_store_details(content):
                     # Extract pattern from dictionary if it's a dict, otherwise use as is
                     pattern_str = pattern_dict.get('regex') if isinstance(pattern_dict, dict) else pattern_dict
                     if not isinstance(pattern_str, str):
-                        logger.warning(f"Invalid pattern type for {standard_variable}: {type(pattern_str)}")
                         continue
                         
                     match = re.search(pattern_str, line, re.IGNORECASE)
                     if match:
                         value = match.group(1).strip() if match.groups() else match.group(0).strip()
-                        logger.info(f"Matched {standard_variable} with database pattern: {value}")
                         # Additional validation for specific fields
                         if standard_variable == 'patient_age' and value:
                             try:
@@ -260,12 +243,11 @@ def extract_store_details(content):
                         else:
                             if value and len(value) <= 100:  # Reasonable length check
                                 standard_fields[standard_variable] = value
-                        logger.debug(f"Custom pattern match for {standard_variable}: {value}")
                         break
                 except re.error as e:
-                    logger.warning(f"Invalid regex pattern '{pattern_str}': {e}")
+                    print(f"Invalid regex pattern '{pattern_str}': {e}")
                 except TypeError as e:
-                    logger.warning(f"Type error with pattern for {standard_variable}: {e}")
+                    print(f"Type error with pattern for {standard_variable}: {e}")
             
             # Try alias matching if no pattern match
             if not standard_fields[standard_variable]:
@@ -279,7 +261,6 @@ def extract_store_details(content):
                             value = line[line.lower().find(alias.lower()) + len(alias):].strip()
                         if value and len(value) <= 100:  # Reasonable length check
                             standard_fields[standard_variable] = value
-                            logger.debug(f"Alias match for {standard_variable}: {value}")
                             break
             
             # Standardize values if available
@@ -288,7 +269,6 @@ def extract_store_details(content):
                 standardized = standard_values.get(value.lower(), value)
                 if value != standardized:
                     standard_fields[standard_variable] = standardized
-                    logger.debug(f"Standardized {standard_variable}: {value} -> {standardized}")
     
     # Then try generic patterns for any fields that are still empty
     for line in lines:
@@ -318,11 +298,9 @@ def extract_store_details(content):
                         else:
                             if value and len(value) <= 100:  # Reasonable length check
                                 standard_fields[field] = value
-                        logger.debug(f"Generic pattern match for {field}: {value}")
-                except re.error as e:
-                    logger.warning(f"Invalid generic pattern for {field}: {e}")
-                except TypeError as e:
-                    logger.warning(f"Type error with pattern for {field}: {e}")
+                    
+                except Exception as e:
+                    return e
     
     # Clean up and validate final values
     for field in standard_fields:
@@ -335,7 +313,6 @@ def extract_store_details(content):
                 value = ''  # Clear invalid email
             standard_fields[field] = value
     
-    logger.info(f"Final extracted store details: {standard_fields}")
     return standard_fields
 
 def parse_markdown_table(content: str):
@@ -348,7 +325,6 @@ def parse_markdown_table(content: str):
     Returns:
         DataFrame: Pandas DataFrame with standardized column names and validated data
     """
-    logger.info("Starting markdown table parsing")
 
     # Define standard columns at the top so they’re always available
     standard_columns = ['sr_no', 'medicine_name', "dosage", 'manufacturer_name', 'batch_number', 'quantity']
@@ -357,13 +333,11 @@ def parse_markdown_table(content: str):
         #  Fetch column mappings
         column_mappings = list(TABLE_VALIDATION.find({}))
         if not column_mappings:
-            logger.error("No column mappings found in database")
             raise ValueError("Column validation mappings not found in database")
 
         # Find table content in markdown
         table_matches = re.findall(r'\|(.*?)\|\n', content, re.MULTILINE)
         if not table_matches:
-            logger.warning("No table content found in markdown")
             return pd.DataFrame(columns=standard_columns)
 
         # Clean up table matches and remove separator lines
@@ -371,12 +345,10 @@ def parse_markdown_table(content: str):
         table_matches = [line for line in table_matches if not re.match(r'^[-:|]+$', line.strip())]
 
         if not table_matches:
-            logger.warning("No valid table rows found after cleaning")
             return pd.DataFrame(columns=standard_columns)
 
         # Get headers from first row
         headers = [col.strip().lower() for col in table_matches[0].split('|') if col.strip()]
-        logger.info(f"Original headers found: {headers}")
 
         # Create header mapping using database mappings
         header_mapping = {}
@@ -394,7 +366,6 @@ def parse_markdown_table(content: str):
                 # Match alias
                 if any(str(alias).lower().strip() == clean_header for alias in aliases):
                     header_mapping[idx] = standard_column
-                    logger.info(f"Mapped column {header} to {standard_column} via alias")
                     break
 
                 # Match regex pattern
@@ -403,12 +374,10 @@ def parse_markdown_table(content: str):
                         pattern_str = pattern.get('regex') if isinstance(pattern, dict) else pattern
                         if re.search(pattern_str, clean_header, re.IGNORECASE):
                             header_mapping[idx] = standard_column
-                            logger.info(f"Mapped column {header} to {standard_column} via pattern")
                             break
                     except (re.error, AttributeError) as e:
-                        logger.warning(f"Invalid pattern in database: {e}")
+                        print(f"Invalid pattern in database: {e}")
 
-        logger.info(f"Header mapping created: {header_mapping}")
 
         # Process data rows
         data_rows = []
@@ -460,7 +429,7 @@ def parse_markdown_table(content: str):
                             if match and match.groups():
                                 new_row[std_col] = match.group(1)
                     except (re.error, AttributeError) as e:
-                        logger.warning(f"Invalid validation pattern in database: {e}")
+                        print(f"Invalid validation pattern in database: {e}")
 
                 # Standardization
                 standard_values = mapping.get('standard_values', {})
@@ -490,11 +459,9 @@ def parse_markdown_table(content: str):
         if df['sr_no'].isnull().all() or df['sr_no'].eq('').all():
             df['sr_no'] = range(1, len(df) + 1)
 
-        logger.info(f"Created DataFrame with {len(df)} rows")
         return df
 
     except Exception as e:
-        logger.error(f"Error parsing markdown table: {e}", exc_info=True)
         return pd.DataFrame(columns=standard_columns)
 
 def process_document(file_path: str):
@@ -562,7 +529,6 @@ def process_document(file_path: str):
         store_details = extract_store_details(extracted_content)
 
         elapsed = time.time() - start_time
-        logger.info(f"OCR completed in {elapsed:.2f}s. Extracted {len(extracted_content)} characters.")
 
         result.update({
             "content": extracted_content,
@@ -573,7 +539,6 @@ def process_document(file_path: str):
 
     except Exception as e:
         elapsed = time.time() - start_time
-        logger.error(f"OCR failed after {elapsed:.2f}s: {str(e)}", exc_info=True)
         result["error"] = str(e)
 
     return result
