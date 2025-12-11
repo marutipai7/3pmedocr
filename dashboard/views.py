@@ -186,6 +186,10 @@ def get_coupon_chart_data(request):
     }
     return JsonResponse(data)
 
+def logout_view(request):
+    request.session.flush() 
+    return redirect('/') 
+
 @require_POST
 @dashboard_login_required
 def save_event(request):
