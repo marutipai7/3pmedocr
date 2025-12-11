@@ -377,6 +377,32 @@ $('#register-form').on('submit', function (e) {
             }).get().join(",")
         );
     }
+    
+    // PHARMACY SPECIFIC TRANSFORMS
+    else if (formUrl.includes("/save/pharmacy")) {
+
+        // Pharmacy Timing (dropdown → hidden input)
+        let selectedTiming = $("input[name='pharmacy_timing']:checked").val();
+        if (selectedTiming) {
+            $("input[name='pharmacy_timing']").val(selectedTiming);
+        }
+
+        // Pharmacy Type (dropdown → hidden)
+        let selectedType = $("input[name='pharmacy_type']:checked").val();
+        if (selectedType) {
+            $("input[name='pharmacy_type']").val(selectedType);
+        }
+
+        // Services Offered (dropdown → hidden)
+        $("input[name='services_offered']").val(
+            $("input[name='services_offered']:checked")
+                .map(function () {
+                    return this.value;
+                })
+                .get()
+                .join(",")
+        );
+    }
 
     // HOSPITAL SPECIFIC TRANSFORMS
     else if (formUrl.includes("/save/hospital")) {

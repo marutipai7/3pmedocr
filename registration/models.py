@@ -267,8 +267,6 @@ class NGOProfile(models.Model):
 
 class PharmacyProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-    # --- Personal Details ---
     first_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=100, blank=True, null=True)
     gender = models.CharField(max_length=20, blank=True, null=True)
@@ -276,7 +274,7 @@ class PharmacyProfile(models.Model):
     personal_email = models.CharField(max_length=255, blank=True, null=True)
     personal_phone_number = models.CharField(max_length=20, blank=True, null=True)
     personal_pan_number = models.CharField(max_length=50, blank=True, null=True)
-    
+    website = models.CharField(max_length=255, blank=True, null=True)
     company_name = models.CharField(max_length=255)
     pharmacy_type = models.ForeignKey(PharmacyType, on_delete=models.CASCADE, blank=True, null=True)
     services_offered = models.ForeignKey(PharmacyServices, on_delete=models.CASCADE, blank=True, null=True)
@@ -286,7 +284,6 @@ class PharmacyProfile(models.Model):
     state = models.CharField(max_length=128, blank=True, null=True)
     pincode = models.CharField(max_length=20, blank=True, null=True)
     country = models.CharField(max_length=128, blank=True, null=True, default='India')
-
     incorporation_number = models.CharField(max_length=128, blank=True, null=True)
     incorporation_doc_path = models.CharField(max_length=255, blank=True, null=True)
     incorporation_doc_virus_scanned = models.BooleanField(default=False)
@@ -306,7 +303,6 @@ class PharmacyProfile(models.Model):
     storefront_image_virus_scanned = models.BooleanField(default=False)
     selfie_path_for_applock = models.CharField(max_length=255, blank=True, null=True)
     selfie_virus_scanned = models.BooleanField(default=False)
-
     is_verified = models.BooleanField(default=False)
     verification_status = models.CharField(max_length=20, default='pending')  # e.g., pending, approved, rejected
     rejection_reason = models.TextField(blank=True, null=True)

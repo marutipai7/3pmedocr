@@ -911,226 +911,148 @@ def save_medical_pharmacy(request):
     data = request.POST
     files = request.FILES
     errors = {}
-
-    # Email
     email = data.get("email")
-    logger.info(f"Email received: {email}")
     if not email:
         errors["email"] = "Email is required."
-        logger.warning("Email is missing")
     else:
         try:
             validate_email(email)
-            logger.info("Email validation passed")
         except ValidationError:
-            errors["email"] = "Enter a valid email address."
-            logger.warning("Email validation failed")
+            errors["email"] = "Enter a valid email."
         if User.objects.filter(email=email).exists():
-            errors["email"] = "This email is already registered."
-            logger.warning("Email already exists in database")
-            
-    # otp_token = data.get("otp_token")
-    # if not otp_token:
-    #     errors["otp1"] = "Please refresh the page."
-    email_otp = data.get("otp1")  # from HTML field "otp1"
-    # if not email_otp:
-    #     errors["otp1"] = "OTP is required."
-    # otp_verification = verify_otp(email, email_otp, otp_token)
-    # if not otp_verification["success"]:
-    #     errors["otp1"] = otp_verification["message"]
-
-    # Password
-    password = data.get("password")
-    confirm_password = data.get("confirm_password")
-    if not password or len(password) < 8:
-        errors["password"] = "Password must be at least 8 characters."
-        logger.warning(f"Password validation failed - length: {len(password) if password else 0}")
-    elif password != confirm_password:
-        errors["confirm_password"] = "Passwords do not match."
-        logger.warning(f"Password mismatch - Password: '{password}' vs Confirm: '{confirm_password}'")
-    else:
-        logger.info("Password validation passed")
-
-    # Phone
+            errors["email"] = "This email already exists."
+    phone_number = data.get("phone")
     phone_country_code = "+91"
-    phone_number = data.get("phone-number")
     if not phone_number or not re.match(r"^\d{10}$", phone_number):
-        errors["phone-number"] = "Enter a valid phone number."
-
-    # Company Info
-    company_name = data.get("company-name")
+        errors["phone"] = "Enter valid phone number."
+    company_name = data.get("company_name")
     if not company_name:
-        errors["company-name"] = "Company name is required."
+        errors["company_name"] = "Company name is required."
 
-    # Get foreign key instances from IDs
+    website = data.get("website_url") or ""
     pharmacy_type_id = data.get("pharmacy_type")
-    services_offered_id = data.get("services_offered")
-    
-    # Convert to model instances
     pharmacy_type = None
-    services_offered = None
-    
     if pharmacy_type_id:
         try:
-            pharmacy_type = PharmacyType.objects.get(name=pharmacy_type_id)
-        except Exception as e:
-            errors["pharmacy_type"] = "Invalid pharmacy type selected."
-    
-    if services_offered_id:
+            pharmacy_type = PharmacyType.objects.get(id=pharmacy_type_id)
+        except:
+            errors["pharmacy_type"] = "Invalid pharmacy type."
+    service_id = data.get("services_offered")
+    services_offered = None
+    if service_id:
         try:
-            services_offered = PharmacyServices.objects.get(name=services_offered_id)
-        except Exception as e:
+            services_offered = PharmacyServices.objects.get(id=service_id)
+        except:
             errors["services_offered"] = "Invalid service selected."
-
-    website = data.get("website-url")
+    timing_id = data.get("pharmacy_timing")
+    pharmacy_timing = None
+    if timing_id:
+        try:
+            pharmacy_timing = PharmacyTiming.objects.get(id=timing_id)
+        except:
+            errors["pharmacy_timing"] = "Invalid timing selected."
     address = data.get("address")
     city = data.get("city")
     state = data.get("state")
     pincode = data.get("pincode")
-    if not pincode or not re.match(r"^\d{4,10}$", pincode):
-        errors["pincode"] = "Enter a valid pincode."
-
     if not address:
-        errors["address"] = "Address is required."
+        errors["address"] = "Address required."
     if not city:
-        errors["city"] = "City is required."
+        errors["city"] = "City required."
     if not state:
-        errors["state"] = "State is required."
+        errors["state"] = "State required."
     if not pincode or not re.match(r"^\d{4,10}$", pincode):
-        errors["pincode"] = "Enter a valid pincode."
-        
-
-    # Incorporation Doc
+        errors["pincode"] = "Invalid pincode."
     incorporation_number = data.get("incorporation_number")
-    if not incorporation_number:
-        errors["incorporation_number"] = "Incorporation number is required."
-    incorporation_doc_path, err = validate_and_save_file(files.get("incorporation_doc"), "incorporation", "Incorporation Document",user_type="pharmacy")
-    if not incorporation_doc_path:
-        errors["incorporation_doc"] = "Upload incorporation document."
+    incorporation_doc_path, err = validate_and_save_file(
+        files.get("incorporation_doc"), 
+        "incorporation", 
+        "Incorporation Document",
+        user_type="pharmacy"
+    )
     if err:
         errors["incorporation_doc"] = err
-
-    # GST
     gst_number = data.get("gst_number")
-    if not gst_number:
-        errors["gst_number"] = "GST number is required."
-    gst_doc_path, err = validate_and_save_file(files.get("gst_doc"), "gst", "GST Document",user_type="pharmacy")
-    if not gst_doc_path:
-        errors["gst_doc"] = "Upload GST document."
+    gst_doc_path, err = validate_and_save_file(
+        files.get("gst_doc"), "gst", "GST Document", user_type="pharmacy"
+    )
     if err:
         errors["gst_doc"] = err
-
-    # PAN
     pan_number = data.get("pan_number")
-    if not pan_number:
-        errors["pan_number"] = "PAN number is required."
-    pan_doc_path, err = validate_and_save_file(files.get("pan_doc"), "pan", "PAN Document",user_type="pharmacy")
-    if not pan_doc_path:
-        errors["pan_doc"] = "Upload PAN document."
+    pan_doc_path, err = validate_and_save_file(
+        files.get("pan_doc"), "pan", "PAN Document", user_type="pharmacy"
+    )
     if err:
         errors["pan_doc"] = err
-
-    # TAN
-    tan_number = data.get("tan_number")
-    if not tan_number:
-        errors["tan_number"] = "TAN number is required."
-    tan_doc_path, err = validate_and_save_file(files.get("tan_doc"), "tan", "TAN Document",user_type="pharmacy")
-    if not tan_doc_path:
-        errors["tan_doc"] = "Upload TAN document."
-    if err:
-        errors["tan_doc"] = err
-
-    # MEDICAL LICENSE
     medical_license_number = data.get("medical_license_number")
-    if not medical_license_number:
-        errors["medical_license_number"] = "Medical License number is required."
-    medical_license_doc_path, err = validate_and_save_file(files.get("medical_license_doc"), "medical_license", "Medical License Document",user_type="pharmacy")
-    if not medical_license_doc_path:
-        errors["medical_license_doc"] = "Upload Medical License document."
+    medical_license_doc_path, err = validate_and_save_file(
+        files.get("medical_license_doc"), "medical_license", "Medical License Document", user_type="pharmacy"
+    )
     if err:
         errors["medical_license_doc"] = err
 
-    # Brand Image
-    storefront_image_path, err = validate_and_save_file(files.get("store_front"), "store_front", "Storefront Image",user_type="pharmacy")
+    storefront_image_path, err = validate_and_save_file(
+        files.get("store_front"), "store_front", "Store Front Image", user_type="pharmacy"
+    )
     if err:
         errors["store_front"] = err
-
-    # Description and OTP
-    referral_code = data.get("referral_code")
-
-    # Contact Person
     contact_name = data.get("contact_person_name")
     contact_phone = data.get("contact_person_phone")
     contact_role = data.get("contact_person_role")
     ref_otp = data.get("otp2")
     if not contact_name:
-        errors["contact_person_name"] = "Contact person name is required."
+        errors["contact_person_name"] = "Contact name required."
     if not contact_phone:
-        errors["contact_person_phone"] = "Contact person phone is required."
+        errors["contact_person_phone"] = "Phone required."
     if not contact_role:
-        errors["contact_person_role"] = "Contact person role is required."
-
-    # Return errors if any
+        errors["contact_person_role"] = "Role required."
     if errors:
-        logger.error(f"Registration failed with errors: {errors}")
         return JsonResponse({"success": False, "errors": errors}, status=400)
 
-    # Create User
     user = User.objects.create(
         email=email,
         phone_country_code=phone_country_code,
         phone_number=phone_number,
-        password=make_password(password),
+        password=make_password(data.get("password")),
         user_type="pharmacy"
     )
 
-    # Create AdvertiserProfile
-    pharmacy = PharmacyProfile.objects.create(
+    profile = PharmacyProfile.objects.create(
         user=user,
         company_name=company_name,
         pharmacy_type=pharmacy_type,
         services_offered=services_offered,
-        website_url=website,
+        pharmacy_timing=pharmacy_timing,
+        personal_email=email,
+        website=website,
         address=address,
         city=city,
         state=state,
         pincode=pincode,
         incorporation_number=incorporation_number,
         incorporation_doc_path=incorporation_doc_path,
-        incorporation_doc_virus_scanned=bool(incorporation_doc_path),
         gst_number=gst_number,
         gst_doc_path=gst_doc_path,
-        gst_doc_virus_scanned=bool(gst_doc_path),
         pan_number=pan_number,
         pan_doc_path=pan_doc_path,
-        pan_doc_virus_scanned=bool(pan_doc_path),
-        tan_number=tan_number,
-        tan_doc_path=tan_doc_path,
-        tan_doc_virus_scanned=bool(tan_doc_path),
-        medical_license_number = medical_license_number,
-        medical_license_doc_path = medical_license_doc_path,
-        medical_license_doc_virus_scanned=bool(medical_license_doc_path),
+        medical_license_number=medical_license_number,
+        medical_license_doc_path=medical_license_doc_path,
         storefront_image_path=storefront_image_path,
-        storefront_image_virus_scanned=bool(storefront_image_path),
-        email_otp=email_otp,
-        referral_code=referral_code,
+        referral_code=data.get("referral_code")
     )
 
-    # Create ContactPerson if present
-    if contact_name and contact_phone:
-        ContactPerson.objects.create(
-            profile_type='pharmacy',
-            profile=user,
-            name=contact_name,
-            phone_country_code=phone_country_code,
-            phone_number=contact_phone,
-            role=contact_role,
-            otp=ref_otp,
-            referral_code=referral_code,
-            email_otp=email_otp
-        )
-    logger.info("Medical pharmacy registration completed successfully")
-    return JsonResponse({"success": True, "message": "Medical pharmacy registered successfully."})
+    ContactPerson.objects.create(
+        profile_type="pharmacy",
+        profile=user,
+        name=contact_name,
+        phone_country_code=phone_country_code,
+        phone_number=contact_phone,
+        role=contact_role,
+        otp=ref_otp
+    )
+
+    return JsonResponse({"success": True, "message": "Pharmacy registered successfully"})
+
 
 @csrf_protect
 @require_POST
