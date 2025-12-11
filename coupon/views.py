@@ -17,7 +17,6 @@ from .models import (
 )
 from points.models import PointsActionType, PointsHistory
 from registration.views import validate_and_save_file
-from settings import COMPANY_NAME
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
