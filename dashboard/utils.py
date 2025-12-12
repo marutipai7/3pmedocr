@@ -1,11 +1,23 @@
 from django.shortcuts import redirect
 from functools import wraps
+from django.http import JsonResponse
+from django.shortcuts import render
 from registration.models import User
 from points.models import PointsActionType, PointsHistory, PointsBadge
 from .models import SettingMenu
 from django.db.models import Sum, Q
 from registration.models import AdvertiserProfile, ClientProfile, PharmacyProfile, NGOProfile, LabProfile, DoctorProfile, HospitalProfile
 from settings.models import UserColorScheme
+from django.core.exceptions import PermissionDenied, ValidationError
+from django.shortcuts import get_object_or_404
+
+from registration.models import (
+    User,
+    HospitalProfile,
+    PharmacyProfile,
+    LabProfile,
+    DoctorProfile
+)
 
 def dashboard_login_required(view_func):
     @wraps(view_func)
@@ -139,3 +151,62 @@ def get_theme_colors(user_type: str) -> dict:
 
     except Exception as e:   
         return e
+    
+
+
+def check_seller_verified(user_id: int, user_type: str):
+    """
+    Validates if seller profile exists and is verified.
+    Raises PermissionDenied or ValidationError if invalid.
+    Returns True if seller is verified.
+    """
+
+    user = get_object_or_404(User, id=user_id)
+
+    profile_model_map = {
+        "hospital": HospitalProfile,
+        "pharmacy": PharmacyProfile,
+        "lab": LabProfile,
+        "doctor": DoctorProfile,
+    }
+
+    if user_type not in profile_model_map:
+        raise ValidationError("Invalid seller type")
+
+    ProfileModel = profile_model_map[user_type]
+
+    try:
+        profile = ProfileModel.objects.get(user_id=user_id)
+    except ProfileModel.DoesNotExist:
+        raise PermissionDenied(
+            "Please complete your profile and submit it for verification before performing this action."
+        )
+
+    if not profile.is_verified:
+        raise PermissionDenied(
+            "Seller profile is not verified yet. Please wait for admin approval."
+        )
+
+    return True
+
+def seller_verified_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        user = request.user_obj
+        
+        # Skip verification for non-seller types (ngo, advertiser, client)
+        unverified_allowed = ["ngo", "advertiser", "client"]
+        if user.user_type not in unverified_allowed:
+            try:
+                check_seller_verified(user.id, user.user_type)
+            except (PermissionDenied, ValidationError) as e:
+                # For AJAX views return JSON instead of redirect
+                if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                    return JsonResponse({"success": False, "error": str(e)}, status=403)
+
+                # Normal page request → show message or redirect
+                return render(request, "errors/not-verified.html", {"message": str(e)})
+
+        return view_func(request, *args, **kwargs)
+
+    return _wrapped_view

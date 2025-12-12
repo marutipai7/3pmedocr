@@ -10,8 +10,7 @@ from django.core.paginator import Paginator
 from django.utils.dateparse import parse_date
 from datetime import date, timedelta, datetime
 from django.template.loader import render_to_string
-from dashboard.views import get_common_context, get_theme_colors
-from dashboard.utils import dashboard_login_required
+from dashboard.utils import dashboard_login_required, get_common_context, get_theme_colors, seller_verified_required
 from registration.views import validate_and_save_file
 from points.models import PointsActionType, PointsHistory
 from django.views.decorators.http import require_POST, require_GET
