@@ -25,6 +25,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 def coupon_view(request):
     user = request.user_obj
     context = get_common_context(request, user)
+    if user.user_type == "pharmacy":
+        return render(request, "pharmacy/pharmacy_coupon.html", context)
 
     if request.method == 'POST':
         is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'

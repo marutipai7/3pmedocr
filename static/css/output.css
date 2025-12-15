@@ -2314,6 +2314,9 @@
   .bg-bright-green {
     background-color: var(--color-bright-green);
   }
+  .bg-dodger-blue-deep {
+    background-color: var(--color-dodger-blue-deep);
+  }
   .bg-burnt-orange {
     background-color: var(--color-burnt-orange);
   }
