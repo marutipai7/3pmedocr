@@ -56,7 +56,13 @@ def settings_page(request):
     if handler_func:
         context.update(handler_func(user))
     context['country_codes'] = load_country_codes()
-    return render(request, 'settings/settings_page.html', context)
+    if user.user_type == "pharmacy":
+        template_name = "seller_settings/pharmacy_settings.html"
+    else:
+        template_name = "settings/settings_page.html"
+
+    return render(request, template_name, context)
+    # return render(request, 'settings/settings_page.html', context)
 
 def get_base_context(user):
     context = {
