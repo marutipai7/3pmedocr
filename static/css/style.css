@@ -169,6 +169,35 @@
     --color-steel-gray:#7E818C;
     --color-light-grayish-orange:#F5EFE9;
     --color-inactive-dark-blue:#1234564D;
+    --color-deep-teal-green: #1A7A5E;
+    --color-ocean-teal:#08817814;
+    --color-soft-ivory:#FFFBEB;
+    --color-frost-white: #F3F4F6;
+    --color-dodger-blue-deep: #1167D9;
+    --color-copper-orange:#BB4D00;
+    --color-cinnamon-orange:#BB4D00CC;
+    --color-warm-tangerine:#E17100;
+    --color-deep-amber:#BB4D004D;
+    --color-pastel-seafoam:#B9F8CF1A;
+    --color-seafoam:#B9F8CF;
+    --color-leaf-green:#009966;
+    --color-crimson-red:#FB2C36;
+    --color-dark-navy:#101828;
+    --color-blue-charcoal:#212B36;
+    --color-cobalt-blue-deep:#084BA9;
+    --color-caribbean-green: #00BC7D;
+    --color-azure-radiance: #2B7FFF;
+    --color-powder-teal: #B0D6D3;
+    --color-blue-haze: #E9EAF0;
+    --color-soft-pastel-mint:#DCFCE780;
+    --color-pastel-mint:#DCFCE7;
+    --color-light-green:#00C950;
+    --color-cool-steel-blue:#919EAB52;
+    --color-slate-gray: #79747E;
+    --color-cool-ice-gray:#DFE3E8;
+    --color-pale-ice-blue:#C8DAEA;
+    --color-dropdown: #F5F5F5;
+    --color-light-teal: #DDEBE7;
     --box-shadow-1: 4px 4px 10px 4px #3AAFA926;
     --box-shadow-2: 0px 4px 4px 0px #00000040;
     --box-shadow-3: 4px 4px 10px 4px #00000033;
@@ -179,6 +208,8 @@
     --box-shadow-8: 4px 4px 10px 4px #00000033;
     --box-shadow-9: 4px 4px 10px 2px #00000026;
     --box-shadow-10: 1px 1px 8px 0px #00000024 inset;
+    --box-shadow-12: 0px 1px 2px -1px #0000001A,0px 1px 3px 0px #0000001A;
+    --box-shadow-13:1px 1px 8px 0px #00000014 inset,-1px -1px 8px 0px #00000014 inset;
     --radio-border-color: teal;
     --radio-fill-color: teal;
 
@@ -734,5 +765,16 @@ body {
     @apply flex items-center justify-center gap-2 w-[180px] h-[40px] rounded-[18px] border border-light-sea-green text-[10px] sm:text-[11px] lg:text-xs xl:text-14-fs font-semibold cursor-pointer;
 }
 
-
+.active-tab-rewards {
+  @apply text-deep-teal-green border-b-3 border-deep-teal-green font-semibold;
+}
  
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
