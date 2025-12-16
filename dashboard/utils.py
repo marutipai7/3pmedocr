@@ -6,17 +6,18 @@ from registration.models import User
 from points.models import PointsActionType, PointsHistory, PointsBadge
 from .models import SettingMenu
 from django.db.models import Sum, Q
-from registration.models import AdvertiserProfile, ClientProfile, PharmacyProfile, NGOProfile, LabProfile, DoctorProfile, HospitalProfile
 from settings.models import UserColorScheme
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.shortcuts import get_object_or_404
-
 from registration.models import (
     User,
     HospitalProfile,
     PharmacyProfile,
     LabProfile,
-    DoctorProfile
+    DoctorProfile,
+    AdvertiserProfile,
+    ClientProfile,
+    NGOProfile
 )
 
 def dashboard_login_required(view_func):

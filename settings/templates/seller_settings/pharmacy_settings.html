@@ -149,4 +149,14 @@
     <script src="/static/js/help.js"></script>
     <script src="/static/js/points.js"></script>
     <script src="{% static 'js/settings.js' %}"></script>
+
+<script>
+    const getIssueOptionLists = "{% url 'get-issue-options' %}";
+    const saveTickets = "{% url 'submit_support_ticket' %}";
+    const getTicketLists = "{% url 'get-tickets-list' %}";
+    const ticketDetailsIdWise = "{% url 'get-tickets-details' %}";
+    const ticketDetailsDateWise = "{% url 'get-tickets-filters' %}";
+    const faqLists = "{% url 'get-faq-lists' %}";
+    const sendMail = "{% url 'send-support-email' %}";
+</script>
 {% endblock %}
