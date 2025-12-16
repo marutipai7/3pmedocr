@@ -723,16 +723,6 @@
                 {% endfor %}
             </p>
         </div>
-
-        <!--Website URL -->
-        <!-- <div class="flex flex-col">
-            <p class="font-semibold  text-jet-black text-lg">
-                Website URL
-            </p>
-            <p class="font-normal text-base text-medium-gray">
-                {{website_url}}
-            </p>
-        </div> -->
         <!--Working Hours -->
         <div class="flex flex-col">
             <p class="font-semibold text-lg">
@@ -789,13 +779,6 @@
                 {{owner_name}}
             </p>
         </div>
-        <!--Designation-->
-        <!-- <div class="flex flex-col">
-            <p class="font-semibold text-lg">Designation</p>
-            <p class="font-normal text-base text-medium-gray">
-                {{designation}}
-            </p>
-        </div> -->
         <!-- Country Code + Phone -->
         <div class="flex flex-col sm:flex-row sm:items-start gap-4">
             <div class="flex flex-col">
@@ -866,35 +849,6 @@
             </p>
         </div>
         <div></div>
-
-        <!-- Type Of Hospital -->
-        <!-- <div class="flex flex-col">
-            <p class="font-semibold  text-jet-black text-lg">
-                Type Of Hospital
-            </p>
-            <p class="font-normal text-base text-medium-gray">
-                Lorem
-            </p>
-        </div> -->
-
-        <!--Services-->
-        <!-- <div class="flex flex-col">
-            <p class="font-semibold  text-jet-black text-lg">
-                Services
-            </p>
-            <p class="font-normal text-base text-medium-gray">
-                Lorem,Lorem,Lorem
-            </p>
-        </div> -->
-        <!--Website URL -->
-        <!-- <div class="flex flex-col">
-            <p class="font-semibold  text-jet-black text-lg">
-                Website URL
-            </p>
-            <p class="font-normal text-base text-medium-gray">
-                (Optional)
-            </p>
-        </div> -->
         <!--Working Hours -->
         <div class="flex flex-col">
             <p class="font-semibold text-lg">
@@ -951,13 +905,6 @@
                 {{owner_name}}
             </p>
         </div>
-        <!--Designation-->
-        <!-- <div class="flex flex-col">
-            <p class="font-semibold text-lg">Designation</p>
-            <p class="font-normal text-base text-medium-gray">
-                Lorem
-            </p>
-        </div> -->
         <!-- Country Code + Phone -->
         <div class="flex flex-col sm:flex-row sm:items-start gap-4">
             <div class="flex flex-col">
@@ -1038,50 +985,20 @@
                 {{registration_number}}
             </p>
         </div>
-
-        <!--Services-->
-        <div class="flex flex-col">
-            <p class="font-semibold  text-jet-black text-lg">
-                Services
-            </p>
-            <p class="font-normal text-base text-medium-gray">
-                Lorem,Lorem,Lorem
-            </p>
-        </div>
-
-        <!--Available Facilities-->
-        <div class="flex flex-col">
-            <p class="font-semibold  text-jet-black text-lg">
-                Available Facilities
-            </p>
-            <p class="font-normal text-base text-medium-gray">
-                Lorem,Lorem,Lorem
-            </p>
-        </div>
-
-        <!--Website URL -->
-        <div class="flex flex-col">
-            <p class="font-semibold  text-jet-black text-lg">
-                Website URL
-            </p>
-            <p class="font-normal text-base text-medium-gray">
-                (Optional)
-            </p>
-        </div>
         <!--Working Hours -->
         <div class="flex flex-col">
             <p class="font-semibold text-lg">
                 Working Hours
             </p>
             <p class="font-normal text-base text-medium-gray">
-                Monday Open at 9:00 AM Close at 5:00 PM
+                {{clinic_timing_from}} {{clinic_timing_to}}
             </p>
         </div>
         <!--Address-->
         <div class="flex flex-col">
             <p class="font-semibold text-lg">Address</p>
             <p class="font-normal text-base text-medium-gray">
-                12 MG Road, Near City Hospital
+                {{address}}
             </p>
         </div>
         <div></div>
@@ -1091,28 +1008,28 @@
                 City, Town, District
             </p>
             <p class="font-normal text-base text-medium-gray">
-                Pune
+                {{city}}
             </p>
         </div>
         <!--State-->
         <div class="flex flex-col">
             <p class="font-semibold text-lg">State</p>
             <p class="font-normal text-base text-medium-gray">
-                Maharashtra
+                {{state}}
             </p>
         </div>
         <!--Country-->
         <div class="flex flex-col">
             <p class="font-semibold text-lg">Country</p>
             <p class="font-normal text-base text-medium-gray">
-                India
+                {{country}}
             </p>
         </div>
         <!--Pincode-->
         <div class="flex flex-col">
             <p class="font-semibold text-lg">Pincode</p>
             <p class="font-normal text-base text-medium-gray">
-                585103
+                {{pincode}}
             </p>
         </div>
         <!--Admin  name-->
@@ -1121,14 +1038,7 @@
                 Admin Name
             </p>
             <p class="font-normal text-base text-medium-gray">
-                Rahul Mehta
-            </p>
-        </div>
-        <!--Designation-->
-        <div class="flex flex-col">
-            <p class="font-semibold text-lg">Designation</p>
-            <p class="font-normal text-base text-medium-gray">
-                Lorem
+                {{owner_name}}
             </p>
         </div>
         <!-- Country Code + Phone -->
@@ -1138,7 +1048,7 @@
                     Country Code
                 </p>
                 <p class="font-normal text-base text-medium-gray">
-                    +91
+                    {{country_code}}
                 </p>
             </div>
             <div class="flex flex-col">
@@ -1146,7 +1056,7 @@
                     Phone No.
                 </p>
                 <p class="font-normal text-base text-medium-gray">
-                    9945956316
+                    {{alt_contact_number}}
                 </p>
             </div>
         </div>
@@ -1156,7 +1066,7 @@
                 Referral Code
             </p>
             <p class="font-normal text-base text-medium-gray">
-                Hyuoiipp
+                {{referral_code}}
             </p>
         </div>
     </div>

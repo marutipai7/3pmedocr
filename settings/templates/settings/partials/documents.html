@@ -1165,31 +1165,6 @@
 
             </div>
         </div>
-        <p class="font-semibold text-lg text-dodger-blue pt-10">
-            Rejection explanation:
-        </p>
-        <div class="flex flex-col gap-2 pt-2">
-            <p class="font-bold text-base">
-                Blurry or Unreadable Document -
-                <span class="font-normal">The uploaded file is not clear. Please ensure the text and
-                    details are fully visible.</span>
-            </p>
-            <p class="font-bold text-base">
-                Expired or Outdated Document -
-                <span class="font-normal">The document has passed its validity date. Please upload a
-                    current version.</span>
-            </p>
-            <p class="font-bold text-base">
-                Wrong File Format or Incomplete Upload -
-                <span class="font-normal">Only PDF, JPG, or PNG files are accepted. Ensure the full
-                    document is uploaded.</span>
-            </p>
-            <p class="font-bold text-base">
-                Incorrect or Mismatched Information -
-                <span>The document does not match your profile details (e.g.,
-                    name, ID, registration info).</span>
-            </p>
-        </div>
     </div>
 {% elif user.user_type == 'hospital' %}
     <div class="hidden tab-content documents">
@@ -1293,57 +1268,6 @@
 
             </div>
         </div>
-        <!-- <div class="flex it flex-col lg:flex-row lg:items-center justify-between pt-4">
-            <div class="flex flex-col gap-1">
-                <p class="font-semibold text-lg text-jet-black">
-                    GST Number & Document
-                </p>
-                <div class="flex items-center gap-2 doc-container">
-                    <p class="font-normal text-base text-medium-gray doc-info">
-                        27AABCM1234F125
-                    </p>
-                    <div class="flex items-center gap-2 hidden buttons-container">
-                        <button
-                            class="border border-dodger-blue text-dodger-blue rounded-[10px] py-1 px-2 cursor-pointer cancel-btn-doc">Cancel</button>
-                        <button
-                            class="bg-dodger-blue text-white rounded-[10px] py-1 px-4 cursor-pointer save-btn-doc">Save</button>
-                    </div>
-                </div>
-
-            </div>
-            <div class="flex flex-col lg:flex-row lg:items-center gap-4">
-                <div class="flex items-center gap-2 lg:pr-14 text-nowrap">
-                    <span
-                        class="material-symbols-outlined material-filled text-strong-red">disabled_by_default</span>
-                    <p class="font-normal text-xs text-strong-red">
-                        Mismatch/Wrong Data
-                    </p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <input type="text"
-                        class="border border-dashed border-dodger-blue p-2 rounded-md text-center w-28 font-normal text-sm text-jet-black"
-                        value="image.png" readonly />
-                    <div class="flex items-center gap-2 text-nowrap">
-                        <span
-                            class="material-symbols-outlined material-filled text-bright-green">check_box</span>
-                        <p class="font-normal text-xs text-bright-green">
-                            Virus Scan
-                        </p>
-                    </div>
-                    <span title="View"
-                        class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon">visibility</span>
-                    <div class="relative inline-block">
-                        <span title="Upload Document"
-                            class="upload-trigger material-symbols-outlined border p-1 rounded-md cursor-pointer">
-                            upload
-                        </span>
-                        <input type="file" class="hidden file-input"
-                            accept=".pdf,.doc,.docx,.jpg,.png,.jpeg" />
-                    </div>
-                </div>
-
-            </div>
-        </div> -->
         <div class="flex flex-col lg:flex-row lg:items-center justify-between pt-4">
             <div class="flex flex-col gap-1">
                 <p class="font-semibold text-lg text-jet-black">
@@ -1431,42 +1355,17 @@
 
             </div>
         </div>
-        <p class="font-semibold text-lg text-dodger-blue pt-10">
-            Rejection explanation:
-        </p>
-        <div class="flex flex-col gap-2 pt-2">
-            <p class="font-bold text-base">
-                Blurry or Unreadable Document -
-                <span class="font-normal">The uploaded file is not clear. Please ensure the text and
-                    details are fully visible.</span>
-            </p>
-            <p class="font-bold text-base">
-                Expired or Outdated Document -
-                <span class="font-normal">The document has passed its validity date. Please upload a
-                    current version.</span>
-            </p>
-            <p class="font-bold text-base">
-                Wrong File Format or Incomplete Upload -
-                <span class="font-normal">Only PDF, JPG, or PNG files are accepted. Ensure the full
-                    document is uploaded.</span>
-            </p>
-            <p class="font-bold text-base">
-                Incorrect or Mismatched Information -
-                <span>The document does not match your profile details (e.g.,
-                    name, ID, registration info).</span>
-            </p>
-        </div>
     </div>
 {% elif user.user_type == 'doctor' %}
     <div class="hidden tab-content documents">
         <div class="flex lg:items-center justify-between pt-7 flex-col lg:flex-row">
             <div class="flex flex-col gap-1">
                 <p class="font-semibold text-lg text-jet-black">
-                    Lab Registration Certificate
+                    Clinic Registration Certificate
                 </p>
                 <div class="flex items-center gap-2 doc-container">
                     <p class="font-normal text-base text-medium-gray doc-info">
-                        MH/C/2022/123456
+                        {{registration_number}}
                     </p>
                     <div class="flex items-center gap-2 hidden buttons-container">
                         <button
@@ -1515,7 +1414,7 @@
                 </p>
                 <div class="flex items-center gap-2 doc-container">
                     <p class="font-normal text-base text-medium-gray doc-info">
-                        MUMA1234B
+                        {{aadhar_number}}
                     </p>
                     <div class="flex items-center gap-2 hidden buttons-container">
                         <button
@@ -1566,7 +1465,7 @@
                 </p>
                 <div class="flex items-center gap-2 doc-container">
                     <p class="font-normal text-base text-medium-gray doc-info">
-                        27AABCM1234F125
+                        {{pan_number}}
                     </p>
                     <div class="flex items-center gap-2 hidden buttons-container">
                         <button
@@ -1613,60 +1512,11 @@
         <div class="flex flex-col lg:flex-row lg:items-center justify-between pt-4">
             <div class="flex flex-col gap-1">
                 <p class="font-semibold text-lg text-jet-black">
-                    Gov License/Accreditation (e.g.NABL)
-                </p>
-                <div class="flex items-center gap-2 doc-container">
-                    <p class="font-normal text-base text-medium-gray doc-info">
-                        AABCM1234F
-                    </p>
-                    <div class="flex items-center gap-2 hidden buttons-container">
-                        <button
-                            class="border border-dodger-blue text-dodger-blue rounded-[10px] py-1 px-2 cursor-pointer cancel-btn-doc">Cancel</button>
-                        <button
-                            class="bg-dodger-blue text-white rounded-[10px] py-1 px-4 cursor-pointer save-btn-doc">Save</button>
-                    </div>
-                </div>
-
-            </div>
-            <div class="flex flex-col lg:flex-row lg:items-center gap-4">
-                <div class="flex items-center gap-2 lg:pr-35 text-nowrap">
-                    <span
-                        class="material-symbols-outlined material-filled text-strong-red">disabled_by_default</span>
-                    <p class="font-normal text-xs text-strong-red">Expired</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <input type="text"
-                        class="border border-dashed border-dodger-blue p-2 rounded-md text-center w-28 font-normal text-sm text-jet-black"
-                        value="image.png" readonly />
-                    <div class="flex items-center gap-2 text-nowrap">
-                        <span
-                            class="material-symbols-outlined material-filled text-bright-green">check_box</span>
-                        <p class="font-normal text-xs text-bright-green">
-                            Virus Scan
-                        </p>
-                    </div>
-                    <span title="View"
-                        class="material-symbols-outlined border p-1 rounded-md cursor-pointer view-icon">visibility</span>
-                    <div class="relative inline-block">
-                        <span title="Upload Document"
-                            class="upload-trigger material-symbols-outlined border p-1 rounded-md cursor-pointer">
-                            upload
-                        </span>
-                        <input type="file" class="hidden file-input"
-                            accept=".pdf,.doc,.docx,.jpg,.png,.jpeg" />
-                    </div>
-                </div>
-
-            </div>
-        </div>
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between pt-4">
-            <div class="flex flex-col gap-1">
-                <p class="font-semibold text-lg text-jet-black">
                     Lab Photo
                 </p>
                 <div class="flex items-center gap-2 doc-container">
                     <p class="font-normal text-base text-medium-gray doc-info">
-                        AABCM1234F
+                        {{clinic_photo_path}}
                     </p>
                     <div class="flex items-center gap-2 hidden buttons-container">
                         <button
@@ -1707,31 +1557,6 @@
                 </div>
 
             </div>
-        </div>
-        <p class="font-semibold text-lg text-dodger-blue pt-10">
-            Rejection explanation:
-        </p>
-        <div class="flex flex-col gap-2 pt-2">
-            <p class="font-bold text-base">
-                Blurry or Unreadable Document -
-                <span class="font-normal">The uploaded file is not clear. Please ensure the text and
-                    details are fully visible.</span>
-            </p>
-            <p class="font-bold text-base">
-                Expired or Outdated Document -
-                <span class="font-normal">The document has passed its validity date. Please upload a
-                    current version.</span>
-            </p>
-            <p class="font-bold text-base">
-                Wrong File Format or Incomplete Upload -
-                <span class="font-normal">Only PDF, JPG, or PNG files are accepted. Ensure the full
-                    document is uploaded.</span>
-            </p>
-            <p class="font-bold text-base">
-                Incorrect or Mismatched Information -
-                <span>The document does not match your profile details (e.g.,
-                    name, ID, registration info).</span>
-            </p>
         </div>
     </div>
 {% endif %}

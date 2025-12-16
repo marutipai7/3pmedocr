@@ -107,7 +107,7 @@
 
 
                     <!--Support Section-->
-                    {% include 'support/support.html'%}
+                    {% include 'settings-support/support.html'%}
 
 
                     <!--Donate Section-->
@@ -134,6 +134,8 @@
                     </div>
                 </div>
             </div>
+{{ chart_labels|json_script:"chartLabelsData" }}
+{{ chart_data|json_script:"chartDataData"}}
 {% endblock %}
 
 {% block extra_js %}
