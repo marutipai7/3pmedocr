@@ -147,10 +147,19 @@
     <script src="/static/js/toaster.js"></script>
     <script src="/static/js/tabs.js"></script>
     <script src="/static/js/table-pagination.js"></script>
-    <script src="/static/js/donate.js"></script>
-    <script src="/static/js/help.js"></script>
-    <script src="/static/js/points.js"></script>
-    <script src="{% static 'js/settings.js' %}"></script>
+  <script src="{% static 'js/settings.js' %}"></script>
+
+  {% if active_main_tab == "support" %}
+    <script src="{% static 'js/help.js' %}"></script>
+  {% endif %}
+
+  {% if active_main_tab == "donate" %}
+    <script src="{% static 'js/donate.js' %}"></script>
+  {% endif %}
+
+  {% if active_main_tab == "rewards" %}
+    <script src="{% static 'js/points.js' %}"></script>
+  {% endif %}
 
 <script>
     const getIssueOptionLists = "{% url 'get-issue-options' %}";

@@ -14,9 +14,16 @@
         {% endfor %}
       </select>
 
-      <select name="select_issue" id="select_issue" class="w-full">
+      <select name="select_issue" id="select_issue" class="w-full focus:outline-none focus:ring-0 border-1 cursor-pointer">
         <option value="">Select Issue Option</option>
+
+        {% for option in issue_options %}
+          <option value="{{ option.id }}">
+            {{ option.issue_type.name }} – {{ option.name }}
+          </option>
+        {% endfor %}
       </select>
+
     </div>
 
     <textarea
