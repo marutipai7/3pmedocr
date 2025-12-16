@@ -1,0 +1,114 @@
+{% load static %}
+  {% csrf_token %}
+  <div class="mainTab-content hidden" id="donate">
+    <div class="shadow-lg p-4 rounded-lg m-4 max-w-full overflow-x-auto bg-white">
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <span class="material-symbols-outlined">volunteer_activism</span>
+          <p class="font-medium text-xl">Donate</p>
+        </div>
+        <div class="flex justify-between items-center">
+          <p class="text-18-nr">Help Us Help Others—Donate Today!</p>
+          <button class="close-expanded text-xl font-bold text-gray-500 hover:text-red-600 hidden">&times;</button>
+        </div>
+      </div>
+
+      <!-- Tabs + Search/Filter -->
+      <div class="flex flex-wrap justify-between gap-4 w-full">
+
+        <!-- Tabs Section -->
+        <div class="tabs-section flex gap-6 sm:gap-8 whitespace-nowrap mt-8 overflow-x-auto no-scrollbar">
+          <button 
+            class="{{ tab_class }} {% if active_tab == 'organization' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
+            data-tab="organization">
+            Organizations
+          </button>
+          <button 
+            class="{{ tab_class }} {% if active_tab == 'donation-history' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer text-{{ text }}"
+            data-tab="donation-history">
+            Donation History
+          </button>
+        </div>
+      </div>
+
+      <!-- Organizations Section -->
+      <div  class="organization tab-content mt-4" data-start-date="" data-end-date="" data-range-label="">
+        <!-- Search + Filter Section (for Organizations tab only) -->
+        <div id="organizationFilters" class="search-filter-section flex flex-row items-center justify-end gap-3 sm:gap-4 w-auto pb-1">
+          <div class="w-[280px] sm:w-[300px] h-10 rounded-[6px] bg-light-white flex items-center px-2">
+            <span class="material-symbols-outlined text-dark-gray">search</span>
+            <input 
+              type="text" 
+              name="organization_query" 
+              placeholder="Search by name or categories"
+              class="w-full ml-1 border-none bg-transparent focus:outline-none focus:ring-0 placeholder:text-medium-gray" />
+          </div>
+          <div class="relative dropdown">
+            <button
+              class="filterToggle flex items-center border border-slate-gray rounded-md p-1 w-8 h-8 cursor-pointer">
+              <span class="material-symbols-outlined flex justify-center items-center">tune</span>
+            </button>
+            <div
+              class="filterDropdown absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-50">
+              <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-{{ hover_bg }} hover:text-white rounded organization-daterange" data-range="custom">
+                Custom date<span class="material-symbols-outlined calendar-icon">calendar_today</span>
+              </div>
+              <div class="p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded cursor-pointer organization-daterange" data-range="1 week">
+                1 Week
+              </div>
+              <div class="p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded cursor-pointer organization-daterange" data-range="1 month">
+                1 Month
+              </div>
+              <div class="p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded cursor-pointer organization-daterange" data-range="1 year">
+                1 Year
+              </div>
+            </div>
+            <div
+              class="datepicker-container hidden px-4 pb-3 absolute top-full right-0 lg:right-[180px] z-50 bg-white shadow-md rounded">
+              <div class="datepicker-inline"></div>
+            </div>
+          </div>
+        </div>
+        <div id="organizationSectionId" class="postDiv">
+          {% include "donate/partials/organization-cards.html" with ngo_posts=ngo_posts %}
+        </div>
+        <!-- Pagination Placeholder -->
+        <div id="pagination-container" class="gap-2 mt-4 flex justify-center"></div>
+      </div>
+
+      <!-- Donation History Section (hidden by default) -->
+      {% comment %} <div id="donationHistory" class="hidden mt-4"> {% endcomment %}
+        {% include 'donate/donate-history-table.html' %}
+      {% comment %} </div> {% endcomment %}
+
+
+  <!-- Modal for post details -->
+  <div id="postDetailModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-3xl relative">
+      <button onclick="closePostDetail()" class="absolute top-2 right-2 text-gray-500 hover:text-black">&times;</button>
+      <div id="postDetailContent">
+        <h2 id="modalNgoName" class="text-2xl font-bold mb-2"></h2>
+        <h3 id="modalHeader" class="text-xl font-semibold mb-2"></h3>
+        <p id="modalDescription" class="mb-4"></p>
+        <a id="modalWebsite" href="#" target="_blank" class="text-blue-600 underline mb-4 block"></a>
+        {% if post.id %}
+        <a href="{% url 'donate-pay' post.id %}" class="pay-button bg-dark-blue-500 text-white px-12 py-2 rounded-md">
+          <span class="text-sm">Pay</span>
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- platform bill  -->
+        {% include 'donate/view-donate-history.html' %}
+
+      <!-- donate receipt  -->
+        {% include 'donate/donation-receipt.html' %}
+
+    <!-- platform bill  -->
+        {% include 'donate/donation-platform-bill.html' %}
+    
+    <!-- Share popup  -->
+        {% include 'donate/partials/share-popup.html' %}

@@ -1,0 +1,55 @@
+{% load static %}
+<div class="mainTab-content hidden" id="support">
+  <div class="bg-white shadow-(--box-shadow-5) rounded-[10px] px-2 sm:px-4 py-4 max-w-full">
+    <!-- Support header -->
+      {% include "support/support-form-header.html" %}
+    
+    <!-- Support form and list -->
+      <div class="report-issue tab-content pt-8 ">
+        {% include "support/support-form.html" %}
+        {% include "support/support-list.html" %}
+      </div>
+    
+    <!-- Email Support Div -->
+      <div class="contact-support tab-content pt-8 space-y-6 hidden">
+        {% include "support/support-email.html" %} 
+        
+        <!-- FAQ Section  -->
+        <div class="flex items-center gap-2 justify-between w-full">
+          <div class="w-1/2 flex flex-col gap-1">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-{{ text }}"> quiz </span>
+              <p class="text-sm font-semibold">FAQ Section</p>
+            </div>
+            <p class="font-normal text-sm text-medium-gray">Quick Answers.</p>
+          </div>
+          <div class="w-1/2 flex items-center justify-end">
+            <div
+              class="w-full max-w-[360px] h-[48px] rounded-[6px] text-sm flex items-center justify-center"
+            >
+              <a href="#" class="underline text-{{ text }} font-normal">
+                Click to read More/Hide
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative mt-6 flex items-center rounded-md w-full">
+          <input
+            type="text"
+            id="faq-search-input"
+            class="flex-grow px-4 py-4 border border-dark-gray rounded-md pr-10 placeholder-black"
+            placeholder="Search by question or answer"
+          />
+          <span class="absolute right-3 top-4 text-medium-gray">
+            <span class="material-symbols-outlined"> search </span>
+          </span>
+        </div>
+          {% include "support/support-faq.html" %}
+        
+      </div>
+    
+   <!-- Chat Section -->
+      {% include "support/chat.html" %}
+  </div>
+</div>

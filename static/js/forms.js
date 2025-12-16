@@ -483,3 +483,19 @@ function clearSavedData() {
   // toastr.success('Saved data cleared!');
   closePopup("savedDataPopup");
 }
+  $(".main-tab").on("click", function () {
+    let tabId = $(this).data("tab");
+    $(".main-tab").removeClass("active-tab-main");
+    $(this).addClass("active-tab-main");
+    $(".mainTab-content").addClass("hidden");
+    $("#" + tabId).removeClass("hidden");
+  });
+
+
+   $(".main-tab-pharmacy").on("click", function () {
+    let tabId = $(this).data("tab");
+    $(".main-tab-pharmacy").removeClass("active-tab-main-pharmacy");
+    $(this).addClass("active-tab-main-pharmacy");
+    $(".mainTab-content").addClass("hidden");
+    $("#" + tabId).removeClass("hidden");
+  });

@@ -1,0 +1,24 @@
+<div class="space-y-2">
+  <div class="flex items-center space-x-2">
+    <span class="material-symbols-outlined"> search_activity</span>
+    <p class="font-medium text-xl">Support</p>
+  </div>
+  <p class="text-18-nr">We’re Just a Click Away—Support When You Need It!</p>
+</div>
+<!-- Tabs -->
+<div
+  class="flex gap-4 sm:gap-4 whitespace-nowrap mt-8 overflow-x-auto no-scrollbar"
+> 
+  <button
+    class="ngo-sprt-tab-btn {{ tab_class }} {% if active_tab == 'report-issue' %}{{ active_tab_class }}{% endif %} text-sm sm:text-18-nr px-4 py-1.5 font-semibold cursor-pointer text-{{ text }}"
+    data-tab="report-issue"
+  >
+    Report Issue
+  </button>
+  <button
+    class="ngo-sprt-tab-btn {{ tab_class }} {% if active_tab == 'contact-support' %}{{ active_tab_class }}{% endif %} text-sm sm:text-18-nr px-4 py-1.5 font-semibold cursor-pointer text-{{ text }}"
+    data-tab="contact-support"
+  >
+    FAQ or Contact Support
+  </button>
+</div>

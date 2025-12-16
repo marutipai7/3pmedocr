@@ -1,0 +1,462 @@
+{% load static %}
+            <div class="mainTab-content hidden" id="rewards">
+            <div class="bg-white shadow-(--box-shadow-5) rounded-[10px] px-2 sm:px-4 py-4 relative">
+              <div class="flex flex-col lg:flex-row">
+                <div class="space-y-2">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined">
+                      trophy
+                    </span>
+                    <p class="font-medium text-xl">Points</p>
+                  </div>
+                  <p class="text-18-nr">
+                   Every Activity Counts: Referral, Maps, & Post = More Points, More Perks!
+                  </p>
+                </div>
+              
+                <div class="flex flex-col lg:items-center diamond-user absolute right-7 top-0">
+                  {% if badge %}
+                    <img
+                      src="{{ badge.image_url }}"
+                      alt="{{ badge.name }}"
+                      class="w-25 h-25"
+                    />
+                    <p class="font-semibold text-sm md:text-lg">{{ badge.name }}</p>
+                  {% else %}
+                    <img
+                      src="/static/images/diamond-badge.svg"
+                      alt="No Badge"
+                      class="w-25 h-25"
+                    />
+                    <p class="font-semibold text-sm md:text-lg">No Badge</p>
+                  {% endif %}
+                </div>
+              </div>
+              
+              <!-- Tabs -->
+              <div class="tabs-section flex gap-6 sm:gap-8 whitespace-nowrap mt-8 overflow-x-auto no-scrollbar">
+                <button 
+                  class="{{ tab_class }} {% if active_tab == 'points' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
+                  data-tab="points">
+                  Points
+                </button>
+
+                <button 
+                  class="{{ tab_class }} {% if active_tab == 'points-history' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer text-{{ text }}"
+                  data-tab="points-history">
+                  Points History
+                </button>
+
+                <button 
+                  class="{{ tab_class }} {% if active_tab == 'all-rewards' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer text-{{ text }}"
+                  data-tab="all-rewards">
+                  All Rewards
+                </button>
+
+                <button 
+                  class="{{ tab_class }} {% if active_tab == 'rewards-claimed' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer text-{{ text }}"
+                  data-tab="rewards-claimed">
+                  Rewards Claimed
+                </button>
+              </div>
+
+              <!--Points Tab content-->
+              <div class="tab-content points  pt-6 pb-3 space-y-2">
+               
+
+                <div
+                  class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 pt-6"
+                >
+                  <!-- Custom Legend -->
+                  <!-- <div class="flex flex-wrap items-center gap-10 pl-2" id="referralCustomLegend">
+                    {% for label, value in action_points.items %}
+                      <label class="flex items-center gap-4 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          class="legend-checkbox focus:outline-none focus:ring-0 focus:ring-offset-0 rounded-xs text-{{ text }} text-2xl w-5 h-5 cursor-pointer"
+                          data-index="{{ forloop.counter0 }}"
+                          {% if value > 0 %}checked{% endif %}
+                        />
+                        <span class="flex items-center gap-1">
+                          <div class="w-2 h-2 rounded-full"></div>
+                          {{ label }}
+                        </span>
+                      </label>
+                    {% endfor %}
+                  </div> -->
+                 <div class="flex flex-wrap items-center gap-10 pl-2" id="referralCustomLegend">
+                          {% for label, value in action_points.items %}
+                              <label class="flex items-center gap-4 cursor-pointer">
+                                  <input
+                                      type="checkbox"
+                                      class="legend-checkbox focus:outline-none focus:ring-0 focus:ring-offset-0 rounded-xs text-violet-500 text-2xl w-5 h-5 cursor-pointer"
+                                      data-index="{{ forloop.counter0 }}"
+                                      {% if value > 0 %}checked{% endif %}
+                                  />
+                                  <span class="flex items-center gap-1">
+                                      {% if label|lower == "referral" %}
+                                          <div class="bg-indigo-500 w-2 h-2 rounded-full"></div>
+                                      {% elif label|lower == "map" %}
+                                          <div class="bg-green-500 w-2 h-2 rounded-full"></div>
+                                      {% elif label|lower == "orders" or label|lower == "coupon" %}
+                                          <div class="bg-teal-500 w-2 h-2 rounded-full"></div>
+                                      {% else %}
+                                          <div class="bg-gray-400 w-2 h-2 rounded-full"></div>
+                                      {% endif %}
+                                      {{ label }}
+                                  </span>
+                              </label>
+                          {% endfor %}
+                      </div>
+
+
+                  <!-- Right Controls -->
+                  <div class="flex flex-wrap gap-4 items-center">
+                    <!-- Filter Dropdown -->
+                  <div class="relative dropdown">
+                     <button
+                      class="filterToggle  flex items-center border border-slate-gray rounded-md p-1 w-8 h-8 cursor-pointer">
+                      <span class="material-symbols-outlined flex justify-center items-center">tune</span>
+                    </button>
+                      <div
+                        class="filterDropdown absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10"
+                      >
+
+                        <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-{{ secondary_bg }} hover:text-white rounded">
+                          Custom date<span class="material-symbols-outlined calendar-icon"
+                            >calendar_today</span
+                          >
+                          
+                        </div>
+                        <div class="p-2 pl-4 hover:bg-{{ secondary_bg }} hover:text-white rounded cursor-pointer" >1 Week</div>
+                        <div class="p-2 pl-4 hover:bg-{{ secondary_bg }} hover:text-white rounded cursor-pointer">1 Month</div>
+                        <div class="p-2 pl-4 hover:bg-{{ secondary_bg }} hover:text-white rounded cursor-pointer">1 Year</div>
+                        
+                      </div>
+                      <div class="datepicker-container hidden px-4 pb-3 absolute  right-43 z-100">
+                        <div class="datepicker-inline" inline-datepicker data-date="06/23/2025"></div>
+                      </div>
+                  </div>
+                  </div>
+                </div>
+
+                <!-- Chart -->
+
+                <canvas id="referralChart" class="max-h-70"></canvas>
+                <div class="flex flex-wrap gap-4 items-center justify-end pt-4">
+                    <div class="relative dropdown">
+                     <button
+                      class="filterToggle hidden flex items-center border border-slate-gray rounded-md p-1 w-8 h-8 cursor-pointer">
+                      <span class="material-symbols-outlined flex justify-center items-center">tune</span>
+                    </button>
+                      <div
+                        class="filterDropdown absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10"
+                      >
+                      
+                        <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-{{ secondary_bg }} hover:text-white rounded">
+                          Custom date<span class="material-symbols-outlined calendar-icon"
+                            >calendar_today</span
+                          >
+                          
+                        </div>
+                        <div class="p-2 pl-4 hover:bg-{{ secondary_bg }} hover:text-white rounded cursor-pointer" >1 Week</div>
+                        <div class="p-2 pl-4 hover:bg-{{ secondary_bg }} hover:text-white rounded cursor-pointer">1 Month</div>
+                        <div class="p-2 pl-4 hover:bg-{{ secondary_bg }} hover:text-white rounded cursor-pointer">1 Year</div>
+                        
+                      </div>
+                      <div class="datepicker-container hidden px-4 pb-3 absolute  right-43 z-100">
+                        <div class="datepicker-inline" inline-datepicker data-date="06/23/2025"></div>
+                      </div>
+                  </div>
+                </div>
+
+                <div class="bg-{{ secondary_bg }} w-full rounded-md h-28 mt-4 shadow-lg relative">
+                  <div
+                    class="flex flex-col items-center justify-center gap-4 pt-4"
+                  >
+                    <p class="font-bold text-xl">Total Points</p>
+                    <p class="font-bold text-4xl text-{{ text }}">{{ total_points }}</p>
+                  </div>
+                  <img src="/static/images/{{ trophy }}" alt="trophy" class="absolute right-10 top-8">
+                </div>
+                <div class="flex flex-wrap items-center gap-4 pt-4">
+                    {% for label, value in action_points.items %}
+                      <div class="bg-{{ secondary_bg }} rounded-md shadow-lg p-4 flex-1 min-w-[200px]">
+                        <div class="flex flex-col gap-3 items-center justify-center">
+                          <p class="font-bold text-xl">{{ label }}</p>
+                          <p class="font-bold text-3xl text-{{ text }}">{{ value }}</p>
+                        </div>
+                      </div>
+                    {% endfor %}
+                </div>
+
+
+                <div class="bg-{{ secondary_bg }} mt-4 p-4 rounded-md shadow-lg">
+                  <p class="font-semibold text-sm lg:text-lg text-jet-black">
+                    Unlock exclusive benefits and upgrade your status through referrals, purchases, sharing & Donation points!
+                  </p>
+
+                  <div class="pt-4">
+                    {% for badge in all_badges %}
+                      <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 {% if not forloop.first %}mt-4{% endif %}">
+                        <div class="flex flex-col sm:flex-row gap-4">
+                          <div class="flex items-center justify-center sm:justify-start">
+                          {% if badge.image_url %}
+                          <img
+                            src="{{ badge.image_url }}"
+                            alt="{{ badge.name }}"
+                            class="h-30 w-30 object-contain"
+                          />
+                        {% else %}
+                          <img
+                            src="/static/images/diamond-badge.svg"
+                            alt="{{ badge.name }}"
+                            class="h-30 w-30 object-contain"
+                          />
+                        {% endif %}
+
+                          </div>
+                          <div class="flex flex-col">
+                            <p class="font-semibold text-lg text-{{ text }} tracking-widest">
+                              {{ badge.name|upper }}
+                            </p>
+                            <div class="badge-description font-semibold text-base mt-2 whitespace-pre-line">
+                              {{ badge.description }}
+                            </div>
+                            <ul class="badge-description-list list-disc pl-6 mt-2 font-semibold text-base"></ul>
+
+                          </div>
+                        </div>
+                        <div>
+                          <p class="font-normal text-lg text-{{ text }}">
+                            {% if badge.max_points %}
+                              {{ badge.min_points }} to {{ badge.max_points }} points
+                            {% else %}
+                              {{ badge.min_points }} & Above points
+                            {% endif %}
+                          </p>
+                        </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+
+
+                <div class="pt-6">
+                  <p class="font-normal text-xl">✅ Important Note:</p>
+                  <ul class="list-disc pl-6 font-normal text-lg">
+                    <li>
+                      Badges and User Types are for recognition and experience enhancement only, with no monetary value.
+                    </li>
+                    <li>Points may expire due to inactivity and are non-transferable.</li>
+                    <li>
+                      Above Point classification, features and access levels may change anytime at the discretion of the company.
+                    </li>
+                    <li>
+                      The Badges or User types do not represent any type of securities, monetary value or contractual benefits.
+                    </li>
+                    <li>
+                      The platform does not offer any financial or medical products, it is only a technology platform.
+                    </li>
+                    <li>
+                      It is deemed to be accepted by users that ,Terms and Conditions may change at any time, and users must comply with applicable changes at the discretion of the company.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <!--All Rewards Tab content-->
+              <div class="tab-content hidden all-rewards relative">
+                <!--Rewards section-->
+                <div class="flex justify-between items-center pt-5">
+                  <p class="font-semibold lg:text-lg sm:text-nowrap text-jet-black">New Coupons for you </p>
+                  <div class="flex-1 flex items-center justify-end gap-4 w-full">
+                    <div class="w-full max-w-[280px] rounded-[6px] bg-light-white flex items-center gap-2 px-2">
+                      <span class="material-symbols-outlined text-dark-gray">
+                        search
+                      </span>
+                      <input id="allrewardssearch"
+                        type="text"
+                        placeholder="Search by name or categories"
+                        class="w-full py-2.5 focus:!outline-none placeholder:text-medium-gray border-none bg-transparent focus:ring-0 only-text"
+                      />
+                    </div>
+                  
+                      <div class="relative dropdown">
+                      <button class="filterToggle  flex items-center border border-slate-gray rounded-md p-1 w-8 h-8 cursor-pointer">
+                          <span class="material-symbols-outlined flex justify-center items-center">tune</span>
+                        </button>
+                        <div class="filterDropdown absolute hidden allRewardsCoupons right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026]  rounded-md w-44 z-10">
+                          <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-{{ hover_bg }} hover:text-white rounded">
+                            Custom date<span class="material-symbols-outlined calendar-icon">calendar_today</span>
+                          </div>
+                          <div data-range="1 Week" class="daterange dateFilter p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded cursor-pointer" >1 Week</div>
+                          <div data-range="1 Month" class="daterange dateFilter p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded cursor-pointer">1 Month</div>
+                          <div data-range="1 Year" class="daterange dateFilter p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded cursor-pointer">1 Year</div>
+                        </div>
+                        <div class="datepicker-container hidden px-4 pb-3 absolute right-43 z-100">
+                          <div class="datepicker-inline" inline-datepicker data-date="06/23/2025"></div>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+                <!--Cards-->
+                <div class="pt-4 grid grid-cols-1 place-items-center lg:grid-cols-2 xl:grid-cols-3 gap-3" id="featured-rewards"></div>
+                <div class="flex justify-center gap-2 mt-6" id="featured-pagination-controls">
+                  <button id="prevPage1" class="text-light-gray3 px-4 py-2 text-xs">
+                    Previous
+                  </button>
+                  <div id="pagination-numbers1" class="flex gap-2"></div>
+                  <button id="nextPage1" class="text-light-gray3 px-4 py-2 text-xs">
+                    Next
+                  </button>
+                </div>
+                                
+                <!--Popular Coupons section-->
+                <div class="flex justify-between items-center pt-6">
+                  <p class="font-semibold text-lg">Popular Coupons</p>
+                  <a href="#" class="font-bold text-lg text-{{ text }} underline">View more</a>
+                </div>
+              
+                <div id="popular-coupons"></div>
+                <div class="flex justify-center gap-2 mt-6" id="popular-pagination-controls">
+                  <button id="prevPage2" class="text-light-gray3 px-4 py-2 text-xs">
+                    Previous
+                  </button>
+                  <div id="pagination-numbers2" class="flex gap-2"></div>
+                  <button id="nextPage2" class="text-light-gray3 px-4 py-2 text-xs">
+                    Next
+                  </button>
+                </div>
+             </div>
+
+              <!--Rewards Claimed Tab section-->
+              <div class="tab-content hidden rewards-claimed relative">
+                <div class="flex justify-between items-center pt-5">
+                  <p class="font-semibold text-lg sm:text-nowrap">Recent Redemptions</p>
+                  <div class="flex flex-1 items-center justify-end w-full gap-4">
+                    <div
+                    class="w-full max-w-[280px] rounded-[6px] bg-light-white flex items-center gap-2 px-2"
+                  >
+                    <span class="material-symbols-outlined text-dark-gray">
+                      search
+                    </span>
+                    <input
+                      type="text"
+                      placeholder="Search by name or categories" id="rewards-claimed-search"
+                      class="w-full py-2.5 focus:!outline-none placeholder:text-medium-gray border-none bg-transparent focus:ring-0 only-text"
+                    />
+                    
+                  </div>
+                    <div class="relative dropdown">
+                      <button
+                        class="filterToggle  flex items-center border border-slate-gray rounded-md p-1 w-8 h-8 cursor-pointer">
+                        <span class="material-symbols-outlined flex justify-center items-center">tune</span>
+                      </button>
+                      <div
+                        class="filterDropdown rewardsClaimed absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10"
+                      >
+                      
+                        <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-{{ hover_bg }} hover:text-white rounded">
+                          Custom date<span class="material-symbols-outlined calendar-icon"
+                            >calendar_today</span
+                          >
+                          
+                        </div>
+                        <div class="p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded dateFilter cursor-pointer" data-range="1 Week">1 Week</div>
+                        <div class="p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded dateFilter cursor-pointer" data-range="1 Month">1 Month</div>
+                        <div class="p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded dateFilter cursor-pointer" data-range="1 Year">1 Year</div>
+
+                      </div>
+                      <div class="datepicker-container hidden px-4 pb-3 absolute  right-43 z-100">
+                        <div class="datepicker-inline" inline-datepicker data-date="06/23/2025"></div>
+                      </div>
+                  </div>
+                </div>
+                
+              
+                </div>
+                <div class="overflow-x-auto pt-4">
+                  <table
+                    class="min-w-full table-auto  docTable"
+                  >
+                    <thead class="bg-{{ table }} text-white text-sm sm:text-18-b">
+                      <tr>
+                        <th class="text-center px-4 py-6 border-r border-white">
+                          <div class="flex items-center justify-center gap-2">
+                            Date Claimed
+                            <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy"/>
+                          </div>
+                        </th>
+                      
+                        <th class="text-center px-4 py-6 border-r border-white">Category</th>
+                        <th class="text-center px-4 py-6 border-r border-white">Brand Name</th>
+                        <th class="text-center px-4 py-6 border-r border-white">Code</th>
+                        <th class="text-center px-4 py-6 border-r border-white">
+                          <div class="flex items-center justify-center gap-2">
+                          Expired On
+                            <img src="/static/images/sort-alt.svg" alt="sort" loading="lazy"/>
+                          </div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody id="claimedCouponsBody" class="bg-snow-gray text-dark-gray text-16-fs">
+                    </tbody>
+                  </table>
+                </div>
+                <div id="claimed-pagination-container"></div>
+              </div>
+
+          <!--Points History Tab Section-->
+          <div class="tab-content points-history relative hidden">
+            <div class="flex justify-between items-center pt-5">
+              <p class="font-semibold lg:text-lg sm:text-nowrap">Points History</p>
+              <div class="flex-1 flex items-center justify-end gap-4 w-full">
+                  <div class="w-full max-w-[280px] rounded-[6px] bg-light-white flex items-center gap-2 px-2">
+                    <span class="material-symbols-outlined text-dark-gray">
+                      search
+                    </span>
+                    <form method="get" class="flex items-center gap-2 w-full">
+                      <input
+                        type="text"
+                        name="search"
+                        value="{{ request.GET.search }}"
+                        placeholder="Search by name or categories"
+                        class="w-full py-2.5 focus:!outline-none placeholder:text-medium-gray border-none bg-transparent focus:ring-0 only-text"
+                      />
+                    </form>
+                  </div>
+                  <div class="dropdown filter-dropdown relative z-10">
+                    <button class="filter-dropdown-btn dropdown-btn flex items-center border border-slate-gray rounded-md p-1 w-8 h-8 cursor-pointer">
+                        <span class="material-symbols-outlined">tune</span>
+                    </button>
+                    <form id="filterForm" method="GET" class="relative">
+                      <input type="hidden" name="search" value="{{ request.GET.search }}">
+                      <input type="hidden" name="date_filter" id="dateFilterInput">
+                      <input type="date" name="start_date" id="startDateInput" class="hidden" style="display: none;">
+                      <input type="date" name="end_date" id="endDateInput" class="hidden" style="display: none;">
+                    </form>
+                    <div class="filter-dropdown-option dropdown-option absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44">
+                      <div onclick="applyDateFilter('custom')" class="p-2 pl-4 flex justify-between items-center hover:bg-{{ hover_bg }} hover:text-white rounded cursor-pointer">
+                        Custom date
+                        <span class="material-symbols-outlined">calendar_today</span>
+                      </div>
+                      <div onclick="applyDateFilter('last_week')" class="p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded cursor-pointer">1 Week</div>
+
+                      <div onclick="applyDateFilter('last_month')" class="p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded cursor-pointer">1 Month</div>
+
+                      <div onclick="applyDateFilter('last_year')" class="p-2 pl-4 hover:bg-{{ hover_bg }} hover:text-white rounded cursor-pointer">1 Year</div>
+                    </div>
+                    <div class="datepicker-container hidden px-4 pb-3 absolute  right-43 z-100">
+                      <div class="datepicker-inline" inline-datepicker data-date="06/23/2025"></div>
+                    </div>
+                  </div>
+              </div>
+            </div>        
+
+            <div class="overflow-x-auto pt-4" id="pointsTable">
+              {% include 'partials/points_table.html' %}
+            </div>
+          </div>
+            </div>
+        </div>

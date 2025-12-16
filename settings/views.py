@@ -58,6 +58,12 @@ def settings_page(request):
     context['country_codes'] = load_country_codes()
     if user.user_type == "pharmacy":
         template_name = "seller_settings/pharmacy_settings.html"
+    elif user.user_type == "lab":
+        template_name = "seller_settings/lab_settings.html"
+    elif user.user_type == "hospital":
+        template_name = "seller_settings/hospital_settings.html"
+    elif user.user_type == "doctor":
+        template_name = "seller_settings/doctor_settings.html"
     else:
         template_name = "settings/settings_page.html"
 
