@@ -54,17 +54,20 @@
                         <div class="flex gap-4 sm:gap-5 whitespace-nowrap mt-8 overflow-x-auto no-scrollbar tabs">
                             <button
                             class="{{ tab_class }} {% if active_tab == 'account-details' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
-                            data-tab="account-details">
+                            data-tab="account-details"
+                            data-parent="settings">
                             Account Details
                             </button>
                             <button
                             class="{{ tab_class }} {% if active_tab == 'documents' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
-                            data-tab="documents">
+                            data-tab="documents"
+                            data-parent="settings">
                             Documents
                             </button>
                             <button
                             class="{{ tab_class }} {% if active_tab == 'notification-control' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
-                            data-tab="notification-control">
+                            data-tab="notification-control"
+                            data-parent="settings">
                             Notification Control Center
                             </button>
                         </div>
@@ -147,19 +150,10 @@
     <script src="/static/js/toaster.js"></script>
     <script src="/static/js/tabs.js"></script>
     <script src="/static/js/table-pagination.js"></script>
-  <script src="{% static 'js/settings.js' %}"></script>
-
-  {% if active_main_tab == "support" %}
-    <script src="{% static 'js/help.js' %}"></script>
-  {% endif %}
-
-  {% if active_main_tab == "donate" %}
-    <script src="{% static 'js/donate.js' %}"></script>
-  {% endif %}
-
-  {% if active_main_tab == "rewards" %}
-    <script src="{% static 'js/points.js' %}"></script>
-  {% endif %}
+<script src="{% static 'js/settings.js' %}"></script>
+<script src="{% static 'js/help.js' %}"></script>
+<script src="{% static 'js/donate.js' %}"></script>
+<script src="{% static 'js/points.js' %}"></script>
 
 <script>
     const getIssueOptionLists = "{% url 'get-issue-options' %}";

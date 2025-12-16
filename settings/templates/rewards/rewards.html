@@ -37,25 +37,29 @@
               <div class="tabs-section flex gap-6 sm:gap-8 whitespace-nowrap mt-8 overflow-x-auto no-scrollbar">
                 <button 
                   class="{{ tab_class }} {% if active_tab == 'points' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
-                  data-tab="points">
+                  data-tab="points"
+                  data-parent="rewards">
                   Points
                 </button>
 
                 <button 
                   class="{{ tab_class }} {% if active_tab == 'points-history' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer text-{{ text }}"
-                  data-tab="points-history">
+                  data-tab="points-history"
+                  data-parent="rewards">
                   Points History
                 </button>
 
                 <button 
                   class="{{ tab_class }} {% if active_tab == 'all-rewards' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer text-{{ text }}"
-                  data-tab="all-rewards">
+                  data-tab="all-rewards"
+                  data-parent="rewards">
                   All Rewards
                 </button>
 
                 <button 
                   class="{{ tab_class }} {% if active_tab == 'rewards-claimed' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer text-{{ text }}"
-                  data-tab="rewards-claimed">
+                  data-tab="rewards-claimed"
+                  data-parent="rewards">
                   Rewards Claimed
                 </button>
               </div>

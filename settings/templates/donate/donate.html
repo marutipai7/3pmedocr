@@ -20,12 +20,14 @@
         <div class="tabs-section flex gap-6 sm:gap-8 whitespace-nowrap mt-8 overflow-x-auto no-scrollbar">
           <button 
             class="{{ tab_class }} {% if active_tab == 'organization' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
-            data-tab="organization">
+            data-tab="organization"
+            data-parent="donate">
             Organizations
           </button>
           <button 
             class="{{ tab_class }} {% if active_tab == 'donation-history' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer text-{{ text }}"
-            data-tab="donation-history">
+            data-tab="donation-history"
+            data-parent="settings">
             Donation History
           </button>
         </div>

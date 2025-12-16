@@ -492,10 +492,21 @@ function clearSavedData() {
   });
 
 
-   $(".main-tab-pharmacy").on("click", function () {
-    let tabId = $(this).data("tab");
-    $(".main-tab-pharmacy").removeClass("active-tab-main-pharmacy");
-    $(this).addClass("active-tab-main-pharmacy");
-    $(".mainTab-content").addClass("hidden");
-    $("#" + tabId).removeClass("hidden");
-  });
+$(".main-tab-pharmacy").on("click", function () {
+  const mainTab = $(this).data("tab");
+
+  // Activate main tab
+  $(".main-tab-pharmacy").removeClass("active-tab-main-pharmacy");
+  $(this).addClass("active-tab-main-pharmacy");
+
+  // Show main content
+  $(".mainTab-content").addClass("hidden");
+  $("#" + mainTab).removeClass("hidden");
+
+  // 🔥 AUTO ACTIVATE FIRST SUB TAB
+  const firstSubTab = $(`[data-parent="${mainTab}"]`).first();
+
+  if (firstSubTab.length) {
+    firstSubTab.trigger("click");
+  }
+});
