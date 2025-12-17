@@ -143,6 +143,7 @@
 
 {% block extra_js %}
     <script src="/static/js/sidebar.js"></script>
+    <script src="{% static 'js/ngopoints.js' %}"></script>
     <script src="/static/js/forms.js"></script>
     <script src="/static/js/countryCodes.js"></script>
     <script src="/static/js/common.js"></script>
@@ -153,7 +154,6 @@
 <script src="{% static 'js/settings.js' %}"></script>
 <script src="{% static 'js/help.js' %}"></script>
 <script src="{% static 'js/donate.js' %}"></script>
-<script src="{% static 'js/points.js' %}"></script>
 
 <script>
     const getIssueOptionLists = "{% url 'get-issue-options' %}";

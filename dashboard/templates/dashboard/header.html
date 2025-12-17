@@ -85,7 +85,7 @@
       </a>
       {% endif %}
       {% if user.user_type == 'advertiser' or user.user_type == 'pharmacy' or user.user_type == 'lab' or user.user_type == 'doctor' or user.user_type == 'hospital' %}
-      <a href="{% url 'advertiser-advance' %}" class="relative">
+      <a href="{% url 'advance' %}" class="relative">
         <img src="{% static 'images/walleticon.svg' %}" alt="star" class="cursor-pointer has-tooltip" />
         <div
           class="absolute py-1 px-1.5 text-start text-xs tooltip -bottom-7 right-1 z-10 bg-white border rounded-md border-{{ border }} font-normal">

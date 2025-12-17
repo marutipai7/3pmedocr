@@ -990,7 +990,7 @@ form.addEventListener("submit", async function (e) {
       await fetchTickets();
       currentPage = 1;
       renderTickets();
-      renderPagination();
+      renderSupportPagination();
     } else {
       toastr.error(result.message || "Something went wrong.", "Error");
     }
@@ -1021,7 +1021,7 @@ async function fetchTickets() {
     allTickets = await res.json();
     currentPage = 1; // reset to first page
     renderTickets();
-    renderPagination();
+    renderSupportPagination();
   } catch (err) {
     console.error("Error loading tickets:", err);
   }
@@ -1065,7 +1065,7 @@ function renderTickets(data = allTickets) {
 }
 
 // Render pagination buttons
-function renderPagination(data = allTickets) {
+function renderSupportPagination(data = allTickets) {
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const paginationBtns = document.querySelector(".paginationBtns");
   const prevBtn = document.querySelector(".prevPage");
@@ -1084,7 +1084,7 @@ function renderPagination(data = allTickets) {
     btn.addEventListener("click", () => {
       currentPage = page;
       renderTickets(data);
-      renderPagination(data);
+      renderSupportPagination(data);
     });
     return btn;
   };
@@ -1112,7 +1112,7 @@ function renderPagination(data = allTickets) {
     if (currentPage > 1) {
       currentPage--;
       renderTickets(data);
-      renderPagination(data);
+      renderSupportPagination(data);
     }
   };
 
@@ -1120,7 +1120,7 @@ function renderPagination(data = allTickets) {
     if (currentPage < totalPages) {
       currentPage++;
       renderTickets(data);
-      renderPagination(data);
+      renderSupportPagination(data);
     }
   };
 }
@@ -1130,7 +1130,7 @@ document.querySelector(".prevPage").addEventListener("click", () => {
   if (currentPage > 1) {
     currentPage--;
     renderTickets();
-    renderPagination();
+    renderSupportPagination();
   }
 });
 
@@ -1140,7 +1140,7 @@ document.querySelector(".nextPage").addEventListener("click", () => {
   if (currentPage < totalPages) {
     currentPage++;
     renderTickets();
-    renderPagination();
+    renderSupportPagination();
   }
 });
 
@@ -1162,7 +1162,7 @@ document
 
     currentPage = 1;
     renderTickets(filtered); // Pass filtered results
-    renderPagination(filtered); // Adjust pagination accordingly
+    renderSupportPagination(filtered); // Adjust pagination accordingly
   });
 
 function debounce(func, delay) {
@@ -1186,7 +1186,7 @@ document.getElementById("ticket-search").addEventListener(
     });
     currentPage = 1;
     renderTickets(filtered);
-    renderPagination(filtered);
+    renderSupportPagination(filtered);
   }, 300)
 );
 
@@ -1348,7 +1348,7 @@ function filterTickets(fromDate, toDate) {
       allTickets = data.tickets; // Update the global variable
       currentPage = 1; // Reset to page 1
       renderTickets(allTickets); // Render from filtered data
-      renderPagination(allTickets.length);
+      renderSupportPagination(allTickets.length);
       // renderTickets(data.tickets); // Use your existing renderTickets()
     })
     .catch((err) => {

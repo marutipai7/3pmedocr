@@ -1,4 +1,8 @@
 
+function getCSRFToken() {
+    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+}
+
 const chartLabels = JSON.parse(document.getElementById('chartLabelsData').textContent);
 const chartData = JSON.parse(document.getElementById('chartDataData').textContent);
 
@@ -26,7 +30,7 @@ if (roundedMax < 20) {
   roundedMax=20;
 }
 const ctx = document.getElementById("referralChart").getContext("2d");
-new Chart(ctx, {
+let referralChart = new Chart(ctx, {
   type: 'line',
   data: {
     labels: chartLabels,
@@ -115,12 +119,13 @@ document.querySelectorAll('.badge-description').forEach(function(descElem) {
 
 
 
-let currentPage = 1;
-const limit = 3;
+(function () {
+  let currentPage = 1;
+  const limit = 3;
 
 function allrewards(search = '', dateRange = '', page = 1) {
   $.ajax({
-    url: 'get-cards/',
+    url: '/points/get-cards/',
     data: {
       search: search,
       daterange: dateRange,
@@ -242,7 +247,7 @@ $(document).ready(function() {
 
   function popular_coupons(search = '', dateRange = '', page = 1) {
     $.ajax({
-      url: 'get-popular-coupons/',
+      url: '/points/get-popular-coupons/',
       data: {
         search: search,
         daterange: dateRange,
@@ -357,7 +362,7 @@ $(document).ready(function() {
     const endDate = $("#endDateInput").val();
 
       $.ajax({
-        url: "history/",
+        url: "/points/history/",
         data: {
           search: search,
           start_date: startDate,
@@ -433,6 +438,9 @@ $(document).on("click", ".claim-btn", function () {
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ coupon_id: couponId }),
+        headers: {
+            'X-CSRFToken': getCSRFToken()
+        },
         success: function (response) {
             if (response.status === 'success') {
                 toastr.success('Coupon claimed! Code copied: ' + code);
@@ -646,3 +654,4 @@ function observeCards(containerId, cardClass, callback) {
 
   observer.observe(container, { childList: true, subtree: true });
 }
+})();

@@ -678,7 +678,7 @@ def get_ngo_graph_data(request):
     })
     
 @dashboard_login_required
-def advertiser_advance(request):
+def advance(request):
     user = request.user_obj
     context = get_common_context(request, user)
     if user.user_type == 'advertiser':
@@ -718,12 +718,38 @@ def advertiser_advance(request):
             'user':user
         })
         return render(request, "lab/lab_advance.html", context)
+    elif user.user_type == 'pharmacy':
+        pharmacy_profile = PharmacyProfile.objects.get(user=user)
+        context.update({
+            'pharmacy_profile': pharmacy_profile,
+            'user_display_name': pharmacy_profile.company_name,
+            'user_profile': user,
+            'user':user
+        })
+        return render(request, "pharmacy/pharmacy_advance.html", context)
     
 @dashboard_login_required
-def advertiser_advance_history(request):
+def advance_history(request):
     user = request.user_obj
     context = get_common_context(request, user)
-    return render(request, "advertiser/advance-history.html", context)
+    if user.user_type == 'advertiser':
+        advertiser_profile = AdvertiserProfile.objects.get(user=user)
+        context.update({
+            'advertiser_profile': advertiser_profile,
+            'user_display_name': advertiser_profile.company_name,
+            'user_profile': user,
+            'user': user
+        })
+        return render(request, "advertiser/advance-history.html", context)
+    elif user.user_type == 'pharmacy':
+        pharmacy_profile = PharmacyProfile.objects.get(user=user)
+        context.update({
+            'pharmacy_profile': pharmacy_profile,
+            'user_display_name': pharmacy_profile.company_name,
+            'user_profile': user,
+            'user':user
+        })
+        return render(request, "pharmacy/pharmacy_advance_history.html", context)
 
 @dashboard_login_required
 def cart(request):

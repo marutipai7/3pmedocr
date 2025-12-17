@@ -510,3 +510,12 @@ $(".main-tab-pharmacy").on("click", function () {
     firstSubTab.trigger("click");
   }
 });
+$('[data-tab="points"][data-parent="rewards"]').on('click', function () {
+    setTimeout(() => {
+        if (window.referralChart) {
+            window.referralChart.update();
+        } else if (typeof initReferralChart === "function") {
+            initReferralChart();
+        }
+    }, 100);
+});
