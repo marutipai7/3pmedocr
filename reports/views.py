@@ -8,5 +8,11 @@ def reports(request):
     context = get_common_context(request, user)
     if user.user_type == 'pharmacy':
         return render(request, 'pharmacy_reports.html', context)
+    elif user.user_type == 'lab':
+        return render(request, 'lab_reports.html', context)
+    elif user.user_type == 'doctor':
+        return render(request, 'doctor_reports.html', context)
+    elif user.user_type == 'hospital':
+        return render(request, 'hospital_reports.html', context)
     else:
         return render(request, 'reports.html', context)
