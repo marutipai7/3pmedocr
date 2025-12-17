@@ -483,13 +483,25 @@ function clearSavedData() {
   // toastr.success('Saved data cleared!');
   closePopup("savedDataPopup");
 }
-  $(".main-tab").on("click", function () {
-    let tabId = $(this).data("tab");
-    $(".main-tab").removeClass("active-tab-main");
-    $(this).addClass("active-tab-main");
-    $(".mainTab-content").addClass("hidden");
-    $("#" + tabId).removeClass("hidden");
-  });
+$(".main-tab").on("click", function () {
+  const mainTab = $(this).data("tab");
+
+  // Activate main tab
+  $(".main-tab").removeClass("active-tab-main");
+  $(this).addClass("active-tab-main");
+
+  // Show main content
+  $(".mainTab-content").addClass("hidden");
+  $("#" + mainTab).removeClass("hidden");
+
+  // 🔥 AUTO ACTIVATE FIRST SUB TAB (same logic as pharmacy)
+  const firstSubTab = $(`[data-parent="${mainTab}"]`).first();
+
+  if (firstSubTab.length) {
+    firstSubTab.trigger("click");
+  }
+});
+
 
 
 $(".main-tab-pharmacy").on("click", function () {
