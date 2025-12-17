@@ -32,5 +32,9 @@ def appointment_view(request):
     context["appointments"] = active_appointments
     
     print("Acive Appointments:", active_appointments[0] if active_appointments else "No Appointments")
-
-    return render(request, 'lab/lab_appointment.html', context)
+    if user_type == "lab":
+        return render(request, 'lab/lab_appointment.html', context)
+    elif user_type == "doctor":
+        return render(request, 'doctor/doctor_appointment.html', context)
+    else:
+        return render(request, 'appointments.html', context)
