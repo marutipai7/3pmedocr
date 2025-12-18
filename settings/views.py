@@ -1,36 +1,24 @@
 import os
 import re
 import json
-import uuid
-from decimal import Decimal
-from datetime import date, datetime, timedelta
-from collections import defaultdict
+from django.utils import timezone
+from datetime import timedelta
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.core.files.storage import default_storage
-from django.core.paginator import Paginator
-from django.core.serializers.json import DjangoJSONEncoder
-from django.template.loader import render_to_string
-from django.utils import timezone
-from django.utils.dateparse import parse_date
 from django.db import transaction
-from django.db.models import Q, Sum
 from django.views.decorators.http import (
-    require_GET,
     require_POST,
-    require_http_methods,
+    require_GET,
 )
 from django.contrib.auth.hashers import make_password, check_password
-from rest_framework import serializers
 from dashboard.utils import (
     dashboard_login_required,
     get_common_context,
-    get_theme_colors,
-    seller_verified_required,
 )
+from settings.models import SellerSubscription
 from registration.models import (
     User,
     NGOProfile,
@@ -50,7 +38,6 @@ from registration.models import (
     LabService,
     LabFacility,
     LabTiming,
-    HospitalTiming,
     AdServiceReq,
     AdvertiserType,
     ClientType,
@@ -58,24 +45,14 @@ from registration.models import (
     NGOService,
 )
 from registration.views import (
-    is_file_clean,
     validate_and_save_file,
 )
 from support.models import (
     IssueType,
     IssueOption,
-    SupportTicket,
-    FAQ,
-    ChatOptionGroup,
 )
-from support.utils import send_custom_email
 from maps.models import SearchHistory, SavedLocation
-from points.models import (
-    PointsActionType,
-    PointsHistory,
-    PointsBadge,
-)
-from coupon.models import Coupon, CouponClaimed
+from coupon.models import Coupon
 from donate.models import Donation
 from ngopost.models import NGOPost
 
@@ -111,7 +88,7 @@ def settings_page(request):
     issue_types = IssueType.objects.filter(
         user_types__contains=[user_type]
     )
-    # 🔥 Filter IssueTypes by user_type
+
     issue_options = IssueOption.objects.filter(
         issue_type__in=issue_types,
         user_types__contains=[user_type]
@@ -153,7 +130,6 @@ def settings_page(request):
 
     return render(request, template_name, context)
 
-    # return render(request, 'settings/settings_page.html', context)
 
 def get_base_context(user):
     context = {
@@ -886,3 +862,93 @@ def change_password(request):
         return JsonResponse({'success': True, 'message': 'Password changed successfully', "errors" : ''})
     except Exception as e:
         return JsonResponse({'success': False, 'errors': f'Error updating password: {str(e)}', "message" : ''})
+
+def get_seller_profile_id(user):
+    profile_map = {
+        "pharmacy": PharmacyProfile,
+        "lab": LabProfile,
+        "hospital": HospitalProfile,
+        "doctor": DoctorProfile,
+    }
+    model = profile_map.get(user.user_type)
+    if not model:
+        return None
+
+    profile = model.objects.filter(user=user).only("id").first()
+    return profile.id if profile else None
+
+@dashboard_login_required
+def seller_subscription_status(request):
+    """
+    Returns current subscription status for logged-in seller
+    """
+    user = request.user_obj  # assuming custom auth
+
+    seller_type = user.user_type           # pharmacy / lab / hospital / doctor
+    seller_profile_id = get_seller_profile_id(user)  # adapt this to your project
+
+    sub = SellerSubscription.objects.filter(
+        seller_type=seller_type,
+        seller_profile_id=seller_profile_id,
+        is_active=True,
+        is_enabled=True
+    ).first()
+
+    if not sub:
+        return JsonResponse({
+            "has_subscription": False,
+            "plan": "Free",
+        })
+
+    days_left = None
+    if sub.expiry_date:
+        days_left = (sub.expiry_date.date() - timezone.now().date()).days
+
+    return JsonResponse({
+        "has_subscription": True,
+        "plan": sub.plan_name,
+        "price": float(sub.price),
+        "expiry_date": sub.expiry_date.strftime("%d/%m/%Y") if sub.expiry_date else None,
+        "days_left": days_left,
+    })
+
+@require_POST
+@dashboard_login_required
+def subscribe_subscription(request):
+    user = request.user_obj
+
+    seller_profile_id = get_seller_profile_id(user)
+    if not seller_profile_id:
+        return JsonResponse({"success": False}, status=400)
+
+    # deactivate old
+    SellerSubscription.objects.filter(
+        seller_type=user.user_type,
+        seller_profile_id=seller_profile_id,
+        is_active=True
+    ).update(is_active=False)
+
+    # create new subscription
+    SellerSubscription.objects.create(
+        seller_type=user.user_type,
+        seller_profile_id=seller_profile_id,
+        plan_name="Premium",
+        price=999,
+        is_active=True,
+        expiry_date=timezone.now() + timedelta(days=30),
+    )
+
+    return JsonResponse({"success": True})
+
+@dashboard_login_required
+@require_POST
+def cancel_subscription(request):
+    user = request.user_obj
+
+    SellerSubscription.objects.filter(
+        seller_type=user.user_type,
+        seller_profile_id=get_seller_profile_id(user),
+        is_active=True
+    ).update(is_active=False)
+
+    return JsonResponse({"success": True})

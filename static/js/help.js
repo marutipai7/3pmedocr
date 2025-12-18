@@ -1231,13 +1231,15 @@ function openModalProgress(ticketId) {
       document.querySelector(".help-updated-date-status").textContent =
         data.updated_at;
       const imgElement = document.querySelector(".help-img");
-      imgElement.src = data.img ? data.img : "/static/images/no-image.png";
-      if (data.img) {
+
+      if (data.img && data.img.trim() !== "") {
         imgElement.src = data.img;
-        imgElement.style.display = "block";
+        imgElement.classList.remove("hidden");
       } else {
-        imgElement.style.display = "none";
+        imgElement.src = "";
+        imgElement.classList.add("hidden");
       }
+      console.log("IMAGE URL:", data.img);
       console.log("Highlighting status:", data.status);
       highlightCurrentStatus(data.status);
       // highlightCurrentStatus(data.status);

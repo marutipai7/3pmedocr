@@ -87,7 +87,7 @@
         <span class="font-normal text-base text-dark-gray">(Account created on {{created_at}} )</span>
       </p>
       <!-- <div id="account-details-render"> -->
-      {% include 'partials/account_details.html' %}
+      {% include 'settings/partials/account_details.html' %}
 
       <!-- Account Settings -->
       <div class="flex flex-col gap-y-3 mt-8">
@@ -265,7 +265,7 @@
     <!--Edit Section-->
     <div class="hidden edit-details">
       <p class="text-{{ text }} pl-4 sm:pl-6">Account Details</p>
-      {% include 'partials/edit-account-details.html' %}
+      {% include 'settings/partials/edit-account-details.html' %}
     </div>
     <!--Change Password -->
     <div class="hidden toggle-section" data-section="password">
@@ -463,7 +463,7 @@
     </div>
 
     <!--Documents Section-->
-    {% include 'partials/documents.html' %}
+    {% include 'settings/partials/documents.html' %}
 
     <!--Notification Control Section-->
     <div class="hidden tab-content notification-control" id="notification-control">

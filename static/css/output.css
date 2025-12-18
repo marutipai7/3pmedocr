@@ -5894,6 +5894,11 @@ body {
   font-weight: var(--font-weight-semibold);
   color: var(--color-dodger-blue);
 }
+.active-tab-main-pharmacy {
+  --tw-font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-deep-teal-green);
+}
 .active-tab-pharmacy {
   border-bottom-style: var(--tw-border-style);
   border-bottom-width: 3px;

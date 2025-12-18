@@ -19,4 +19,7 @@ urlpatterns = [
     path('change-password/', views.change_password, name='change_password'),
     # path('get_user_theme_api/', views.get_user_theme_api, name='get_user_theme_api'),
     # path('account-details/', views.get_account_details, name='account-details'),
+    path("subscription/status/", views.seller_subscription_status, name="seller-subscription-status"),
+    path("subscription/cancel/", views.cancel_subscription, name="seller-subscription-cancel"),
+    path("subscription/subscribe/",views.subscribe_subscription,name="seller-subscription-subscribe"),
 ]

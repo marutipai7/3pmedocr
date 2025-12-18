@@ -1,8 +1,8 @@
 
+window.referralChart = null;
 function getCSRFToken() {
     return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
-
 const chartLabels = JSON.parse(document.getElementById('chartLabelsData').textContent);
 const chartData = JSON.parse(document.getElementById('chartDataData').textContent);
 
@@ -29,34 +29,49 @@ let roundedMax = Math.ceil(maxValue / 5) * 5;
 if (roundedMax < 20) {
   roundedMax=20;
 }
-const ctx = document.getElementById("referralChart").getContext("2d");
-let referralChart = new Chart(ctx, {
-  type: 'line',
-  data: {
-    labels: chartLabels,
-    datasets: datasets
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false
-      }
-    }
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-      min: 0,
-      suggestedMax: roundedMax,
-      ticks: {
-        stepSize: 5,
-        precision: 0
-      }
-    }
-  }
-});
+function initReferralChart() {
+  const canvas = document.getElementById("referralChart");
+  if (!canvas) return;
 
+  const ctx = canvas.getContext("2d");
+
+  // destroy if already exists
+  if (window.referralChart instanceof Chart) {
+    window.referralChart.destroy();
+  }
+
+  window.referralChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: chartLabels,
+      datasets: datasets
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {          // ✅ CORRECT
+        y: {
+          beginAtZero: true,
+          min: 0,
+          suggestedMax: roundedMax,
+          ticks: {
+            stepSize: 5,
+            precision: 0
+          }
+        }
+      }
+    }
+  });
+}
+document.addEventListener("DOMContentLoaded", initReferralChart);
+console.log("labels:", chartLabels, chartLabels.length);
+console.log("datasets:", chartData);
+
+Object.keys(chartData).forEach(k => {
+  console.log(k, chartData[k].length);
+});
 // Create checkboxes dynamically
 const checkboxContainer = document.getElementById("referralCustomLegend");
 datasets.forEach((dataset, index) => {
@@ -70,8 +85,10 @@ datasets.forEach((dataset, index) => {
 
   checkbox.addEventListener("change", function () {
     const i = this.dataset.index;
-    referralChart.data.datasets[i].hidden = !this.checked;
-    referralChart.update();
+    if (window.referralChart instanceof Chart) {
+      window.referralChart.data.datasets[i].hidden = !this.checked;
+      window.referralChart.update();
+    }
   });
 
   // label.appendChild(checkbox);

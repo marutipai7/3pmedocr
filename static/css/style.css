@@ -411,6 +411,9 @@ body {
 .active-tab-main {
   @apply font-semibold text-dodger-blue
 }
+.active-tab-main-pharmacy {
+  @apply font-semibold text-deep-teal-green
+}
 .active-tab-pharmacy{
      @apply text-light-sea-green border-b-3 border-light-sea-green;
 

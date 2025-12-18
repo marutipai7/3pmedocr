@@ -91,6 +91,8 @@ def get_common_context(request, user):
         user_display_name = (user_profile.hospital_name if user_profile else "Unknown")
     elif user_type == "lab":
         user_display_name = (user_profile.lab_name if user_profile else "Unknown")
+    elif user_type == "pharmacy":
+        user_display_name = (user_profile.company_name if user_profile else "Unknown")
     else:
         user_display_name = (
             user_profile.company_name if user_profile else "Unknown"
@@ -139,6 +141,7 @@ def get_common_context(request, user):
         "action_points": action_points,
         "chart_action_types": chart_action_types,
         "trophy": trophy,
+        "all_badges": PointsBadge.objects.all(),
     }
     context["tab_class"] = tab_class_map.get(user_type)
     context["active_tab_class"] = active_tab_class_map.get(user_type)

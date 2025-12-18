@@ -10,6 +10,7 @@ from django.views.decorators.http import require_http_methods, require_GET, requ
 from django.core.serializers.json import DjangoJSONEncoder
 from registration.views import validate_and_save_file
 from rest_framework import serializers
+from django.conf import settings
 
 @dashboard_login_required
 @require_http_methods(["GET", "POST"])
@@ -132,6 +133,12 @@ def get_bot_content_api(request):
         user_type = 'client'
     elif hasattr(user = 'Pharmacyprofile') and user.Pharmacyprofile is not None:
         user_type = 'pharmacy'
+    elif hasattr(user, 'labprofile') and user.labprofile is not None:
+        user_type = 'lab'
+    elif hasattr(user, 'doctorprofile') and user.doctorprofile is not None:
+        user_type = 'doctor'
+    elif hasattr(user, 'hospitalprofile') and user.hospitalprofile is not None:
+        user_type = 'hospital'
 
     try:
         chat_group = ChatOptionGroup.objects.get(user_type=user_type, is_active=True)
@@ -246,6 +253,7 @@ def ticket_details(request):
     user = request.user_obj
     email = user.email
     usertype = user.user_type
+
     if request.method == "POST":
         try:
             data = json.loads(request.body)
@@ -256,9 +264,21 @@ def ticket_details(request):
             ticket = SupportTicket.objects.select_related(
                 "issue_option__issue_type", "created_by"
             ).get(id=db_id)
-            
-            created_at = ticket.created_at.strftime("%d/%m/%Y, %I:%M %p")  
-            updated_at = ticket.updated_at.strftime("%d/%m/%Y, %I:%M %p")  
+
+            created_at = ticket.created_at.strftime("%d/%m/%Y, %I:%M %p")
+            updated_at = ticket.updated_at.strftime("%d/%m/%Y, %I:%M %p")
+
+            # ✅ SAFE image handling (STRING PATH)
+            if ticket.image:
+                image_url = request.build_absolute_uri(
+                    f"/document/{ticket.image}"
+                )
+            else:
+                image_url = ""
+
+            # 🔍 DEBUG
+            print("📌 Ticket image raw value:", ticket.image)
+            print("📌 Final image URL:", image_url)
 
             return JsonResponse({
                 "ticket_id": ticket.ticket_id(),
@@ -269,13 +289,16 @@ def ticket_details(request):
                 "issue_type": ticket.issue_option.issue_type.name if ticket.issue_option else "N/A",
                 "status": ticket.get_status_display(),
                 "description": ticket.description,
-                "img": ticket.image if ticket.image else "",
+                "img": image_url,
             })
 
         except Exception as e:
+            print("❌ ERROR in ticket_details:", str(e))
             return JsonResponse({"error": str(e)})
 
     return JsonResponse({"error": "Invalid request method"})
+
+
 
 @dashboard_login_required
 def filter_tickets(request):

@@ -523,11 +523,12 @@ $(".main-tab-pharmacy").on("click", function () {
   }
 });
 $('[data-tab="points"][data-parent="rewards"]').on('click', function () {
-    setTimeout(() => {
-        if (window.referralChart) {
-            window.referralChart.update();
-        } else if (typeof initReferralChart === "function") {
-            initReferralChart();
-        }
-    }, 100);
+  setTimeout(() => {
+    if (window.referralChart) {
+      window.referralChart.resize();
+      window.referralChart.update();
+    } else {
+      initReferralChart();
+    }
+  }, 150);
 });
