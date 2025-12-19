@@ -220,3 +220,57 @@ $(document).ready(function () {
     showPage(currentPage);
   }
 });
+$(".createCouponForm").on("submit", function (e) {
+  e.preventDefault();
+  $(".error-message").addClass("hidden");
+
+  const payload = {
+    coupon_name: $("#couponName").val().trim(),
+    coupon_code: $("#couponCode").val().trim(),
+    discount_type: $("#percentageCheck").is(":checked") ? "percentage" : "fixed",
+    discount_value: $("#discountValue").val().trim(),
+    expiry_date: $("#expiryDate").val().trim(),
+    usage_limit: $("#usagesLimit").val().trim(),
+    csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+  };
+  console.log("Expiry date:", $("#expiryDate").val());
+  $.ajax({
+    url: "/coupons/seller/create/",
+    method: "POST",
+    data: payload,
+
+    success: function (data) {
+      if (data.success) {
+        toastr.success("Coupon Creation Successful");
+
+        $(".createCouponForm")[0].reset();
+        $("#percentageCheck").prop("checked", true);
+        $("#percentIcon").show();
+
+        setTimeout(function () {
+          $(".myCoupons").show();
+          $(".createCouponSection").addClass("hidden");
+        }, 1500);
+      } else {
+        toastr.error(data.error || "Coupon Creation failed");
+      }
+    },
+
+    error: function (xhr) {
+      const res = xhr.responseJSON;
+
+      if (res && res.errors) {
+        if (res.errors.coupon_name) $("#couponNameError").removeClass("hidden");
+        if (res.errors.coupon_code) $("#couponCodeError").removeClass("hidden");
+        if (res.errors.discount_value) $("#discountValueError").removeClass("hidden");
+        if (res.errors.expiry_date) $("#expiryDateError").removeClass("hidden");
+        if (res.errors.usage_limit) $("#usagesLimitError").removeClass("hidden");
+
+        toastr.error("Please fix the highlighted errors");
+      } else {
+        toastr.error("Coupon Creation failed");
+      }
+    },
+  });
+});
+

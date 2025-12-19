@@ -117,10 +117,10 @@ def settings_page(request):
     context['country_codes'] = load_country_codes()
 
     template_map = {
-        "pharmacy": "seller_settings/pharmacy_settings.html",
-        "lab": "seller_settings/lab_settings.html",
-        "hospital": "seller_settings/hospital_settings.html",
-        "doctor": "seller_settings/doctor_settings.html",
+        "pharmacy": "settings/seller_settings.html",
+        "lab": "settings/seller_settings.html",
+        "hospital": "settings/seller_settings.html",
+        "doctor": "settings/seller_settings.html",
     }
 
     template_name = template_map.get(

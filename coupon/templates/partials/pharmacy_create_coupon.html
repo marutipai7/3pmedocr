@@ -1,0 +1,100 @@
+                <div class="p-5 createCouponSection hidden">
+                    <div class="flex items-center gap-2.5">
+                        <span class="material-symbols-outlined text-xl! font-semibold!">home</span>
+                        <h1 class="text-base font-semibold">Create New Coupon</h1>
+                    </div>
+                    <div class="mt-5">
+                        <form class="createCouponForm flex flex-col gap-2">
+                            {% csrf_token %}
+                            <p class="font-semibold text-sm text-blue-charcoal">Discount Type</p>
+                            <div class="flex items-center gap-[73px] ml-2">
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox"
+                                        class="accent-deep-teal-green w-[18px] h-[18px] cursor-pointer"
+                                        id="percentageCheck" checked>
+                                    <p class="font-normal text-sm text-dark-gray">Percentage</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox"
+                                        class="accent-deep-teal-green w-[18px] h-[18px] cursor-pointer"
+                                        id="fixedAmountCheck">
+                                    <p class="font-normal text-sm text-dark-gray">Fixed Amount</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="flex flex-col gap-2 input-wrapper">
+                                    <label class="font-semibold text-sm text-blue-charcoal">Coupon Name</label>
+                                    <input type="text" id="couponName"
+                                        class="bg-dropdown rounded-2xl py-2.5 px-4 shadow-(--box-shadow-13) focus:ring-0 focus:outline-none placeholder:text-dark-gray placeholder:text-base placeholder:font-normal text-base font-semibold text-blue-charcoal"
+                                        placeholder="Enter Coupon Name">
+                                    <span class="error-message text-crimson-red font-normal text-xs hidden"
+                                        id="couponNameError">Coupon name is required</span>
+                                </div>
+                                <div class="flex flex-col gap-2 input-wrapper">
+                                    <label class="font-semibold text-sm text-blue-charcoal">Coupon Code</label>
+                                    <input type="text" id="couponCode"
+                                        class="bg-dropdown rounded-2xl py-2.5 px-4 shadow-(--box-shadow-13) focus:ring-0 focus:outline-none placeholder:text-dark-gray placeholder:text-base placeholder:font-normal text-base font-semibold text-blue-charcoal"
+                                        placeholder="Enter Coupon Code">
+                                    <span class="error-message text-crimson-red font-normal text-xs hidden"
+                                        id="couponCodeError">Coupon code is required</span>
+                                </div>
+                                <div class="flex flex-col gap-2 input-wrapper">
+                                    <label class="font-semibold text-sm text-blue-charcoal">Discount Value</label>
+                                    <div
+                                        class="bg-dropdown rounded-2xl shadow-(--box-shadow-13) flex items-center gap-1">
+                                        <input type="number" id="discountValue"
+                                            class="w-full py-2.5 px-4  focus:ring-0 focus:outline-none placeholder:text-dark-gray placeholder:text-base placeholder:font-normal text-base font-semibold text-blue-charcoal"
+                                            placeholder="Enter Discount Value">
+                                        <span class="material-symbols-outlined pr-4 text-slate-steel-blue text-xl!"
+                                            id="percentIcon">percent</span>
+                                    </div>
+                                    <span class="error-message text-crimson-red font-normal text-xs hidden"
+                                        id="discountValueError">Discount value is
+                                        required</span>
+                                </div>
+                                <div class="flex flex-col gap-2 input-wrapper">
+                                    <label class="font-semibold text-sm text-blue-charcoal">Expiry Date</label>
+                                    <div
+                                        class="bg-dropdown rounded-2xl shadow-(--box-shadow-13) flex items-center gap-1">
+                                        <input type="text" id="expiryDate"
+                                            class="w-full py-2.5 px-4  focus:ring-0 focus:outline-none placeholder:text-dark-gray placeholder:text-base placeholder:font-normal text-base font-semibold text-blue-charcoal"
+                                            placeholder="DD/MM/YYYY">
+                                        <span
+                                            class="material-symbols-outlined pr-4 text-slate-steel-blue text-xl! cursor-pointer"
+                                            id="calendarIcon">calendar_month</span>
+                                    </div>
+                                    <span class="error-message text-crimson-red font-normal text-xs hidden"
+                                        id="expiryDateError">Expiry date is required</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-2 input-wrapper">
+                                <label class="font-semibold text-sm text-blue-charcoal">Usages Limit</label>
+                                <div class="bg-dropdown rounded-2xl shadow-(--box-shadow-13) flex items-center gap-1">
+                                    <input type="number" id="usagesLimit"
+                                        class="w-full py-2.5 px-4  focus:ring-0 focus:outline-none placeholder:text-dark-gray placeholder:text-base placeholder:font-normal text-base font-semibold text-blue-charcoal"
+                                        placeholder="Enter Usages Limit">
+                                    <span
+                                        class="material-symbols-outlined pr-4 text-slate-steel-blue text-xl!">group</span>
+                                </div>
+                                <span class="error-message text-crimson-red font-normal text-xs hidden"
+                                    id="usagesLimitError">Usages limit is required</span>
+                            </div>
+                            <div class="mt-5 flex justify-end items-center gap-4">
+                                <button type="button" id="cancelBtn"
+                                    class="border border-deep-teal-green px-6 py-2 cursor-pointer rounded-[10px]">
+                                    <span class="font-normal text-base text-deep-teal-green">Cancel</span>
+                                </button>
+                                <button type="submit"
+                                    class="bg-deep-teal-green px-6 py-2 cursor-pointer rounded-[10px]">
+                                    <span class="font-normal text-base text-white">Create</span>
+                                </button>
+                            </div>
+                        </form>
+                        {% comment %} <div id="successMessage"
+                            class="hidden   bg-semi-transparent-black fixed inset-0 flex justify-center">
+                            <div class="bg-white px-4 py-2 mt-6 h-10 rounded-lg">
+                                Coupon created successfully!
+                            </div>
+                        </div> {% endcomment %}
+                    </div>
+                </div>

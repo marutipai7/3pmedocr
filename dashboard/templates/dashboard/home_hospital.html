@@ -45,7 +45,7 @@
             </div>
           </div>
           <!--Hospital Image and Admin Details-->
-          <div class="flex gap-2  pt-5 ml-3">
+          <div class="flex flex-col lg:flex-row gap-2  pt-5 ml-3">
             <div class="relative">
               <img src="{% if hospital_profile.hospital_photo_path %}/document/{{ hospital_profile.hospital_photo_path }}{% else %}/static/images/hospital-bg.jpg{% endif %}" alt="Hospital" class="w-full h-full object-cover rounded-lg">
               <div class="absolute inset-0 flex items-end">

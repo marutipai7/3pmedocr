@@ -268,17 +268,12 @@ def ticket_details(request):
             created_at = ticket.created_at.strftime("%d/%m/%Y, %I:%M %p")
             updated_at = ticket.updated_at.strftime("%d/%m/%Y, %I:%M %p")
 
-            # ✅ SAFE image handling (STRING PATH)
             if ticket.image:
                 image_url = request.build_absolute_uri(
                     f"/document/{ticket.image}"
                 )
             else:
                 image_url = ""
-
-            # 🔍 DEBUG
-            print("📌 Ticket image raw value:", ticket.image)
-            print("📌 Final image URL:", image_url)
 
             return JsonResponse({
                 "ticket_id": ticket.ticket_id(),
@@ -297,8 +292,6 @@ def ticket_details(request):
             return JsonResponse({"error": str(e)})
 
     return JsonResponse({"error": "Invalid request method"})
-
-
 
 @dashboard_login_required
 def filter_tickets(request):
