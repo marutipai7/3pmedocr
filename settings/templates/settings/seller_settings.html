@@ -7,14 +7,14 @@
             <div
                 class=" relative transition-all duration-300 main-content h-full flex-1 flex flex-col gap-8 overflow-y-auto scroll p-5">
                 <div
-                    class="show-sidebar-toggle hidden fixed top-[100px] left-12 z-50 h-10 w-10 bg-{{primary_bg}} items-center justify-center rounded-r-md cursor-pointer">
+                    class="show-sidebar-toggle hidden fixed top-[100px] left-12 z-50 h-10 w-10 bg-{{secondary_bg}} items-center justify-center rounded-r-md cursor-pointer">
                     <span class="material-symbols-outlined bold-weight text-{{ text }}">
                         arrow_forward_ios
                     </span>
                 </div>
                 <div class="shadow p-4 rounded-lg m-2 max-w-full bg-white">
                         <div
-                            class="bg-{{primary_bg}} rounded-[20px] flex justify-between items-center py-3.5 px-[30px] mb-10 tabs-menu overflow-x-auto gap-5 lg:gap-0">
+                            class="bg-{{secondary_bg}} rounded-[20px] flex justify-between items-center py-3.5 px-[30px] mb-10 tabs-menu overflow-x-auto gap-5 lg:gap-0">
                             <div class="{{main_tab_class}} {{active_main_tab_class}} flex items-center gap-2.5 cursor-pointer text-dark-gray text-lg font-normal"
                                 data-tab="settings">
                                 <span class="material-symbols-outlined">settings</span>
@@ -84,14 +84,14 @@
                                 edit
                             </span>
                             <!-- Tooltip for Tablet screens -->
-                            <div id="editTooltip" class="absolute right-0 mb-1 px-2 py-1 bg-white border border-{{  primary_bg   }} rounded-md text-xs
+                            <div id="editTooltip" class="absolute right-0 mb-1 px-2 py-1 bg-white border border-{{  secondary_bg   }} rounded-md text-xs
                                     whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10
                                         md:block lg:hidden">
                                 Last Edit on {{updated_at}}
                             </div>
 
                             <!-- Tooltip for Desktop screens -->
-                            <div class="absolute  left-1/2 -translate-x-1/2 mb-1 px-2 py-1  bg-white border border-{{  primary_bg   }} rounded-md text-xs
+                            <div class="absolute  left-1/2 -translate-x-1/2 mb-1 px-2 py-1  bg-white border border-{{  secondary_bg   }} rounded-md text-xs
                                     whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10
                                     hidden lg:block">
                                 Edit

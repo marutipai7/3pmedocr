@@ -38,7 +38,7 @@
         {% if num == 1 or num == page_obj.paginator.num_pages or num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
           
           {% if page_obj.number == num %}
-            <button class="pagination-btn px-3 py-1.5 rounded-lg text-sm text-white bg-{{ primary_bg }}" data-page="{{ num }}">{{ num }}</button>
+            <button class="pagination-btn px-3 py-1.5 rounded-lg text-sm text-white bg-{{ secondary_bg }}" data-page="{{ num }}">{{ num }}</button>
           {% else %}
             <button class="pagination-btn px-3 py-1.5 rounded-lg text-sm bg-pagination" data-page="{{ num }}">{{ num }}</button>
           {% endif %}

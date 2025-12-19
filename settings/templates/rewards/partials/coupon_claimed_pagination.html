@@ -8,7 +8,7 @@
 
   {% for num in page_obj.paginator.page_range %}
     {% if page_obj.number == num %}
-      <span class="px-3 py-1.5 rounded-lg text-sm text-white bg-{{ primary_bg }}">{{ num }}</span>
+      <span class="px-3 py-1.5 rounded-lg text-sm text-white bg-{{ secondary_bg }}">{{ num }}</span>
     {% else %}
       <button onclick="rewardClaimed('{{ search }}', '{{ start_date }}', '{{ end_date }}', {{ num }})"
               class="px-3 py-1.5 rounded-lg text-sm bg-pagination">
