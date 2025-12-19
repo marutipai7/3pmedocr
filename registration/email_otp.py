@@ -54,7 +54,7 @@ async def async_send_otp_email(user):
     return {"success": True, "otp_token": otp_secret}
 
 async def send_forgot_password_email(user, company_name: str, base_url: str):
-    token_obj = sync_to_async(PasswordResetToken.create_token)(user)
+    token_obj = await sync_to_async(PasswordResetToken.create_token)(user)
     reset_link = f"{base_url}/user/reset-password/{token_obj.token}/"
     subject = f"Reset your {company_name} password"
     body_text = f"""Hi {user.email},
@@ -71,10 +71,10 @@ async def send_forgot_password_email(user, company_name: str, base_url: str):
 
     Security Tip: Never share your password with anyone. This link will expire in 30 minutes for your protection."""
 
-    email_sent = await send_email(user.email, subject, body_text)
+    email_sent = send_email(user.email, subject, body_text)
     
     if not email_sent:
         return {"success": False, "message": "Failed to send email."}
-
+    print("reset link:", reset_link, "to:", user.email, "company:", company_name)
     return {"success": True, "message": "Password reset email sent."}
 

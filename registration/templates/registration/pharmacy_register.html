@@ -1,0 +1,591 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block title %}Register as Pharmacy{% endblock %}
+
+{% block content %}
+<body class="min-h-screen flex flex-col scroll">
+  <!-- Left curve -->
+  <div class="relative z-0">
+    <div class="absolute flex gap-2 items-center">
+      <img src="/static/images/left curve.svg" alt="">
+      <div class="bg-steel-blue w-14 h-14 rounded-full ml-4"></div>
+      <div class="bg-golden-orange w-9 h-9 rounded-full mb-24"></div>
+    </div>
+  </div>
+  <!-- Already Account link -->
+  <div class="absolute right-0 top-3 z-20">
+    <a href="" class="text-primary-color text-xs pr-10">Already have an account?</a>
+  </div>
+  <!-- Main content -->
+  <div class="flex-1 z-10">
+    <div class="max-w-3xl xl:max-w-4xl 2xl:max-w-7xl mx-auto p-10 pt-40 sm:py-20 text-primary-color">
+      <h1 class="text-4xl font-bold text-center">Register as Pharmacy</h1>
+      <form id="register-form" class="mt-10 flex flex-col gap-4" enctype="multipart/form-data" action="{% url 'save_pharmacy' %}" method="post">
+        {% csrf_token %}
+        <!-- Email -->
+        <div class="flex flex-col sm:flex-row gap-4">
+          <div class="flex flex-col gap-4 w-full sm:w-1/2">
+
+            <div class="relative w-full">
+              <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Email</label>
+              <input type="text" name="email" placeholder="contact@sunrisepharma.com"
+                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-4 w-full sm:w-1/2">
+            <!-- Email -->
+
+            <div class="flex items-center gap-2">
+              <div class="code-dropdown relative inline-block">
+                <div
+                  class="code-btn flex items-center border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
+                  <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                  <span class="selected-code mr-2">+91</span>
+                </div>
+                <div
+                  class="code-option absolute left-0 mt-0.5 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-20 max-h-44 overflow-y-auto scroll">
+                </div>
+              </div>
+              <div class="relative w-full">
+                <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Phone Number</label>
+                <input type="text" name="phone" placeholder="9876543210"
+                  class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="relative w-full">
+          <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Company Name</label>
+          <input type="text" name="company_name" placeholder="ABC  Pvt. Ltd"
+            class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <div class="flex flex-col gap-4 w-full sm:w-1/2">
+
+            <div class="dropdown relative inline-block flex-1">
+                <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Pharmacy Type</label>
+
+                <div class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
+                    <span class="mr-2 selected-value pharmacy-type-selected">Select Type</span>
+                    <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
+                </div>
+
+                <div class="dropdown-option absolute left-0 border border-primary-color bg-white hidden rounded-md w-full mt-0.5 z-20 max-h-44 overflow-y-auto scroll">
+                    {% for type in pharmacy_types %}
+                    <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
+                        <label value="{{ type.id }}" class="flex-1">{{ type.name }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <input type="hidden" name="pharmacy_type" id="pharmacy_type">
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-4 w-full sm:w-1/2">
+            <!--Services-->
+            <div class="dropdown relative inline-block flex-1">
+                <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Services You Offer</label>
+
+                <div class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
+                    <span class="mr-2 selected-value pharmacy-service-selected">Select Service</span>
+                    <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
+                </div>
+
+                <div class="dropdown-option absolute left-0 border border-primary-color bg-white hidden rounded-md w-full mt-0.5 z-20 max-h-44 overflow-y-auto scroll">
+                    {% for service in pharmacy_services %}
+                    <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
+                        <label value="{{ service.id }}" class="flex-1">{{ service.name }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <input type="hidden" name="services_offered" id="services_offered">
+            </div>
+          </div>
+        </div>
+        <div class="relative w-full">
+          <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Website URL</label>
+          <input type="text" name="website_url" placeholder="(optional)"
+            class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+        </div>
+        <div class="flex gap-4 items-end">
+          <!-- Days Dropdown -->
+          <div class="dropdown relative inline-block flex-1">
+              <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Pharmacy Timing</label>
+
+              <div class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
+                  <span class="mr-2 selected-value pharmacy-timing-selected">Select Timing</span>
+                  <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
+              </div>
+
+              <div class="dropdown-option absolute left-0 border border-primary-color bg-white hidden rounded-md w-full mt-0.5 z-20 max-h-44 overflow-y-auto scroll">
+                  {% for timing in pharmacy_timing %}
+                  <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer">
+                      <label value="{{ timing.id }}" class="flex-1">
+                          {{ timing.day_of_week }}
+                      </label>
+                  </div>
+                  {% endfor %}
+              </div>
+
+              <input type="hidden" name="pharmacy_timing" id="pharmacy_timing">
+          </div>
+        </div>
+
+
+
+        <!-- Address -->
+        <div class="relative w-full">
+          <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Address</label>
+          <textarea type="text" name="address" placeholder="12 MG Road, Near City Hospital"
+            class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal"></textarea>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4 otp-div">
+          <div class="flex flex-col gap-4 w-full sm:w-1/2">
+            <!-- City,Town,District -->
+            <div class="relative w-full">
+              <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">City,Town,District</label>
+              <input type="text" name="city" placeholder="Pune"
+                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+            </div>
+            <!-- State -->
+            <div class="relative w-full">
+              <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">State</label>
+              <input type="text" name="state" placeholder="New York"
+                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+            </div>
+
+            <!--File Access Confirmation Popup -->
+            <div
+              class="file-access-popup hidden fixed inset-0 bg-black/30 bg-opacity-70 flex items-center justify-center z-50">
+              <div class="bg-white rounded-lg p-6 max-w-sm w-full border border-primary-color shadow-lg">
+                <p class="mb-4">This site wants to access your files to upload an image. Do you allow?</p>
+                <div class="flex justify-end space-x-3">
+                  <div class="deny-access px-4 py-2 border border-primary-color text-black rounded-md cursor-pointer">
+                    No</div>
+                  <div class="allow-access px-4 py-2 bg-primary-color text-white rounded-md cursor-pointer">Yes</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Incorporation number & Document -->
+            <div class="upload-section relative w-full">
+              <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
+                Incorporation number & Document
+              </label>
+
+              <div class="flex items-center gap-2 w-full mt-2">
+                <input type="text" name="incorporation_number" placeholder="U85110MH2022PTC123456"
+                  class="flex-1 border border-primary-color rounded-md outline-none text-sm px-4 py-4" />
+                <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
+                  <span class="material-symbols-outlined text-dark-blue !text-base">close</span>
+                </div>
+                <div
+                  class="uploadTrigger h-14 w-21 flex flex-col items-center justify-center cursor-pointer border-dashed border-2 border-primary-color rounded-md">
+                  <span class="material-symbols-outlined text-primary-color !text-2xl upload-icon">upload</span>
+                  <span
+                    class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
+                </div>
+
+                <input type="file" name="incorporation_doc" accept="image/*" class="uploadInput hidden" />
+              </div>
+            </div>
+
+            <div class="flex items-center justify-end">
+              <label class="flex items-center gap-5">
+
+                <span class="status-text text-primary-color text-16-nr">Virus scan</span>
+                <input type="checkbox" class="check-scan scan-toggle" />
+              </label>
+            </div>
+
+            <!--  PAN Number & Document -->
+            <div class="upload-section relative w-full">
+              <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
+                PAN Number & Document
+              </label>
+
+              <div class="flex items-center gap-2 w-full mt-2">
+                <input type="text" name="pan_number" placeholder="AABCM1234F"
+                  class="flex-1 border border-primary-color rounded-md outline-none text-sm px-4 py-4" />
+
+                <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
+                  <span class="material-symbols-outlined text-dark-blue !text-base">close</span>
+                </div>
+                <div
+                  class="uploadTrigger h-14 w-21 flex flex-col items-center justify-center cursor-pointer border-dashed border-2 border-primary-color rounded-md">
+                  <span class="material-symbols-outlined text-primary-color !text-2xl upload-icon">upload</span>
+                  <span
+                    class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
+                </div>
+
+                <input type="file" name="pan_doc" accept="image/*" class="uploadInput hidden" />
+              </div>
+            </div>
+            <div class="flex items-center justify-end">
+              <label class="flex items-center gap-5">
+
+                <span class="status-text text-primary-color text-16-nr">Virus scan</span>
+                <input type="checkbox" class="check-scan scan-toggle" />
+              </label>
+            </div>
+
+            <!-- Medical License Number & Document -->
+            <div class="upload-section relative w-full">
+              <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
+                Medical License Number & Document
+              </label>
+
+              <div class="flex items-center gap-2 w-full mt-2">
+                <input type="text" name="medical_license_number" placeholder="MH/C/2022/123456"
+                  class="flex-1 border border-primary-color rounded-md outline-none text-sm px-4 py-4" />
+
+                <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
+                  <span class="material-symbols-outlined text-dark-blue !text-base">close</span>
+                </div>
+                <div
+                  class="uploadTrigger h-14 w-21 flex flex-col items-center justify-center cursor-pointer border-dashed border-2 border-primary-color rounded-md">
+                  <span class="material-symbols-outlined text-primary-color !text-2xl upload-icon">upload</span>
+                  <span
+                    class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
+                </div>
+
+                <input type="file" name="medical_license_doc" accept="image/*" class="uploadInput hidden" />
+              </div>
+            </div>
+            <div class="flex items-center justify-end">
+              <label class="flex items-center gap-5">
+
+                <span class="status-text text-primary-color text-16-nr">Virus scan</span>
+                <input type="checkbox" class="check-scan scan-toggle" />
+              </label>
+            </div>
+
+            <!-- Password -->
+            <div class="w-full relative">
+              <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Password</label>
+              <div class="relative">
+                <input id="Password" type="password" name="password" placeholder="***************"
+                  class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+                <span
+                  class="togglePassword material-symbols-outlined absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer text-primary-color"
+                  data-target="Password">
+                  visibility
+                </span>
+              </div>
+              <p class="text-xs mt-1">Password must be 8+ characters with uppercase, lowercase, number, and symbol</p>
+            </div>
+
+            <!-- Send OTP -->
+
+            <div>
+              <div
+                class="bg-primary-color cursor-pointer rounded-md p-[0.95rem] w-full text-white text-center mt-[2.0 rem] send-otp">
+                Send OTP
+              </div>
+              <p class="text-xs mt-1 flex justify-start otp">Didn’t get the code ?&nbsp;<span
+                  class="text-charcoal-black resend cursor-pointer">Resend</span></p>
+            </div>
+          </div>
+          <div class="flex flex-col gap-4 w-full sm:w-1/2">
+            <!-- Pincode -->
+            <div class="relative w-full">
+              <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Pincode</label>
+              <input type="text" name="pincode" placeholder="411001"
+                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+            </div>
+            <!-- Country -->
+            <div class="relative w-full">
+              <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Country</label>
+              <input type="text" name="country" placeholder="India"
+                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+            </div>
+
+            <!-- GST Number & Document -->
+            <div class="upload-section relative w-full">
+              <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
+                GST Number & Document
+              </label>
+
+              <div class="flex items-center gap-2 w-full mt-2">
+                <input type="text" name="gst_number" placeholder="27AABCM1234F1Z5"
+                  class="flex-1 border border-primary-color rounded-md outline-none text-sm px-4 py-4" />
+
+                <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
+                  <span class="material-symbols-outlined text-dark-blue !text-base">close</span>
+                </div>
+                <div
+                  class="uploadTrigger h-14 w-21 flex flex-col items-center justify-center cursor-pointer border-dashed border-2 border-primary-color rounded-md">
+                  <span class="material-symbols-outlined text-primary-color !text-2xl upload-icon">upload</span>
+                  <span
+                    class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
+                </div>
+
+                <input type="file" name="gst_doc" accept="image/*" class="uploadInput hidden" />
+              </div>
+            </div>
+
+            <div class="flex items-center justify-end">
+              <label class="flex items-center gap-5">
+
+                <span class="status-text text-primary-color text-16-nr">Virus scan</span>
+                <input type="checkbox" class="check-scan scan-toggle" />
+              </label>
+            </div>
+            <!-- TAN Number & Document-->
+            {% comment %} <div class="upload-section relative w-full">
+              <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
+                TAN Number & Document
+              </label>
+
+              <div class="flex items-center gap-2 w-full mt-2">
+                <input type="text" placeholder="MUMA12345B"
+                  class="flex-1 border border-primary-color rounded-md outline-none text-sm px-4 py-4" />
+
+                <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
+                  <span class="material-symbols-outlined text-dark-blue !text-base">close</span>
+                </div>
+                <div
+                  class="uploadTrigger h-14 w-21 flex flex-col items-center justify-center cursor-pointer border-dashed border-2 border-primary-color rounded-md">
+                  <span class="material-symbols-outlined text-primary-color !text-2xl upload-icon">upload</span>
+                  <span
+                    class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
+                </div>
+
+                <input type="file" accept="image/*" class="uploadInput hidden" />
+              </div>
+            </div>
+
+            <div class="flex items-center justify-end">
+              <label class="flex items-center gap-5">
+
+                <span class="status-text text-primary-color text-16-nr">Virus scan</span>
+                <input type="checkbox" class="check-scan scan-toggle" />
+              </label>
+            </div> {% endcomment %}
+
+            <!--  Store-front Image -->
+            <div class="upload-section relative w-full">
+              <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
+                Store-front Image
+              </label>
+
+              <div
+                class="flex items-center border-2 border-dashed border-primary-color rounded-md px-4 py-4 mt-2 relative">
+                <input type="text" class="flex-1 border-none outline-none text-sm bg-transparent" readonly />
+
+                <input type="file" name="store_front" accept="image/*" class="uploadInput hidden" />
+
+
+                <div class="absolute inset-0 flex items-center justify-center cursor-pointer uploadTrigger">
+                  <span class="material-symbols-outlined text-primary-color text-2xl">upload</span>
+                </div>
+
+              </div>
+            </div>
+
+
+            <div class="flex items-center justify-end">
+              <label class="flex items-center gap-5">
+                <span class="status-text text-primary-color text-16-nr">Virus scan</span>
+                <input type="checkbox" class="check-scan scan-toggle" />
+              </label>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="relative w-full">
+              <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Confirm Password</label>
+              <input id="ConfPassword" type="password" name="confirm_password" placeholder="***************"
+                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" /><span
+                data-target="ConfPassword"
+                class="togglePassword material-symbols-outlined absolute right-4 top-9 transform -translate-y-1/2 cursor-pointer text-primary-color">
+                visibility
+              </span>
+            </div>
+            <!--   -->
+            <div class="relative w-full mt-4">
+              <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Enter email OTP</label>
+              <input type="text" name="otp1" placeholder="123456"
+                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+              <p class="text-xs mt-1 flex justify-end mt-1 otp-message "></p>
+            </div>
+          </div>
+        </div>
+        <h1 class="text-3xl font-semibold">Contact person</h1>
+
+        <div class="flex flex-col sm:flex-row gap-4 otp-div">
+          <div class="flex flex-col gap-4 w-full sm:w-1/2">
+            <!-- Name -->
+            <div class="relative w-full">
+              <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Name</label>
+              <input type="text" name="contact_person_name" placeholder="Rahul Mehta"
+                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+            </div>
+            <!-- Designation -->
+
+            <div class="flex items-center gap-2">
+              <div class="dropdown code-dropdown relative inline-block">
+                <div
+                  class="dropdown-btn flex items-center border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
+                  <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                  <span class="selected-code mr-2">+91</span>
+                </div>
+                <div
+                  class="dropdown-option code-option absolute left-0 mt-0.5 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-20 max-h-44 overflow-y-auto scroll">
+                </div>
+              </div>
+              <div class="relative w-full">
+                <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Phone Number</label>
+                <input type="text" name="contact_person_phone" placeholder="9876543210"
+                  class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+              </div>
+            </div>
+
+
+            <div>
+              <div class="bg-primary-color rounded-md p-[0.95rem] w-full text-white text-center mt-6 send-otp">
+                Send OTP
+              </div>
+              <p class="text-xs mt-1 flex justify-start otp">Didn’t get the code ?&nbsp;<span
+                  class="text-charcoal-black resend cursor-pointer">Resend</span></p>
+            </div>
+
+          </div>
+          <div class="flex flex-col gap-4 w-full sm:w-1/2">
+            <!-- Role-->
+            <div class="relative w-full">
+              <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Role</label>
+              <input type="text" name="contact_person_role" placeholder="Manager"
+                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+            </div>
+            <div class="relative w-full ">
+              <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Referral Code</label>
+              <input type="text" name="referral_code" placeholder="(optional)"
+                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+              <p class="text-xs mt-1 ">Have a referral code? Enter it here to unlock benefits</p>
+            </div>
+
+
+            <!-- Send OTP -->
+            <div class="relative w-full">
+              <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">OTP Verifications</label>
+              <input type="text" name="otp2"
+                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+              <p class="text-xs mt-1 otp-message">Enter the 6 digit code send to registered Email/WhatsApp</p>
+            </div>
+          </div>
+        </div>
+        <!-- Terms of Service -->
+        <div class="flex gap-4 items-center">
+          <input type="checkbox" class="w-5 h-5 border-2 border-deep-muted-grey" />
+          <p>I agree to the Terms of Service, Privacy Policy & Disclaimer.</p>
+        </div>
+
+        <div class="flex justify-center items-center gap-4 mt-5">
+          <button type="button" onclick="window.location.href='{% url 'welcome' %}'" class="border border-primary-color rounded-md py-2 px-10 cursor-pointer back-to-roles">
+            Back
+          </button>
+          <button type="submit"
+            class="bg-primary-color text-white rounded-md py-2 px-10 cursor-pointer">Continue</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- Right curve -->
+  <div class="flex justify-end absolute right-0 -bottom-[100%] z-0">
+    <div class="flex gap-2 items-center -rotate-180">
+      <img src="/static/images/right curve.svg" alt="" class="rotate-180">
+      <div class="bg-steel-blue w-14 h-14 rounded-full ml-4"></div>
+      <div class="bg-golden-orange w-9 h-9 rounded-full mb-24"></div>
+    </div>
+  </div>
+
+</body>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const pharmacyFieldMappings = {
+        // BASIC INFO
+        email: ".relative",
+        phone: ".relative",
+        company_name: ".relative",
+        website_url: ".relative",
+
+        // DROPDOWNS
+        pharmacy_type: ".dropdown",
+        services_offered: ".dropdown",
+        pharmacy_timing: ".dropdown",
+
+        // ADDRESS FIELDS
+        address: ".relative",
+        city: ".relative",
+        state: ".relative",
+        pincode: ".relative",
+        country: ".relative",
+
+        // DOCUMENTS (UPLOAD SECTIONS)
+        incorporation_number: ".upload-section",
+        incorporation_doc: ".upload-section",
+
+        gst_number: ".upload-section",
+        gst_doc: ".upload-section",
+
+        pan_number: ".upload-section",
+        pan_doc: ".upload-section",
+
+        medical_license_number: ".upload-section",
+        medical_license_doc: ".upload-section",
+
+        store_front: ".upload-section",
+
+        // PASSWORD + OTP
+        password: ".relative",
+        confirm_password: ".relative",
+        otp1: ".relative",
+
+        // CONTACT PERSON
+        contact_person_name: ".relative",
+        contact_person_phone: ".relative",
+        contact_person_role: ".relative",
+        otp2: ".relative",
+
+        // OPTIONAL REFERRAL
+        referral_code: ".relative",
+    };
+
+    Object.entries(pharmacyFieldMappings).forEach(([field, selector]) => {
+
+        // Find the field
+        const element = document.querySelector(`[name="${field}"]`);
+
+        if (element) {
+            const wrapper = element.closest(selector);
+
+            if (wrapper && !wrapper.parentElement.querySelector(`span[data-error-for="${field}"]`)) {
+                const errorSpan = document.createElement("span");
+                errorSpan.setAttribute("data-error-for", field);
+                errorSpan.classList.add("text-xs", "text-dark-red", "mt-1", "block");
+                wrapper.insertAdjacentElement("afterend", errorSpan);
+            }
+        } else {
+
+            // If no input found → maybe radio/checkbox group  
+            const group = document.querySelectorAll(`input[name="${field}"]`);
+            if (group.length > 0) {
+                const wrapper = group[0].closest(selector);
+
+                if (wrapper && !wrapper.parentElement.querySelector(`span[data-error-for="${field}"]`)) {
+                    const errorSpan = document.createElement("span");
+                    errorSpan.setAttribute("data-error-for", field);
+                    errorSpan.classList.add("text-xs", "text-dark-red", "mt-1", "block");
+                    wrapper.insertAdjacentElement("afterend", errorSpan);
+                }
+            }
+        }
+    });
+});
+</script>
+
+{% endblock %}

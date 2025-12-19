@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.support_view, name='support_view'),
@@ -14,3 +16,8 @@ urlpatterns = [
     path('get-faq-lists/', views.faq_lists, name='get-faq-lists'),
     path('send-support-email/', views.send_support_email, name='send-support-email'),
 ]
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
+    )

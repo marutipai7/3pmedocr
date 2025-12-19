@@ -1,7 +1,6 @@
 import os
 import json
 import random
-import logging
 from coupon.models import Coupon
 from django.utils import timezone
 from donate.models import Donation
@@ -18,9 +17,16 @@ from django.views.decorators.http import require_GET, require_POST
 from .utils import dashboard_login_required, get_common_context, get_theme_colors
 from .models import SettingMenu, CouponPerformance,  CalendarEvent, TrendingCoupon
 from django.db.models import Sum, Count, Q, Max, F, ExpressionWrapper, DurationField
-from registration.models import MedicalProviderProfile, NGOProfile, ClientProfile, AdvertiserProfile, ContactPerson
-
-logger = logging.getLogger(__name__)
+from registration.models import (
+    PharmacyProfile, 
+    NGOProfile, 
+    ClientProfile, 
+    AdvertiserProfile, 
+    ContactPerson, 
+    LabProfile, 
+    DoctorProfile, 
+    HospitalProfile
+)
 
 @dashboard_login_required
 def dashboard_home(request):
@@ -119,21 +125,56 @@ def dashboard_home(request):
             })
             return render(request, "dashboard/home_advertiser.html", context)
 
-        elif user_type == 'provider':
-            provider_profile = MedicalProviderProfile.objects.get(user=user)
+        elif user_type == 'pharmacy':
+            pharmacy_profile = PharmacyProfile.objects.get(user=user)
             events = CalendarEvent.objects.all().order_by('date')
             
             context.update({
-                'provider_profile': provider_profile,
-                'user_display_name': provider_profile.company_name,
+                'pharmacy_profile': pharmacy_profile,
+                'user_display_name': pharmacy_profile.company_name,
                 'events': events,
                 'user': user,
             })
-            return render(request, "dashboard/home_provider.html", context)
+            return render(request, "dashboard/home_pharmacy.html", context)
+        
+        elif user_type == 'lab':
+            lab_profile = LabProfile.objects.get(user=user)
+            events = CalendarEvent.objects.all().order_by('date')
+            
+            context.update({
+                'lab_profile': lab_profile,
+                'user_display_name': lab_profile.lab_name,
+                'events': events,
+                'user': user,
+            })
+            return render(request, "dashboard/home_lab.html", context)
+        
+        elif user_type == 'doctor':
+            doctor_profile = DoctorProfile.objects.get(user=user)
+            events = CalendarEvent.objects.all().order_by('date')
+            
+            context.update({
+                'doctor_profile': doctor_profile,
+                'user_display_name': doctor_profile.clinic_name,
+                'events': events,
+                'user': user,
+            })
+            return render(request, "dashboard/home_doctor.html", context)
+        
+        elif user_type == 'hospital':
+            hospital_profile = HospitalProfile.objects.get(user=user)
+            events = CalendarEvent.objects.all().order_by('date')
+            
+            context.update({
+                'hospital_profile': hospital_profile,
+                'user_display_name': hospital_profile.hospital_name,
+                'events': events,
+                'user': user,
+            })
+            return render(request, "dashboard/home_hospital.html", context)
 
     except Exception as e:
         return render(request, "dashboard/not_found.html")
-    
     
 def get_coupon_chart_data(request):
     performances = CouponPerformance.objects.order_by('-date')[:8][::-1]  
@@ -144,6 +185,10 @@ def get_coupon_chart_data(request):
         'active_coupons': [perf.active_coupons for perf in performances],
     }
     return JsonResponse(data)
+
+def logout_view(request):
+    request.session.flush() 
+    return redirect('/') 
 
 @require_POST
 @dashboard_login_required
@@ -227,10 +272,6 @@ def get_upcoming_events(request):
         response_data = {'upcoming_events': events_data}
         return JsonResponse(response_data)
 
-def logout_view(request):
-    request.session.flush() 
-    return redirect('/') 
-
 @dashboard_login_required
 def saved(request):
     user = request.user_obj
@@ -281,15 +322,15 @@ def saved(request):
         })
         return render(request, "saved/saved_advertiser.html", context)
     
-    elif user.user_type == 'provider':
-        provider_profile = MedicalProviderProfile.objects.get(user=user)
+    elif user.user_type == 'pharmacy':
+        pharmacy_profile = PharmacyProfile.objects.get(user=user)
         context.update({
-            'provider_profile': provider_profile,
-            'user_display_name': provider_profile.company_name,
+            'pharmacy_profile': pharmacy_profile,
+            'user_display_name': pharmacy_profile.company_name,
             'user_profile': user,
             'user': user
         })
-        return render(request, "saved/saved_provider.html", context)
+        return render(request, "saved/saved_pharmacy.html", context)
     
     elif user.user_type == 'client':
         client_profile = ClientProfile.objects.get(user=user)
@@ -300,7 +341,6 @@ def saved(request):
             'user': user
         })
         return render(request, "saved/saved_client.html", context)
-
 
 @require_GET
 @dashboard_login_required
@@ -371,14 +411,13 @@ def coupon_detail(request, coupon_id):
             'redeemed_count': getattr(coupon, 'redeemed_count', 0),
             'validity': coupon.validity.strftime('%d/%m/%y,%H:%M') if getattr(coupon, 'validity', None) else '',
             'status': 'Active' if getattr(coupon, 'validity', None) and coupon.validity > timezone.now().date() else 'Expired',
-            'image_url': coupon.image.url if getattr(coupon, 'image', None) else '',
+            'image_url': coupon.image if coupon.image else '',
             'age_group': getattr(coupon.age_group, 'name', '') if hasattr(coupon, 'age_group') and coupon.age_group else '',
             'gender': getattr(coupon.gender, 'name', '') if hasattr(coupon, 'gender') and coupon.gender else '',
             'city': getattr(coupon.city, 'name', '') if hasattr(coupon, 'city') and coupon.city else '',
             'spending_power': getattr(coupon.spending_power, 'name', '') if hasattr(coupon, 'spending_power') and coupon.spending_power else '',
         }
     except Exception as e:
-        logger.error(f"Error building coupon detail data: {e}", exc_info=True)
         return JsonResponse({'error': 'Server error'}, status=500)
     return JsonResponse(data)
 
@@ -427,7 +466,6 @@ def platform_bill(request, coupon_id):
             'address': os.environ.get("ADDRESS", ""),
         }
     except Exception as e:
-        logger.error(f"Error building coupon detail data: {e}", exc_info=True)
         return JsonResponse({'error': 'Server error'}, status=500)
     return JsonResponse(data)
 
@@ -482,20 +520,17 @@ def get_donation_history(request):
             "donation_history": page_obj.object_list,
             'today': date.today(),
         })
-    elif user.user_type == 'provider':
-        html = render_to_string("provider/partials/donate-history.html", {
+    elif user.user_type == 'pharmacy':
+        html = render_to_string("pharmacy/partials/donate-history.html", {
             "donation_history": page_obj.object_list,
             'today': date.today(),
         })
-    logger.info(f"User {user.id} fetched donation history: {query}")
-    logger.info(f"user type: {user.user_type} has {donations.count()} donations")
     return JsonResponse({
         "html": html,
         "current_page": page_obj.number,
         "total_pages": paginator.num_pages,
         "total_items": paginator.count,  
     })
-
 
 @dashboard_login_required    
 def get_donate_bill(request, donation_id):
@@ -506,7 +541,7 @@ def get_donate_bill(request, donation_id):
 
     contact_person = ContactPerson.objects.filter(
         profile_type=user.user_type,
-        profile_id=user
+        profile=user
     ).first() 
 
     response_data = {
@@ -522,7 +557,6 @@ def get_donate_bill(request, donation_id):
     }
     return JsonResponse(response_data)
 
-
 @dashboard_login_required    
 def get_platform_bill(request, donation_id):
     user = request.user_obj
@@ -532,7 +566,7 @@ def get_platform_bill(request, donation_id):
     ngo_profile = NGOProfile.objects.filter(user=ngo_user).first()
     contact_person = ContactPerson.objects.filter(
         profile_type=user.user_type,
-        profile_id=user
+        profile=user
     ).first()
 
     response_data = {
@@ -564,13 +598,10 @@ def toggle_saved_donation(request):
         donation.saved = (action == 'save')
         donation.save()
 
-        logger.info(f"User {request.user_obj} set saved={donation.saved} for donation {donation_id} (action={action})")
         return JsonResponse({'success': True, 'saved': donation.saved})
 
     except Donation.DoesNotExist:
-        logger.warning(f"Donation {donation_id} not found or does not belong to user {request.user_obj}")
         return JsonResponse({'success': False, 'error': 'Donation not found'}, status=404)
-
 
 @dashboard_login_required
 @require_GET
@@ -581,14 +612,11 @@ def export_donation_history(request):
         "donation_history": donations,
         'today': date.today(),
     })
-    logger.info(f"Exporting donation history for user {user} with {donations.count()} records")
     return JsonResponse({
         "html": html,
         "total_items": donations.count(),
     })
 
-
-# ngo graph 
 @require_GET
 @dashboard_login_required
 def get_ngo_graph_data(request):
@@ -649,41 +677,8 @@ def get_ngo_graph_data(request):
         }
     })
     
-
-
-def get_ngo_graph_data_old(request):
-    today = timezone.now().date()
-
-    labels = []
-    total_post = []
-    total_views = []
-    target_donation = []
-    donation_received = []
-
-    for i in range(7):
-        date = today - timezone.timedelta(days=6 - i)
-        posts = NGOPost.objects.filter(created_at__date=date)
-
-        labels.append(date.strftime('%d-%b'))
-
-        total_post.append(posts.count())
-        total_views.append(posts.aggregate(Sum('views'))['views__sum'] or 0)
-        target_donation.append(posts.aggregate(Sum('target_donation'))['target_donation__sum'] or 0)
-        donation_received.append(posts.aggregate(Sum('donation_received'))['donation_received__sum'] or 0)
-
-    return JsonResponse({
-        'labels': labels,
-        'datasets': {
-            'Total Post': total_post,
-            'Total Views': total_views,
-            'Target Donation': target_donation,
-            'Donation Received': donation_received,
-        }
-    })
-
-
 @dashboard_login_required
-def advertiser_advance(request):
+def advance(request):
     user = request.user_obj
     context = get_common_context(request, user)
     if user.user_type == 'advertiser':
@@ -697,30 +692,64 @@ def advertiser_advance(request):
 
         return render(request, "advertiser/advertiser_advance.html", context)
     elif user.user_type == 'ngo':
-        provider_profile = NGOProfile.objects.get(user=user)
+        pharmacy_profile = NGOProfile.objects.get(user=user)
         context.update({
-            'provider_profile': provider_profile,
-            'user_display_name': provider_profile.company_name,
+            'pharmacy_profile': pharmacy_profile,
+            'user_display_name': pharmacy_profile.company_name,
             'user_profile': user,
             'user':user
         })
         return render(request, "advertiser/advertiser_advance.html", context)
-    elif user.user_type == 'provider':
-        provider_profile = MedicalProviderProfile.objects.get(user=user)
+    elif user.user_type == 'pharmacy':
+        pharmacy_profile = PharmacyProfile.objects.get(user=user)
         context.update({
-            'provider_profile': provider_profile,
-            'user_display_name': provider_profile.company_name,
+            'pharmacy_profile': pharmacy_profile,
+            'user_display_name': pharmacy_profile.company_name,
             'user_profile': user,
             'user':user
         })
         return render(request, "advertiser/advertiser_advance.html", context)
-
+    elif user.user_type == 'lab':
+        lab_profile = LabProfile.objects.get(user=user)
+        context.update({
+            'lab_profile': lab_profile,
+            'user_display_name': lab_profile.lab_name,
+            'user_profile': user,
+            'user':user
+        })
+        return render(request, "lab/lab_advance.html", context)
+    elif user.user_type == 'pharmacy':
+        pharmacy_profile = PharmacyProfile.objects.get(user=user)
+        context.update({
+            'pharmacy_profile': pharmacy_profile,
+            'user_display_name': pharmacy_profile.company_name,
+            'user_profile': user,
+            'user':user
+        })
+        return render(request, "pharmacy/pharmacy_advance.html", context)
+    
 @dashboard_login_required
-def advertiser_advance_history(request):
+def advance_history(request):
     user = request.user_obj
     context = get_common_context(request, user)
-    return render(request, "advertiser/advance-history.html", context)
-
+    if user.user_type == 'advertiser':
+        advertiser_profile = AdvertiserProfile.objects.get(user=user)
+        context.update({
+            'advertiser_profile': advertiser_profile,
+            'user_display_name': advertiser_profile.company_name,
+            'user_profile': user,
+            'user': user
+        })
+        return render(request, "advertiser/advance-history.html", context)
+    elif user.user_type == 'pharmacy':
+        pharmacy_profile = PharmacyProfile.objects.get(user=user)
+        context.update({
+            'pharmacy_profile': pharmacy_profile,
+            'user_display_name': pharmacy_profile.company_name,
+            'user_profile': user,
+            'user':user
+        })
+        return render(request, "pharmacy/pharmacy_advance_history.html", context)
 
 @dashboard_login_required
 def cart(request):
@@ -736,11 +765,11 @@ def cart(request):
         })
 
         return render(request, "dashboard/cart.html", context)
-    elif user.user_type == 'provider':
-        provider_profile = MedicalProviderProfile.objects.get(user=user)
+    elif user.user_type == 'pharmacy':
+        pharmacy_profile = PharmacyProfile.objects.get(user=user)
         context.update({
-            'provider_profile': provider_profile,
-            'user_display_name': provider_profile.company_name,
+            'pharmacy_profile': pharmacy_profile,
+            'user_display_name': pharmacy_profile.company_name,
             'user_profile': user,
             'user':user
         })

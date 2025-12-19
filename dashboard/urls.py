@@ -9,7 +9,7 @@ urlpatterns = [
     path('get-upcoming-events/', views.get_upcoming_events, name='get_upcoming_events'),
     path('ngo-graph-data/', views.get_ngo_graph_data, name='ngo-graph-data'),
     path('saved/', views.saved, name='saved'),
-    path('advance/', views.advertiser_advance, name='advertiser-advance'),
+    path('advance/', views.advance, name='advance'),
     path('cart/', views.cart, name='cart'),
     path('saved-coupon-history/', views.adv_saved_coupon_history, name='saved_coupon_history'),
     path('coupon_detail/<int:coupon_id>/', views.coupon_detail, name='coupon_detail'),
@@ -20,5 +20,5 @@ urlpatterns = [
     path('toggle-saved/donation/', views.toggle_saved_donation, name='toggle_saved_donation'),
     path('get-donate-bill/<int:donation_id>/', views.get_donate_bill, name='get-donate-bill'),
     path('get-platform-bill/<int:donation_id>/', views.get_platform_bill, name='get-platform-bill'),
-    path('advance/advance-history/', views.advertiser_advance_history, name='advance-history'),
+    path('advance/advance-history/', views.advance_history, name='advance-history'),
 ]

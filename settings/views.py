@@ -1,57 +1,67 @@
-import re
 import os
+import re
 import json
+from django.utils import timezone
+from datetime import timedelta
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from maps.models import SearchHistory, SavedLocation
-from dashboard.utils import dashboard_login_required, get_common_context
-from registration.models import *
-from django.contrib.auth.hashers import make_password, check_password
-from django.core.files.storage import default_storage
-from django.views.decorators.http import require_POST
-from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from django.template.loader import render_to_string
+from django.core.validators import validate_email
 from django.db import transaction
-import logging
+from django.views.decorators.http import (
+    require_POST,
+    require_GET,
+)
+from django.contrib.auth.hashers import make_password, check_password
+from dashboard.utils import (
+    dashboard_login_required,
+    get_common_context,
+)
+from settings.models import SellerSubscription
+from registration.models import (
+    User,
+    NGOProfile,
+    AdvertiserProfile,
+    ClientProfile,
+    PharmacyProfile,
+    ContactPerson,
+    LabProfile,
+    DoctorProfile,
+    HospitalProfile,
+    DoctorEducation,
+    DoctorSpeciality,
+    DoctorExperience,
+    PharmacyServices,
+    PharmacyType,
+    PharmacyTiming,
+    LabService,
+    LabFacility,
+    LabTiming,
+    AdServiceReq,
+    AdvertiserType,
+    ClientType,
+    ClientService,
+    NGOService,
+)
+from registration.views import (
+    validate_and_save_file,
+)
+from support.models import (
+    IssueType,
+    IssueOption,
+)
+from maps.models import SearchHistory, SavedLocation
 from coupon.models import Coupon
 from donate.models import Donation
 from ngopost.models import NGOPost
 
-logger = logging.getLogger(__name__)
-
-ALLOWED_EXTENSIONS = {'.pdf', '.jpg', '.jpeg', '.png'}
-MAX_FILE_SIZE = 5 * 1024 * 1024 
-
+## Settings
 def load_country_codes():
     json_path = os.path.join(settings.BASE_DIR, 'static', 'data', 'countryCodes.json')
     with open(json_path, 'r', encoding='utf-8') as f:
         return json.load(f)
     
-def is_file_clean(file_obj):
-    return True
-
-def validate_and_save_file(file_obj, subdir, field_label, user_type='common'):
-    if not file_obj:
-        return '', f"{field_label} is required."
-
-    ext = os.path.splitext(file_obj.name)[1].lower()
-    if ext not in ALLOWED_EXTENSIONS:
-        return '', f"{field_label} must be a PDF or image file."
-
-    if file_obj.size > MAX_FILE_SIZE:
-        return '', f"{field_label} must be under 5MB."
-
-    if not is_file_clean(file_obj):
-        return '', f"{field_label} failed virus scan."
-
-    # 👇 Now user_type is part of the path — flexible for all
-    upload_dir = os.path.join(user_type + '_docs', subdir)
-    os.makedirs(os.path.join(settings.MEDIA_ROOT, upload_dir), exist_ok=True)
-    filename = default_storage.save(os.path.join(upload_dir, file_obj.name), file_obj)
-    return filename, None
-
 def validate_email_phone(post_data, errors):
     email = post_data.get("email", "").strip()
     if not email:
@@ -69,21 +79,57 @@ def validate_email_phone(post_data, errors):
 @dashboard_login_required
 def settings_page(request):
     user = request.user_obj
+    user_type = user.user_type
+
     context = get_common_context(request, user)
     context.update(get_base_context(user))
+    context["active_main_tab"] = request.GET.get("tab", "settings")
     
+    issue_types = IssueType.objects.filter(
+        user_types__contains=[user_type]
+    )
+
+    issue_options = IssueOption.objects.filter(
+        issue_type__in=issue_types,
+        user_types__contains=[user_type]
+    ).select_related("issue_type")
+
+    context.update({
+        "issue_types": issue_types,
+        "issue_options": issue_options,
+    })
+
+
     user_type_handlers = {
         'ngo': handle_ngo_profile,
         'client': handle_client_profile,
         'advertiser': handle_advertiser_profile,
-        'provider': handle_provider_profile,
+        'pharmacy': handle_pharmacy_profile,
+        'lab': handle_lab_profile,
+        'hospital': handle_hospital_profile,
+        'doctor': handle_doctor_profile,
     }
+
     handler_func = user_type_handlers.get(user.user_type)
     if handler_func:
         context.update(handler_func(user))
+
     context['country_codes'] = load_country_codes()
-    # print(context)
-    return render(request, 'settings/settings_page.html', context)
+
+    template_map = {
+        "pharmacy": "seller_settings/pharmacy_settings.html",
+        "lab": "seller_settings/lab_settings.html",
+        "hospital": "seller_settings/hospital_settings.html",
+        "doctor": "seller_settings/doctor_settings.html",
+    }
+
+    template_name = template_map.get(
+        user.user_type,
+        "settings/settings_page.html"
+    )
+
+    return render(request, template_name, context)
+
 
 def get_base_context(user):
     context = {
@@ -98,19 +144,21 @@ def get_base_context(user):
         'push_notifications': user.push_notifications,
         'regulatory_alerts': user.regulatory_alerts,
         'promotions_and_offers': user.promotions_and_offers,
+        'payment_notifications': user.payment_notifications,
+        'location_notification': user.location_notification,
         'quite_mode': user.quite_mode,
         'quite_mode_start_time': user.quite_mode_start_time,
         'quite_mode_end_time': user.quite_mode_end_time,
     }
     return context
 
-def handle_contact_person(profile_type, profile_id):
-    contact = ContactPerson.objects.filter(profile_type=profile_type, profile_id=profile_id).first()
+def handle_contact_person(profile_type, profile):
+    contact = ContactPerson.objects.filter(profile_type=profile_type, profile=profile).first()
     return {
-        'contact_name': contact.name,
-        'contact_phone_country_code': contact.phone_country_code,
-        'contact_phone_number': contact.phone_number,
-        'contact_role': contact.role
+        'contact_name': contact.name if contact else '',
+        'contact_phone_country_code': contact.phone_country_code if contact else '',
+        'contact_phone_number': contact.phone_number if contact else '',
+        'contact_role': contact.role if contact else ''
     }
 
 def handle_advertiser_profile(user):
@@ -206,24 +254,21 @@ def handle_ngo_profile(user):
     data.update(handle_contact_person(user.user_type, user))
     return data
 
-def handle_provider_profile(user):
-    profile = MedicalProviderProfile.objects.filter(user=user).first()
-    all_types = MedicalProviderType.objects.filter(is_active=True)
-    all_services = MedicalProviderServices.objects.filter(is_active=True)
-    all_workingdays = MedicalProviderWorkingDays.objects.filter(is_active=True)
+def handle_pharmacy_profile(user):
+    profile = PharmacyProfile.objects.filter(user=user).first()
+    all_types = PharmacyType.objects.filter(is_active=True)
+    all_services = PharmacyServices.objects.filter(is_active=True)
+    all_workingdays = PharmacyTiming.objects.filter(is_active=True)
     data = {
         'company_name': profile.company_name,
-        'provider_type': profile.provider_type,
+        'pharmacy_type': profile.pharmacy_type,
         'all_types': all_types,
         'services_offered': profile.services_offered,
         'all_services': all_services,
-        'working_days': profile.working_days,
         'all_workingdays': all_workingdays,
-        'website_url': profile.website_url,
         'address': profile.address,
         'city': profile.city,
         'state': profile.state,
-        'country': profile.country,
         'pincode': profile.pincode,
         'referral_code': profile.referral_code or '',
         'incorporation_number': profile.incorporation_number,
@@ -234,11 +279,122 @@ def handle_provider_profile(user):
         'medical_license_doc_path': os.path.basename(profile.medical_license_doc_path) if profile.medical_license_doc_path else "",
         'pan_number': profile.pan_number,
         'pan_doc_path': os.path.basename(profile.pan_doc_path) if profile.pan_doc_path else "",
-        'tan_number': profile.tan_number,
-        'tan_doc_path': os.path.basename(profile.tan_doc_path) if profile.tan_doc_path else "",
         'storefront_image_path': os.path.basename(profile.storefront_image_path) if profile.storefront_image_path else "",
     }
     data.update(handle_contact_person(user.user_type, user))
+    return data
+
+def handle_lab_profile(user):
+    profile = LabProfile.objects.filter(user=user).first()
+    all_timings = LabTiming.objects.filter(is_active=True)
+    all_services = LabService.objects.filter(is_active=True)
+    all_facilities = LabFacility.objects.filter(is_active=True)
+
+    data = {
+        'lab_name' : profile.lab_name,
+        'owner_name': profile.owner_name,
+        'contact_number': profile.contact_number,
+        'alt_contact_number': profile.alt_contact_number,
+        'lab_registration_number': profile.lab_registration_number,
+        'address': profile.address,
+        'city': profile.city,
+        'state': profile.state,
+        'country': profile.country,
+        'pincode': profile.pincode,
+        'all_timings': all_timings,
+        'lab_timing': profile.lab_timing,
+        'services_selected': profile.services.all(),
+        'all_services': all_services,
+        'facilities_selected': profile.facilities.all(),
+        'all_facilities': all_facilities,
+        'lab_certificate_number': profile.lab_certificate_number,
+        'lab_certificate_path': os.path.basename(profile.lab_certificate_path) if profile.lab_certificate_path else "",
+        'identity_proof_aadhar_number': profile.identity_proof_aadhar_number,
+        'identity_proof_aadhar_path': os.path.basename(profile.identity_proof_aadhar_path) if profile.identity_proof_aadhar_path else "",
+        'identity_proof_pan_number': profile.identity_proof_pan_number,
+        'identity_proof_pan_path': os.path.basename(profile.identity_proof_pan_path) if profile.identity_proof_pan_path else "",
+        'gov_license_number': profile.gov_license_number,
+        'gov_license_path': os.path.basename(profile.gov_license_path) if profile.gov_license_path else "",
+        'lab_photo_path': os.path.basename(profile.lab_photo_path) if profile.lab_photo_path else "",
+        'is_verified': profile.is_verified,
+        'verification_status': profile.verification_status,
+        'rejection_reason': profile.rejection_reason,
+        'verified_at': profile.verified_at,
+        'referral_code': profile.referral_code or '',
+    }
+    return data
+
+def handle_hospital_profile(user):
+    profile = HospitalProfile.objects.filter(user=user).first()
+    data = {
+        'hospital_name' : profile.hospital_name,
+        'owner_name': profile.owner_name,
+        'contact_no': profile.contact_no,
+        'alternate_contact_no': profile.alternate_contact_no,
+        'address': profile.address,
+        'city': profile.city,
+        'state': profile.state,
+        'pincode': profile.pincode,
+        'hospital_timing': profile.hospital_timing,
+        'home_visit': profile.home_visit,
+        'registration_no': profile.registration_no,
+        'registration_certificate_path': os.path.basename(profile.registration_certificate_path) if profile.registration_certificate_path else "",
+        'aadhar_card_no': profile.aadhar_card_no,
+        'aadhar_doc_path': os.path.basename(profile.aadhar_doc_path) if profile.aadhar_doc_path else "",
+        'pan_card_no': profile.pan_card_no,
+        'pan_doc_path': os.path.basename(profile.pan_doc_path) if profile.pan_doc_path else "",
+        'hospital_logo_path': os.path.basename(profile.hospital_logo_path) if profile.hospital_logo_path else "",
+        'hospital_photo_path': os.path.basename(profile.hospital_photo_path) if profile.hospital_photo_path else "",
+        'phone_for_otp': profile.phone_for_otp,
+        'is_verified': profile.is_verified,
+        'verification_status': profile.verification_status,
+        'rejection_reason': profile.rejection_reason,
+        'verified_at': profile.verified_at,
+        'referral_code': profile.referral_code or '',
+    }
+    return data
+
+def handle_doctor_profile(user):
+    profile = DoctorProfile.objects.filter(user=user).first()
+    all_speciality = DoctorSpeciality.objects.filter(is_active=True)
+    all_education = DoctorEducation.objects.filter(is_active=True)
+    all_experience = DoctorExperience.objects.filter(is_active=True)
+    data = {
+        'full_name': profile.full_name,
+        'gender': profile.gender,
+        'age': profile.age,
+        'specialty': profile.specialty,
+        'all_speciality': all_speciality,
+        'education': profile.education,
+        'all_education': all_education,
+        'experience': profile.experience,
+        'all_experience': all_experience,
+        'profile_photo_path': profile.profile_photo_path,
+        'clinic_name': profile.clinic_name,
+        'owner_name': profile.owner_name,
+        'contact_number': profile.contact_number,
+        'alt_contact_number': profile.alt_contact_number,
+        'address': profile.full_address,
+        'city': profile.city,
+        'state': profile.state,
+        'pincode': profile.pincode,
+        'clinic_timing_from': profile.clinic_timing_from,
+        'clinic_timing_to': profile.clinic_timing_to,
+        'home_visit_available': profile.home_visit_available,
+        'registration_number': profile.registration_number,
+        'registration_certificate_path': os.path.basename(profile.registration_certificate_path) if profile.registration_certificate_path else "",
+        'aadhar_number': profile.aadhar_number,
+        'aadhar_doc_path': os.path.basename(profile.aadhar_doc_path) if profile.aadhar_doc_path else "",
+        'pan_number': profile.pan_number,
+        'pan_doc_path': os.path.basename(profile.pan_doc_path) if profile.pan_doc_path else "",
+        'clinic_logo_path': os.path.basename(profile.clinic_logo_path) if profile.clinic_logo_path else "",
+        'clinic_photo_path': os.path.basename(profile.clinic_photo_path) if profile.clinic_photo_path else "",
+        'is_verified': profile.is_verified,
+        'verification_status': profile.verification_status,
+        'rejection_reason': profile.rejection_reason,
+        'verified_at': profile.verified_at,
+        'referral_code': profile.referral_code or '',
+    }
     return data
 
 def logout_view(request):
@@ -252,7 +408,7 @@ def update_notification_field(request):
     data = json.loads(request.body)
     field = data.get("field")
     value = data.get("value")
-    if field in ["inapp_notifications", "email_notifications", "push_notifications", "regulatory_alerts", "promotions_and_offers", "quite_mode"]:
+    if field in ["inapp_notifications", "email_notifications", "push_notifications", "regulatory_alerts", "promotions_and_offers", "quite_mode", "payment_notifications", "location_notification"]:
         setattr(user, field, value)
     elif field in ["quite_mode_start_time", "quite_mode_end_time"]:
         setattr(user, field, value if value else None)
@@ -295,7 +451,7 @@ def update_user_document(request):
         'ngo': NGOProfile,
         'advertiser': AdvertiserProfile,
         'client': ClientProfile,
-        'provider': MedicalProviderProfile,
+        'pharmacy': PharmacyProfile,
     }.get(user_type)
 
     if not profile_model:
@@ -363,7 +519,7 @@ def update_ngo_profile(request):
                 setattr(ngo_profile, field, data.get(field))
             ngo_profile.ngo_services = NGOService.objects.get(name=data.get("ngo_services"))
             ngo_profile.save()
-        contact_person = ContactPerson.objects.filter(profile_type='ngo', profile_id=user).first()
+        contact_person = ContactPerson.objects.filter(profile_type='ngo', profile=user).first()
 
         if contact_person:
             contact_person.name = request.POST.get('contact_name')
@@ -383,7 +539,7 @@ def update_advertiser_profile(request):
     
     validate_email_phone(post_data, errors)
     
-    required_fields = ["company_name", "city", "state", "country", "pincode"]
+    required_fields = ["company_name", "phone","address", "city", "state", "country", "pincode", "contact_name", "contact_phone_number", "contact_role"]
     for field in required_fields:
         if not post_data.get(field):
             errors[field] = f"{field.replace('_', ' ').capitalize()} is required."
@@ -394,7 +550,7 @@ def update_advertiser_profile(request):
     try:
         with transaction.atomic():
             # --- Update User ---
-            user.email = post_data.get('email')
+            # user.email = post_data.get('email')
             user.phone_country_code = post_data.get("countryCodes")
             user.phone_number = post_data.get("phone")
             user.save()
@@ -405,6 +561,7 @@ def update_advertiser_profile(request):
             advertiser_profile.advertiser_type = AdvertiserType.objects.get(name=post_data.get("advertiser_type"))
             advertiser_profile.ad_services_required = AdServiceReq.objects.get(name=post_data.get("company_services") )
             advertiser_profile.website_url = post_data.get("website_url")
+            advertiser_profile.address = post_data.get("address")
             advertiser_profile.city = post_data.get("city")
             advertiser_profile.state = post_data.get("state")
             advertiser_profile.country = post_data.get("country")
@@ -417,7 +574,7 @@ def update_advertiser_profile(request):
             if contact_name or contact_phone:
                 contact, _ = ContactPerson.objects.get_or_create(
                     profile_type="advertiser",
-                    profile_id=user
+                    profile=user
                 )
                 contact.name = contact_name
                 contact.role = post_data.get("contact_role")
@@ -474,7 +631,7 @@ def update_client_profile(request):
             if contact_name or contact_phone:
                 contact, _ = ContactPerson.objects.get_or_create(
                     profile_type="advertiser",
-                    profile_id=user
+                    profile=user
                 )
                 contact.name = contact_name
                 contact.role = post_data.get("contact_role")
@@ -490,14 +647,13 @@ def update_client_profile(request):
 
 @require_POST
 @dashboard_login_required
-def update_provider_profile(request):
+def update_pharmacy_profile(request):
     post_data = request.POST
     errors = {}
     user = request.user_obj  
 
-    # --- Validate ---
     validate_email_phone(post_data, errors)
-    required_fields = ["company_name", "city", "state", "country", "pincode"]
+    required_fields = ["company_name", "city", "state", "pincode"]
     for field in required_fields:
         if not post_data.get(field):
             errors[field] = f"{field.replace('_', ' ').capitalize()} is required."
@@ -513,35 +669,31 @@ def update_provider_profile(request):
             user.phone_number = post_data.get("phone")
             user.save()
 
-            # --- Update ProviderProfile ---
-            provider_profile = get_object_or_404(MedicalProviderProfile, user=user)
-            provider_profile.company_name = post_data.get("company_name")
-            provider_profile.website_url = post_data.get("website_url")
-            provider_profile.address = post_data.get("address")
-            provider_profile.city = post_data.get("city")
-            provider_profile.state = post_data.get("state")
-            provider_profile.country = post_data.get("country")
-            provider_profile.pincode = post_data.get("pincode")
+            # --- Update Pharmacy Profile ---
+            pharmacy_profile = get_object_or_404(PharmacyProfile, user=user)
+            pharmacy_profile.company_name = post_data.get("company_name")
+            pharmacy_profile.website_url = post_data.get("website_url")
+            pharmacy_profile.address = post_data.get("address")
+            pharmacy_profile.city = post_data.get("city")
+            pharmacy_profile.state = post_data.get("state")
+            pharmacy_profile.pincode = post_data.get("pincode")
 
-            provider_type_value = post_data.get("provider_type")
-            if provider_type_value:
-                provider_profile.provider_type = get_object_or_404(MedicalProviderType, name=provider_type_value)
+            pharmacy_type_value = post_data.get("pharmacy_type")
+            if pharmacy_type_value:
+                pharmacy_profile.pharmacy_type = get_object_or_404(PharmacyType, name=pharmacy_type_value)
             services_offered_value = post_data.get("services_offered")
             if services_offered_value:
-                provider_profile.services_offered = get_object_or_404(MedicalProviderServices, name=services_offered_value)
-            working_days_value = post_data.get("working_days")
-            if working_days_value:
-                provider_profile.working_days = get_object_or_404(MedicalProviderWorkingDays, name=working_days_value)
+                pharmacy_profile.services_offered = get_object_or_404(PharmacyServices, name=services_offered_value)
 
-            provider_profile.save()
+            pharmacy_profile.save()
 
             # --- Update or Create ContactPerson ---
             contact_name = post_data.get("contact_name")
             contact_phone = post_data.get("contact_phone_number")
             if contact_name or contact_phone:
                 contact, _ = ContactPerson.objects.get_or_create(
-                    profile_type="provider",
-                    profile_id=user
+                    profile_type="pharmacy",
+                    profile=user
                 )
                 contact.name = contact_name
                 contact.role = post_data.get("contact_role")
@@ -549,8 +701,96 @@ def update_provider_profile(request):
                 contact.phone_number = contact_phone
                 contact.save()
 
-        return JsonResponse({'success': True, 'message': 'Provider profile updated successfully'})
+        return JsonResponse({'success': True, 'message': 'Pharmacy profile updated successfully'})
     
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)}, status=500)
+
+@require_POST
+@dashboard_login_required
+def update_lab_profile(request):
+    post_data = request.POST
+    errors = {}
+    user = request.user_obj  
+    
+    validate_email_phone(post_data, errors)
+    required_fields = ["lab_name", "city", "state", "pincode"]
+    for field in required_fields:
+        if not post_data.get(field):
+            errors[field] = f"{field.replace('_', ' ').capitalize()} is required."
+
+    if errors:
+        return JsonResponse({"success": False, "errors": errors}, status=400)
+    
+    try:
+        with transaction.atomic():
+            user.email = post_data.get('email')
+            user.phone_country_code = post_data.get("countryCodes")
+            user.save()
+            
+            lab_profile = get_object_or_404(LabProfile, user=user)
+            lab_profile.save()
+            
+            return JsonResponse({'success': True, 'message': 'Lab profile updated successfully'})
+
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)}, status=500)
+
+@require_POST
+@dashboard_login_required
+def update_hospital_profile(request):
+    post_data = request.POST
+    errors = {}
+    user = request.user_obj  
+    validate_email_phone(post_data, errors)
+    required_fields = ["hospital_name", "city", "state", "pincode"]
+    for field in required_fields:
+        if not post_data.get(field):
+            errors[field] = f"{field.replace('_', ' ').capitalize()} is required."
+
+    if errors:
+        return JsonResponse({"success": False, "errors": errors}, status=400)
+    
+    try:
+        with transaction.atomic():
+            user.email = post_data.get('email')
+            user.phone_country_code = post_data.get("countryCodes")
+            user.save()
+            
+            hospital_profile = get_object_or_404(HospitalProfile, user=user)
+            hospital_profile.save()
+            
+            return JsonResponse({'success': True, 'message': 'Hospital profile updated successfully'})
+
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)}, status=500)
+
+@require_POST
+@dashboard_login_required
+def update_doctor_profile(request):
+    post_data = request.POST
+    errors = {}
+    user = request.user_obj  
+    validate_email_phone(post_data, errors)
+    required_fields = ["clinic_name", "city", "state", "pincode"]
+    for field in required_fields:
+        if not post_data.get(field):
+            errors[field] = f"{field.replace('_', ' ').capitalize()} is required."
+
+    if errors:
+        return JsonResponse({"success": False, "errors": errors}, status=400)
+    
+    try:
+        with transaction.atomic():
+            user.email = post_data.get('email')
+            user.phone_country_code = post_data.get("countryCodes")
+            user.save()
+            
+            doctor_profile = get_object_or_404(DoctorProfile, user=user)
+            doctor_profile.save()
+            
+            return JsonResponse({'success': True, 'message': 'Doctor profile updated successfully'})
+
     except Exception as e:
         return JsonResponse({"success": False, "message": str(e)}, status=500)
 
@@ -560,7 +800,6 @@ def delete_account(request):
     user = request.user_obj
     data = json.loads(request.body)
     reason = data.get("reason", "No reason provided")
-    logger.info(msg=f"Deleted account {user.email}. Reason: {reason}")
 
     # Soft delete: deactivate user
     user.is_active = False
@@ -587,10 +826,10 @@ def clear_saved_data(request):
         Coupon.objects.filter(user=user, saved=True).update(saved=False)
         Donation.objects.filter(user=user, saved=True).update(saved=False)
 
-    if user.user_type == 'ngo':
+    elif user.user_type == 'ngo':
         NGOPost.objects.filter(user=user, saved=True).update(saved=False)
 
-    if user.user_type == "provider":
+    elif user.user_type == "pharmacy":
         Donation.objects.filter(user=user, saved=True).update(saved=False)
 
     return JsonResponse({'status': 'saved data cleared'})
@@ -623,3 +862,93 @@ def change_password(request):
         return JsonResponse({'success': True, 'message': 'Password changed successfully', "errors" : ''})
     except Exception as e:
         return JsonResponse({'success': False, 'errors': f'Error updating password: {str(e)}', "message" : ''})
+
+def get_seller_profile_id(user):
+    profile_map = {
+        "pharmacy": PharmacyProfile,
+        "lab": LabProfile,
+        "hospital": HospitalProfile,
+        "doctor": DoctorProfile,
+    }
+    model = profile_map.get(user.user_type)
+    if not model:
+        return None
+
+    profile = model.objects.filter(user=user).only("id").first()
+    return profile.id if profile else None
+
+@dashboard_login_required
+def seller_subscription_status(request):
+    """
+    Returns current subscription status for logged-in seller
+    """
+    user = request.user_obj  # assuming custom auth
+
+    seller_type = user.user_type           # pharmacy / lab / hospital / doctor
+    seller_profile_id = get_seller_profile_id(user)  # adapt this to your project
+
+    sub = SellerSubscription.objects.filter(
+        seller_type=seller_type,
+        seller_profile_id=seller_profile_id,
+        is_active=True,
+        is_enabled=True
+    ).first()
+
+    if not sub:
+        return JsonResponse({
+            "has_subscription": False,
+            "plan": "Free",
+        })
+
+    days_left = None
+    if sub.expiry_date:
+        days_left = (sub.expiry_date.date() - timezone.now().date()).days
+
+    return JsonResponse({
+        "has_subscription": True,
+        "plan": sub.plan_name,
+        "price": float(sub.price),
+        "expiry_date": sub.expiry_date.strftime("%d/%m/%Y") if sub.expiry_date else None,
+        "days_left": days_left,
+    })
+
+@require_POST
+@dashboard_login_required
+def subscribe_subscription(request):
+    user = request.user_obj
+
+    seller_profile_id = get_seller_profile_id(user)
+    if not seller_profile_id:
+        return JsonResponse({"success": False}, status=400)
+
+    # deactivate old
+    SellerSubscription.objects.filter(
+        seller_type=user.user_type,
+        seller_profile_id=seller_profile_id,
+        is_active=True
+    ).update(is_active=False)
+
+    # create new subscription
+    SellerSubscription.objects.create(
+        seller_type=user.user_type,
+        seller_profile_id=seller_profile_id,
+        plan_name="Premium",
+        price=999,
+        is_active=True,
+        expiry_date=timezone.now() + timedelta(days=30),
+    )
+
+    return JsonResponse({"success": True})
+
+@dashboard_login_required
+@require_POST
+def cancel_subscription(request):
+    user = request.user_obj
+
+    SellerSubscription.objects.filter(
+        seller_type=user.user_type,
+        seller_profile_id=get_seller_profile_id(user),
+        is_active=True
+    ).update(is_active=False)
+
+    return JsonResponse({"success": True})

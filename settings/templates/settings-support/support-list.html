@@ -1,0 +1,144 @@
+{% load static %}
+<!-- Ticket History -->
+<div class="space-y-2 mt-6">
+  <div class="flex items-center">
+    <h1 class="font-semibold text-base text-dark-gray whitespace-nowrap">
+      Ticket Lists
+    </h1>
+    <div class="flex w-full justify-end items-center gap-2">
+      <div
+        class="max-w-[280px] rounded-[6px] bg-light-white flex items-center px-2"
+      >
+        <span class="material-symbols-outlined text-dark-gray"> search </span>
+        <input
+          id="ticket-search"
+          type="text"
+          placeholder="Search by issue type"
+          class="w-full -ml-1 border-none bg-transparent focus:outline-none focus:ring-0 placeholder:text-medium-gray px-2 py-1"
+        />
+      </div>
+
+      <div class="relative dropdown">
+        <button
+          class="filterToggle flex items-center border border-slate-gray rounded-md p-1 w-8 h-8 cursor-pointer"
+        >
+          <span
+            class="material-symbols-outlined flex justify-center items-center"
+            >tune</span
+          >
+        </button>
+        <div
+          class="filterDropdown absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10"
+        >
+          <div
+            class="help-filter-option p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-{{ border }} hover:text-white rounded"
+            data-filter="custom"
+          >
+            Custom date<span class="material-symbols-outlined calendar-icon"
+              >calendar_today</span
+            >
+          </div>
+          <div
+            class="help-filter-option p-2 pl-4 hover:bg-{{ border }} hover:text-white rounded cursor-pointer"
+            data-filter="1week"
+          >
+            1 Week
+          </div>
+          <div
+            class="help-filter-option p-2 pl-4 hover:bg-{{ border }} hover:text-white rounded cursor-pointer"
+            data-filter="1month"
+          >
+            1 Month
+          </div>
+          <div
+            class="help-filter-option p-2 pl-4 hover:bg-{{ border }} hover:text-white rounded cursor-pointer"
+            data-filter="1year"
+          >
+            1 Year
+          </div>
+          
+        </div>
+        <div
+          class="datepicker-container hidden px-4 pb-3 absolute right-43 z-100"
+        >
+          <div
+            class="datepicker-inline"
+            inline-datepicker
+            id="inline-datepicker"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="relative overflow-x-auto docTable">
+    <table class="min-w-full text-sm text-dark-gray whitespace-nowrap">
+      <thead class="bg-{{ table }} text-white">
+        <tr>
+          <th class="text-center px-4 py-4 border-r border-white">
+            Date & Time
+          </th>
+          <th class="px-4 py-4 text-center border-r border-white">
+            Ticket ID
+            <img
+              src="{% static 'images/sort-alt.svg' %}"
+              alt="sort"
+              class="inline ml-2"
+            />
+          </th>
+          <th class="text-center px-4 py-4 border-r border-white">
+            Issue Type
+          </th>
+          <th class="text-center px-4 py-4 border-r border-white">
+            Status
+            <img
+              src="{% static 'images/sort-alt.svg' %}"
+              alt="sort"
+              class="inline ml-2"
+            />
+          </th>
+          <th class="text-center px-4 py-4 border-r border-white">Actions</th>
+        </tr>
+      </thead>
+      <tbody
+        id="ticket-history-body"
+        class="bg-snow-gray text-dark-gray text-[16px]"
+      >
+        <!-- Dynamic rows will be injected here -->
+      </tbody>
+    </table>
+    <!-- pagination  -->
+    <div class="flex gap-2 my-4 justify-center">
+      <button
+        class="prevPage bg-white px-3 py-1 rounded text-light-gray1 text-sm"
+        fdprocessedid="zl4gia"
+      >
+        Previous
+      </button>
+      <div class="paginationBtns flex gap-4">
+        <button
+          class="page-btn px-3 py-1.5 rounded-lg text-sm bg-{{ border }} text-white"
+          fdprocessedid="r46ep"
+        >
+          1</button
+        ><button
+          class="page-btn px-3 py-1.5 rounded-lg text-sm bg-pagination"
+          fdprocessedid="6w58r"
+        >
+          2
+        </button>
+      </div>
+      <button
+        class="nextPage bg-white px-3 py-1 rounded text-light-gray1 text-sm"
+        fdprocessedid="feqrk9"
+      >
+        Next
+      </button>
+    </div>
+
+    <!-- view  -->
+   {% include "settings-support/support-view.html" %}
+
+  </div>
+</div>

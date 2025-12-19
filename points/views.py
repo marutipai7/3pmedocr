@@ -2,20 +2,14 @@ import json
 import datetime
 from django.shortcuts import render
 from dashboard.utils import dashboard_login_required, get_common_context
-from .models import (
-    PointsHistory,
-    PointsActionType,
-    PointsBadge,
-    CouponClaimed
-    )
-from coupon.models import Coupon
+from .models import PointsHistory, PointsActionType, PointsBadge
+from coupon.models import Coupon, CouponClaimed
 from collections import defaultdict
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.utils.dateparse import parse_date
 from django.utils import timezone
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 from django.db.models import Sum, Q
 from django.core.paginator import Paginator
 
@@ -136,22 +130,23 @@ def get_coupon_data(request, is_popular=False):
     except Exception as e:
         return JsonResponse({"html": "", "error": str(e)})
 
-
-
+@require_GET
 def get_coupon_cards(request):
     return get_coupon_data(request, is_popular=False)
 
+@require_GET
 def get_popular_coupon_cards(request):
     return get_coupon_data(request, is_popular=True)
 
+@require_GET
 def points_history_view(request):
     context = filter_points(request)
     return render(request, 'partials/points_table.html', context)
 
+@require_GET
 def ajax_filtered_points(request):
     context = filter_points(request)
     return render(request, 'partials/points_table.html', context)
-
 
 @dashboard_login_required
 def filter_points(request):
@@ -212,7 +207,6 @@ def filter_points(request):
         **get_common_context(request, user)
     }
 
-@csrf_exempt
 @require_POST
 @dashboard_login_required
 def claim_coupon(request):
@@ -236,8 +230,6 @@ def claim_coupon(request):
         return JsonResponse({'status': 'coupon_not_found'}, status=404)
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
-
-
 
 @dashboard_login_required
 def get_claimed_coupons(request):

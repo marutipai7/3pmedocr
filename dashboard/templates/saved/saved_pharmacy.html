@@ -1,0 +1,171 @@
+{% extends "dashboard/layout.html" %}
+{% load static %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+      <!-- Content -->
+      <div class="h-[calc(100vh-72px)] w-full px-6 pt-6 pb-3 bg-slate-white">
+        <div
+          class="bg-white shadow-(--box-shadow-5) h-full rounded-[10px] px-2 sm:px-4 py-5 overflow-y-auto scroll"
+        >
+          <div class="h-[130px] sm:h-[110px] w-full">
+            <div class="flex items-center justify-between">
+              <div class="space-y-1.5">
+                <div class="flex items-center gap-2">
+                  <span
+                    class="material-symbols-outlined"
+                    style="font-size: 20px"
+                  >
+                    bookmark
+                  </span>
+                  <span class="text-xl font-medium">Saved Items</span>
+                </div>
+                <p class="text-18-nr">
+                  Quickly view and manage all your saved favorites in one place.
+                </p>
+              </div>
+              <a href="/dashboard">
+                <span class="material-symbols-outlined cursor-pointer">
+                  close
+                </span>
+              </a>
+            </div>
+
+            <!-- Tabs -->
+            <div
+              class="flex gap-6 whitespace-nowrap mt-8 overflow-x-auto no-scrollbar"
+            >
+              <button
+                class="{{ tab_class }} {% if active_tab == 'places' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
+                data-tab="places"
+              >
+                Places
+              </button>
+              <button
+                class="{{ tab_class }} {% if active_tab == 'order-history' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
+                data-tab="order-history"
+              >
+                Order History
+              </button>
+              <button
+                class="{{ tab_class }} {% if active_tab == 'share-history' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
+                data-tab="share-history"
+              >
+                Share History
+              </button>
+              <button
+                class="{{ tab_class }} {% if active_tab == 'donationSaved' %}{{ active_tab_class }}{% endif %} px-4 text-18-fs cursor-pointer border-{{ border }} text-{{ text }}"
+                data-tab="donationSaved"
+              >
+                Donation History
+              </button>
+            </div>
+          </div>
+
+          <!-- Places Content -->
+           {% include "pharmacy/saved-places.html" %}
+
+
+          <!-- Order History -->
+           {% include "pharmacy/saved-orders.html" %}
+
+
+          <!-- Share History -->
+           {% include "pharmacy/saved-shares.html" %}
+
+
+          <!-- Donation History -->
+          {% include "pharmacy/donate-history-table.html" %}
+
+          {% include "pharmacy/donation-platform-bill.html" %}
+
+          {% include "pharmacy/donation-receipt.html" %}
+
+          {% include 'pharmacy/view-donate-history.html' %}
+
+          {% include 'saved/share-popup.html' %}
+
+
+          <!-- Platform bill Popup -->
+          <div class="platform-bill-modal fixed inset-0 bg-semi-transparent-black items-center justify-center z-50 hidden h-full">
+            <div class="bg-snow-gray rounded-lg p-3 max-w-md w-full h-[80vh]">
+              <div class="flex items-center justify-between h-10">
+                <div class="flex items-center gap-3">
+                  <span
+                    class="material-symbols-outlined cursor-pointer bg-light-sea-green text-white rounded-md p-1"
+                    >share</span
+                  >
+                  <span
+                    class="material-symbols-outlined cursor-pointer bg-light-sea-green text-white rounded-md p-1"
+                    >download</span
+                  >
+                </div>
+                <p class="font-semibold text-lg text-light-sea-green">
+                  Platform Bill
+                </p>
+                <button class="close-platform-bill">
+                  <span class="material-symbols-outlined cursor-pointer"
+                    >close</span
+                  >
+                </button>
+              </div>
+              <div class="h-[calc(100%-40px)] overflow-y-auto scroll">
+                <img
+                src="/static/images/platformbill-receipt.svg"
+                alt="Incorporation Certificate"
+                class="w-full rounded"
+              />
+              </div>
+            </div>
+          </div>
+
+          <!-- Medicine bill Popup -->
+           {% include "pharmacy/medicine-bill.html" %}
+
+
+          <!-- Donation Receipt Popup -->
+          <div class="donation-receipt-modal fixed inset-0 bg-semi-transparent-black items-center justify-center z-50 hidden h-full">
+            <div class="bg-snow-gray rounded-lg p-3 max-w-md w-full h-[80vh]">
+              <div class="flex items-center justify-between h-10">
+                <div class="flex items-center gap-3">
+                  <span
+                    class="material-symbols-outlined cursor-pointer bg-light-sea-green text-white rounded-md p-1"
+                    >share</span
+                  >
+                  <span
+                    class="material-symbols-outlined cursor-pointer bg-light-sea-green text-white rounded-md p-1"
+                    >download</span
+                  >
+                </div>
+                <p class="font-semibold text-lg text-light-sea-green">
+                  Donation Receipt
+                </p>
+                <button class="close-donation-receipt">
+                  <span class="material-symbols-outlined cursor-pointer"
+                    >close</span
+                  >
+                </button>
+              </div>
+              <div class="h-[calc(100%-40px)] overflow-y-auto scroll">
+                <img
+                src="/static/images/Donate Bill.svg"
+                alt="Incorporation Certificate"
+                class="w-full rounded"
+              />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock%}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script src="{% static 'js/pharmacy/pharmacy-saved.js' %}"></script>
+<script src="{% static 'js/tabs.js' %}"></script>
+<script src="{% static 'js/table-pagination.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/pharmacy/cards-pagination.js' %}"></script>
+{% endblock %}

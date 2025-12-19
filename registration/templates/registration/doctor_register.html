@@ -1,0 +1,916 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block title %}Register as Laboratory Technician{% endblock %}
+
+{% block content %}
+
+<body class="min-h-screen flex flex-col scroll">
+    <!-- Left curve -->
+    <div class="relative z-0">
+        <div class="absolute flex gap-2 items-center">
+            <img src="/static/images/left curve.svg" alt="">
+            <div class="bg-steel-blue w-14 h-14 rounded-full ml-4"></div>
+            <div class="bg-golden-orange w-9 h-9 rounded-full mb-24"></div>
+        </div>
+    </div>
+    <!-- Already Account link -->
+    <div class="absolute right-0 top-3 z-20">
+        <a href="" class="text-primary-color text-xs pr-10">Already have an account?</a>
+    </div>
+    <!-- Main content -->
+    <div class="flex-1 z-10">
+        <div class="max-w-3xl xl:max-w-4xl 2xl:max-w-7xl mx-auto p-10 pt-40 sm:py-20 text-primary-color">
+            <h1 class="text-4xl font-bold text-center">Register as Doctor</h1>
+            <form id="register-form" class="mt-10 flex flex-col gap-4" enctype="multipart/form-data" action="{% url 'save_doctor' %}" method="post">
+                {% csrf_token %}
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <!-- Name -->
+                    <div class="flex flex-col gap-4 w-full sm:w-1/2">
+                        <div class="relative w-full">
+                            <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Full Name</label>
+                            <input type="text" name="full_name" placeholder="John Doe"
+                                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+                        </div>
+                    </div>
+                    <!-- Email -->
+                    <div class="flex flex-col gap-4 w-full sm:w-1/2">
+                        <div class="relative w-full">
+                            <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Email</label>
+                            <input type="email" name="email" placeholder="johndoe@example.com"
+                                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+                        </div>
+                    </div>
+
+                </div>
+                <div class="flex flex-col sm:flex-row gap-4">
+
+                    <!--Phone Number-->
+                    <div class="flex flex-col gap-4 w-full sm:w-1/2">
+                        <div class="flex items-center gap-2">
+                            <div class="code-dropdown relative inline-block ">
+                                <div
+                                    class="code-btn flex items-center border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
+                                    <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                                    <span class="selected-code mr-2">+91</span>
+                                </div>
+                                <div
+                                    class="code-option countryCodes absolute left-0 mt-0.5 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-20 max-h-44 overflow-y-auto scroll">
+                                </div>
+                            </div>
+                            <div class="relative w-full">
+                                <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Phone Number</label>
+                                <input type="text" name="phone" placeholder="9876543210"
+                                    class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+                            </div>
+                        </div>
+                    </div>
+                    <!--Phone Number-->
+                    <div class="flex flex-col gap-4 w-full sm:w-1/2">
+                        <div class="flex items-center gap-2">
+                            <div class="code-dropdown relative inline-block">
+                                <div
+                                    class="code-btn flex items-center border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
+                                    <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                                    <span class="selected-code mr-2">+91</span>
+                                </div>
+                                <div
+                                    class="code-option countryCodes absolute left-0 mt-0.5 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-20 max-h-44 overflow-y-auto scroll">
+                                </div>
+                            </div>
+                            <div class="relative w-full">
+                                <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Alternate Phone
+                                    Number</label>
+                                <input type="text" name="alt_phone" placeholder="9876543210"
+                                    class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <!-- Gender -->
+                    <div class="flex flex-col gap-4 w-full sm:w-1/2">
+                        <div class="dropdown relative inline-block">
+                            <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Gender</label>
+                            <div
+                                class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
+                                <span class="mr-2 selected-value">select</span>
+                                <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
+                            </div>
+                            <div
+                                class="dropdown-option absolute left-0 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-full mt-0.5 z-20 max-h-44 overflow-y-auto scroll">
+                                <div class="gender-option px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                                    <input type="checkbox" name="gender" value="Male" id="Male" class="mr-2 accent-Royal-indigo">
+                                    <label class="flex-1">
+                                        Male
+                                    </label>
+                                </div>
+                                <div class="gender-optionpx-4 py-2 hover:bg-gray-100 cursor-pointer">
+                                    <input type="checkbox" name="gender" value="Female" id="Female" class="mr-2 accent-Royal-indigo">
+                                    <label class="flex-1">
+                                      Female
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Age -->
+                    <div class="flex flex-col gap-4 w-full sm:w-1/2">
+                        <div class="relative w-full">
+                            <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Age</label>
+                            <input type="number" name="age" placeholder="Enter Age"
+                                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+                        </div>
+                    </div>
+
+                </div>
+                <div class="relative w-full">
+                    <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Clinic Name</label>
+                    <input type="text" name="clinic_name" placeholder="ABC  Pvt. Ltd"
+                        class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+                </div>
+                <div class="relative w-full">
+                    <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Owner Name</label>
+                    <input type="text" name="owner_name" placeholder="ABC  Pvt. Ltd"
+                        class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+                </div>
+                <div class="flex flex-col sm:flex-row gap-4">
+
+                    <!-- Specialization -->
+                    <div class="flex flex-col gap-4 w-full sm:w-1/2">
+                        <div class="dropdown relative inline-block">
+                            <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Specialization</label>
+
+                            <div class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
+                                <span class="mr-2 selected-value">select</span>
+                                <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
+                            </div>
+
+                            <div class="dropdown-option specialization-option absolute left-0 border border-primary-color bg-white text-blue-teal shadow-lg hidden rounded-md w-full mt-0.5 z-20 max-h-44 overflow-y-auto scroll">
+
+                                {% for spec in doctor_speciality %}
+                                <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                                    <input type="checkbox" name="specialization" value="{{ spec.id }}" class="mr-2 accent-Royal-indigo">
+                                    <label class="flex-1">{{ spec.name }}</label>
+                                </div>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Qualification -->
+                    <div class="flex flex-col gap-4 w-full sm:w-1/2">
+                        <div class="dropdown relative inline-block">
+                            <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Qualification</label>
+
+                            <div class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
+                                <span class="mr-2 selected-value">select</span>
+                                <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
+                            </div>
+
+                            <div class="dropdown-option qualification-option absolute left-0 border border-primary-color bg-white text-blue-teal shadow-lg hidden rounded-md w-full mt-0.5 z-20 max-h-44 overflow-y-auto scroll">
+
+                                {% for edu in doctor_education %}
+                                <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                                    <input type="checkbox" name="qualification" value="{{ edu.id }}" class="mr-2 accent-Royal-indigo">
+                                    <label class="flex-1">{{ edu.name }}</label>
+                                </div>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <!-- Experience -->
+                    <div class="flex flex-col gap-4 w-full sm:w-1/2">
+                        <div class="dropdown relative inline-block">
+                            <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Experience</label>
+
+                            <div class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
+                                <span class="mr-2 selected-value">select</span>
+                                <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
+                            </div>
+
+                            <div class="dropdown-option experience-option absolute left-0 border border-primary-color bg-white text-blue-teal shadow-lg hidden rounded-md w-full mt-0.5 z-20 max-h-44 overflow-y-auto scroll">
+
+                                {% for exp in doctor_experience %}
+                                <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                                    <input type="checkbox" name="experience" value="{{ exp.id }}" class="mr-2 accent-Royal-indigo">
+                                    <label class="flex-1">{{ exp.years }}</label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Home Visit -->
+                    <div class="flex flex-col gap-4 w-full sm:w-1/2">
+                        <div class="dropdown relative inline-block">
+                            <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Home Visit</label>
+
+                            <div class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
+                                <span class="mr-2 selected-value">select</span>
+                                <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
+                            </div>
+
+                            <div class="dropdown-option absolute left-0 border border-primary-color bg-white text-blue-teal shadow-lg hidden rounded-md w-full mt-0.5 z-20 max-h-44 overflow-y-auto scroll">
+
+                                <div class="home-visit-option px-4 py-2 hover:bg-gray-100 cursor-pointer" data-value="Available">
+                                    <input type="checkbox" value="Available" class="mr-2 accent-Royal-indigo">
+                                    <label class="flex-1">Available</label>
+                                </div>
+
+                                <div class="home-visit-option px-4 py-2 hover:bg-gray-100 cursor-pointer" data-value="Unavailable">
+                                    <input type="checkbox" value="Unavailable" class="mr-2 accent-Royal-indigo">
+                                    <label class="flex-1">Unavailable</label>
+                                </div>
+
+                            </div>
+                        </div>
+                        <input type="hidden" name="home_visit_available" id="home_visit_available">
+                    </div>
+                </div>
+
+                <div class="flex gap-4 items-end">
+                    <!-- Opening Time Dropdown -->
+                    <div class="dropdown relative inline-block flex-1">
+                        <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Opening Time</label>
+
+                        <div class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
+                            <span class="mr-2 selected-value">Select Time</span>
+                            <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
+                        </div>
+
+                        <div class="dropdown-option opening-time-option absolute left-0 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-full mt-0.5 z-20 max-h-44 overflow-y-auto scroll">
+
+                            <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer" data-value="Monday — Opens at 9:00 AM">
+                                <input type="checkbox" value="Monday — Opens at 9:00 AM" class="mr-2 accent-Royal-indigo">
+                                <label class="flex-1">Monday — Opens at 9:00 AM</label>
+                            </div>
+
+                            <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer" data-value="Tuesday — Opens at 9:00 AM">
+                                <input type="checkbox" value="Tuesday — Opens at 9:00 AM" class="mr-2 accent-Royal-indigo">
+                                <label class="flex-1">Tuesday — Opens at 9:00 AM</label>
+                            </div>
+
+                            <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer" data-value="Wednesday — Opens at 9:00 AM">
+                                <input type="checkbox" value="Wednesday — Opens at 9:00 AM" class="mr-2 accent-Royal-indigo">
+                                <label class="flex-1">Wednesday — Opens at 9:00 AM</label>
+                            </div>
+
+                            <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer" data-value="Thursday — Opens at 9:00 AM">
+                                <input type="checkbox" value="Thursday — Opens at 9:00 AM" class="mr-2 accent-Royal-indigo">
+                                <label class="flex-1">Thursday — Opens at 9:00 AM</label>
+                            </div>
+
+                            <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer" data-value="Friday — Opens at 9:00 AM">
+                                <input type="checkbox" value="Friday — Opens at 9:00 AM" class="mr-2 accent-Royal-indigo">
+                                <label class="flex-1">Friday — Opens at 9:00 AM</label>
+                            </div>
+
+                            <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer" data-value="Saturday — Opens at 10:00 AM">
+                                <input type="checkbox" value="Saturday — Opens at 10:00 AM" class="mr-2 accent-Royal-indigo">
+                                <label class="flex-1">Saturday — Opens at 10:00 AM</label>
+                            </div>
+
+                            <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer" data-value="Sunday — Closed">
+                                <input type="checkbox" value="Sunday — Closed" class="mr-2 accent-Royal-indigo">
+                                <label class="flex-1">Sunday — Closed</label>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="clinic_timing_from" id="clinic_timing_from">
+
+                    <!-- Closing Time Dropdown -->
+                    <div class="dropdown relative inline-block flex-1">
+                        <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Closing Time</label>
+
+                        <div class="dropdown-btn flex items-center justify-between border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
+                            <span class="mr-2 selected-value">Select Time</span>
+                            <span class="material-symbols-outlined dropdown-arrow">keyboard_arrow_down</span>
+                        </div>
+
+                        <div class="dropdown-option closing-time-option absolute left-0 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-full mt-0.5 z-20 max-h-44 overflow-y-auto scroll">
+
+                            <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer" data-value="Monday — Closes at 5:00 PM">
+                                <input type="checkbox" value="Monday — Closes at 5:00 PM" class="mr-2 accent-Royal-indigo">
+                                <label class="flex-1">Monday — Closes at 5:00 PM</label>
+                            </div>
+
+                            <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer" data-value="Tuesday — Closes at 5:00 PM">
+                                <input type="checkbox" value="Tuesday — Closes at 5:00 PM" class="mr-2 accent-Royal-indigo">
+                                <label class="flex-1">Tuesday — Closes at 5:00 PM</label>
+                            </div>
+
+                            <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer" data-value="Wednesday — Closes at 5:00 PM">
+                                <input type="checkbox" value="Wednesday — Closes at 5:00 PM" class="mr-2 accent-Royal-indigo">
+                                <label class="flex-1">Wednesday — Closes at 5:00 PM</label>
+                            </div>
+
+                            <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer" data-value="Thursday — Closes at 5:00 PM">
+                                <input type="checkbox" value="Thursday — Closes at 5:00 PM" class="mr-2 accent-Royal-indigo">
+                                <label class="flex-1">Thursday — Closes at 5:00 PM</label>
+                            </div>
+
+                            <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer" data-value="Friday — Closes at 5:00 PM">
+                                <input type="checkbox" value="Friday — Closes at 5:00 PM" class="mr-2 accent-Royal-indigo">
+                                <label class="flex-1">Friday — Closes at 5:00 PM</label>
+                            </div>
+
+                            <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer" data-value="Saturday — Closes at 2:00 PM">
+                                <input type="checkbox" value="Saturday — Closes at 2:00 PM" class="mr-2 accent-Royal-indigo">
+                                <label class="flex-1">Saturday — Closes at 2:00 PM</label>
+                            </div>
+
+                            <div class="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer" data-value="Sunday — Closed">
+                                <input type="checkbox" value="Sunday — Closed" class="mr-2 accent-Royal-indigo">
+                                <label class="flex-1">Sunday — Closed</label>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="clinic_timing_to" id="clinic_timing_to">
+                </div>
+
+
+
+                <!-- Address -->
+                <div class="relative w-full">
+                    <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Address</label>
+                    <textarea type="text" name="address" placeholder="12 MG Road, Near City Hospital"
+                        class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal"></textarea>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-4 otp-div">
+                    <div class="flex flex-col gap-4 w-full sm:w-1/2">
+                        <!-- City,Town,District -->
+                        <div class="relative w-full">
+                            <label
+                                class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">City,Town,District</label>
+                            <input type="text" name="city" placeholder="Pune"
+                                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+                        </div>
+                        <!-- State -->
+                        <div class="relative w-full">
+                            <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">State</label>
+                            <input type="text" name="state" placeholder="New York"
+                                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+                        </div>
+
+                        <!--File Access Confirmation Popup -->
+                        <div
+                            class="file-access-popup hidden fixed inset-0 bg-black/30 bg-opacity-70 flex items-center justify-center z-50">
+                            <div class="bg-white rounded-lg p-6 max-w-sm w-full border border-primary-color shadow-lg">
+                                <p class="mb-4">This site wants to access your files to upload an image. Do you allow?
+                                </p>
+                                <div class="flex justify-end space-x-3">
+                                    <div
+                                        class="deny-access px-4 py-2 border border-primary-color text-black rounded-md cursor-pointer">
+                                        No</div>
+                                    <div
+                                        class="allow-access px-4 py-2 bg-primary-color text-white rounded-md cursor-pointer">
+                                        Yes</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Incorporation number & Document -->
+                        <div class="upload-section relative w-full">
+                            <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
+                                Registration number & Document
+                            </label>
+
+                            <div class="flex items-center gap-2 w-full mt-2">
+                                <input type="text" name="registration_number" placeholder="U85110MH2022PTC123456"
+                                    class="flex-1 border border-primary-color rounded-md outline-none text-sm px-4 py-4" />
+                                <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
+                                    <span class="material-symbols-outlined text-dark-blue !text-base">close</span>
+                                </div>
+                                <div
+                                    class="uploadTrigger h-14 w-21 flex flex-col items-center justify-center cursor-pointer border-dashed border-2 border-primary-color rounded-md">
+                                    <span
+                                        class="material-symbols-outlined text-primary-color !text-2xl upload-icon">upload</span>
+                                    <span
+                                        class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
+                                </div>
+
+                                <input type="file" name="registration_doc" accept="image/*" class="uploadInput hidden" />
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-end">
+                            <label class="flex items-center gap-5">
+
+                                <span class="status-text text-primary-color text-16-nr">Virus scan</span>
+                                <input type="checkbox" class="check-scan scan-toggle" />
+                            </label>
+                        </div>
+
+                        <!--  PAN Number & Document -->
+                        <div class="upload-section relative w-full">
+                            <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
+                                PAN Number & Document
+                            </label>
+
+                            <div class="flex items-center gap-2 w-full mt-2">
+                                <input type="text" name="pan_number" placeholder="AABCM1234F"
+                                    class="flex-1 border border-primary-color rounded-md outline-none text-sm px-4 py-4" />
+
+                                <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
+                                    <span class="material-symbols-outlined text-dark-blue !text-base">close</span>
+                                </div>
+                                <div
+                                    class="uploadTrigger h-14 w-21 flex flex-col items-center justify-center cursor-pointer border-dashed border-2 border-primary-color rounded-md">
+                                    <span
+                                        class="material-symbols-outlined text-primary-color !text-2xl upload-icon">upload</span>
+                                    <span
+                                        class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
+                                </div>
+
+                                <input type="file" name="pan_doc" accept="image/*" class="uploadInput hidden" />
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-end">
+                            <label class="flex items-center gap-5">
+
+                                <span class="status-text text-primary-color text-16-nr">Virus scan</span>
+                                <input type="checkbox" class="check-scan scan-toggle" />
+                            </label>
+                        </div>
+
+                        <!-- Clinic Logo -->
+                        <div class="upload-section relative w-full">
+                            <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
+                                Clinic Logo
+                            </label>
+                            <div
+                                class="flex items-center border-2 border-dashed border-primary-color rounded-md px-4 py-4 mt-2 relative">
+                                <input type="text" class="flex-1 border-none outline-none text-sm bg-transparent"
+                                    readonly />
+                                <input type="file" name="clinic_logo" accept="image/*" class="uploadInput hidden" />
+                                <div
+                                    class="absolute inset-0 flex items-center justify-center cursor-pointer uploadTrigger">
+                                    <span class="material-symbols-outlined text-primary-color text-2xl">upload</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-end">
+                            <label class="flex items-center gap-5">
+                                <span class="status-text text-primary-color text-16-nr">Virus scan</span>
+                                <input type="checkbox" class="check-scan scan-toggle" />
+                            </label>
+                        </div>
+
+
+                        <!-- Password -->
+                        <div class="w-full relative">
+                            <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Password</label>
+                            <div class="relative">
+                                <input id="Password" type="password" name="password" placeholder="***************"
+                                    class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+                                <span
+                                    class="togglePassword material-symbols-outlined absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer text-primary-color"
+                                    data-target="Password">
+                                    visibility
+                                </span>
+                            </div>
+                            <p class="text-xs mt-1">Password must be 8+ characters with uppercase, lowercase, number,
+                                and symbol</p>
+                        </div>
+
+                        <!-- Send OTP -->
+
+                        <div>
+                            <div
+                                class="bg-primary-color cursor-pointer rounded-md p-[0.95rem] w-full text-white text-center mt-[2.0 rem] send-otp">
+                                Send OTP
+                            </div>
+                            <p class="text-xs mt-1 flex justify-start otp">Didn’t get the code ?&nbsp;<span
+                                    class="text-charcoal-black resend cursor-pointer">Resend</span></p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-4 w-full sm:w-1/2">
+                        <!-- Pincode -->
+                        <div class="relative w-full">
+                            <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Pincode</label>
+                            <input type="text" name="pincode" placeholder="411001"
+                                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+                        </div>
+                        <!-- Country -->
+                        <div class="relative w-full">
+                            <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Country</label>
+                            <input type="text" name="country" placeholder="India"
+                                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+                        </div>
+
+                        <!-- Aadhar Number & Document -->
+                        <div class="upload-section relative w-full">
+                            <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
+                                Aadhar Number & Document
+                            </label>
+
+                            <div class="flex items-center gap-2 w-full mt-2">
+                                <input type="text" name="aadhar_number" placeholder="431383635177"
+                                    class="flex-1 border border-primary-color rounded-md outline-none text-sm px-4 py-4" />
+
+                                <div class="absolute right-0 -top-3 cursor-pointer hidden remove-file-btn">
+                                    <span class="material-symbols-outlined text-dark-blue !text-base">close</span>
+                                </div>
+                                <div
+                                    class="uploadTrigger h-14 w-21 flex flex-col items-center justify-center cursor-pointer border-dashed border-2 border-primary-color rounded-md">
+                                    <span
+                                        class="material-symbols-outlined text-primary-color !text-2xl upload-icon">upload</span>
+                                    <span
+                                        class="upload-label text-bright-green text-xs text-nowrap max-w-15 overflow-x-auto no-scrollbar"></span>
+                                </div>
+
+                                <input type="file" name="aadhar_doc" accept="image/*" class="uploadInput hidden" />
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-end">
+                            <label class="flex items-center gap-5">
+
+                                <span class="status-text text-primary-color text-16-nr">Virus scan</span>
+                                <input type="checkbox" class="check-scan scan-toggle" />
+                            </label>
+                        </div>
+                        <!-- Profile-->
+                        <div class="upload-section relative w-full">
+                            <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
+                                Profile Image
+                            </label>
+
+                            <div
+                                class="flex items-center border-2 border-dashed border-primary-color rounded-md px-4 py-4 mt-2 relative">
+                                <input type="text" class="flex-1 border-none outline-none text-sm bg-transparent"
+                                    readonly />
+
+                                <input type="file" name="profile_photo" accept="image/*" class="uploadInput hidden" />
+
+
+                                <div
+                                    class="absolute inset-0 flex items-center justify-center cursor-pointer uploadTrigger">
+                                    <span class="material-symbols-outlined text-primary-color text-2xl">upload</span>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                        <div class="flex items-center justify-end">
+                            <label class="flex items-center gap-5">
+                                <span class="status-text text-primary-color text-16-nr">Virus scan</span>
+                                <input type="checkbox" class="check-scan scan-toggle" />
+                            </label>
+                        </div>
+
+
+                        <!--  Clinic  Image -->
+                        <div class="upload-section relative w-full">
+                            <label class="absolute left-3 top-0.5 bg-white px-1 text-xs z-10">
+                                Clinic Image
+                            </label>
+
+                            <div
+                                class="flex items-center border-2 border-dashed border-primary-color rounded-md px-4 py-4 mt-2 relative">
+                                <input type="text" class="flex-1 border-none outline-none text-sm bg-transparent"
+                                    readonly />
+
+                                <input type="file" name="clinic_photo" accept="image/*" class="uploadInput hidden" />
+
+
+                                <div
+                                    class="absolute inset-0 flex items-center justify-center cursor-pointer uploadTrigger">
+                                    <span class="material-symbols-outlined text-primary-color text-2xl">upload</span>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                        <div class="flex items-center justify-end">
+                            <label class="flex items-center gap-5">
+                                <span class="status-text text-primary-color text-16-nr">Virus scan</span>
+                                <input type="checkbox" class="check-scan scan-toggle" />
+                            </label>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="relative w-full">
+                            <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Confirm Password</label>
+                            <input id="ConfPassword" type="password" name="confirm_password"
+                                placeholder="***************"
+                                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" /><span
+                                data-target="ConfPassword"
+                                class="togglePassword material-symbols-outlined absolute right-4 top-9 transform -translate-y-1/2 cursor-pointer text-primary-color">
+                                visibility
+                            </span>
+                        </div>
+                        <!--   -->
+                        <div class="relative w-full mt-4">
+                            <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Enter email OTP</label>
+                            <input type="text" name="otp1" placeholder="123456"
+                                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+                            <p class="text-xs mt-1 flex justify-end mt-1 otp-message "></p>
+                        </div>
+                    </div>
+                </div>
+                <h1 class="text-3xl font-semibold">Contact person</h1>
+
+                <div class="flex flex-col sm:flex-row gap-4 otp-div">
+                    <div class="flex flex-col gap-4 w-full sm:w-1/2">
+                        <!-- Name -->
+                        <div class="relative w-full">
+                            <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Name</label>
+                            <input type="text" name="contact_name" placeholder="Rahul Mehta"
+                                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+                        </div>
+                        <!-- Designation -->
+
+                        <div class="flex items-center gap-2">
+                            <div class="dropdown code-dropdown relative inline-block">
+                                <div
+                                    class="dropdown-btn flex items-center border border-primary-color rounded-md p-3 mt-2 pt-4 cursor-pointer">
+                                    <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                                    <span class="selected-code mr-2">+91</span>
+                                </div>
+                                <div
+                                    class="dropdown-option countryCodes code-option absolute left-0 mt-0.5 border border-primary-color bg-white text-blue-teal shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-20 max-h-44 overflow-y-auto scroll">
+                                </div>
+                            </div>
+                            <div class="relative w-full">
+                                <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Phone Number</label>
+                                <input type="text" name="contact_phone" placeholder="9876543210"
+                                    class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <div
+                                class="bg-primary-color rounded-md p-[0.95rem] w-full text-white text-center mt-6 send-otp">
+                                Send OTP
+                            </div>
+                            <p class="text-xs mt-1 flex justify-start otp">Didn’t get the code ?&nbsp;<span
+                                    class="text-charcoal-black resend cursor-pointer">Resend</span></p>
+                        </div>
+
+                    </div>
+                    <div class="flex flex-col gap-4 w-full sm:w-1/2">
+                        <!-- Role-->
+                        <div class="relative w-full">
+                            <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Role</label>
+                            <input type="text" name="contact_role" placeholder="HR Manager"
+                                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+                        </div>
+                        <div class="relative w-full ">
+                            <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">Referral Code</label>
+                            <input type="text" name="referral_code" placeholder="(optional)"
+                                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+                            <p class="text-xs mt-1 ">Have a referral code? Enter it here to unlock benefits</p>
+                        </div>
+
+
+                        <!-- Send OTP -->
+                        <div class="relative w-full">
+                            <label class="absolute left-3 -top-0.5 bg-white px-1 text-xs z-10">OTP Verifications</label>
+                            <input type="text" name="otp2"
+                                class="mt-2 block w-full rounded-md border border-primary-color p-4 text-sm focus:outline-none placeholder:text-blue-teal" />
+                            <p class="text-xs mt-1 otp-message">Enter the 6 digit code send to registered Email/WhatsApp
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Terms of Service -->
+                <div class="flex gap-4 items-center">
+                    <input type="checkbox" class="w-5 h-5 border-2 border-deep-muted-grey" />
+                    <p>I agree to the Terms of Service, Privacy Policy & Disclaimer.</p>
+                </div>
+
+                <div class="flex justify-center items-center gap-4 mt-5">
+                    <button type="button"
+                        onclick="window.location.href='{% url 'welcome' %}'"
+                        class="border border-primary-color rounded-md py-2 px-10 cursor-pointer back-to-roles">
+                        Back
+                    </button>
+                    <button type="submit"
+                        class="bg-primary-color text-white rounded-md py-2 px-10 cursor-pointer">Continue</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Right curve -->
+    <div class="flex justify-end absolute right-0 -bottom-[100%] z-0">
+        <div class="flex gap-2 items-center -rotate-180">
+            <img src="/static/images/right curve.svg" alt="" class="rotate-180">
+            <div class="bg-steel-blue w-14 h-14 rounded-full ml-4"></div>
+            <div class="bg-golden-orange w-9 h-9 rounded-full mb-24"></div>
+        </div>
+    </div>
+
+</body>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const doctorFieldMappings = {
+        // BASIC INFO
+        full_name: ".relative",
+        email: ".relative",
+        phone: ".relative",
+        alt_phone: ".relative",
+        age: ".relative",
+        clinic_name: ".relative",
+        owner_name: ".relative",
+
+        // ADDRESS
+        address: ".relative",
+        city: ".relative",
+        state: ".relative",
+        pincode: ".relative",
+        country: ".relative",
+
+        // DROPDOWNS
+        gender: ".dropdown",
+        specialization: ".dropdown",
+        qualification: ".dropdown",
+        experience: ".dropdown",
+        home_visit_available: ".dropdown",
+        clinic_timing_from: ".dropdown",
+        clinic_timing_to: ".dropdown",
+
+        // DOCUMENTS
+        registration_number: ".upload-section",
+        registration_doc: ".upload-section",
+
+        aadhar_number: ".upload-section",
+        aadhar_doc: ".upload-section",
+
+        pan_number: ".upload-section",
+        pan_doc: ".upload-section",
+
+        clinic_logo: ".upload-section",
+        clinic_photo: ".upload-section",
+        profile_photo: ".upload-section",
+
+        // PASSWORD
+        password: ".relative",
+        confirm_password: ".relative",
+
+        // OTP
+        otp1: ".relative",
+        otp2: ".relative",
+
+        // CONTACT PERSON
+        contact_name: ".relative",
+        contact_phone: ".relative",
+        contact_role: ".relative"
+    };
+
+    // ---------- Add error spans dynamically ----------
+    Object.entries(doctorFieldMappings).forEach(([field, selector]) => {
+        let element = document.querySelector(`[name="${field}"]`);
+
+        if (element) {
+            let wrapper = element.closest(selector);
+            if (wrapper && !wrapper.parentElement.querySelector(`span[data-error-for="${field}"]`)) {
+                const span = document.createElement("span");
+                span.setAttribute("data-error-for", field);
+                span.classList.add("text-xs", "text-dark-red", "mt-1", "block");
+                wrapper.insertAdjacentElement("afterend", span);
+            }
+        } else {
+            // GROUPED INPUTS (Dropdown checkboxes)
+            let group = document.querySelectorAll(`input[name="${field}"]`);
+            if (group.length > 0) {
+                let wrapper = group[0].closest(selector);
+                if (wrapper && !wrapper.parentElement.querySelector(`span[data-error-for="${field}"]`)) {
+                    const span = document.createElement("span");
+                    span.setAttribute("data-error-for", field);
+                    span.classList.add("text-xs", "text-dark-red", "mt-1", "block");
+                    wrapper.insertAdjacentElement("afterend", span);
+                }
+            }
+        }
+    });
+
+});
+</script>
+
+
+<!-- ========== HOME VISIT SELECTION (Available / Unavailable) ========== -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const homeVisitOptions = document.querySelectorAll(".home-visit-option");
+
+    homeVisitOptions.forEach(option => {
+        option.addEventListener("click", function () {
+
+            // uncheck all
+            homeVisitOptions.forEach(opt => opt.querySelector("input").checked = false);
+
+            // select current
+            const checkbox = this.querySelector("input");
+            checkbox.checked = true;
+
+            const selectedValue = this.getAttribute("data-value");
+            const boolValue = selectedValue === "Available" ? "true" : "false";
+
+            // update visible dropdown label
+            this.closest(".dropdown").querySelector(".selected-value").textContent = selectedValue;
+
+            // update hidden field
+            document.getElementById("home_visit_available").value = boolValue;
+
+            // close menu
+            this.closest(".dropdown-option").classList.add("hidden");
+
+            console.log("Doctor Home Visit:", selectedValue, "→", boolValue);
+        });
+    });
+
+});
+</script>
+
+
+<!-- ========== SINGLE SELECT FOR SPECIALIZATION / EDUCATION / EXPERIENCE / GENDER ========== -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    function applySingleSelect(selectorName, dropdownClass) {
+        let options = document.querySelectorAll(`.${dropdownClass} input[type="checkbox"]`);
+        options.forEach(option => {
+
+            option.closest("div").addEventListener("click", function () {
+
+                // Remove selection from all
+                options.forEach(o => o.checked = false);
+
+                // Select current
+                option.checked = true;
+
+                // Update visible dropdown text
+                let label = this.querySelector("label").innerText;
+                this.closest(".dropdown").querySelector(".selected-value").textContent = label;
+
+                // Hidden real input
+                let hidden = document.querySelector(`input[name="${selectorName}"]`);
+                if (hidden) hidden.value = option.value;
+
+                console.log(selectorName, "=", option.value);
+            });
+        });
+    }
+
+    // Attach to each dropdown
+    applySingleSelect("gender", "gender-option");
+    applySingleSelect("specialization", "specialization-option");
+    applySingleSelect("qualification", "qualification-option");
+    applySingleSelect("experience", "experience-option");
+
+});
+</script>
+
+
+<!-- ========== OPENING & CLOSING TIME (Single Select) ========== -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    function applyTimeSelect(name, className) {
+        let options = document.querySelectorAll(`.${className} input[type="checkbox"]`);
+
+        options.forEach(option => {
+            option.closest("div").addEventListener("click", function () {
+
+                // unselect all
+                options.forEach(o => o.checked = false);
+
+                // select chosen one
+                option.checked = true;
+
+                // update visible label
+                let timeText = this.querySelector("label").innerText;
+                this.closest(".dropdown").querySelector(".selected-value").textContent = timeText;
+
+                // push the actual value
+                document.querySelector(`input[name='${name}']`).value = option.value;
+
+                console.log(name, "=>", option.value);
+            });
+        });
+    }
+
+    applyTimeSelect("clinic_timing_from", "opening-time-option");
+    applyTimeSelect("clinic_timing_to", "closing-time-option");
+
+});
+</script>
+{% endblock %}

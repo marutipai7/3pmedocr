@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ngo: "ngo_docs",
         advertiser: "advertiser_docs",
         client: "client_docs",
-        provider: "provider_docs",
+        pharmacy: "pharmacy_docs",
     };
     // Mapping doc_type → human title
     const titleMap = {

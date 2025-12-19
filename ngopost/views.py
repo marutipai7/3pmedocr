@@ -2,6 +2,7 @@ from django.shortcuts import render
 from datetime import datetime, date
 from .models import (
     NGOPost, 
+    Status,
     PostTypeOption, 
     DonationFrequencyOption, 
     CountryOption, 
@@ -11,7 +12,6 @@ from .models import (
     GenderOption, 
     SpendingPowerOption
     )
-import logging
 from datetime import datetime
 from dashboard.utils import dashboard_login_required, get_common_context
 from django.http import JsonResponse, Http404
@@ -22,8 +22,6 @@ from donate.models import Donation
 from django.template.loader import render_to_string
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
 
 
 @dashboard_login_required
@@ -69,12 +67,12 @@ def post_view(request):
 
     # Update post status and attach donations
     for post in post_history:
-        if post.status == post.Status.ONGOING and post.end_date < datetime.now().date():
+        if post.status == Status.ONGOING and post.end_date < datetime.now().date():
             post.update_status_if_needed()
         post.donation_list = Donation.objects.filter(ngopost=post).select_related('user').order_by('-payment_date')
     
     for post in saved_posts:
-        if post.status == post.Status.ONGOING and post.end_date < datetime.now().date():
+        if post.status == Status.ONGOING and post.end_date < datetime.now().date():
             post.update_status_if_needed()
         post.donation_list = Donation.objects.filter(ngopost=post).select_related('user').order_by('-payment_date')
 
@@ -95,8 +93,6 @@ def post_view(request):
         'spending_power_options': SpendingPowerOption.objects.filter(is_active=True),
     })
     return render(request, 'post.html', context)
-
-
 
 @dashboard_login_required
 def post_history_ajax(request):
@@ -145,14 +141,13 @@ def post_history_ajax(request):
         "total_pages": paginator.num_pages,
     })
 
-
 @dashboard_login_required
 @csrf_exempt
 def save_ngo_post(request):
     if request.method != "POST":
         return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-    user = request.user_obj  # set in middleware
+    user = request.user_obj
 
     data = request.POST
     files = request.FILES.getlist('creatives[]')
@@ -205,7 +200,6 @@ def save_ngo_post(request):
     except Exception as e:
         return JsonResponse({'error': 'Something went wrong.', 'message': 'NGO Post not Saved.', 'details': str(e)}, status=500)
     
-
 @dashboard_login_required
 @require_GET
 def post_detail(request, post_id):
@@ -213,15 +207,13 @@ def post_detail(request, post_id):
         post = NGOPost.objects.get(id=post_id)
     except NGOPost.DoesNotExist:
         raise Http404('Post not found')
-    # Get donations for this post
     donations = Donation.objects.filter(ngopost=post).select_related('user')
     donation_list = []
     for d in donations:
         user = d.user
         profile = None
-        name = user.email  # fallback
+        name = user.email  
         city = ''
-        # Dynamically get the correct profile and name/city fields
         if user.user_type == 'user':
             profile = getattr(user, 'userprofile', None)
             if profile:
@@ -237,8 +229,8 @@ def post_detail(request, post_id):
             if profile:
                 name = profile.company_name
                 city = profile.city
-        elif user.user_type == 'provider':
-            profile = getattr(user, 'medicalproviderprofile', None)
+        elif user.user_type == 'pharmacy':
+            profile = getattr(user, 'Pharmacyprofile', None)
             if profile:
                 name = profile.company_name
                 city = profile.city
@@ -280,7 +272,6 @@ def post_detail(request, post_id):
         'creative2': post.creative2.url if post.creative2 else '',
         'donations': donation_list,
     }
-    logger.info(f"AJAX Preview Data for post {post_id}: {data}")
     return JsonResponse(data)
 
 @dashboard_login_required
@@ -297,11 +288,9 @@ def toggle_saved_post(request):
         post.saved = (action == 'save')
         post.save()
 
-        logger.info(f"User {request.user_obj} set saved={post.saved} for post {post_id} (action={action})")
         return JsonResponse({'success': True, 'saved': post.saved})
 
     except NGOPost.DoesNotExist:
-        logger.warning(f"Post {post_id} not found or does not belong to user {request.user_obj}")
         return JsonResponse({'success': False, 'error': 'Post not found'}, status=404)
 
 @dashboard_login_required

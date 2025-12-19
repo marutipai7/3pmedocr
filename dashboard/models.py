@@ -6,7 +6,7 @@ USER_TYPE_CHOICES = [
     ('advertiser', 'Advertiser'),
     ('client', 'Client'),
     ('ngo', 'NGO'),
-    ('provider', 'Medical Provider'),
+    ('pharmacy', 'Pharmacy'),
     ('user', 'User'),
 ]
 
@@ -20,7 +20,6 @@ class SettingMenu(models.Model):
         help_text="Show this menu to these user types",
     )
     is_active = models.BooleanField(default=True)
-
 
 class CouponPerformance(models.Model):
     date = models.DateField(auto_now_add=True)
@@ -85,3 +84,18 @@ class CalendarEvent(models.Model):
             'bg-dark-purple': '#7c3aed',
         }
         return color_map.get(self.color, '#64748b')  # Default to slate-blue if not found
+    
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False)
+    title = models.CharField(max_length=255, null=False, blank=False)
+    message = models.TextField(null=False, blank=False)
+    
+    reference_type = models.CharField(max_length=100, null=True, blank=True)
+    reference_id = models.IntegerField(null=True, blank=True)
+
+    is_read = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Notification for {self.user.username}: {self.title}"

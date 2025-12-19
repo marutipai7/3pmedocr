@@ -1,16 +1,19 @@
 from django.db import models
 from registration.models import User
 from django.conf import settings
+from django.utils import timezone
 
 class IssueType(models.Model):
     name = models.CharField(max_length=100, unique=True)
-
+    user_types = models.JSONField(default=list)
+    
     def __str__(self):
         return self.name
 
 class IssueOption(models.Model):
     issue_type = models.ForeignKey(IssueType, on_delete=models.CASCADE, related_name='options')
     name = models.CharField(max_length=255)
+    user_types = models.JSONField(default=list)
 
     class Meta:
         unique_together = ('issue_type', 'name')
@@ -20,10 +23,11 @@ class IssueOption(models.Model):
 
 class SupportTicket(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='submitted_tickets')
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='created_tickets')
-    issue_option = models.ForeignKey(IssueOption, on_delete=models.SET_NULL, null=True)
-    description = models.TextField()
-    image = models.ImageField(upload_to='support_issues/', blank=True, null=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_tickets')
+    issue_option = models.ForeignKey(IssueOption, on_delete=models.SET_NULL, null=True, blank=True)
+    issue_type = models.ForeignKey(IssueType, on_delete=models.SET_NULL, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    image = models.CharField(max_length=255, null=True, blank=True)
     
     status = models.CharField(max_length=20, choices=[
         ('1', 'Open'),
@@ -66,7 +70,7 @@ CHATBOT_USER_TYPE_CHOICES = [
         ('advertiser', 'Advertiser'),
         ('client', 'Client'),
         ('ngo', 'NGO'),
-        ('provider', 'Medical Provider'),
+        ('pharmacy', 'Pharmacy'),
         ('user', 'User'),
     ]
 
@@ -109,13 +113,41 @@ class UserManagement(models.Model):
 class TicketChatMessage(models.Model):
     ticket = models.ForeignKey(SupportTicket, on_delete=models.CASCADE, related_name='chat_messages')
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='sent_ticket_messages')
-    sender_type = models.CharField(max_length=10, default='user', choices=[('user', 'User'), ('admin', 'Admin'), ('system', 'System')])
-    message_content = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-
+    sender_type = models.CharField(max_length=10, default='user')
+    message_content = models.TextField(null=False, blank=False)
+    timestamp = models.DateTimeField(default=timezone.now)
     class Meta:
         ordering = ['timestamp']
-
     def __str__(self):
         return f"Msg on Ticket {self.ticket.ticket_id()} by {self.sender_type} at {self.timestamp.strftime('%Y-%m-%d %H:%M')}"
     
+class ChatSupport(models.Model):
+    chat_session_id = models.CharField(max_length=255, db_index=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    sender_type = models.CharField(max_length=20)
+    sender_id = models.IntegerField(null=True, blank=True)
+    session_status = models.CharField(max_length=20, default="active")
+    priority = models.CharField(max_length=20, default="normal")
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_read = models.BooleanField(default=False)
+    message_type = models.CharField(max_length=20, default="text")
+    attachment_url = models.CharField(max_length=255, null=True, blank=True)
+    
+    class Meta:
+        db_table = "support_chat"
+
+
+class EmailSupport(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    subject = models.CharField(max_length=255)
+    message = models.TextField()
+    email = models.CharField(max_length=255)
+    status = models.CharField(max_length=20, default="pending")
+    priority = models.CharField(max_length=20, default="normal")
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = "support_email"

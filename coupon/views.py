@@ -1,11 +1,9 @@
-import os
-import logging
-from dotenv import load_dotenv
 from pathlib import Path
 from django.shortcuts import render
 from django.urls import reverse
 from django.http import JsonResponse
 from django.contrib import messages
+from django.conf import settings
 from datetime import datetime, timedelta, date
 from django.utils import timezone
 from django.core.paginator import Paginator
@@ -15,20 +13,20 @@ from django.views.decorators.http import require_GET, require_http_methods
 from dashboard.utils import dashboard_login_required, get_common_context
 from .models import (
     Coupon, CategoryOption, BrandOption, OfferTypeOption, CountryOption,
-    StateOption, CityOption, PincodeOption, AgeOption, GenderOption, SpendingPowerOption
+    StateOption, CityOption, PincodeOption, AgeOption, GenderOption, SpendingPowerOption, PaymentStatusEnum
 )
 from points.models import PointsActionType, PointsHistory
 from registration.views import validate_and_save_file
-# Load .env file
-BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(os.path.join(BASE_DIR, '.env'))
 
-logger = logging.getLogger(__name__)
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 @dashboard_login_required
 def coupon_view(request):
     user = request.user_obj
     context = get_common_context(request, user)
+    if user.user_type == "pharmacy":
+        return render(request, "pharmacy/pharmacy_coupon.html", context)
 
     if request.method == 'POST':
         is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
@@ -178,12 +176,13 @@ def coupon_view(request):
                 image=image_path,
                 displays_per_coupon=displays_per_coupon_int,
                 rate_per_display=rate_per_display_float,
-                payment_method=payment_method,
-                payment_status="Pending",
+                payment_method=payment_method.upper(),
+                payment_status=PaymentStatusEnum.PENDING,
                 payment_details="",
                 final_paid_amount=final_paid_amount_float,
                 gst_amount=gst_amount_float,
             )
+            print(1234567890, coupon)
             coupon.save()
 
             # --- Award points ---
@@ -195,9 +194,7 @@ def coupon_view(request):
                     points=action_type_obj.default_points,
                 )
             except PointsActionType.DoesNotExist:
-                logger.warning("PointsActionType for 'Coupon' does not exist. No points awarded.")
-
-            logger.info(f"Successfully created coupon with ID: {coupon.id}")
+                print("PointsActionType for 'Coupon' does not exist. No points awarded.")
 
             if is_ajax:
                 return JsonResponse({
@@ -209,7 +206,6 @@ def coupon_view(request):
             messages.success(request, "Coupon posted successfully!")
 
         except Exception as e:
-            logger.error(f"Error creating coupon: {e}", exc_info=True)
             error_msg = f"An unexpected error occurred: {str(e)}"
             if is_ajax:
                 return JsonResponse({"error": error_msg})
@@ -218,7 +214,6 @@ def coupon_view(request):
 
     context.update(get_context_data(user))
     return render(request, "coupon.html", context)
-
 
 @dashboard_login_required
 @require_GET
@@ -243,17 +238,15 @@ def coupon_detail(request, coupon_id):
             'redeemed_count': getattr(coupon, 'redeemed_count', 0),
             'validity': coupon.validity.strftime('%d/%m/%y,%H:%M') if getattr(coupon, 'validity', None) else '',
             'status': 'Active' if getattr(coupon, 'validity', None) and coupon.validity > timezone.now().date() else 'Expired',
-            'image_url': coupon.image.url if getattr(coupon, 'image', None) else '',
+            'image_url': coupon.image if coupon.image else '',
             'age_group': getattr(coupon.age_group, 'name', '') if hasattr(coupon, 'age_group') and coupon.age_group else '',
             'gender': getattr(coupon.gender, 'name', '') if hasattr(coupon, 'gender') and coupon.gender else '',
             'city': getattr(coupon.city, 'name', '') if hasattr(coupon, 'city') and coupon.city else '',
             'spending_power': getattr(coupon.spending_power, 'name', '') if hasattr(coupon, 'spending_power') and coupon.spending_power else '',
         }
     except Exception as e:
-        logger.error(f"Error building coupon detail data: {e}", exc_info=True)
         return JsonResponse({'error': 'Server error'}, status=500)
     return JsonResponse(data)
-
 
 @dashboard_login_required
 @require_GET
@@ -281,18 +274,16 @@ def platform_bill(request, coupon_id):
             'final_paid_amount': getattr(coupon, 'final_paid_amount', 0),
 
             ## Platform Company details
-            'company': os.environ.get("COMPANY", ""),
-            'gstin': os.environ.get("GSTIN", ""),
-            'address': os.environ.get("ADDRESS", ""),
+            'company': settings.COMPANY_NAME,
+            'gstin': settings.COMPANY_GSTIN,
+            'address': settings.COMPANY_ADDRESS,
             # 'phone': os.environ.get("PHONE", ""),
             # 'email': os.environ.get("EMAIL", ""),
             # 'website': os.environ.get("WEBSITE", ""),
         }
     except Exception as e:
-        logger.error(f"Error building coupon detail data: {e}", exc_info=True)
         return JsonResponse({'error': 'Server error'}, status=500)
     return JsonResponse(data)
-
 
 @dashboard_login_required
 @require_http_methods(["GET", "POST"])
@@ -307,10 +298,8 @@ def get_coupon_history(request):
             coupon = Coupon.objects.get(id=coupon_id, advertiser=user)
             coupon.saved = (action == 'save')
             coupon.save()
-            logger.info(f"User {user} set saved={coupon.saved} for post {coupon_id} (action={action})")
             return JsonResponse({'success': True, 'saved': coupon.saved})
         except Coupon.DoesNotExist:
-            logger.warning(f"User {user} tried to {action} post {coupon_id} but it does not exist or does not belong to them.")
             return JsonResponse({'success': False, 'error': 'Post not found'}, status=404)
 
     # --- 2. If not POST, continue with GET listing logic ---
@@ -342,7 +331,7 @@ def get_coupon_history(request):
             end_date = datetime.strptime(end, "%Y-%m-%d")
             filters &= Q(created_at__range=(start_date, end_date))
         except Exception:
-            pass  # Invalid format, ignore or handle as needed
+            pass
 
     coupons = Coupon.objects.filter(filters).order_by('-created_at')
     paginator = Paginator(coupons, limit)

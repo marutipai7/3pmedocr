@@ -1,5 +1,4 @@
 import uuid
-import logging
 from decimal import Decimal
 from django.db.models import Q
 from django.utils import timezone
@@ -11,14 +10,11 @@ from django.core.paginator import Paginator
 from django.utils.dateparse import parse_date
 from datetime import date, timedelta, datetime
 from django.template.loader import render_to_string
-from dashboard.views import get_common_context, get_theme_colors
-from dashboard.utils import dashboard_login_required
+from dashboard.utils import dashboard_login_required, get_common_context, get_theme_colors, seller_verified_required
 from registration.views import validate_and_save_file
 from points.models import PointsActionType, PointsHistory
 from django.views.decorators.http import require_POST, require_GET
-from registration.models import NGOProfile, AdvertiserProfile, ClientProfile, MedicalProviderProfile, ContactPerson
-
-logger = logging.getLogger(__name__)
+from registration.models import NGOProfile, AdvertiserProfile, ClientProfile, PharmacyProfile, ContactPerson, LabProfile, DoctorProfile, HospitalProfile
 
 @dashboard_login_required
 @require_GET
@@ -28,8 +24,14 @@ def donate_view(request):
         user_profile = AdvertiserProfile.objects.filter(user=user).first()
     elif user.user_type == 'client':
         user_profile = ClientProfile.objects.filter(user=user).first()
-    elif user.user_type == 'provider':
-        user_profile = MedicalProviderProfile.objects.filter(user=user).first()
+    elif user.user_type == 'pharmacy':
+        user_profile = PharmacyProfile.objects.filter(user=user).first()
+    elif user.user_type == 'lab':
+        user_profile = LabProfile.objects.filter(user=user).first()
+    elif user.user_type == 'doctor':
+        user_profile = DoctorProfile.objects.filter(user=user).first()
+    elif user.user_type == 'hospital':
+        user_profile = HospitalProfile.objects.filter(user=user).first()
 
     donation_query = request.GET.get('donation_query', '').strip().lower()
 
@@ -39,11 +41,38 @@ def donate_view(request):
                      donation_query in (d.ngopost.post_type.name.lower() if d.ngopost and d.ngopost.post_type else '') or
                      donation_query in (d.ngopost.user.ngoprofile.ngo_name.lower() if d.ngopost and d.ngopost.user and hasattr(d.ngopost.user, 'ngoprofile') and d.ngopost.user.ngoprofile.ngo_name else '')]
     context = get_common_context(request, request.user_obj)
-    context.update({
+    color_hex_map = {
+        "living-coral": "#FF6F61",
+        "dark-blue": "#123456",
+        "violet-sky": "#6B79F5",
+        "light-sea-green": "#3AAFA9",
+    }
+    primary_bg = context.get("primary_bg")
+    context["hexcolor"] = color_hex_map.get(primary_bg)
+    if user.user_type == "lab":
+        context.update({
         "donations": donations,
         "donation_query": donation_query,
-        'user_display_name': user_profile.company_name,
+        'user_display_name': user_profile.lab_name,
     })
+    elif user.user_type == "doctor":
+        context.update({
+            "donations": donations,
+            "donation_query": donation_query,
+            'user_display_name': user_profile.clinic_name,
+        })
+    elif user.user_type == "hospital":
+        context.update({
+            "donations": donations,
+            "donation_query": donation_query,
+            'user_display_name': user_profile.hospital_name,
+        })
+    else:
+        context.update({
+            "donations": donations,
+            "donation_query": donation_query,
+            'user_display_name': user_profile.company_name,
+        })
     return render(request, "advertiser/donate.html", context)
 
 @dashboard_login_required
@@ -91,12 +120,6 @@ def get_organization_posts(request):
             applied_date_filter = f"Explicit Range: {start_date} → {end_date}"
 
     posts = NGOPost.objects.filter(filters).select_related("user").order_by("-created_at")
-    total_count = posts.count()
-
-    logger.info(
-        f"[NGO Posts] Search='{query or 'None'}', Date Filter='{applied_date_filter or 'None'}', "
-        f"Results Found={total_count}"
-    )
 
     paginator = Paginator(posts, 6)
     posts_page = paginator.get_page(page)
@@ -143,18 +166,20 @@ def donate_pay_view(request, post_id=None):
         amount = float(request.POST.get('donation_amount', 0))
         if amount < 100:
             return JsonResponse({'error': 'Minimum donation is ₹100'}, status=400)
-        # Prevent donations exceeding target amount
+
         if (post.donation_received or Decimal('0.00')) + Decimal(str(amount)) > post.target_donation:
             return JsonResponse({'error': 'Donation exceeds the target amount for this post.'}, status=400)
-        # Enforce donation frequency
+        
         freq = post.donation_frequency.lower()
         user_donations_count = Donation.objects.filter(ngopost=post, user=user).count()
         allowed = 1 if 'one' in freq else 2 if 'two' in freq else 3 if 'three' in freq else 1
         if user_donations_count >= allowed:
             return JsonResponse({'error': f'You can donate only {allowed} time(s) to this post.'}, status=400)
+        
         platform_fee = round(amount * 0.02, 2)
         gst = round(platform_fee * 0.18, 2)
         amount_to_ngo = round(amount - platform_fee - gst, 2)
+        
         pan_number = request.POST.get('pan_number', '')
         pan_document_file = request.FILES.get('pan_document')
         if not pan_number or len(pan_number) != 10:
@@ -162,6 +187,7 @@ def donate_pay_view(request, post_id=None):
         pan_document_path, error = validate_and_save_file(pan_document_file, 'donation_docs', 'PAN Document', user_type='common')
         if error:
             return JsonResponse({'error': error}, status=400)
+        
         order_id = str(uuid.uuid4().hex[:8])
         transaction_id = str(uuid.uuid4().hex[:8])
         donation = Donation.objects.create(
@@ -184,20 +210,12 @@ def donate_pay_view(request, post_id=None):
         post.save(update_fields=['donation_received'])
         try:
             action_type_obj = PointsActionType.objects.get(action_type='Donate')
-            PointsHistory.objects.create(
-                user=user,
-                action_type=action_type_obj,
-                points=action_type_obj.default_points
-            )
+            PointsHistory.objects.create(user=user, action_type=action_type_obj, points=action_type_obj.default_points)
         except PointsActionType.DoesNotExist:
-            logger.warning("PointsActionType for 'Donate' does not exist. No points awarded.")
+            print("PointsActionType for 'Donate' does not exist. No points awarded.")
         return JsonResponse({'success': True, 'order_id': order_id, 'transaction_id': transaction_id})
-    context.update({
-    "post": post,
-    "ngo_profile": ngo_profile
-    })
+    context.update({ "post": post, "ngo_profile": ngo_profile})
     return render(request, "advertiser/donate-pay.html", context)
-
 
 @dashboard_login_required
 @require_GET
@@ -243,7 +261,6 @@ def get_donation_history(request):
         'today': date.today(),
         **get_common_context(request, request.user_obj),
     })
-    logger.info(f"User {user.id} fetched donation history: {query}")
     return JsonResponse({
         "html": html,
         "current_page": page_obj.number,
@@ -260,7 +277,7 @@ def get_donate_bill(request, donation_id):
     ngo_profile = NGOProfile.objects.filter(user=ngo_user).first()
     contact_person = ContactPerson.objects.filter(
         profile_type=user.user_type,
-        profile_id=user
+        profile=user
     ).first()  
 
 
@@ -272,14 +289,12 @@ def get_donate_bill(request, donation_id):
         "amount": f"₹{donation.amount}",
         "pay_mode": f"{donation.payment_method}",
         "address": f"{ngo_profile.address}, {ngo_profile.city}, {ngo_profile.state}, {ngo_profile.pincode}",
-        "name": contact_person.name,
-        "email": user.email,
+        "name": contact_person.name if contact_person else "",
+        "email": user.email if user.email else "",
     }
 
     return JsonResponse(response_data)
 
-
-# show data on receipt 
 @dashboard_login_required    
 def get_platform_bill(request, donation_id):
     user = request.user_obj
@@ -289,7 +304,7 @@ def get_platform_bill(request, donation_id):
     ngo_profile = NGOProfile.objects.filter(user=ngo_user).first()
     contact_person = ContactPerson.objects.filter(
         profile_type=user.user_type,
-        profile_id=user
+        profile=user
     ).first()
 
 
@@ -302,8 +317,8 @@ def get_platform_bill(request, donation_id):
         "amount": f"₹{donation.amount}",
         "pay_mode": f"₹{donation.payment_method}",
         "address": f"{ngo_profile.address}, {ngo_profile.city}, {ngo_profile.state}, {ngo_profile.pincode}",
-        "name": contact_person.name,
-        "email": user.email,
+        "name": contact_person.name if contact_person else "",
+        "email": user.email if user.email else "",
         "finalTotal": f"{(donation.amount + donation.gst):.2f}",
     }
 
@@ -323,14 +338,11 @@ def toggle_saved_donation(request):
         donation.saved = (action == 'save')
         donation.save()
 
-        logger.info(f"User {request.user_obj} set saved={donation.saved} for donation {donation_id} (action={action})")
         return JsonResponse({'success': True, 'saved': donation.saved, 'text_class': get_theme_colors(request.user_obj.user_type).get("text", "blue-500")})
 
     except Donation.DoesNotExist:
-        logger.warning(f"Donation {donation_id} not found or does not belong to user {request.user_obj}")
         return JsonResponse({'success': False, 'error': 'Donation not found'}, status=404)
 
-# csv 
 @dashboard_login_required
 @require_GET
 def export_donation_history(request):
@@ -342,7 +354,6 @@ def export_donation_history(request):
         "donation_history": donations,
         'today': date.today(),
     })
-    logger.info(f"Exporting donation history for user {user} with {donations.count()} records")
     return JsonResponse({
         "html": html,
         "total_items": donations.count(),  # Add this

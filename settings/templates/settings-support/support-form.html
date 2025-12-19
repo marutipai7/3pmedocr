@@ -1,0 +1,84 @@
+<!-- Track or Report Issue -->
+<div class="space-y-2">
+  <h1 class="font-semibold text-base">Report or Track an Issue</h1>
+  <form action="#" class="support-form issue-form space-y-4">
+    <div class="w-full flex flex-col sm:flex-row items-center gap-5">
+      <select
+        name="issue_type"
+        id="issue_type"
+        class="w-full focus:outline-none focus:ring-0 border-1 cursor-pointer"
+      >
+      <option>Select Issue Type</option>
+        {% for issue_type in issue_types %}
+        <option value="{{ issue_type.id }}">{{ issue_type.name }}</option>
+        {% endfor %}
+      </select>
+
+      <select name="select_issue" id="select_issue" class="w-full focus:outline-none focus:ring-0 border-1 cursor-pointer">
+        <option value="">Select Issue Option</option>
+
+        {% for option in issue_options %}
+          <option value="{{ option.id }}">
+            {{ option.issue_type.name }} – {{ option.name }}
+          </option>
+        {% endfor %}
+      </select>
+
+    </div>
+
+    <textarea
+      name="description"
+      rows="6"
+      class="issue-description block p-2.5 w-full text-sm rounded-[6px] border text-dark-gray border-slate-gray focus:!outline-none focus:ring-0"
+      placeholder="Please enter description for issue"
+    ></textarea>
+
+    <div class="flex items-center justify-between w-full gap-4">
+      <!-- Upload image field -->
+      <div
+        class="w-full sm:w-1/2 h-[50px] rounded-[6px] border-2 border-dashed border-{{ border }} flex items-center justify-between px-3 relative"
+      >
+        <input
+          name="image"
+          id="ngo-issue-image"
+          type="file"
+          accept="image/*"
+          multiple
+          class="ngo-issue-image hidden"
+        />
+
+        <!-- Label aligned to start -->
+        <label
+          for="ngo-issue-image"
+          class="w-full flex items-center justify-start gap-3 cursor-pointer ngo-issue-image-label"
+        >
+          <span class="material-symbols-outlined">image</span>
+          <div id="ngo-file-container"
+            class="flex items-center gap-2 overflow-x-auto max-w-full py-1 ngo-file-container"
+          >
+            <span class="ngo-file-name font-normal text-sm"
+              >Upload issues image</span
+            >
+          </div>
+        </label>
+
+        <!-- "+" Icon on right -->
+        <label for="ngo-issue-image" class="cursor-pointer">
+          <span class="material-symbols-outlined bg-{{ primary_bg }} text-white rounded-md p-1">add</span
+          >
+        </label>
+      </div>
+
+      <!-- Submit button -->
+      <button
+        type="submit"
+        class="px-8 text-medium-gray bg-light-gray rounded-[10px] py-2 cursor-not-allowed ngo-issue-submit-btn"
+        disabled
+      >
+        Submit
+      </button>
+    </div>
+  </form>
+  <div class="w-full h-0.5 rounded bg-{{ primary_bg }} mt-7"></div>
+</div>
+

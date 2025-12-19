@@ -87,12 +87,12 @@ $(document).ready(function () {
 
   // Remove active styles from all tabs
   $(".tab-btn-pharmacy")
-    .removeClass("active-tab-pharmacy font-semibold border-b-2 border-light-sea-green text-dark-gray")
+    .removeClass("active-tab-pharmacy font-semibold border-b-2 border-deep-teal-green text-dark-gray")
     .addClass("font-medium text-light-gray1");
 
   // Apply active styles to clicked tab
   $(this)
-    .addClass("active-tab-pharmacy font-semibold border-b-2 border-light-sea-green text-dark-gray")
+    .addClass("active-tab-pharmacy font-semibold border-b-2 border-deep-teal-green text-dark-gray")
     .removeClass("font-medium text-light-gray1");
 
   // Show relevant tab content
@@ -190,4 +190,72 @@ $(document).ready(function () {
   });
   $(".tab-btn-client").eq(0).click();
 
+  $(".tab-btn-hospital").click(function () {
+    var target = $(this).data("tab");
+    $(".tab-btn-hospital")
+      .removeClass(
+        "active-tab-hospital font-semibold border-b-2 border-dark-blue text-dark-gray"
+      )
+      .addClass("font-medium text-light-gray1");
+    $(this)
+      .addClass(
+        "active-tab-hospital font-semibold border-b-2 border-dark-blue text-dark-gray"
+      )
+      .removeClass("font-medium text-light-gray1");
+    $(".tab-content").addClass("hidden");
+    $("." + target).removeClass("hidden");
+    if (target === "points") {
+      $(".diamond-user").show();
+    } else {
+      $(".diamond-user").hide();
+    }
+
+    if (target === "documents") {
+      $(".editIcon").hide();
+      $(".fileLimit").removeClass("hidden");
+    } else {
+      $(".editIcon").show();
+      $(".fileLimit").addClass("hidden");
+    }
+    if (target === "notification-control") {
+      $(".edit-toggle").hide();
+    } else {
+      $(".edit-toggle").show();
+    }
+  });
+  $(".tab-btn-hospital").eq(0).click();
+
+    $(".tab-btn-rewards").click(function () {
+    var target = $(this).data("tab");
+    $(".tab-btn-rewards")
+      .removeClass(
+        "active-tab-rewards font-semibold border-b-2 border-dark-blue text-dark-gray"
+      )
+      .addClass("font-medium text-light-gray1");
+    $(this)
+      .addClass(
+        "active-tab-rewards font-semibold border-b-2 border-dark-blue text-dark-gray"
+      )
+      .removeClass("font-medium text-light-gray1");
+    $(".tab-content").addClass("hidden");
+    $("." + target).removeClass("hidden");
+    if (target === "points") {
+      $(".diamond-user").show();
+    } else {
+      $(".diamond-user").hide();
+    }
+
+    if (target === "documents") {
+      $(".editIcon").hide();
+      $(".fileLimit").removeClass("hidden");
+    } else {
+      $(".editIcon").show();
+      $(".fileLimit").addClass("hidden");
+    }
+    if (target === "notification-control") {
+      $(".edit-toggle").hide();
+    } else {
+      $(".edit-toggle").show();
+    }
+  });
 });

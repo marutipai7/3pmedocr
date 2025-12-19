@@ -299,195 +299,316 @@ checkbox.on('change', function () {
     return cookieValue;
 }
 const csrftoken = getCookie('csrftoken');
-$('#register-form').on('submit', function(e) {
+
+$('#register-form').on('submit', function (e) {
     e.preventDefault();
-    $('.border-dark-red').removeClass('border-dark-red');
-    $('.placeholder\\:text-semi-transparent-red').removeClass('placeholder:text-semi-transparent-red');
-    $('label.text-dark-red').removeClass('text-dark-red');
-    $('.field-error').remove();
-    $('[data-error-for]').text('').removeClass('text-xs text-dark-red'); // <-- Clear all data-error-for spans
+    console.clear(); // cleaner debugging console
+    console.log("===== 📤 SUBMITTING FORM =====");
+    resetFormErrors();
 
-    var pwd = $('[name="password"]').val();
-    var cpwd = $('[name="confirm_password"]').val();
-    
-    // Debug logging
-    console.log('Password validation:', {
-        password: pwd,
-        confirmPassword: cpwd,
-        match: pwd === cpwd,
-        passwordLength: pwd ? pwd.length : 0,
-        confirmLength: cpwd ? cpwd.length : 0
-    });
-    
+    let pwd = $('[name="password"]').val();
+    let cpwd = $('[name="confirm_password"]').val();
+    console.log("Password Match:", pwd === cpwd);
+
     if (pwd !== cpwd) {
-        var $field = $('[name="confirm_password"]');
-        $field.next('.field-error').remove();
-        $('<span class="field-error text-xs text-dark-red"></span>')
-            .text('Passwords do not match.')
-            .insertAfter($field);
-        $field
-            .addClass('border-dark-red placeholder:text-semi-transparent-red')
-            .removeClass('border-primary-color placeholder:text-blue-teal');
-        $field.prev('label').addClass('text-dark-red');
-
-        toastr.error('Passwords do not match.');
+        showError($('[name="confirm_password"]'), "Passwords do not match.");
+        toastr.error("Passwords do not match.");
         return;
     }
 
-    var $terms = $('[name="terms"]');
-    $terms.next('.field-error').remove();
-
-    if (!$terms.is(':checked')) {
-        $('<span class="field-error text-xs text-dark-red"></span>')
-            .text('You must agree to the terms.')
-            .insertAfter($terms);
-
-        toastr.error('You must agree to the terms.');
+    let terms = $('[name="terms"]');
+    if (terms.length && !terms.is(":checked")) {
+        showError(terms, "You must agree to the terms.");
+        toastr.error("You must agree to the terms.");
         return;
     }
 
-    var formType = $(this).data('type');
-    var formUrl = $(this).attr('action');
-
-    console.log('Form Url:', formUrl);
-
-    let countryCodeValue = $('.countryCode-selected').text().trim();
-    $('input[name="country-code"]').val(countryCodeValue);
-    let contactCountryCodeValue = $('.contact-countryCode-selected').text().trim();
-    $('input[name="contact-country-code"]').val(contactCountryCodeValue);
-
+    let formUrl = $(this).attr("action");
+    console.log("➡️ URL:", formUrl);
     if (formUrl == '/user/save/advertiser') {
+
         let selectValue = $('.advertiser-type-selected').text().trim();
         $('input[name="advertiser_type"]').val(selectValue);
+
         let adServiceValue = $('.ad-service-selected').text().trim();
         $('input[name="ad_service_req"]').val(adServiceValue);
-    } else if (formUrl == '/user/save/medical_provider') {
-        // var providerType = $('#provider_type_input').val();
-        // var servicesOffered = $('#services_offered_input').val();
-        // var workingDays = $('#working_days_input').val();
-        // var openingTime = $('#opening_time').val();
-        // var closingTime = $('#closing_time').val();
-        // var valid = true;
-        // // Remove previous errors
-        // $('.field-error.provider_type, .field-error.services_offered, .field-error.working_days, .field-error.opening_time, .field-error.closing_time').remove();
-        // if (!providerType) {
-        //     valid = false;
-        //     $('<span class="field-error provider_type text-xs text-dark-red">Please select a provider type.</span>')
-        //         .insertAfter($('#provider_type_input'));
-        // }
-        // if (!servicesOffered) {
-        //     valid = false;
-        //     $('<span class="field-error services_offered text-xs text-dark-red">Please select at least one service.</span>')
-        //         .insertAfter($('#services_offered_input'));
-        // }
-        // if (!workingDays) {
-        //     valid = false;
-        //     $('<span class="field-error working_days text-xs text-dark-red">Please select at least one working day.</span>')
-        //         .insertAfter($('#working_days_input'));
-        // }
-        // if (!openingTime) {
-        //     valid = false;
-        //     $('<span class="field-error opening_time text-xs text-dark-red">Please select an opening time.</span>')
-        //         .insertAfter($('#opening_time'));
-        // }
-        // if (!closingTime) {
-        //     valid = false;  
-        //     $('<span class="field-error closing_time text-xs text-dark-red">Please select a closing time.</span>')
-        //         .insertAfter($('#closing_time'));
-        // }
-        // if (!valid) {
-        //     e.preventDefault();
-        //     toastr.error('Please fill all required dropdowns.');
-        //     return false;
-        // }
+
+    } else if (formUrl == '/user/save/medical_pharmacy') {
+
         let selectService = $('.selected-services').text().trim();
         $('input[name="services_offered"]').val(selectService);
-        let selectProviderType = $('.selected-provider-type').text().trim();
-        $('input[name="provider_type"]').val(selectProviderType);
+
+        let selectPharmacyType = $('.selected-pharmacy-type').text().trim();
+        $('input[name="pharmacy_type"]').val(selectPharmacyType);
+
         let selectWorkingDays = $('.selected-working-days').text().trim();
         $('input[name="working_days"]').val(selectWorkingDays);
+
     } else if (formUrl == '/user/save/client') {
+
         let selectValue = $('.company-type-selected').text().trim();
         $('input[name="company_type"]').val(selectValue);
+
         let adServiceValue = $('.company-service-selected').text().trim();
         $('input[name="company_service"]').val(adServiceValue);
+
     } else if (formUrl == '/user/save/ngo') {
+
         let selectValue = $('.ngo-service-selected').text().trim();
         $('input[name="ngo_service"]').val(selectValue);
     }
-    var formData = new FormData(this);
 
+    // LAB SPECIFIC TRANSFORMS
+    else if (formUrl.includes("/save/lab")) {
+        let selectedTiming = $("input[name='lab_timing']:checked").val();
+        if (selectedTiming) {
+            $("input[name='lab_timing']").val(selectedTiming);
+        }
+
+        $("input[name='services']").val(
+            $("input[name='services']:checked").map(function () {
+                return this.value;
+            }).get().join(",")
+        );
+
+        $("input[name='facilities']").val(
+            $("input[name='facilities']:checked").map(function () {
+                return this.value;
+            }).get().join(",")
+        );
+    }
+    
+    // PHARMACY SPECIFIC TRANSFORMS
+    else if (formUrl.includes("/save/pharmacy")) {
+
+        // Pharmacy Timing (dropdown → hidden input)
+        let selectedTiming = $("input[name='pharmacy_timing']:checked").val();
+        if (selectedTiming) {
+            $("input[name='pharmacy_timing']").val(selectedTiming);
+        }
+
+        // Pharmacy Type (dropdown → hidden)
+        let selectedType = $("input[name='pharmacy_type']:checked").val();
+        if (selectedType) {
+            $("input[name='pharmacy_type']").val(selectedType);
+        }
+
+        // Services Offered (dropdown → hidden)
+        $("input[name='services_offered']").val(
+            $("input[name='services_offered']:checked")
+                .map(function () {
+                    return this.value;
+                })
+                .get()
+                .join(",")
+        );
+    }
+
+    // HOSPITAL SPECIFIC TRANSFORMS
+    else if (formUrl.includes("/save/hospital")) {
+        console.log("📌 Processing Hospital Fields");
+        let selectedTiming = $("input[name='hospital_timing']:checked").val();
+        console.log("Hospital Timing:", selectedTiming);
+        if (selectedTiming) {
+            $("input[name='hospital_timing']").val(selectedTiming);
+        }
+
+        // Home Visit → Boolean
+        let homeVisit = $(".home-visit-option input:checked").attr("id") === "Available" ? "Available" : "Unavailable";
+        console.log("Home Visit:", homeVisit);
+        $("<input>").attr({
+            type: "hidden",
+            name: "home_visit",
+            value: homeVisit
+        }).appendTo("#register-form");
+    }
+
+    // DOCTOR SPECIFIC TRANSFORMS
+    else if (formUrl.includes("/save/doctor")) {
+        console.log("📌 Processing Doctor Fields");
+
+        // -------- Gender (single option)
+        let gender = $("input[name='gender']:checked").val();
+        console.log("Gender:", gender);
+        if (gender) {
+            $("input[name='gender']").val(gender);
+        }
+
+        // -------- Specialization (single FK)
+        let specialization = $("input[name='specialization']:checked").val();
+        console.log("Specialization ID:", specialization);
+        if (specialization) {
+            $("<input>").attr({
+                type: "hidden",
+                name: "specialization",
+                value: specialization
+            }).appendTo("#register-form");
+        }
+
+        // -------- Qualification (single FK)
+        let qualification = $("input[name='qualification']:checked").val();
+        console.log("Qualification ID:", qualification);
+        if (qualification) {
+            $("<input>").attr({
+                type: "hidden",
+                name: "qualification",
+                value: qualification
+            }).appendTo("#register-form");
+        }
+
+        // -------- Experience (single FK)
+        let experience = $("input[name='experience']:checked").val();
+        console.log("Experience ID:", experience);
+        if (experience) {
+            $("<input>").attr({
+                type: "hidden",
+                name: "experience",
+                value: experience
+            }).appendTo("#register-form");
+        }
+
+        // -------- Home Visit (Available/Unavailable → Boolean)
+        let homeVisitRaw = $(".home-visit-option input:checked").attr("id");
+        let homeVisitBoolean = homeVisitRaw === "Available" ? "true" : "false";
+
+        console.log("Home Visit:", homeVisitRaw, "→", homeVisitBoolean);
+
+        $("<input>").attr({
+            type: "hidden",
+            name: "home_visit_available",
+            value: homeVisitBoolean
+        }).appendTo("#register-form");
+
+        // -------- Opening Time Dropdown (text)
+        let openTime = $(".opening-time-option input:checked").val();
+        console.log("Opening Time:", openTime);
+        if (openTime) {
+            $("<input>").attr({
+                type: "hidden",
+                name: "clinic_timing_from",
+                value: openTime
+            }).appendTo("#register-form");
+        }
+
+        // -------- Closing Time Dropdown (text)
+        let closeTime = $(".closing-time-option input:checked").val();
+        console.log("Closing Time:", closeTime);
+        if (closeTime) {
+            $("<input>").attr({
+                type: "hidden",
+                name: "clinic_timing_to",
+                value: closeTime
+            }).appendTo("#register-form");
+        }
+    }
+
+    let formData = new FormData(this);
+    console.log("===== 🧾 FormData Preview =====");
+    for (var pair of formData.entries()) {
+        console.log(pair[0] + " ➜ " + pair[1]);
+    }
     $.ajax({
         url: formUrl,
-        type: 'POST',
-        headers: { 'X-CSRFToken': csrftoken },
+        type: "POST",
+        headers: {"X-CSRFToken": csrftoken},
         data: formData,
         processData: false,
         contentType: false,
-        success: function(resp) {
-            $('.field-error').remove();
-            $('[data-error-for]').text('').removeClass('text-xs text-dark-red');
-            $('.border-dark-red').removeClass('border-dark-red');
-            $('.placeholder\\:text-semi-transparent-red').removeClass('placeholder:text-semi-transparent-red');
-            $('label.text-dark-red').removeClass('text-dark-red');
-            
+        success: function (resp) {
+            console.log("🎯 SUCCESS RESPONSE:", resp);
             if (resp.success) {
-                toastr.success(resp.message || 'Registration successful!');
-                setTimeout(function() {
-                    window.location.href = "login";
-                }, 1200);
+                toastr.success(resp.message || "Registration successful!");
+                setTimeout(() => location.href = "/user/login", 1200);
             } else if (resp.errors) {
-                // Loop through errors, apply classes/styles just like jQuery Validate
-                $.each(resp.errors, function(field, message) {
-                    var $input = $('[name="' + field + '"]');
-                    $('[data-error-for="' + field + '"]')
-                        .text(message)
-                        .addClass('text-xs text-dark-red');
-                    $input
-                        .addClass('border-dark-red placeholder:text-semi-transparent-red')
-                        .removeClass('border-primary-color placeholder:text-blue-teal');
-                    $input.prev('label').addClass('text-dark-red');
-                });
-                console.log(resp.errors);
-                toastr.error("Please correct the highlighted errors.");
+                showErrors(resp.errors);
+                toastr.error("Please correct highlighted errors.");
             } else {
-                toastr.error(resp.error || "Registration failed.");
+                toastr.error("Registration failed.");
             }
         },
-        error: function(xhr) {
-            $('.field-error').remove();
-            $('[data-error-for]').text('').removeClass('text-xs text-dark-red');
-            $('.border-dark-red').removeClass('border-dark-red');
-            $('.placeholder\\:text-semi-transparent-red').removeClass('placeholder:text-semi-transparent-red');
-            $('label.text-dark-red').removeClass('text-dark-red');
+        error: function (xhr) {
+            console.log("❌ ERROR RESPONSE RAW:", xhr);
+            console.log("❌ ERROR RESPONSE JSON:", xhr.responseJSON);
 
-            if (xhr.responseJSON && xhr.responseJSON.errors) {
-                $.each(xhr.responseJSON.errors, function(field, message) { 
-                    var $input = $('[name="' + field + '"]');
-                    $input.next('.field-error').remove();
-                    $('<span class="field-error text-xs text-dark-red"></span>')
-                        .text(message)
-                        .insertAfter($input);
-                    $input
-                        .addClass('border-dark-red placeholder:text-semi-transparent-red')
-                        .removeClass('border-primary-color placeholder:text-blue-teal');
-                    $input.prev('label').addClass('text-dark-red');
-                });
-                toastr.error("Please correct the highlighted errors.");
+            if (xhr.responseJSON?.errors) {
+                showErrors(xhr.responseJSON.errors);
+                toastr.error("Please correct highlighted errors.");
             } else {
                 toastr.error("Server error. Try again.");
             }
         }
     });
+
 });
-// Optional: Remove error style when field is corrected
-$('#register-form input').on('input change', function() {
-    var $input = $(this);
-    $input.removeClass('border-dark-red placeholder:text-semi-transparent-red');
-    $input.prev('label').removeClass('text-dark-red');
-    $input.next('.field-error').remove();
-    $('[data-error-for="' + $input.attr('name') + '"]').text('').removeClass('text-xs text-dark-red');
+
+function resetFormErrors() {
+    $(".border-dark-red").removeClass("border-dark-red");
+    $("label.text-dark-red").removeClass("text-dark-red");
+    $(".placeholder\\:text-semi-transparent-red").removeClass("placeholder:text-semi-transparent-red");
+    $("[data-error-for]").text("");
+}
+
+function showError($input, message) {
+    if (!$input.length) {
+        console.warn("⚠️ showError() input missing:", message);
+        return;
+    }
+    let name = $input.attr("name");
+    let $label = $input.closest(".relative").find("label").first();
+    let $span = $(`[data-error-for="${name}"]`);
+
+    if ($input.closest(".dropdown").length) {
+        $input.closest(".dropdown").find(".dropdown-btn")
+            .addClass("border-dark-red").removeClass("border-primary-color");
+    } else {
+        $input.addClass("border-dark-red placeholder:text-semi-transparent-red")
+            .removeClass("border-primary-color placeholder:text-blue-teal");
+    }
+
+    $label.addClass("text-dark-red");
+    $span.text(message).addClass("text-dark-red");
+}
+
+function showErrors(errors) {
+    console.log("🛑 Backend Validation Errors:", errors);
+    $.each(errors, (field, message) => {
+        let $input = $(`[name="${field}"]`);
+        if ($input.length) {
+            showError($input, message);
+        } else {
+            console.warn("⚠️ Field not found in DOM:", field);
+        }
+    });
+
+    let firstError = $(".text-dark-red").first();
+    if (firstError.length) {
+        $("html, body").animate({scrollTop: firstError.offset().top - 150}, 500);
+    }
+}
+
+$("#register-form input, #register-form textarea").on("input change", function () {
+    let $input = $(this);
+    let name = $input.attr("name");
+    let $label = $input.closest(".relative").find("label").first();
+    let $span = $(`[data-error-for="${name}"]`);
+
+    $input.removeClass("border-dark-red placeholder:text-semi-transparent-red")
+          .addClass("border-primary-color placeholder:text-blue-teal");
+
+    $label.removeClass("text-dark-red");
+    $span.text("");
 });
+
+// Dropdown change fix
+$(".dropdown input").on("change", function () {
+    let $wrapper = $(this).closest(".dropdown");
+    $wrapper.find(".dropdown-btn")
+        .removeClass("border-dark-red")
+        .addClass("border-primary-color");
+
+    $(`[data-error-for="${this.name}"]`).text("");
+});
+
 
 $('#login-form').on('submit', function(e) {
     e.preventDefault();

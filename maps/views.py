@@ -6,7 +6,7 @@ from bson import ObjectId
 from django.conf import settings
 from django.http import JsonResponse
 from .models import SavedLocation, SearchHistory, PincodeLocation
-from registration.models import NGOProfile, AdvertiserProfile, ClientProfile, MedicalProviderProfile
+from registration.models import NGOProfile, AdvertiserProfile, ClientProfile, PharmacyProfile, LabProfile, DoctorProfile, HospitalProfile
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from math import radians, cos, sin, sqrt, atan2
@@ -22,8 +22,14 @@ def map_view(request):
         profile = AdvertiserProfile.objects.filter(user=user).first()
     elif user.user_type == 'client':
         profile = ClientProfile.objects.filter(user=user).first()
-    elif user.user_type == 'provider':
-        profile = MedicalProviderProfile.objects.filter(user=user).first()
+    elif user.user_type == 'pharmacy':
+        profile = PharmacyProfile.objects.filter(user=user).first()
+    elif user.user_type == 'lab':
+        profile = LabProfile.objects.filter(user=user).first()
+    elif user.user_type == 'doctor':
+        profile = DoctorProfile.objects.filter(user=user).first()
+    elif user.user_type == 'hospital':
+        profile = HospitalProfile.objects.filter(user=user).first()
     else:
         pass
 
@@ -31,7 +37,7 @@ def map_view(request):
         context = get_common_context(request, user)
         context.update({
             'user': user,
-            'address': profile.address,
+            'address': profile.address if hasattr(profile, 'address') else '',
             'city': profile.city,
             'state': profile.state,
             'pincode': profile.pincode,
@@ -111,7 +117,6 @@ def get_routes(request):
 
     return JsonResponse({'error': f"All routing servers failed: {last_exception}"}, status=500)
 
-# @dashboard_login_required
 @require_POST
 @csrf_exempt
 def get_amenities(request):
@@ -174,7 +179,6 @@ def get_amenities(request):
 
     return JsonResponse({"amenities": amenities})
 
-# Haversine distance (in km)
 def haversine(lat1, lon1, lat2, lon2):
     R = 6371
     d_lat = radians(lat2 - lat1)

@@ -89,10 +89,6 @@ $(".save-btn").on("click", function (e) {
     });
   });
 
- 
-
-
-
   // Input validation clearing for edit form
   $("#pharmacyName").on("input", function () {
     if ($(this).val().trim() !== "") {
@@ -487,3 +483,52 @@ function clearSavedData() {
   // toastr.success('Saved data cleared!');
   closePopup("savedDataPopup");
 }
+$(".main-tab").on("click", function () {
+  const mainTab = $(this).data("tab");
+
+  // Activate main tab
+  $(".main-tab").removeClass("active-tab-main");
+  $(this).addClass("active-tab-main");
+
+  // Show main content
+  $(".mainTab-content").addClass("hidden");
+  $("#" + mainTab).removeClass("hidden");
+
+  // 🔥 AUTO ACTIVATE FIRST SUB TAB (same logic as pharmacy)
+  const firstSubTab = $(`[data-parent="${mainTab}"]`).first();
+
+  if (firstSubTab.length) {
+    firstSubTab.trigger("click");
+  }
+});
+
+
+
+$(".main-tab-pharmacy").on("click", function () {
+  const mainTab = $(this).data("tab");
+
+  // Activate main tab
+  $(".main-tab-pharmacy").removeClass("active-tab-main-pharmacy");
+  $(this).addClass("active-tab-main-pharmacy");
+
+  // Show main content
+  $(".mainTab-content").addClass("hidden");
+  $("#" + mainTab).removeClass("hidden");
+
+  // 🔥 AUTO ACTIVATE FIRST SUB TAB
+  const firstSubTab = $(`[data-parent="${mainTab}"]`).first();
+
+  if (firstSubTab.length) {
+    firstSubTab.trigger("click");
+  }
+});
+$('[data-tab="points"][data-parent="rewards"]').on('click', function () {
+  setTimeout(() => {
+    if (window.referralChart) {
+      window.referralChart.resize();
+      window.referralChart.update();
+    } else {
+      initReferralChart();
+    }
+  }, 150);
+});

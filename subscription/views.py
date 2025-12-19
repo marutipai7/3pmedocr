@@ -1,21 +1,15 @@
-import os
-from pathlib import Path
 from decimal import Decimal
-from venv import logger
 from django.db import models
 from datetime import timedelta
-from dotenv import load_dotenv
 from django.utils import timezone
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.conf import settings
 from registration.models import ContactPerson
 from django.views.decorators.http import require_POST
 from points.models import PointsActionType, PointsHistory
 from dashboard.utils import dashboard_login_required, get_common_context
 from subscription.models import SubscriptionPlan, Feature, SubscriptionHistory
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 @dashboard_login_required
 def subscription_view(request):
@@ -158,7 +152,7 @@ def subscribe_plan(request):
             points=action_type_obj.default_points
         )
     except PointsActionType.DoesNotExist:
-        logger.warning("PointsActionType for 'Subscription' does not exist. No points awarded.")
+        print("PointsActionType for 'Subscription' does not exist. No points awarded.")
 
     company_name = getattr(getattr(user, 'clientprofile', None), 'company_name', "N/A")
 
@@ -235,7 +229,6 @@ def current_subscription_summary(request):
         }
     return JsonResponse({"summary": data})
 
-
 @dashboard_login_required
 def subscription_invoice(request, history_id):
     user = request.user_obj
@@ -245,7 +238,7 @@ def subscription_invoice(request, history_id):
         return JsonResponse({"error": "Invoice not found"}, status=404)
 
     try:
-        contact_person = ContactPerson.objects.filter(profile_type="client", profile_id=user.id).first()
+        contact_person = ContactPerson.objects.filter(profile_type="client", profile=user.id).first()
     except ContactPerson.DoesNotExist:
         contact_person = None
 
@@ -270,11 +263,11 @@ def subscription_invoice(request, history_id):
         "net_payable": str(history.net_payable),
 
         "supplier": {
-            "name": os.environ.get("COMPANY", ""),
-            "gstin": os.environ.get("GSTIN", ""),
-            "address": os.environ.get("ADDRESS", ""),
-            "contact": os.environ.get("CONTACT", ""),
-            "email": os.environ.get("EMAIL", "")
+            "name": settings.COMPANY_NAME,
+            "gstin": settings.COMPANY_GSTIN,
+            "address": settings.COMPANY_ADDRESS,
+            "contact": settings.COMPANY_CONTACT,
+            "email": settings.COMPANY_EMAIL
         },
 
         "client": {
