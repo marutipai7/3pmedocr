@@ -4,12 +4,378 @@
 
 
 {% block content %}
+            <div class="flex-grow flex flex-col gap-6 p-4 md:p-8 overflow-y-auto scroll">
+                <div class="flex gap-2 items-center">
+                    <span class="material-symbols-outlined !font-semibold">patient_list</span>
+                    <h1 class="font-semibold">Reports</h1>
+                </div>
 
+                <div class="flex flex-col sm:flex-row justify-between gap-2 sm:items-center">
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute top-1 left-2 !text-xl">search</span>
+                        <input type="text" placeholder="Search by name or categories"
+                            class="py-1.5 pl-8 pr-2 w-full sm:w-[17rem] text-sm rounded-md border border-blue-haze placeholder:text-medium-gray focus:outline-none" />
+                    </div>
+                    <div class="flex items-center justify-end gap-2.5">
+                        <p class="font-normal text-xs text-dodger-blue">Data shown: Jan 12, 2025 – Mar 14, 2025</p>
+                        <div class="relative dropdown">
+                            <button
+                                class="filterToggle  flex items-center border border-blue-haze rounded-md p-1 w-8 h-8 cursor-pointer">
+                                <span class="material-symbols-outlined flex justify-center items-center">tune</span>
+                            </button>
+                            <div
+                                class="filterDropdown absolute right-0 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10">
+                                <div
+                                    class="p-2 pl-4 hover:bg-pale-azure  rounded cursor-pointer flex items-center gap-2 font-normal text-base text-dark-gray">
+                                    <span class="material-symbols-outlined !text-lg text-dodger-blue">
+                                        check
+                                    </span>Today
+                                </div>
+                                <div
+                                    class="p-2 pl-4 hover:bg-pale-azure  rounded cursor-pointer flex items-center gap-2 font-normal text-base text-dark-gray">
+                                    <span class="material-symbols-outlined !text-lg text-light-gray">
+                                        check
+                                    </span>Week
+                                </div>
+                                <div
+                                    class="p-2 pl-4 hover:bg-pale-azure  rounded cursor-pointer flex items-center gap-2 font-normal text-base text-dark-gray">
+                                    <span class="material-symbols-outlined !text-lg text-light-gray">
+                                        check
+                                    </span>Month
+                                </div>
+                                <div
+                                    class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-pale-azure  rounded font-normal text-base text-dark-gray">
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined !text-lg text-light-gray">
+                                            check
+                                        </span>Custom
+                                    </div>
+                                    <span class="material-symbols-outlined calendar-icon">calendar_today</span>
+                                </div>
+                            </div>
+                            <div
+                                class="datepicker-container hidden px-4 pb-3 absolute top-full right-0 lg:right-[180px] z-50 bg-white shadow-md rounded">
+                                <div class="datepicker-inline"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-ghost-white p-4 rounded-lg flex justify-between items-center">
+                        <div class="flex flex-col justify-between gap-1">
+                            <h2 class="text-sm">Total Revenue</h2>
+                            <p class="text-lg font-semibold">₹1.2 Cr</p>
+                        </div>
+                        <div
+                            class="bg-light-dodger-blue flex justify-center items-center w-14 h-14 rounded-full text-dodger-blue">
+                            <span class="material-symbols-outlined !font-semibold">currency_rupee_circle</span>
+                        </div>
+                    </div>
+                    <div class="bg-ghost-white p-4 rounded-lg flex justify-between items-center">
+                        <div class="flex flex-col justify-between gap-1">
+                            <h2 class="text-sm">Highest Revenue Dept</h2>
+                            <p class="text-lg font-semibold">&#8377;68L</p>
+                        </div>
+                        <div
+                            class="bg-light-dodger-blue flex justify-center items-center w-14 h-14 rounded-full text-dodger-blue">
+                            <span class="material-symbols-outlined !font-semibold">money_bag</span>
+                        </div>
+                    </div>
+                    <div class="bg-ghost-white p-4 rounded-lg flex justify-between items-center">
+                        <div class="flex flex-col justify-between gap-1">
+                            <h2 class="text-sm">Quarter Growth</h2>
+                            <p class="text-lg font-semibold">+12.5%</p>
+                        </div>
+                        <div
+                            class="bg-light-dodger-blue flex justify-center items-center w-14 h-14 rounded-full text-dodger-blue">
+                            <img src="/static/images/quarter_growth.svg" alt="">
+                        </div>
+                    </div>
+                    <div class="bg-ghost-white p-4 rounded-lg flex justify-between items-center">
+                        <div class="flex flex-col justify-between gap-1">
+                            <h2 class="text-sm">Avg Revenue / Patient</h2>
+                            <p class="text-lg font-semibold">&#8377;3,150</p>
+                        </div>
+                        <div
+                            class="bg-light-dodger-blue flex justify-center items-center w-14 h-14 rounded-full text-dodger-blue">
+                            <img src="/static/images/avg_revenue.svg" alt="">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white p-4 rounded-xl lab-report-shadow">
+                        <div class="flex justify-between items-center dropdown relative">
+                            <h3 class="font-semibold">Department Revenue</h3>
+                            <div class="flex items-center gap-2">
+                                <p class="text-sm text-medium-gray font-semibold">14/3/25</p>
+                                <span
+                                    class="material-symbols-outlined calendar-icon cursor-pointer">calendar_today</span>
+                            </div>
+                            <div
+                                class="datepicker-container hidden px-4 pb-3 absolute top-full right-0 z-50 bg-white shadow-md rounded">
+                                <div class="datepicker-inline"></div>
+                            </div>
+                        </div>
+                        <div class="dropdown relative inline-block w-full my-4">
+                            <button
+                                class="dropdown-btn cursor-pointer w-full border border-muted-gray rounded-md  px-4 py-2 flex justify-between items-center focus:outline-none">
+                                <span class="dropdown-value">OPD</span>
+                                <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                            </button>
+
+                            <ul class="dropdown-menu absolute hidden  w-full bg-white rounded-md  z-10">
+                                <li class="px-4 py-2 hover:bg-blue-haze cursor-pointer">OPD</li>
+                                <li class="px-4 py-2 hover:bg-blue-haze cursor-pointer">ICU</li>
+                                <li class="px-4 py-2 hover:bg-blue-haze cursor-pointer">General</li>
+                                <li class="px-4 py-2 hover:bg-blue-haze cursor-pointer">ETC</li>
+                            </ul>
+                        </div>
+                        <div class="flex flex-col justify-center items-center gap-2">
+                            <canvas id="barChart"></canvas>
+                            <p class="text-dodger-blue text-sm">14.20% High then last month</p>
+                            <button class=" bg-dodger-blue text-white w-72 py-2 rounded-lg download-btn"
+                                data-target="barChart">Download PDF</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl lab-report-shadow">
+                        <div class="flex justify-between items-center dropdown relative mb-2">
+                            <h3 class="font-semibold">Package Demand & Lead Sources</h3>
+                            <div class="flex items-center gap-2">
+                                <p class="text-sm text-medium-gray font-semibold">14/3/25</p>
+                                <span
+                                    class="material-symbols-outlined calendar-icon cursor-pointer">calendar_today</span>
+                            </div>
+                            <div
+                                class="datepicker-container hidden px-4 pb-3 absolute top-full right-0 z-50 bg-white shadow-md rounded">
+                                <div class="datepicker-inline"></div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <canvas id="pieChart" class="!h-[50%] !w-[55%] mx-auto"></canvas>
+                            <div class="bg-pale-azure flex items-center justify-between px-4 py-1.5">
+                                <p class="font-semibold text-sm">Package</p>
+                                <div class="flex items-center gap-[64px]">
+                                    <p class="font-semibold text-sm">Bookings</p>
+                                    <p class="font-semibold text-sm">Conversion Rate</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-2.5">
+                                <div class="flex items-center justify-between px-4 border-b border-blue-haze">
+                                    <div class="flex items-center gap-1">
+                                        <div class="w-1 h-1 rounded-full bg-azure-radiance"></div>
+                                        <p class="font-normal text-xs">Executive Health Plan</p>
+                                    </div>
+                                    <div class="flex items-center gap-[140px]">
+                                        <p class="font-normal text-xs">10,000</p>
+                                        <p class="font-normal text-xs">---</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between px-4 border-b border-blue-haze">
+                                    <div class="flex items-center gap-1">
+                                        <div class="w-1 h-1 rounded-full bg-light-green"></div>
+                                        <p class="font-normal text-xs">Diabetes Care Bundle</p>
+                                    </div>
+                                    <div class="flex items-center gap-[130px]">
+                                        <p class="font-normal text-xs">7,500</p>
+                                        <p class="font-normal text-xs">75%</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between px-4 border-b border-blue-haze">
+                                    <div class="flex items-center gap-1">
+                                        <div class="w-1 h-1 rounded-full bg-sunrise-yellow"></div>
+                                        <p class="font-normal text-xs">Women's Wellness Checkup</p>
+                                    </div>
+                                    <div class="flex items-center gap-[130px]">
+                                        <p class="font-normal text-xs">3,750</p>
+                                        <p class="font-normal text-xs">50%</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="bg-white rounded-md py-4 px-3 border border-frost-white lab-report-shadow flex flex-col gap-2">
+                    <div class="flex items-center justify-between dropdown relative">
+                        <p>Conversion Insights</p>
+                        <div class="flex items-center gap-2">
+                            <p class="text-sm text-medium-gray font-semibold">14/3/25</p>
+                            <span class="material-symbols-outlined calendar-icon cursor-pointer">calendar_today</span>
+                        </div>
+                        <div
+                            class="datepicker-container hidden px-4 pb-3 absolute top-full right-0 z-50 bg-white shadow-md rounded">
+                            <div class="datepicker-inline"></div>
+                        </div>
+                    </div>
+                    <div class="bg-pale-azure flex items-center justify-between px-4 py-1.5">
+                        <p class="font-semibold text-sm">Step</p>
+                        <div class="flex items-center gap-[64px]">
+                            <p class="font-semibold text-sm">Count</p>
+                            <p class="font-semibold text-sm">Conversion %</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2.5">
+                        <div class="flex items-center justify-between px-4">
+                            <div class="flex items-center gap-1">
+                                <div class="w-1 h-1 rounded-full bg-azure-radiance"></div>
+                                <p class="font-normal text-xs">Leads Generated</p>
+                            </div>
+                            <div class="flex items-center gap-[140px]">
+                                <p class="font-normal text-xs">10,000</p>
+                                <p class="font-normal text-xs">---</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between px-4">
+                            <div class="flex items-center gap-1">
+                                <div class="w-1 h-1 rounded-full bg-light-green"></div>
+                                <p class="font-normal text-xs">Qualified Leads</p>
+                            </div>
+                            <div class="flex items-center gap-[130px]">
+                                <p class="font-normal text-xs">7,500</p>
+                                <p class="font-normal text-xs">75%</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between px-4">
+                            <div class="flex items-center gap-1">
+                                <div class="w-1 h-1 rounded-full bg-sunrise-yellow"></div>
+                                <p class="font-normal text-xs">Opportunities Created</p>
+                            </div>
+                            <div class="flex items-center gap-[130px]">
+                                <p class="font-normal text-xs">3,750</p>
+                                <p class="font-normal text-xs">50%</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between px-4">
+                            <div class="flex items-center gap-1">
+                                <div class="w-1 h-1 rounded-full bg-safety-orange"></div>
+                                <p class="font-normal text-xs">Proposals Sent</p>
+                            </div>
+                            <div class="flex items-center gap-[130px]">
+                                <p class="font-normal text-xs">1,875</p>
+                                <p class="font-normal text-xs">50%</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between px-4">
+                            <div class="flex items-center gap-1">
+                                <div class="w-1 h-1 rounded-full bg-crimson-red"></div>
+                                <p class="font-normal text-xs">Deals Closed</p>
+                            </div>
+                            <div class="flex items-center gap-[130px]">
+                                <p class="font-normal text-xs">375</p>
+                                <p class="font-normal text-xs">20%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Heatmap & Trends -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-4 rounded-xl lab-report-shadow flex flex-col justify-between">
+                        <div class="flex justify-between items-center dropdown relative mb-2">
+                            <h3 class="font-semibold">Load Analytics</h3>
+                            <div class="flex items-center gap-2">
+                                <p class="text-sm text-medium-gray font-semibold">14/3/25</p>
+                                <span
+                                    class="material-symbols-outlined calendar-icon cursor-pointer">calendar_today</span>
+                            </div>
+                            <div
+                                class="datepicker-container hidden px-4 pb-3 absolute top-full right-0 z-50 bg-white shadow-md rounded">
+                                <div class="datepicker-inline"></div>
+                            </div>
+                        </div>
+                        <div class="dropdown relative inline-block w-full">
+                            <button
+                                class="dropdown-btn cursor-pointer w-full border border-cool-steel-blue rounded-md  px-4 py-2 flex justify-between items-center focus:outline-none">
+                                <span class="dropdown-value">10-12 AM</span>
+                                <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                            </button>
+
+                            <ul class="dropdown-menu absolute hidden mt-1 w-full bg-white rounded-md   z-10">
+                                <li class="px-4 py-2 hover:bg-blue-haze cursor-pointer">8-9 AM</li>
+                                <li class="px-4 py-2 hover:bg-blue-haze cursor-pointer">10-12 AM</li>
+                                <li class="px-4 py-2 hover:bg-blue-haze cursor-pointer">5-6 PM</li>
+                                <li class="px-4 py-2 hover:bg-blue-haze cursor-pointer">9-10 PM</li>
+                            </ul>
+                        </div>
+                        <canvas id="lineChart" class="!h-[60%]"></canvas>
+                        <button class=" bg-dodger-blue text-white w-full text-center mt-4 py-2 rounded-lg download-btn"
+                            data-target="lineChart">Download Report</button>
+                    </div>
+
+                    <div class="bg-cloud-gray p-4 rounded-xl lab-report-shadow flex flex-col justify-between">
+                        <div class="flex justify-between items-center dropdown relative mb-2">
+                            <h3 class="font-semibold">Heatmap</h3>
+                            <div class="flex items-center gap-2">
+                                <p class="text-sm text-medium-gray font-semibold">14/3/25</p>
+                                <span
+                                    class="material-symbols-outlined calendar-icon cursor-pointer">calendar_today</span>
+                            </div>
+                            <div
+                                class="datepicker-container hidden px-4 pb-3 absolute top-full right-0 z-50 bg-white shadow-md rounded">
+                                <div class="datepicker-inline"></div>
+                            </div>
+                        </div>
+                        <div class="dropdown relative inline-block w-full">
+                            <button
+                                class="dropdown-btn cursor-pointer w-full bg-white rounded-md  px-4 py-2 flex justify-between items-center focus:outline-none">
+                                <span class="dropdown-value">10-12 AM</span>
+                                <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                            </button>
+
+                            <ul class="dropdown-menu absolute hidden mt-1 w-full bg-white rounded-md   z-10">
+                                <li class="px-4 py-2 hover:bg-blue-haze cursor-pointer">8-9 AM</li>
+                                <li class="px-4 py-2 hover:bg-blue-haze cursor-pointer">10-12 AM</li>
+                                <li class="px-4 py-2 hover:bg-blue-haze cursor-pointer">5-6 PM</li>
+                                <li class="px-4 py-2 hover:bg-blue-haze cursor-pointer">9-10 PM</li>
+                            </ul>
+                        </div>
+                        <div id="heatmap" class="!h-[60%] mt-1"></div>
+                        <button class=" bg-dodger-blue text-white w-full text-center mt-4 py-2 rounded-lg download-btn"
+                            data-target="heatmap">Download Report</button>
+                    </div>
+
+
+
+                    <div class="bg-white p-4 rounded-xl lab-report-shadow flex flex-col justify-between">
+                        <div class="flex justify-between items-center dropdown relative mb-2">
+                            <h3 class="font-semibold">Patient Journey Insights</h3>
+                            <div class="flex items-center gap-2">
+                                <p class="text-sm text-medium-gray font-semibold">14/3/25</p>
+                                <span
+                                    class="material-symbols-outlined calendar-icon cursor-pointer">calendar_today</span>
+                            </div>
+                            <div
+                                class="datepicker-container hidden px-4 pb-3 absolute top-full right-0 z-50 bg-white shadow-md rounded">
+                                <div class="datepicker-inline"></div>
+                            </div>
+                        </div>
+
+                        <canvas id="horizontalBarChart" class="!h-[60%] bg-prussian-blue rounded-[10px] p-2"></canvas>
+                        <button class=" bg-dodger-blue text-white w-full text-center mt-4 py-2 rounded-lg download-btn"
+                            data-target="lineChart">Download Report</button>
+                    </div>
+                </div>
+            </div>
 {% endblock %}
 
 {% block extra_js %}
   <script src="/static/js/common.js"></script>
   <script src="/static/js/tabs.js"></script>
-<script src="/static/js/pharmacy-reports.js"></script>
+<script src="/static/js/hospital-reports.js"></script>
   <script src="/static/js/table-pagination.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!--Heat map-->
+    <script src="https://www.amcharts.com/lib/4/core.js"></script>
+    <script src="https://www.amcharts.com/lib/4/maps.js"></script>
+    <script src="https://www.amcharts.com/lib/4/geodata/india2019High.js"></script>
+    <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 {% endblock %}

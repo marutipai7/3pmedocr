@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.core.paginator import Paginator
 from django.template.loader import render_to_string
 from django.db.models import Q
-from django.views.decorators.http import require_GET, require_http_methods
+from django.views.decorators.http import require_GET, require_http_methods, require_POST
 from dashboard.utils import dashboard_login_required, get_common_context
 from .models import (
     Coupon, CategoryOption, BrandOption, OfferTypeOption, CountryOption,
@@ -17,9 +17,108 @@ from .models import (
 )
 from points.models import PointsActionType, PointsHistory
 from registration.views import validate_and_save_file
+from registration.models import PharmacyProfile, LabProfile, HospitalProfile, DoctorProfile
+from coupon.models import SellerCoupon
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+def get_seller_profile(user):
+    profile_map = {
+        "pharmacy": PharmacyProfile,
+        "lab": LabProfile,
+        "hospital": HospitalProfile,
+        "doctor": DoctorProfile,
+    }
+    model = profile_map.get(user.user_type)
+    if not model:
+        return None
+    return model.objects.filter(user=user).first()
+
+
+def get_seller_profile(user):
+    profile_map = {
+        "pharmacy": PharmacyProfile,
+        "lab": LabProfile,
+        "hospital": HospitalProfile,
+        "doctor": DoctorProfile,
+    }
+    model = profile_map.get(user.user_type)
+    if not model:
+        return None
+    return model.objects.filter(user=user).first()
+
+
+@require_POST
+@dashboard_login_required
+def create_seller_coupon(request):
+    user = request.user_obj
+    profile = get_seller_profile(user)
+
+    if not profile:
+        return JsonResponse({"success": False, "error": "Seller profile not found"}, status=400)
+
+    data = request.POST
+    errors = {}
+
+    # ---- Extract fields ----
+    coupon_name = data.get("coupon_name", "").strip()
+    coupon_code = data.get("coupon_code", "").strip()
+    discount_type = data.get("discount_type", "percentage")
+    discount_value = data.get("discount_value", "").strip()
+    expiry_date = data.get("expiry_date", "").strip()
+    usage_limit = data.get("usage_limit", "").strip()
+
+    # ---- Validation ----
+    if not coupon_name:
+        errors["coupon_name"] = "Coupon name is required"
+
+    if not coupon_code:
+        errors["coupon_code"] = "Coupon code is required"
+
+    if SellerCoupon.objects.filter(coupon_code=coupon_code).exists():
+        errors["coupon_code"] = "Coupon code already exists"
+
+    try:
+        discount_value = float(discount_value)
+        if discount_value <= 0:
+            raise ValueError
+    except Exception:
+        errors["discount_value"] = "Invalid discount value"
+
+    try:
+        usage_limit = int(usage_limit)
+        if usage_limit <= 0:
+            raise ValueError
+    except Exception:
+        errors["usage_limit"] = "Invalid usage limit"
+
+    if not expiry_date:
+        errors["expiry_date"] = "Expiry date is required"
+    else:
+        try:
+            expiry_date = datetime.strptime(expiry_date, "%d/%m/%Y").date()
+            if expiry_date < timezone.now().date():
+                errors["expiry_date"] = "Expiry date cannot be in the past"
+        except ValueError:
+            errors["expiry_date"] = "Invalid expiry date format"
+
+    if errors:
+        return JsonResponse({"success": False, "errors": errors}, status=400)
+
+    # ---- Save Coupon ----
+    SellerCoupon.objects.create(
+        seller_type=user.user_type,
+        seller_id=profile.id,
+        coupon_name=coupon_name,
+        coupon_code=coupon_code,
+        discount_type=discount_type,
+        discount_value=discount_value,
+        expiry_date=expiry_date,
+        usage_limit=usage_limit,
+    )
+
+    return JsonResponse({"success": True, "message": "Coupon created successfully"})
 
 @dashboard_login_required
 def coupon_view(request):

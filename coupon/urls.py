@@ -9,4 +9,5 @@ urlpatterns = [
     path('platform-bill/<int:coupon_id>/', views.platform_bill, name='platform_bill'),
     path('export-coupon-history/', views.export_coupon_history, name='export_coupon_history'),
     path('export-saved-coupon-history/', views.export_saved_coupon_history, name='export_saved_coupon_history'),
+    path("seller/create/", views.create_seller_coupon, name="create-seller-coupon"),
 ] 

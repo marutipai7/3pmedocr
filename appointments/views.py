@@ -36,5 +36,6 @@ def appointment_view(request):
         return render(request, 'lab/lab_appointment.html', context)
     elif user_type == "doctor":
         return render(request, 'doctor/doctor_appointment.html', context)
-    else:
-        return render(request, 'appointments.html', context)
+    elif user_type == "hospital":
+        return render(request, 'hospital/hospital_appointment.html', context)
+

@@ -131,6 +131,18 @@ def get_common_context(request, user):
         "doctor": "active-tab-hospital",
         "hospital": "active-tab-hospital",
     }
+    main_tab_class_map = {
+        "pharmacy": "main-tab-pharmacy",
+        "doctor": "main-tab",
+        "lab": "main-tab",
+        "hospital": "main-tab",
+    }
+    active_main_tab_class_map = {
+        "pharmacy": "active-tab-main-pharmacy",
+        "doctor": "active-tab-main",
+        "lab": "active-tab-main",
+        "hospital": "active-tab-main",
+    }
     context = {
         "user_profile": user,
         "sidebar_menu": menu_items,
@@ -145,6 +157,8 @@ def get_common_context(request, user):
     }
     context["tab_class"] = tab_class_map.get(user_type)
     context["active_tab_class"] = active_tab_class_map.get(user_type)
+    context["main_tab_class"] = main_tab_class_map.get(user_type)
+    context["active_main_tab_class"] = active_main_tab_class_map.get(user_type)
     context.update(get_theme_colors(user_type))
     return context
 

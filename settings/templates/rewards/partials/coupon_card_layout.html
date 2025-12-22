@@ -25,14 +25,14 @@
     </div>
 
     <!-- Divider -->
-    <div class="hidden lg:block h-auto w-px bg-{{ primary_bg }} mx-4"></div>
+    <div class="hidden lg:block h-auto w-px bg-{{ secondary_bg }} mx-4"></div>
 
     <!-- Right section -->
     <div class="pt-4 lg:pt-0 lg:w-48 flex items-center lg:items-end">
       <button 
         data-coupon-id="{{ c.id }}" 
         data-code="{{ c.code }}"
-        class="bg-{{ primary_bg }} font-bold text-lg text-white w-full rounded-md p-2 flex items-center gap-2 justify-center cursor-pointer claim-btn"
+        class="bg-{{ secondary_bg }} font-bold text-lg text-white w-full rounded-md p-2 flex items-center gap-2 justify-center cursor-pointer claim-btn"
       >
         {{ c.code }}
         <span class="material-symbols-outlined">content_copy</span>
