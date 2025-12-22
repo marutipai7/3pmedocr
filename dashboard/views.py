@@ -681,6 +681,7 @@ def get_ngo_graph_data(request):
 def advance(request):
     user = request.user_obj
     context = get_common_context(request, user)
+    context["sidebar_active"] = "home"
     if user.user_type == 'advertiser':
         advertiser_profile = AdvertiserProfile.objects.get(user=user)
         context.update({
