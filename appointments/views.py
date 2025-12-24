@@ -86,7 +86,6 @@ def appointment_view(request):
 
     else:
         appointments = []
-        template = "dashboard/no_access.html"
 
     context["appointments"] = appointments
 
@@ -160,7 +159,6 @@ def list_avaibale_appointments(request):
 
     else:
         appointments = []
-        template = "dashboard/no_access.html"
 
     context["appointments"] = appointments
 

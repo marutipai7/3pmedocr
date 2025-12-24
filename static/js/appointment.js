@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
   );
 
   // ---------- Pending ----------
-  qsa(".card-pending").forEach(card => {
+  qsa(".card-all-pending").forEach(card => {
     card.addEventListener("click", () => openModal(".modal-pending"));
   });
 
