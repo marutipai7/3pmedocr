@@ -160,7 +160,13 @@ class UserProfile(models.Model):
     otp = models.CharField(max_length=64, blank=True, null=True)
 
 class UserAddress(models.Model):
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='addresses')
+    user = models.ForeignKey(
+        UserProfile,
+        on_delete=models.CASCADE,
+        related_name="addresses",
+        db_column="user_profile_id"
+    )
+
     address_type = models.CharField(max_length=64, blank=True, null=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255, blank=True, null=True)
@@ -170,6 +176,13 @@ class UserAddress(models.Model):
     state = models.CharField(max_length=128, blank=True, null=True)
     pincode = models.CharField(max_length=20, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
+
+    class Meta:
+        db_table = "registration_useraddress"
+
+    def __str__(self):
+        return f"{self.address_type} - {self.city}"
+
     
 class UserReferral(models.Model):
     referrer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='referrals_made')
