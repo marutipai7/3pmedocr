@@ -2,7 +2,11 @@ const colorHexMap = {
   "living-coral": "#FF6F61",
   "dark-blue": "#123456",
   "violet-sky": "#6B79F5",
-  "light-sea-green": "#3AAFA9"
+  "light-sea-green": "#3AAFA9",
+  "dodger-blue": "#007BFF",
+  "light-dodger-blue": "#EEF6FF",
+  "deep-teal-green": "#1A7A5E",
+  "light-teal": "#DDEBE7",
 };
 
 let selectedColor = colorHexMap[window.colorData.primary_bg];

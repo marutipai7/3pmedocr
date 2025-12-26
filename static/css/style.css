@@ -329,6 +329,11 @@ body {
     @apply flex items-center justify-center cursor-pointer gap-2 w-[133px] px-2 h-[48px] rounded-[10px] bg-light-sea-green text-white text-18-nr
 }
 
+.active-step {
+  @apply bg-primary-blue text-white text-xs lg:text-lg font-bold w-8 lg:w-12 h-8 lg:h-12;
+  transform: scale(1.15);
+}
+
 .redeem-btn {
     @apply w-[95px] sm:w-[110px] rounded-[10px] h-[48px] bg-light-sea-green text-white font-normal text-sm sm:text-18-nr cursor-pointer;
 }

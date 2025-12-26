@@ -1,119 +1,119 @@
-// Open modal when any card is clicked
-//All Accepted
-  document.querySelectorAll(".card-all-accepted").forEach(card => {
-    card.addEventListener("click", () => {
-      document.querySelector(".modal-all-accepted").classList.remove("hidden");
-    });
-  });
+document.addEventListener("DOMContentLoaded", function () {
 
-  // Close modal when close button is clicked
-  document.querySelector(".modal-close-all-accepted").addEventListener("click", () => {
-    document.querySelector(".modal-all-accepted").classList.add("hidden");
-  });
-
-//All Competed
-  document.querySelectorAll(".card-all-completed").forEach(card => {
-    card.addEventListener("click", () => {
-      document.querySelector(".modal-all-completed").classList.remove("hidden");
-    });
-  });
-
-  // Close modal when close button is clicked
-  document.querySelector(".modal-close-all-completed").addEventListener("click", () => {
-    document.querySelector(".modal-all-completed").classList.add("hidden");
-  });
-
-  
-
-
-  // For "missed" modal
-document.querySelectorAll(".card-missed").forEach(card => {
-  card.addEventListener("click", () => {
-    document.querySelector(".modal-missed").classList.remove("hidden");
-  });
-});
-
-// Close "missed" modal
-document.querySelector(".modal-close-missed").addEventListener("click", () => {
-  document.querySelector(".modal-missed").classList.add("hidden");
-});
-
-// For "canceled" modal
-document.querySelectorAll(".card-canceled").forEach(card => {
-  card.addEventListener("click", () => {
-    document.querySelector(".modal-canceled").classList.remove("hidden");
-  });
-});
-
-// Close "canceled" modal
-document.querySelector(".modal-close-canceled").addEventListener("click", () => {
-  document.querySelector(".modal-canceled").classList.add("hidden");
-});
-
-// For "pending" modal
-document.querySelectorAll(".card-pending").forEach(card => {
-  card.addEventListener("click", () => {
-    document.querySelector(".modal-pending").classList.remove("hidden");
-  });
-});
-
-// Close "pending" modal
-document.querySelector(".modal-close-pending").addEventListener("click", () => {
-  document.querySelector(".modal-pending").classList.add("hidden");
-});
-
-
-// Image Attachment Preview (for all)
-document.querySelectorAll(".view-attachment").forEach(button => {
-  button.addEventListener("click", () => {
-    const attachmentModal = document.querySelector(".attachment-modal");
-    attachmentModal.classList.remove("hidden");
-  });
-});
-
-const attachmentModal = document.querySelector(".attachment-modal");
-const closeAttachmentModal = document.querySelector(".close-attachment-modal");
-
-closeAttachmentModal.addEventListener("click", () => {
-  attachmentModal.classList.add("hidden");
-});
-
-// Close modal if background clicked
-attachmentModal.addEventListener("click", (e) => {
-  if (e.target === attachmentModal) {
-    attachmentModal.classList.add("hidden");
+  // ---------- Helper functions ----------
+  function qs(selector) {
+    return document.querySelector(selector);
   }
-});
 
-//Equipment
-// Handle all status buttons dynamically
-// Toggle dropdown visibility
-  document.addEventListener('click', function (e) {
-    const clickedButton = e.target.closest('.status-btn');
-    const allDropdowns = document.querySelectorAll('.status-dropdown');
+  function qsa(selector) {
+    return document.querySelectorAll(selector);
+  }
 
-    // If clicked inside a status button
+  function openModal(selector) {
+    const modal = qs(selector);
+    if (modal) modal.classList.remove("hidden");
+  }
+
+  function closeModal(selector) {
+    const modal = qs(selector);
+    if (modal) modal.classList.add("hidden");
+  }
+
+  function safeClick(selector, callback) {
+    const el = qs(selector);
+    if (el) el.addEventListener("click", callback);
+  }
+
+  // ---------- All Accepted ----------
+  qsa(".card-all-accepted").forEach(card => {
+    card.addEventListener("click", () => openModal(".modal-all-accepted"));
+  });
+
+  safeClick(".modal-close-all-accepted", () =>
+    closeModal(".modal-all-accepted")
+  );
+
+  // ---------- All Completed ----------
+  qsa(".card-all-completed").forEach(card => {
+    card.addEventListener("click", () => openModal(".modal-all-completed"));
+  });
+
+  safeClick(".modal-close-all-completed", () =>
+    closeModal(".modal-all-completed")
+  );
+
+  // ---------- Missed ----------
+  qsa(".card-missed").forEach(card => {
+    card.addEventListener("click", () => openModal(".modal-missed"));
+  });
+
+  safeClick(".modal-close-missed", () =>
+    closeModal(".modal-missed")
+  );
+
+  // ---------- Canceled ----------
+  qsa(".card-canceled").forEach(card => {
+    card.addEventListener("click", () => openModal(".modal-canceled"));
+  });
+
+  safeClick(".modal-close-canceled", () =>
+    closeModal(".modal-canceled")
+  );
+
+  // ---------- Pending ----------
+  qsa(".card-all-pending").forEach(card => {
+    card.addEventListener("click", () => openModal(".modal-pending"));
+  });
+
+  safeClick(".modal-close-pending", () =>
+    closeModal(".modal-pending")
+  );
+
+  // ---------- Attachment Preview ----------
+  qsa(".view-attachment").forEach(button => {
+    button.addEventListener("click", () => openModal(".attachment-modal"));
+  });
+
+  safeClick(".close-attachment-modal", () =>
+    closeModal(".attachment-modal")
+  );
+
+  const attachmentModal = qs(".attachment-modal");
+  if (attachmentModal) {
+    attachmentModal.addEventListener("click", (e) => {
+      if (e.target === attachmentModal) {
+        closeModal(".attachment-modal");
+      }
+    });
+  }
+
+  // ---------- Status Dropdown ----------
+  document.addEventListener("click", function (e) {
+    const clickedButton = e.target.closest(".status-btn");
+    const allDropdowns = qsa(".status-dropdown");
+
     if (clickedButton) {
       const dropdown = clickedButton.nextElementSibling;
-      // Close all other dropdowns
       allDropdowns.forEach(d => {
-        if (d !== dropdown) d.classList.add('hidden');
+        if (d !== dropdown) d.classList.add("hidden");
       });
-      // Toggle current dropdown
-      dropdown.classList.toggle('hidden');
+      if (dropdown) dropdown.classList.toggle("hidden");
       return;
     }
 
-    // If clicked on a dropdown item
-    if (e.target.classList.contains('dropdown-item')) {
-      const parent = e.target.closest('.relative');
-      parent.querySelector('.status-text').textContent = e.target.textContent;
-      parent.querySelector('.status-dropdown').classList.add('hidden');
+    if (e.target.classList.contains("dropdown-item")) {
+      const parent = e.target.closest(".relative");
+      if (!parent) return;
+
+      const text = parent.querySelector(".status-text");
+      const dropdown = parent.querySelector(".status-dropdown");
+
+      if (text) text.textContent = e.target.textContent;
+      if (dropdown) dropdown.classList.add("hidden");
       return;
     }
 
-    // If clicked outside dropdowns, close all
-    allDropdowns.forEach(d => d.classList.add('hidden'));
+    allDropdowns.forEach(d => d.classList.add("hidden"));
   });
 
-
+});
