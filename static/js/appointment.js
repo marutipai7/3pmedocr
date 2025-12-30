@@ -60,6 +60,14 @@ document.addEventListener("DOMContentLoaded", function () {
     closeModal(".modal-canceled")
   );
 
+  qsa(".card-all-cancelled").forEach(card => {
+      card.addEventListener("click", () => openModal(".modal-canceled"));
+    });
+
+  safeClick(".modal-close-canceled", () =>
+    closeModal(".modal-canceled")
+  );
+
   // ---------- Pending ----------
   qsa(".card-all-pending").forEach(card => {
     card.addEventListener("click", () => openModal(".modal-pending"));

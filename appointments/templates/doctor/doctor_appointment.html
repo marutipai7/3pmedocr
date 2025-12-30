@@ -33,7 +33,7 @@
                 data-tab="missed">Missed</button>
               <button
                 class="tab-btn-hospital text-sm sm:text-18-nr px-4 py-1.5 font-medium cursor-pointer text-dark-gray"
-                data-tab="canceled">Canceled</button>
+                data-tab="canceled">Cancelled</button>
               <button
                 class="tab-btn-hospital text-sm sm:text-18-nr px-4 py-1.5 font-medium cursor-pointer text-dark-gray"
                 data-tab="pending">Pending</button>
@@ -122,7 +122,9 @@
         </div>
 
 
-
+        {% include 'partials/pending-view-modal.html' %}
+        {% include 'partials/cancelled-view-modal.html' %}
+        {% include 'partials/missed-view-modal.html' %}
       </div>
 {% endblock %}
 {% block extra_js %}
