@@ -120,46 +120,79 @@ def get_user_tickets(request):
         return JsonResponse({'success': False, 'message': 'Failed to retrieve tickets.'}, status=500)
 
 @require_GET
-@dashboard_login_required 
+@dashboard_login_required
 def get_bot_content_api(request):
     user = request.user_obj
-    user_type = 'user'
-    
-    if hasattr(user, 'ngoprofile') and user.ngoprofile is not None:
-        user_type = 'ngo'
-    elif hasattr(user, 'advertiserprofile') and user.advertiserprofile is not None:
-        user_type = 'advertiser'
-    elif hasattr(user, 'clientprofile') and user.clientprofile is not None:
-        user_type = 'client'
-    elif hasattr(user = 'Pharmacyprofile') and user.Pharmacyprofile is not None:
-        user_type = 'pharmacy'
-    elif hasattr(user, 'labprofile') and user.labprofile is not None:
-        user_type = 'lab'
-    elif hasattr(user, 'doctorprofile') and user.doctorprofile is not None:
-        user_type = 'doctor'
-    elif hasattr(user, 'hospitalprofile') and user.hospitalprofile is not None:
-        user_type = 'hospital'
+
+    # Default
+    user_type = user.user_type or 'user'
+
+    # Safety fallback if user_type is missing or generic
+    if user_type == 'user':
+        if hasattr(user, 'ngoprofile'):
+            user_type = 'ngo'
+        elif hasattr(user, 'advertiserprofile'):
+            user_type = 'advertiser'
+        elif hasattr(user, 'clientprofile'):
+            user_type = 'client'
+        elif hasattr(user, 'pharmacyprofile'):
+            user_type = 'pharmacy'
+        elif hasattr(user, 'lab_profile'):
+            user_type = 'lab'
+        elif hasattr(user, 'doctor_profile'):
+            user_type = 'doctor'
+        elif hasattr(user, 'hospital_profile'):
+            user_type = 'hospital'
 
     try:
-        chat_group = ChatOptionGroup.objects.get(user_type=user_type, is_active=True)
-        return JsonResponse(chat_group.options_data)
+        chat_group = ChatOptionGroup.objects.get(
+            user_type=user_type,
+            is_active=True
+        )
+        return JsonResponse(chat_group.options_data, status=200)
 
     except ChatOptionGroup.DoesNotExist:
         try:
-            user_group = ChatOptionGroup.objects.get(user_type='user', is_active=True)
+            user_group = ChatOptionGroup.objects.get(
+                user_type='user',
+                is_active=True
+            )
+
             fallback_data = user_group.options_data.copy()
-            if user_type != 'user': 
-                fallback_data["initial_message"] = f"No specific content found for your type ({user_type}). " + fallback_data.get("initial_message", "Here's some general information:")
-            return JsonResponse(fallback_data, status=200) 
+
+            if user_type != 'user':
+                fallback_data["initial_message"] = (
+                    f"No specific content found for your type ({user_type}). "
+                    + fallback_data.get(
+                        "initial_message",
+                        "Here's some general information:"
+                    )
+                )
+
+            return JsonResponse(fallback_data, status=200)
 
         except ChatOptionGroup.DoesNotExist:
             return JsonResponse(
-                {"initial_message": "Sorry, chatbot content is not configured. Please contact support."},
-                status=500 
+                {
+                    "initial_message": (
+                        "Sorry, chatbot content is not configured. "
+                        "Please contact support."
+                    )
+                },
+                status=500
             )
 
-    except Exception as e:
-        return JsonResponse({"initial_message": "Sorry, an unexpected error occurred. Please try again later."},status=500)
+    except Exception:
+        return JsonResponse(
+            {
+                "initial_message": (
+                    "Sorry, an unexpected error occurred. "
+                    "Please try again later."
+                )
+            },
+            status=500
+        )
+
 
 @dashboard_login_required 
 def submit_support_ticket(request):

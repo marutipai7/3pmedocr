@@ -765,75 +765,61 @@ def advance(request):
     user = request.user_obj
     context = get_common_context(request, user)
     context["sidebar_active"] = "home"
-    if user.user_type == 'advertiser':
-        advertiser_profile = AdvertiserProfile.objects.get(user=user)
-        context.update({
-            'advertiser_profile': advertiser_profile,
-            'user_display_name': advertiser_profile.company_name,
-            'user_profile': user,
-            'user': user
-        })
 
-        return render(request, "advertiser/advertiser_advance.html", context)
-    elif user.user_type == 'ngo':
-        pharmacy_profile = NGOProfile.objects.get(user=user)
-        context.update({
-            'pharmacy_profile': pharmacy_profile,
-            'user_display_name': pharmacy_profile.company_name,
-            'user_profile': user,
-            'user':user
-        })
-        return render(request, "advertiser/advertiser_advance.html", context)
-    elif user.user_type == 'pharmacy':
-        pharmacy_profile = PharmacyProfile.objects.get(user=user)
-        context.update({
-            'pharmacy_profile': pharmacy_profile,
-            'user_display_name': pharmacy_profile.company_name,
-            'user_profile': user,
-            'user':user
-        })
-        return render(request, "advertiser/advertiser_advance.html", context)
-    elif user.user_type == 'lab':
-        lab_profile = LabProfile.objects.get(user=user)
-        context.update({
-            'lab_profile': lab_profile,
-            'user_display_name': lab_profile.lab_name,
-            'user_profile': user,
-            'user':user
-        })
-        return render(request, "lab/lab_advance.html", context)
-    elif user.user_type == 'pharmacy':
-        pharmacy_profile = PharmacyProfile.objects.get(user=user)
-        context.update({
-            'pharmacy_profile': pharmacy_profile,
-            'user_display_name': pharmacy_profile.company_name,
-            'user_profile': user,
-            'user':user
-        })
-        return render(request, "pharmacy/pharmacy_advance.html", context)
+    profile_map = {
+        'advertiser': (AdvertiserProfile, 'company_name', 'advertiser_profile'),
+        'ngo': (NGOProfile, 'ngo_name', 'ngo_profile'),
+        'pharmacy': (PharmacyProfile, 'company_name', 'pharmacy_profile'),
+        'lab': (LabProfile, 'lab_name', 'lab_profile'),
+        'hospital': (HospitalProfile, 'hospital_name', 'hospital_profile'),
+        'doctor': (DoctorProfile, 'clinic_name', 'doctor_profile'),
+    }
+
+    profile_config = profile_map.get(user.user_type)
+
+    if not profile_config:
+        return render(request, "dashboard/not_found.html", context)
+
+    model, display_field, context_key = profile_config
+    profile = model.objects.get(user=user)
+
+    context.update({
+        context_key: profile,
+        'user_display_name': getattr(profile, display_field, ''),
+        'user_profile': user,
+        'user': user,
+    })
+
+    return render(request, "advance/advance.html", context)
+
     
 @dashboard_login_required
 def advance_history(request):
     user = request.user_obj
     context = get_common_context(request, user)
-    if user.user_type == 'advertiser':
-        advertiser_profile = AdvertiserProfile.objects.get(user=user)
-        context.update({
-            'advertiser_profile': advertiser_profile,
-            'user_display_name': advertiser_profile.company_name,
-            'user_profile': user,
-            'user': user
-        })
-        return render(request, "advertiser/advance-history.html", context)
-    elif user.user_type == 'pharmacy':
-        pharmacy_profile = PharmacyProfile.objects.get(user=user)
-        context.update({
-            'pharmacy_profile': pharmacy_profile,
-            'user_display_name': pharmacy_profile.company_name,
-            'user_profile': user,
-            'user':user
-        })
-        return render(request, "pharmacy/pharmacy_advance_history.html", context)
+
+    profile_map = {
+        'advertiser': (AdvertiserProfile, 'company_name', 'advertiser_profile'),
+        'pharmacy': (PharmacyProfile, 'company_name', 'pharmacy_profile'),
+        'hospital': (HospitalProfile, 'hospital_name', 'hospital_profile'),
+        'doctor': (DoctorProfile, 'clinic_name', 'doctor_profile'),
+        'lab': (LabProfile, 'lab_name', 'lab_profile'),
+    }
+
+    profile_config = profile_map.get(user.user_type)
+    if not profile_config:
+        return render(request, "dashboard/not_found.html", context)
+
+    model, display_field, context_key = profile_config
+    profile = model.objects.get(user=user)
+
+    context.update({
+        context_key: profile,
+        'user_display_name': getattr(profile, display_field, ''),
+        'user_profile': user,
+        'user': user,
+    })
+    return render(request, "advance/advance-history.html", context)
 
 @dashboard_login_required
 def cart(request):
@@ -847,7 +833,6 @@ def cart(request):
             'user_profile': user,
             'user': user
         })
-
         return render(request, "dashboard/cart.html", context)
     elif user.user_type == 'pharmacy':
         pharmacy_profile = PharmacyProfile.objects.get(user=user)
