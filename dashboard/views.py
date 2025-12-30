@@ -27,6 +27,14 @@ from registration.models import (
     DoctorProfile, 
     HospitalProfile
 )
+from appointments.models import WalletTransaction
+from services.models import LabBidding, LabBidStatus
+from services.models import HospitalBidding, HospitalBidStatus
+from services.models import DoctorBidding, DoctorBidStatus
+from appointments.models import LabAppointments
+from appointments.models import HospitalAppointments
+from appointments.models import DoctorAppointment
+from orders.models import UserPurchase, OrderStatusChoices
 
 @dashboard_login_required
 def dashboard_home(request):
@@ -34,17 +42,31 @@ def dashboard_home(request):
     user_type = user.user_type
 
     menu_items = SettingMenu.objects.filter(
-        is_active=True, user_types__contains=[user_type]
-        ).order_by('order')
+        is_active=True,
+        user_types__contains=[user_type]
+    ).order_by('order')
+
     context = get_common_context(request, user)
     context["theme_colors"] = get_theme_colors(user_type)
     context["sidebar_menu"] = menu_items
-    
+
+    # -------------------------------
+    # Wallet Balance (All users)
+    # -------------------------------
+    context["wallet_balance"] = (
+        WalletTransaction.objects
+        .filter(user=user)
+        .order_by('-created_at')
+        .values_list('current_balance', flat=True)
+        .first()
+    ) or 0
+
     try:
+        # ================= NGO =================
         if user_type == 'ngo':
             ngo_profile = NGOProfile.objects.get(user=user)
             posts_qs = NGOPost.objects.filter(user=user)
-            events = CalendarEvent.objects.filter(user=user,is_active=True)
+            events = CalendarEvent.objects.filter(user=user, is_active=True)
 
             context.update({
                 'ngo_profile': ngo_profile,
@@ -54,26 +76,31 @@ def dashboard_home(request):
                 'total_target': posts_qs.aggregate(Sum('target_donation'))['target_donation__sum'] or 0,
                 'total_received': posts_qs.aggregate(Sum('donation_received'))['donation_received__sum'] or 0,
                 'trending_posts': posts_qs.filter(
-                    created_at__gte=timezone.now() - timezone.timedelta(days=30)
+                    created_at__gte=timezone.now() - timedelta(days=30)
                 ).order_by('-views')[:4],
                 'events': events,
                 'user': user,
             })
             return render(request, "dashboard/home_NGO.html", context)
 
+        # ================= CLIENT =================
         elif user_type == 'client':
             client_profile = ClientProfile.objects.get(user=user)
             latest_sub = SubscriptionHistory.objects.filter(user=user).order_by("-activation_date").first()
-            if latest_sub:
-                latest_sub.save() 
+
             if latest_sub and latest_sub.is_active:
-                context['current_plan'] = latest_sub.plan.name
-                context['expiry_date'] = latest_sub.expiry_date
-                context["licenses"] = latest_sub.license_count
+                context.update({
+                    'current_plan': latest_sub.plan.name,
+                    'expiry_date': latest_sub.expiry_date,
+                    'licenses': latest_sub.license_count,
+                })
             else:
-                context['current_plan'] = "Free Plan"
-                context['expiry_date'] = None
-                context["licenses"] = 1
+                context.update({
+                    'current_plan': "Free Plan",
+                    'expiry_date': None,
+                    'licenses': 1,
+                })
+
             context.update({
                 'client_profile': client_profile,
                 'user_display_name': client_profile.company_name,
@@ -81,100 +108,156 @@ def dashboard_home(request):
             })
             return render(request, "dashboard/home_client.html", context)
 
+        # ================= ADVERTISER =================
         elif user_type == 'advertiser':
             advertiser_profile = AdvertiserProfile.objects.get(user=user)
-            performance = CouponPerformance.objects.order_by('-date').first()
-            trending_coupons = TrendingCoupon.objects.order_by('-created_at')[:5]
-            performances = CouponPerformance.objects.order_by('date')[:8]
-            events = CalendarEvent.objects.all().order_by('date')
-
             today = now().date()
             last_30_days = today - timedelta(days=30)
 
-            # Coupons created in last 30 days
-            coupons = Coupon.objects.filter(advertiser=user, created_at__date__gte=last_30_days)
+            coupons = Coupon.objects.filter(
+                advertiser=user,
+                created_at__date__gte=last_30_days
+            )
 
-            # Totals (last 30 days)
-            total_coupons = coupons.count()
-            total_active_coupons = coupons.filter(validity__gte=today).count()
-            total_redemptions = coupons.aggregate(total=Sum('redeemed_count'))['total'] or 0
+            active_coupons_all = Coupon.objects.filter(
+                advertiser=user,
+                validity__gte=today
+            )
 
-            # Max days left until expiry among ALL active coupons (not just last 30 days)
-            active_coupons_all = Coupon.objects.filter(advertiser=user, validity__gte=today)
-            max_days_left = None
-            if active_coupons_all.exists():
-                max_days_left = active_coupons_all.aggregate(
-                    max_days=Max(
-                        ExpressionWrapper(F('validity') - today, output_field=DurationField())
+            max_days_left = active_coupons_all.aggregate(
+                max_days=Max(
+                    ExpressionWrapper(
+                        F('validity') - today,
+                        output_field=DurationField()
                     )
-                )['max_days']
-                if max_days_left:
-                    max_days_left = max_days_left.days  # convert timedelta to int
+                )
+            )['max_days']
 
             context.update({
                 'advertiser_profile': advertiser_profile,
                 'user_display_name': advertiser_profile.company_name,
-                'performance': performance,
-                'trending_coupons': trending_coupons,
-                'events': events,
+                'performance': CouponPerformance.objects.order_by('-date').first(),
+                'trending_coupons': TrendingCoupon.objects.order_by('-created_at')[:5],
+                'events': CalendarEvent.objects.all().order_by('date'),
+                'total_coupons': coupons.count(),
+                'total_active_coupons': coupons.filter(validity__gte=today).count(),
+                'total_redemptions': coupons.aggregate(
+                    total=Sum('redeemed_count')
+                )['total'] or 0,
+                'max_days_left': max_days_left.days if max_days_left else None,
                 'user': user,
-                'total_coupons': total_coupons,
-                'total_active_coupons': total_active_coupons,
-                'total_redemptions': total_redemptions,
-                'max_days_left': max_days_left,
             })
             return render(request, "dashboard/home_advertiser.html", context)
 
+        # ================= PHARMACY =================
         elif user_type == 'pharmacy':
             pharmacy_profile = PharmacyProfile.objects.get(user=user)
-            events = CalendarEvent.objects.all().order_by('date')
-            
+
+            pending_orders = UserPurchase.objects.filter(
+                assigned_pharmacy=pharmacy_profile,
+                order_status__in=[
+                    OrderStatusChoices.PENDING,
+                    OrderStatusChoices.CONFIRMED,
+                    OrderStatusChoices.SHIPPED
+                ]
+            ).count()
+
             context.update({
                 'pharmacy_profile': pharmacy_profile,
                 'user_display_name': pharmacy_profile.company_name,
-                'events': events,
+                'pending_orders': pending_orders,
+                'events': CalendarEvent.objects.all().order_by('date'),
                 'user': user,
             })
             return render(request, "dashboard/home_pharmacy.html", context)
-        
+
+        # ================= LAB =================
         elif user_type == 'lab':
             lab_profile = LabProfile.objects.get(user=user)
-            events = CalendarEvent.objects.all().order_by('date')
-            
+
             context.update({
                 'lab_profile': lab_profile,
                 'user_display_name': lab_profile.lab_name,
-                'events': events,
+                'quotes_given': LabBidding.objects.filter(lab=lab_profile).count(),
+                'active_bids': LabBidding.objects.filter(
+                    lab=lab_profile,
+                    bid_status__in=[
+                        LabBidStatus.PENDING,
+                        LabBidStatus.ACCEPTED
+                    ]
+                ).count(),
+                'orders_won': LabAppointments.objects.filter(
+                    accepted_lab=lab_profile,
+                    status="Accepted"
+                ).count(),
+                'pending_orders': LabAppointments.objects.filter(
+                    accepted_lab=lab_profile,
+                    status="Pending"
+                ).count(),
+                'events': CalendarEvent.objects.all().order_by('date'),
                 'user': user,
             })
             return render(request, "dashboard/home_lab.html", context)
-        
+
+        # ================= DOCTOR =================
         elif user_type == 'doctor':
             doctor_profile = DoctorProfile.objects.get(user=user)
-            events = CalendarEvent.objects.all().order_by('date')
-            
+
             context.update({
                 'doctor_profile': doctor_profile,
                 'user_display_name': doctor_profile.clinic_name,
-                'events': events,
+                'quotes_given': DoctorBidding.objects.filter(doctor=doctor_profile).count(),
+                'active_bids': DoctorBidding.objects.filter(
+                    doctor=doctor_profile,
+                    bid_status__in=[
+                        DoctorBidStatus.PENDING,
+                        DoctorBidStatus.ACCEPTED
+                    ]
+                ).count(),
+                'orders_won': DoctorAppointment.objects.filter(
+                    doctor=doctor_profile,
+                    status="Accepted"
+                ).count(),
+                'pending_orders': DoctorAppointment.objects.filter(
+                    doctor=doctor_profile,
+                    status="Pending"
+                ).count(),
+                'events': CalendarEvent.objects.all().order_by('date'),
                 'user': user,
             })
             return render(request, "dashboard/home_doctor.html", context)
-        
+
+        # ================= HOSPITAL =================
         elif user_type == 'hospital':
             hospital_profile = HospitalProfile.objects.get(user=user)
-            events = CalendarEvent.objects.all().order_by('date')
-            
+
             context.update({
                 'hospital_profile': hospital_profile,
                 'user_display_name': hospital_profile.hospital_name,
-                'events': events,
+                'quotes_given': HospitalBidding.objects.filter(hospital=hospital_profile).count(),
+                'active_bids': HospitalBidding.objects.filter(
+                    hospital=hospital_profile,
+                    bid_status__in=[
+                        HospitalBidStatus.PENDING,
+                        HospitalBidStatus.ACCEPTED
+                    ]
+                ).count(),
+                'orders_won': HospitalAppointments.objects.filter(
+                    accepted_hospital=hospital_profile,
+                    status="Accepted"
+                ).count(),
+                'pending_orders': HospitalAppointments.objects.filter(
+                    accepted_hospital=hospital_profile,
+                    status="Pending"
+                ).count(),
+                'events': CalendarEvent.objects.all().order_by('date'),
                 'user': user,
             })
             return render(request, "dashboard/home_hospital.html", context)
 
-    except Exception as e:
+    except Exception:
         return render(request, "dashboard/not_found.html")
+
     
 def get_coupon_chart_data(request):
     performances = CouponPerformance.objects.order_by('-date')[:8][::-1]  

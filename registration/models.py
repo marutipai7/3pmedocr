@@ -125,6 +125,9 @@ class User(models.Model):
         ('client', 'Client'),
         ('ngo', 'NGO'),
         ('pharmacy', 'Pharmacy'),
+        ('doctor', 'Doctor'),
+        ('lab', 'Lab'),
+        ('hospital', 'Hospital'),
         ('user', 'User'),
     ]
     email = models.EmailField(unique=True)
