@@ -80,23 +80,20 @@
               </div>
             </div>
           </div>
+          <!-- AJAX Appointment Container -->
+          <div id="tab-content-area" class="pt-8 min-h-[300px]">
 
+              <!-- Appointments -->
+              <div id="appointments-container">
+                  <div id="cards-container"></div>
+              </div>
 
-          <!-- All Div -->
-           {% include 'partials/all-appointments.html'%}
+              <!-- Equipment -->
+              <div id="equipment-container" class="hidden">
+                  {% include 'partials/lab-equipments.html' %}
+              </div>
 
-
-          <!-- Missed Div -->
-          {% include 'partials/missed-appointments.html'%}
-
-          <!-- Canceled Div -->
-          {% include 'partials/cancelled-appointments.html'%}
-
-          <!-- Pending Div -->
-          {% include 'partials/pending-appointments.html'%}
-
-          <!-- Equipment Div -->
-          {% include 'partials/lab-equipments.html'%}
+          </div>
 
         </div>
 

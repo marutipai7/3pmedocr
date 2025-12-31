@@ -1,26 +1,45 @@
 from django.http import JsonResponse
 from django.shortcuts import render
-from django.db.models import Prefetch, Q
+from django.template.loader import render_to_string
 from dashboard.models import SettingMenu
 from dashboard.utils import dashboard_login_required, get_common_context, get_theme_colors
+
 from .models import (
     DoctorAppointment,
-    LabAppointments, 
-    HospitalAppointments, 
-    AppointmentStatus, 
-    HospitalAppointmentStatus, 
-    LabTestPackages, 
-    LabTestType, 
-    LabTestDescription, 
-    HealthIssue,
-    SpecializationServiceMap,
-    HealthIssueServiceMap, 
-    HospitalBedRoom, 
-    HospitalCategory, 
-    HospitalServiceDescription, 
-    HospitalServiceType,
-    )
+    LabAppointments,
+    HospitalAppointments,
+    AppointmentStatus,
+    HospitalAppointmentStatus,
+)
+
 from appointments.utils import get_appointment_stats
+
+
+# -------------------------------
+# STATUS MAPS (IMPORTANT)
+# -------------------------------
+
+HOSPITAL_STATUS_MAP = {
+    "pending": HospitalAppointmentStatus.PENDING,
+    "accepted": HospitalAppointmentStatus.ACCEPTED,
+    "completed": HospitalAppointmentStatus.COMPLETED,
+    "cancelled": HospitalAppointmentStatus.CANCELLED,
+    # NOTE: missed is NOT stored yet
+}
+
+LAB_DOCTOR_STATUS_MAP = {
+    "pending": "Pending",
+    "accepted": "Accepted",
+    "completed": "Completed",
+    "cancelled": "Cancelled",   # ✅ correct spelling
+    "canceled": "Cancelled",    # ✅ map US → UK
+    "missed": None,             # ❌ not stored yet
+}
+
+
+# -------------------------------
+# MAIN APPOINTMENT PAGE
+# -------------------------------
 
 @dashboard_login_required
 def appointment_view(request):
@@ -35,9 +54,8 @@ def appointment_view(request):
     context = get_common_context(request, user)
     context["theme_colors"] = get_theme_colors(user_type)
     context["sidebar_menu"] = menu_items
-    
-    stats = get_appointment_stats(user_type, user)
 
+    stats = get_appointment_stats(user_type, user)
     print("📊 Appointment Stats:", stats)
 
     context.update({
@@ -49,101 +67,67 @@ def appointment_view(request):
         "accepted_appointed_appointments": stats.get("accepted_appointed", 0),
     })
 
+    # Initial page load (AJAX will override content)
     if user_type == "lab":
-        appointments = LabAppointments.objects.select_related(
-            "user__userprofile",
-            "test_package",
-            "test_type",
-            "test_description",
-            "address",
-            "user",
-        ).order_by("-created_at")
-
         template = "lab/lab_appointment.html"
-
     elif user_type == "doctor":
-        appointments = DoctorAppointment.objects.select_related(
-            "user__userprofile",
-            "address",
-            "user",
-            "doctor",
-        ).order_by("-created_at")
-
         template = "doctor/doctor_appointment.html"
-
     elif user_type == "hospital":
-        appointments = HospitalAppointments.objects.select_related(
-            "user__userprofile",
-            "service_type",
-            "description",
-            "category",
-            "bed_room",
-            "address",
-            "user",
-        ).order_by("-created_at")
-
         template = "hospital/hospital_appointment.html"
-
     else:
-        appointments = []
-
-    context["appointments"] = appointments
+        template = "dashboard/layout.html"
 
     return render(request, template, context)
+
+
+# -------------------------------
+# AJAX APPOINTMENTS ENDPOINT
+# -------------------------------
 
 @dashboard_login_required
-def list_avaibale_appointments(request):
+def ajax_appointments(request):
     user = request.user_obj
     user_type = user.user_type
+    status = request.GET.get("status", "all")
 
-    menu_items = SettingMenu.objects.filter(
-        is_active=True,
-        user_types__contains=[user_type]
-    ).order_by("order")
-
-    context = get_common_context(request, user)
-    context["theme_colors"] = get_theme_colors(user_type)
-    context["sidebar_menu"] = menu_items
-    stats = get_appointment_stats(user_type, user)
-
-    print("📊 Available Appointment Stats:", stats)
-
-    context.update({
-        "total_appointments": stats.get("total", 0),
-        "pending_appointments": stats.get("pending", 0),
-        "cancelled_appointments": stats.get("cancelled", 0),
-        "completed_appointments": stats.get("completed", 0),
-        "accepted_appointments": stats.get("accepted", 0),
-        "accepted_appointed_appointments": stats.get("accepted_appointed", 0),
-    })
-
+    # ---------------- LAB ----------------
     if user_type == "lab":
-        appointments = LabAppointments.objects.select_related(
+        qs = LabAppointments.objects.select_related(
             "user__userprofile",
             "test_package",
             "test_type",
             "test_description",
             "address",
             "user",
-        ).filter(
-            status=AppointmentStatus.PENDING
-        ).order_by("-created_at")
+        )
 
-        template = "lab/lab_appointment.html"
+        if status != "all":
+            mapped_status = LAB_DOCTOR_STATUS_MAP.get(status)
+            if mapped_status:
+                qs = qs.filter(status=mapped_status)
+            else:
+                qs = qs.none()   # missed → empty safely
 
+
+    # ---------------- DOCTOR ----------------
     elif user_type == "doctor":
-        appointments = DoctorAppointment.objects.select_related(
+        qs = DoctorAppointment.objects.select_related(
             "user__userprofile",
             "address",
             "user",
-        ).filter(
-            status="Pending"
-        ).order_by("-created_at")
+        )
 
-        template = "doctor/doctor_appointment.html"
+        if status != "all":
+            mapped_status = LAB_DOCTOR_STATUS_MAP.get(status)
+            if mapped_status:
+                qs = qs.filter(status=mapped_status)
+            else:
+                qs = qs.none()
 
+
+    # ---------------- HOSPITAL ----------------
     elif user_type == "hospital":
-        appointments = HospitalAppointments.objects.select_related(
+        qs = HospitalAppointments.objects.select_related(
             "user__userprofile",
             "service_type",
             "description",
@@ -151,15 +135,28 @@ def list_avaibale_appointments(request):
             "bed_room",
             "address",
             "user",
-        ).filter(
-            status=HospitalAppointmentStatus.PENDING
-        ).order_by("-created_at")
+        )
 
-        template = "hospital/hospital_appointment.html"
+        if status == "missed":
+            qs = qs.none()  # not implemented yet
+
+        elif status != "all":
+            mapped_status = HOSPITAL_STATUS_MAP.get(status)
+            if mapped_status:
+                qs = qs.filter(status=mapped_status)
+            else:
+                qs = qs.none()
 
     else:
-        appointments = []
+        qs = HospitalAppointments.objects.none()
 
-    context["appointments"] = appointments
+    qs = qs.order_by("-created_at")
 
-    return render(request, template, context)
+    html = render_to_string(
+        "partials/appointment-cards-list.html",
+        {"appointments": qs},
+        request=request
+    )
+
+    return JsonResponse({"html": html})
+

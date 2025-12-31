@@ -80,23 +80,21 @@
               </div>
             </div>
           </div>
+          <!-- AJAX Appointment Container -->
+          <!-- AJAX Appointment Container -->
+          <div id="tab-content-area" class="pt-8 min-h-[300px]">
 
-          <!-- All Div -->
-           {% include 'partials/all-appointments.html'%}
+              <!-- Appointments -->
+              <div id="appointments-container">
+                  <div id="cards-container"></div>
+              </div>
 
+              <!-- Equipment -->
+              <div id="equipment-container" class="hidden">
+                  {% include 'partials/doctor-equipments.html' %}
+              </div>
 
-
-          <!-- Missed Div -->
-          {% include 'partials/missed-appointments.html'%}
-
-          <!-- Canceled Div -->
-          {% include 'partials/cancelled-appointments.html'%}
-
-          <!-- Pending Div -->
-          {% include 'partials/pending-appointments.html'%}
-
-          <!-- Equipment Div -->
-          {% include 'partials/doctor-equipments.html'%}
+          </div>
         </div>
 
 
@@ -132,6 +130,6 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 <script src="/static/js/appointment.js"></script>
-<script src="/static/js/tabs.js"></script>
+{% comment %} <script src="/static/js/tabs.js"></script> {% endcomment %}
 
 {% endblock %}

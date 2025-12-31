@@ -81,21 +81,20 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Content Switch Area -->
+                    <div id="tab-content-area" class="pt-8 min-h-[300px]">
 
-                    <!-- All Div -->
-                     {% include 'partials/all-appointments.html'%}
+                        <!-- Appointments -->
+                        <div id="appointments-container">
+                            <div id="cards-container"></div>
+                        </div>
 
-                    <!-- Missed Div -->
-                     {% include 'partials/missed-appointments.html'%}
+                        <!-- Equipment -->
+                        <div id="equipment-container" class="hidden">
+                            {% include 'partials/hospital-equipments.html' %}
+                        </div>
 
-                    <!-- Cancelled Div-->
-                    {% include 'partials/cancelled-appointments.html'%}
-
-                    <!-- Pending DIV-->
-                    {% include 'partials/pending-appointments.html'%}
-
-                    <!-- Equipment Div -->
-                    {% include 'partials/hospital-equipments.html'%}
+                    </div>
 
                 </div>
 
@@ -132,6 +131,6 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 <script src="/static/js/appointment.js"></script>
-<script src="/static/js/tabs.js"></script>
+{% comment %} <script src="/static/js/tabs.js"></script> {% endcomment %}
 
 {% endblock %}
