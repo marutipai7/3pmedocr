@@ -3,6 +3,8 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
       <!--Success Popup-->
       <div
         class="viewModal fixed inset-0 bg-semi-transparent-black flex items-center justify-center z-50 hidden"
@@ -21,22 +23,23 @@
           <div class="flex flex-col items-center justify-center gap-2">
             <p class="font-semibold text-2xl">Advance Received Successfully</p>
             <div class="flex flex-col items-center justify-center pt-2 gap-2">
+
               <p class="font-normal text-base text-dark-gray">
                 Previous Advance Balance :
-                <span class="font-semibold text-jet-black">₹11,500.00</span>
+                <span id="prevBalance" class="font-semibold text-jet-black">₹11,500.00</span>
               </p>
               <p class="font-normal text-base text-dark-gray">
                 New Advance Recieved :
-                <span class="font-semibold text-green">₹1,000.00</span>
+                <span id="addedAmount" class="font-semibold text-green">₹1,000.00</span>
               </p>
               <p class="font-normal text-base text-dark-gray">
                 Current Advance Balance :
-                <span class="font-semibold text-jet-black">₹12,500.00</span>
+                <span id="currentBalance" class="font-semibold text-jet-black">₹12,500.00</span>
               </p>
             </div>
             <p class="font-normal text-base text-dark-gray pt-2">
               Congratulation! You have earned
-              <span class="font-bold text-lg text-{{ text }}">2.8</span>
+              <span id="earnedPoints" class="font-bold text-lg text-{{ text }}">2.8</span>
               Points on the Platform Usage
             </p>
             <a
@@ -85,10 +88,10 @@
               <p class="font-semibold text-xl text-dark-gray">
                 Advance Balance
               </p>
-              <p class="font-bold text-5xl text-{{ text }}">
-                &#8377;12,500.00
+              <p id="walletBalance" class="font-bold text-5xl text-{{ text }}">
+                &#8377;{{ wallet_balance }}
               </p>
-              <p class="font-normal text-base text-dark-gray">
+              <p id="walletLastUpdated" class="font-normal text-base text-dark-gray">
                 Last updated on 23rd April 2025
               </p>
             </div>
@@ -147,8 +150,8 @@
         <div class="border border-{{ border }} p-2 rounded-md mt-2">
           <div class="flex justify-between items-center">
             <div class="flex items-center gap-2">
-              <label class="custom-radio">
-                <input type="radio" name="payment" />
+              <label class="custom-radio-pharmacy">
+                <input type="radio" name="payment_method" value="upi">
                 <span class="checkmark"></span>
               </label>
               <p class="font-semibold text-base text-jet-black">UPI</p>
@@ -156,29 +159,30 @@
             <img src="/static/images/upi.svg" alt="upi" />
           </div>
         </div>
+
         <div class="border border-{{ border }} p-2 rounded-md mt-2">
           <div class="flex items-center gap-2">
-            <label class="custom-radio">
-              <input type="radio" name="payment" />
+            <label class="custom-radio-pharmacy">
+              <input type="radio" name="payment_method" value="netbanking">
               <span class="checkmark"></span>
             </label>
             <p class="font-semibold text-base text-jet-black">Net Banking</p>
           </div>
         </div>
+
         <div class="border border-{{ border }} p-2 rounded-md mt-2">
           <div class="flex items-center gap-2">
-            <label class="custom-radio">
-              <input type="radio" name="payment" />
+            <label class="custom-radio-pharmacy">
+              <input type="radio" name="payment_method" value="paymentgateway">
               <span class="checkmark"></span>
             </label>
-            <p class="font-semibold text-base text-jet-black">
-              Payment Gateway
-            </p>
+            <p class="font-semibold text-base text-jet-black">Payment Gateway</p>
           </div>
         </div>
+
         <div class="flex items-center justify-between pt-4">
           <p class="font-semibold text-2xl text-light-gray1">Advance Total</p>
-          <p class="font-semibold text-2xl text-dark-gray">&#8377;0</p>
+          <p  id="advanceTotal" class="font-semibold text-2xl text-dark-gray">&#8377;0</p>
         </div>
         <div class="flex justify-end items-center pt-4 gap-2">
           <button

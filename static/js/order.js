@@ -1,26 +1,27 @@
 $(document).ready(function () {
-  
-  // Handle chat item click: highlight selected, show related chat, hide ticket list on small screens
+
+/* ================================
+   TICKET + CHAT
+================================ */
   $(".issue-item").on("click", function () {
     const chatId = $(this).data("chat-id");
     $(".issue-item").removeClass("bg-teal-veil");
-      $(this).addClass("bg-teal-veil");
-      $(this).find("title").addClass("text-teal-veil");
-    
+    $(this).addClass("bg-teal-veil");
+    $(this).find("title").addClass("text-teal-veil");
+
     $(".chat-profile").addClass("hidden");
     $('.chat-profile[data-id="' + chatId + '"]').removeClass("hidden");
+
     if (window.innerWidth < 1024) {
       $(".ticket-list").addClass("hidden");
     }
   });
 
-  // Toggle ticket menu visibility
   $(".ticket-menu").on("click", function (e) {
-    e.stopPropagation(); 
+    e.stopPropagation();
     $(".ticket-list").toggle();
   });
 
-  // Hide ticket list when clicking outside menu or list
   $(document).on("click", function (event) {
     const $target = $(event.target);
     if (
@@ -30,101 +31,102 @@ $(document).ready(function () {
       $(".ticket-list").addClass("hidden");
     }
   });
-  
-  // Order tracking: add new status with visual indicators if not already added
+
+
+/* ================================
+   ORDER TRACKING
+================================ */
   const addedStatuses = new Set();
 
   function addStatus(statusText, timestamp) {
-    if (addedStatuses.has(statusText)) {
-      return;
-    }
+    if (addedStatuses.has(statusText)) return;
+
     addedStatuses.add(statusText);
     let dotsCount = $('#statusDots div').length;
+
     if (dotsCount > 0) {
-      $('#statusDots').append(`
-        <hr class="text-light-sea-green h-6 w-0 ml-1.5 border-2">
-      `);
+      $('#statusDots').append(`<hr class="text-light-sea-green h-6 w-0 ml-1.5 border-2">`);
     }
-    $('#statusDots').append(`
-      <div class="bg-light-sea-green rounded-full h-4 w-4"></div>
-    `);
-    $('#statusLabels').append(`
-      <p class="font-normal text-base">${statusText}</p>
-    `);
-    $('#statusTimes').append(`
-      <p class="font-semibold text-base">${timestamp}</p>
-    `);
+
+    $('#statusDots').append(`<div class="bg-light-sea-green rounded-full h-4 w-4"></div>`);
+    $('#statusLabels').append(`<p class="font-normal text-base">${statusText}</p>`);
+    $('#statusTimes').append(`<p class="font-semibold text-base">${timestamp}</p>`);
   }
 
-  // Show tracking popup with selected status
   $(".order-tracking-btn").on("click", function () {
     let status = $(this).data("status");
     let color = $(this).data("color");
     addStatus(status, "02/05/2025, 16:30");
     $(".order-current-status").html(status).addClass(`text-${color}`);
-    $(".trackingPopup")
-      .removeClass("hidden")
-      .addClass("flex");
+    $(".trackingPopup").removeClass("hidden").addClass("flex");
   });
 
-  // Show specific popup
+
+/* ================================
+   POPUPS
+================================ */
   $(".popup-btn").on("click", function () {
     let popupId = $(this).data("popup");
-    $("." + popupId)
-      .removeClass("hidden")
-      .addClass("flex");
+    $("." + popupId).removeClass("hidden").addClass("flex");
   });
 
-  // Close popup
   $(".close-popup").on("click", function () {
     let popupId = $(this).data("popup");
     $(this).closest("." + popupId).addClass("hidden").removeClass("flex");
   });
 
-  // Toggle status dropdown
-  $('.status-btn').on('click', function () {
-      $('.status-dropdown').toggle();
+
+/* ================================
+   STATUS DROPDOWN
+================================ */
+  $(".status-btn").on("click", function () {
+    $(".status-dropdown").toggle();
   });
 
-  // Hide status dropdown when clicking outside
-  $(document).on('click', function (e) {
-      if (!$(e.target).closest('.status-btn, .status-dropdown').length) {
-          $('.status-dropdown').hide();
-      }
+  $(document).on("click", function (e) {
+    if (!$(e.target).closest(".status-btn, .status-dropdown").length) {
+      $(".status-dropdown").hide();
+    }
   });
 
-  // Image upload: preview up to 4 images, allow removal
+
+/* ================================
+   IMAGE UPLOAD
+================================ */
   let maxImages = 4;
 
-  $('#image-upload').on('change', function (e) {
+  $("#image-upload").on("change", function (e) {
     let files = Array.from(e.target.files);
-    let currentImages = $('#preview img').length;
+    let currentImages = $("#preview img").length;
+
     if ((files.length + currentImages) > maxImages) {
-      toastr.error('You can only upload up to 4 images.');
+      toastr.error("You can only upload up to 4 images.");
       return;
     }
+
     files.forEach(file => {
       let reader = new FileReader();
       reader.onload = function (e) {
-        const previewHtml = `
+        $('#preview').append(`
           <div class="image-thumb relative mb-4">
             <img src="${e.target.result}" class="w-16 h-16 object-cover rounded" />
             <span class="remove-btn material-symbols-outlined cursor-pointer material-filled text-jet-black absolute right-0 top-0 -mt-2 -mr-3">cancel</span>
-          </div>
-        `;
-        $('#preview').append(previewHtml);
+          </div>`);
       };
       reader.readAsDataURL(file);
     });
+
     $(this).val('');
   });
 
-  // Remove selected image from preview
-  $(document).on('click', '.remove-btn', function () {
-    $(this).closest('.image-thumb').remove();
+  $(document).on("click", ".remove-btn", function () {
+    $(this).closest(".image-thumb").remove();
   });
 
-  // Star rating: highlight stars up to the one clicked
+
+/* ================================
+   STAR RATING
+================================ */
   $("#starRating span").click(function () {
     const index = $(this).index();
     $("#starRating span").removeClass("material-filled text-star-yellow");
@@ -133,30 +135,38 @@ $(document).ready(function () {
     });
   });
 
-  //Notification Dropdown
-   const $bellIcon = $("#bell-icon");
+
+/* ================================
+   NOTIFICATION DROPDOWN
+================================ */
+  const $bellIcon = $("#bell-icon");
   const $popup = $("#popup");
   const $closePopup = $("#close-popup");
   const $viewDetailsDropdown = $("#viewDetailsDropdown");
   const $openViewDetails = $(".openViewDetails");
   const $closeViewDetailsDropdown = $(".closeViewDetailsDropdown");
+
   $bellIcon.on("click", function (e) {
     e.stopPropagation();
     $popup.toggleClass("hidden");
     $viewDetailsDropdown.addClass("hidden");
   });
+
   $closePopup.on("click", function () {
     $popup.addClass("hidden");
   });
+
   $openViewDetails.on("click", function (e) {
     e.stopPropagation();
     $popup.addClass("hidden");
     $viewDetailsDropdown.removeClass("hidden");
   });
+
   $closeViewDetailsDropdown.on("click", function () {
     $viewDetailsDropdown.addClass("hidden");
     $popup.removeClass("hidden");
   });
+
   $(document).on("click", function (e) {
     const $target = $(e.target);
 
@@ -171,68 +181,214 @@ $(document).ready(function () {
       $viewDetailsDropdown.addClass("hidden");
     }
   });
-$('.amount-btn').on('click', function () {
-  // Extract number from button text (e.g., ₹500 → 500)
-  const amount = $(this).text().replace(/[^\d]/g, '');
-  $('#amountInput').val(amount);
-});
 
-//receipt popup
- $(".view-receipt").on("click", function () {
+/* ================================
+   RECEIPT & FILE VIEW
+================================ */
+  $(".view-receipt").on("click", function () {
     $(".viewModal").removeClass("hidden");
-   });
+  });
+
+  $(".view-file").on("click", function () {
+    $(".fileModal").removeClass("hidden");
+  });
+
   $(".closeModal").on("click", function () {
     $(".viewModal").addClass("hidden");
-   
-  });
-
-  //View Button Popup
-   $(".view-file").on("click", function () {
-    $(".fileModal").removeClass("hidden"); 
-  });
-  $(".closeModal").on("click", function () {
     $(".fileModal").addClass("hidden");
-   });
+  });
 
 
-   
-   $('.closehistoryBtn').on("click",function(){
+/* ================================
+   HISTORY + CLOSE BUTTONS
+================================ */
+  $(".closehistoryBtn, .closeadvance-btn, .cancelBtn").on("click", function () {
     window.history.back();
-   })
-   $('.closeadvance-btn').on("click",function(){
-    window.history.back();
-   })
-    $('.cancelBtn').on("click",function(){
-    window.history.back();
-   })
+  });
 
 
-   //viewDetails Popup
-    $(".view-detailsBtn").on("click", function (e) {
+/* ================================
+   SUMMARY POPUP
+================================ */
+  $(".view-detailsBtn").on("click", function (e) {
     e.preventDefault();
-    $(".summaryPopup").removeClass("hidden");
+    $(".viewModal").removeClass("hidden");
   });
 
   $(".closeSummaryPopup").on("click", function () {
-    $(".summaryPopup").addClass("hidden");
-  });
-  $(document).on("click", function (e) {
-    if (
-      !$(e.target).closest(".summaryPopup > div").length &&
-      !$(e.target).is(".view-detailsBtn")
-    ) {
-      $(".summaryPopup").addClass("hidden");
-    }
-  });
-
-  $(".recharge-btn").on("click", function () {
-    $(".viewModal").removeClass("hidden");
-   });
-  $(".closeModal").on("click", function () {
     $(".viewModal").addClass("hidden");
   });
 
+  $(document).on("click", function (e) {
+    if (
+      !$(e.target).closest(".viewModal > div").length &&
+      !$(e.target).is(".view-detailsBtn")
+    ) {
+      $(".viewModal").addClass("hidden");
+    }
+  });
+
+
+/* ================================
+   BOOKMARK
+================================ */
   $(".bookmark-fill").click(function () {
     $(this).addClass(`material-filled text-light-sea-green`);
   });
+
+
+/* =========================================================
+   🔥  ADVANCE RECHARGE — MAIN WORKING LOGIC
+========================================================= */
+  $(".recharge-btn").on("click", function () {
+
+    let amount = parseFloat($("#amountInput").val());
+    let payment_method = $("input[name='payment_method']:checked").val();
+
+    if (!amount || amount < 100) {
+      toastr.error("Minimum amount is ₹100");
+      return;
+    }
+
+    if (!payment_method) {
+      toastr.error("Please select a payment method");
+      return;
+    }
+
+    $.ajax({
+      url: "/dashboard/advance/add/",
+      type: "POST",
+      data: {
+        amount: amount,
+        payment_method: payment_method,
+        csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+      },
+
+      beforeSend: function () {
+        $(".recharge-btn").prop("disabled", true).text("Processing...");
+      },
+
+      success: function (res) {
+        $(".recharge-btn").prop("disabled", false).text("Recharge");
+        toastr.success(res.message);
+
+        if (res.success) {
+          $("#prevBalance").text("₹" + res.previous_balance);
+          $("#addedAmount").text("₹" + res.added_amount);
+          $("#currentBalance").text("₹" + res.current_balance);
+          $("#earnedPoints").text(res.points);
+          $("#walletBalance").text("₹" + res.current_balance);
+          const today = new Date();
+          $("#walletLastUpdated").text(
+            "Last updated on " + formatDate(today)
+          );
+
+
+          $(".viewModal").removeClass("hidden");
+        } else {
+          toastr.error(res.message);
+        }
+      },
+
+      error: function () {
+        $(".recharge-btn").prop("disabled", false).text("Recharge");
+        toastr.error("Server Error");
+      },
+    });
+  });
+
+});
+
+/* ================================
+   ADVANCE TOTAL SYNC
+================================ */
+function updateAdvanceTotal(amount) {
+  amount = parseFloat(amount) || 0;
+  $("#advanceTotal").text(amount.toFixed(0));
+}
+
+/* When user types amount manually */
+$("#amountInput").on("input", function () {
+  updateAdvanceTotal($(this).val());
+});
+
+/* When user clicks recommended amount buttons */
+$(".amount-btn").on("click", function () {
+  const amount = $(this).text().replace(/[^\d]/g, "");
+  $("#amountInput").val(amount);
+  updateAdvanceTotal(amount);
+});
+
+
+function formatDate(dateObj) {
+  const day = dateObj.getDate();
+  const month = dateObj.toLocaleString("en-IN", { month: "long" });
+  const year = dateObj.getFullYear();
+
+  const suffix =
+    day % 10 === 1 && day !== 11 ? "st" :
+    day % 10 === 2 && day !== 12 ? "nd" :
+    day % 10 === 3 && day !== 13 ? "rd" : "th";
+
+  return `${day}${suffix} ${month} ${year}`;
+}
+
+
+function loadAdvanceHistory() {
+  $.ajax({
+    url: "/dashboard/advance/history/ajax/",
+    type: "GET",
+
+    success: function (res) {
+      if (!res.success) return;
+
+      let html = "";
+
+      if (res.data.length === 0) {
+        html = `
+          <tr>
+            <td colspan="7" class="py-6 text-center text-gray-400">
+              No advance history found
+            </td>
+          </tr>`;
+      } else {
+        res.data.forEach(tx => {
+          html += `
+            <tr class="text-center">
+              <td class="py-2 px-4">${tx.date}</td>
+              <td class="py-2 px-4">${tx.tranx_id}</td>
+              <td class="py-2 px-4">${tx.type}</td>
+              <td class="py-2 px-4">${tx.description}</td>
+              <td class="py-2 px-4">${tx.amount}</td>
+              <td class="px-4 py-2">
+                <div class="bg-mint-cream text-green py-2 rounded-md">
+                  ${tx.status}
+                </div>
+              </td>
+              <td class="px-4 py-2">
+                <span class="material-symbols-outlined cursor-pointer view-receipt">
+                  visibility
+                </span>
+              </td>
+            </tr>`;
+        });
+      }
+
+      $("#advanceHistoryBody").html(html);
+    },
+
+    error: function () {
+      $("#advanceHistoryBody").html(`
+        <tr>
+          <td colspan="7" class="py-6 text-center text-red-500">
+            Failed to load history
+          </td>
+        </tr>
+      `);
+    }
+  });
+}
+
+$(document).ready(function () {
+  loadAdvanceHistory();
 });

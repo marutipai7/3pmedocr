@@ -1,6 +1,9 @@
 import os
 import json
 import random
+import uuid
+from decimal import Decimal
+from coupon.views import get_seller_profile
 from coupon.models import Coupon
 from django.utils import timezone
 from donate.models import Donation
@@ -35,6 +38,8 @@ from appointments.models import LabAppointments
 from appointments.models import HospitalAppointments
 from appointments.models import DoctorAppointment
 from orders.models import UserPurchase, OrderStatusChoices
+from django.utils.timezone import localtime
+from appointments.models import WalletTransaction
 
 @dashboard_login_required
 def dashboard_home(request):
@@ -783,14 +788,26 @@ def advance(request):
     model, display_field, context_key = profile_config
     profile = model.objects.get(user=user)
 
+    # ✅ Fetch wallet balance
+    last_txn = (
+        WalletTransaction.objects
+        .filter(user=user)
+        .order_by("-created_at")
+        .first()
+    )
+
+    wallet_balance = last_txn.current_balance if last_txn else Decimal("0.00")
+
     context.update({
         context_key: profile,
         'user_display_name': getattr(profile, display_field, ''),
         'user_profile': user,
         'user': user,
+        'wallet_balance': wallet_balance,  # 👈 pass to template
     })
 
     return render(request, "advance/advance.html", context)
+
 
     
 @dashboard_login_required
@@ -843,3 +860,85 @@ def cart(request):
             'user':user
         })
         return render(request, "dashboard/cart.html", context)
+    
+
+@dashboard_login_required
+def add_advance_amount(request):
+    if request.method != "POST":
+        return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
+
+    user = request.user_obj
+
+    try:
+        amount = Decimal(request.POST.get("amount", 0))
+        payment_method = request.POST.get("payment_method")
+    except:
+        return JsonResponse({"success": False, "message": "Invalid amount"}, status=400)
+
+    if amount < 100:
+        return JsonResponse({"success": False, "message": "Minimum ₹100 required"}, status=400)
+
+    if not payment_method:
+        return JsonResponse({"success": False, "message": "Select payment method"}, status=400)
+
+    # 🔹 Get Previous Balance
+    last_txn = WalletTransaction.objects.filter(user=user).order_by("-created_at").first()
+    previous_balance = last_txn.current_balance if last_txn else Decimal("0.00")
+
+    # 🔹 New Balance
+    current_balance = previous_balance + amount
+
+    # 🔹 Calculate Points (example: 0.28% of recharge)
+    points = round(amount * Decimal("0.0028"), 2)
+
+    # 🔹 Create Transaction Entry
+    WalletTransaction.objects.create(
+        user=user,
+        tranx_id=str(uuid.uuid4()),
+        amount=amount,
+        transaction_type="CREDIT",
+        points_earned=points,
+        current_balance=current_balance,
+        created_at=timezone.now(),
+    )
+
+    return JsonResponse({
+        "success": True,
+        "previous_balance": float(previous_balance),
+        "added_amount": float(amount),
+        "current_balance": float(current_balance),
+        "points": float(points),
+        "message": "Advance added successfully"
+    })
+
+
+
+@dashboard_login_required
+def ajax_advance_history(request):
+    user = request.user_obj
+
+    transactions = (
+        WalletTransaction.objects
+        .filter(user=user)
+        .order_by("-created_at")
+    )
+
+    data = []
+    for tx in transactions:
+        data.append({
+            "date": tx.created_at.strftime("%d %b %Y, %I:%M %p"),
+            "tranx_id": tx.tranx_id,
+            "type": tx.transaction_type.title(),
+            "description": (
+                "Advance Payment"
+                if tx.transaction_type.lower() == "credit"
+                else "Platform Payment"
+            ),
+            "amount": f"₹{tx.amount}",
+            "status": "Successful",
+        })
+
+    return JsonResponse({
+        "success": True,
+        "data": data
+    })
