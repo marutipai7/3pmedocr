@@ -11,7 +11,7 @@ from .models import (
     AppointmentStatus,
     HospitalAppointmentStatus,
 )
-
+from django.core.paginator import Paginator
 from appointments.utils import get_appointment_stats
 
 
@@ -88,8 +88,11 @@ def appointment_view(request):
 def ajax_appointments(request):
     user = request.user_obj
     user_type = user.user_type
-    status = request.GET.get("status", "all")
 
+    status = request.GET.get("status", "all")
+    page_number = request.GET.get("page", 1)
+    if status == "canceled":
+        status = "cancelled"
     # ---------------- LAB ----------------
     if user_type == "lab":
         qs = LabAppointments.objects.select_related(
@@ -103,11 +106,7 @@ def ajax_appointments(request):
 
         if status != "all":
             mapped_status = LAB_DOCTOR_STATUS_MAP.get(status)
-            if mapped_status:
-                qs = qs.filter(status=mapped_status)
-            else:
-                qs = qs.none()   # missed → empty safely
-
+            qs = qs.filter(status=mapped_status) if mapped_status else qs.none()
 
     # ---------------- DOCTOR ----------------
     elif user_type == "doctor":
@@ -119,11 +118,7 @@ def ajax_appointments(request):
 
         if status != "all":
             mapped_status = LAB_DOCTOR_STATUS_MAP.get(status)
-            if mapped_status:
-                qs = qs.filter(status=mapped_status)
-            else:
-                qs = qs.none()
-
+            qs = qs.filter(status=mapped_status) if mapped_status else qs.none()
 
     # ---------------- HOSPITAL ----------------
     elif user_type == "hospital":
@@ -138,25 +133,33 @@ def ajax_appointments(request):
         )
 
         if status == "missed":
-            qs = qs.none()  # not implemented yet
-
+            qs = qs.none()
         elif status != "all":
             mapped_status = HOSPITAL_STATUS_MAP.get(status)
-            if mapped_status:
-                qs = qs.filter(status=mapped_status)
-            else:
-                qs = qs.none()
+            qs = qs.filter(status=mapped_status) if mapped_status else qs.none()
 
     else:
         qs = HospitalAppointments.objects.none()
 
     qs = qs.order_by("-created_at")
 
+    # ---------------- PAGINATION ----------------
+    paginator = Paginator(qs, 5)  # 👈 5 per page (change as needed)
+    page_obj = paginator.get_page(page_number)
+
     html = render_to_string(
         "partials/appointment-cards-list.html",
-        {"appointments": qs},
+        {
+            "appointments": page_obj,
+            "page_obj": page_obj,
+        },
         request=request
     )
 
-    return JsonResponse({"html": html})
-
+    return JsonResponse({
+        "html": html,
+        "has_next": page_obj.has_next(),
+        "has_prev": page_obj.has_previous(),
+        "current_page": page_obj.number,
+        "total_pages": paginator.num_pages,
+    })

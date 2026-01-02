@@ -2,17 +2,21 @@
  * Appointment Module
  * ------------------
  * - AJAX-based appointment loading
- * - Static Bed Inventory tab
- * - Modal open / close (event delegation)
+ * - Pagination + tab filtering
+ * - Single dynamic modal
  * - AJAX-safe and production-ready
  */
+
+let currentStatus = "all";
 
 $(document).ready(function () {
 
   /* ------------------------------
    * Load Appointments (AJAX)
    * ------------------------------ */
-  function loadAppointments(status = "all") {
+  function loadAppointments(status = "all", page = 1) {
+    currentStatus = status;
+
     $("#cards-container").html(
       `<p class="text-center mt-10 text-spanish-gray">Loading...</p>`
     );
@@ -20,7 +24,7 @@ $(document).ready(function () {
     $.ajax({
       url: "/appointment/ajax/appointments/",
       type: "GET",
-      data: { status },
+      data: { status, page },
       success: function (res) {
         $("#cards-container").html(res.html);
       },
@@ -37,7 +41,7 @@ $(document).ready(function () {
   /* ------------------------------
    * Initial Load
    * ------------------------------ */
-  loadAppointments("all");
+  loadAppointments("all", 1);
 
   /* ------------------------------
    * Tabs Handling
@@ -49,75 +53,71 @@ $(document).ready(function () {
     const tab = $(this).data("tab");
 
     if (tab === "equipment") {
-      // ✅ Show equipment
-      console.log("Loading equipment tab");
       $("#tab-content-area > div").addClass("hidden");
       $("#equipment-container").removeClass("hidden");
-
     } else {
-      // ✅ Show appointments
       $("#tab-content-area > div").addClass("hidden");
       $("#appointments-container").removeClass("hidden");
 
-
-      // ✅ Load appointments via AJAX
-      loadAppointments(tab);
+      // reset to page 1 on tab switch
+      loadAppointments(tab, 1);
     }
   });
 
   /* ------------------------------
-   * Open Modals (Event Delegation)
+   * Pagination
    * ------------------------------ */
-  $("#cards-container")
+  $("#cards-container").on("click", ".pagination-btn", function () {
+    const page = $(this).data("page");
+    loadAppointments(currentStatus, page);
+  });
 
-    .on("click", ".card-all-pending", function () {
-      $(".modal-pending").removeClass("hidden");
-    })
+  /* ------------------------------
+   * Open Appointment Modal (Dynamic)
+   * ------------------------------ */
+$("#cards-container").on(
+  "click",
+  ".card-all-pending, .card-all-accepted, .card-all-completed, .card-all-cancelled",
+  function () {
 
-    .on("click", ".card-all-completed", function () {
-      $(".modal-all-completed").removeClass("hidden");
-    })
+    const card = $(this);
 
-    .on("click", ".card-all-cancelled", function () {
-      $(".modal-canceled").removeClass("hidden");
-    })
+    $("#modal-name").text(card.data("name") || "-");
+    $("#modal-profile-img").attr("src", card.data("profile-img"));
 
-    .on("click", ".card-all-accepted", function () {
-      $(".modal-all-accepted").removeClass("hidden");
-    });
+    $("#modal-gender").text(card.data("gender") || "-");
+    $("#modal-age").text(card.data("age") || "-");
+    $("#modal-phone").text(card.data("phone") || "-");
 
+    $("#modal-visit-type").text(card.data("visit-type") || "Visit");
+    $("#modal-date").text(card.data("date") || "-");
+    $("#modal-address").text(card.data("address") || "-");
+
+    $("#modal-test").text(card.data("test") || "-");
+    $("#modal-details").text(card.data("details") || "-");
+
+    const budget = card.data("budget");
+    $("#modal-budget").text(budget ? "₹" + budget : "-");
+
+    $("#modal-order-id").text("Order #" + (card.data("order-id") || "-"));
+
+    $(".modal-pending").removeClass("hidden");
+  }
+);
 });
 
-
 /* ------------------------------
- * Close Modals (Buttons)
+ * Close Modal (Button)
  * ------------------------------ */
 $(document).on("click", ".modal-close-pending", function () {
   $(".modal-pending").addClass("hidden");
 });
 
-$(document).on("click", ".modal-close-canceled", function () {
-  $(".modal-canceled").addClass("hidden");
-});
-
-$(document).on("click", ".modal-close-all-completed", function () {
-  $(".modal-all-completed").addClass("hidden");
-});
-
-$(document).on("click", ".modal-close-all-accepted", function () {
-  $(".modal-all-accepted").addClass("hidden");
-});
-
-
 /* ------------------------------
- * Close Modals (Backdrop Click)
+ * Close Modal (Backdrop)
  * ------------------------------ */
-$(document).on(
-  "click",
-  ".modal-pending, .modal-canceled, .modal-all-completed, .modal-all-accepted",
-  function (e) {
-    if ($(e.target).is(this)) {
-      $(this).addClass("hidden");
-    }
+$(document).on("click", ".modal-pending", function (e) {
+  if ($(e.target).is(this)) {
+    $(this).addClass("hidden");
   }
-);
+});
