@@ -30,21 +30,21 @@
           <div
             class="filterDropdown mt-2 absolute right-0 top-full bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-1000"
           >
-            <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-{{ primary_bg }} hover:text-white rounded">
+            <div class="p-2 pl-4 flex justify-between items-center cursor-pointer hover:bg-{{ border }} hover:text-white rounded">
               Custom date<span class="material-symbols-outlined calendar-icon">calendar_today</span>
             </div>
             <div
-              class="p-2 pl-4 cursor-pointer hover:bg-{{ primary_bg }} hover:text-white rounded"
+              class="p-2 pl-4 cursor-pointer hover:bg-{{ border }} hover:text-white rounded"
             >
               1 Week
             </div>
             <div
-              class="p-2 pl-4 cursor-pointer hover:bg-{{ primary_bg }} hover:text-white rounded"
+              class="p-2 pl-4 cursor-pointer hover:bg-{{ border }} hover:text-white rounded"
             >
               1 Month
             </div>
             <div
-              class="p-2 pl-4 cursor-pointer hover:bg-{{ primary_bg }} hover:text-white rounded"
+              class="p-2 pl-4 cursor-pointer hover:bg-{{ border }} hover:text-white rounded"
             >
               1 Year
             </div>
@@ -72,11 +72,11 @@
                 </div>
               </div>
 
-              <p class="font-semibold text-2xl text-jet-black">50</p>
+              <p id="summaryCurrentBalance" class="font-semibold text-2xl text-jet-black">0</p>
               <div class="flex items-center gap-2">
-                <p class="font-normal text-sm text-dark-gray">Last 7 days</p>
-                <p class="font-normal text-sm text-dark-gray">
-                  (14/05/2025 to 21/05/2025)
+                <p class="font-normal text-sm text-dark-gray summary-label">Last 7 days</p>
+                <p class="font-normal text-sm text-dark-gray summary-date-range">
+                  (--)
                 </p>
               </div>
             </div>
@@ -96,11 +96,11 @@
                 </div>
               </div>
 
-              <p class="font-semibold text-2xl text-jet-black">100</p>
+              <p id="summaryTotalCredit" class="font-semibold text-2xl text-jet-black">0</p>
               <div class="flex items-center gap-2">
-                <p class="font-normal text-sm text-dark-gray">Last 7 days</p>
-                <p class="font-normal text-sm text-dark-gray">
-                  (14/05/2025 to 21/05/2025)
+                <p class="font-normal text-sm text-dark-gray summary-label">Last 7 days</p>
+                <p class="font-normal text-sm text-dark-gray summary-date-range">
+                  (--)
                 </p>
               </div>
             </div>
@@ -120,11 +120,11 @@
                 </div>
               </div>
 
-              <p class="font-semibold text-2xl text-jet-black">50</p>
+              <p id="summaryTotalDebit" class="font-semibold text-2xl text-jet-black">0</p>
               <div class="flex items-center gap-2">
-                <p class="font-normal text-sm text-dark-gray">Last 7 days</p>
-                <p class="font-normal text-sm text-dark-gray">
-                  (14/05/2025 to 21/05/2025)
+                <p class="font-normal text-sm text-dark-gray summary-label">Last 7 days</p>
+                <p class="font-normal text-sm text-dark-gray summary-date-range">
+                  (--)
                 </p>
               </div>
             </div>
@@ -161,13 +161,13 @@
                 <div
                   class="filterDropdown absolute right-0 top-12 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-1000">
 
-                  <div class="p-2 pl-4 cursor-pointer hover:bg-{{ primary_bg }} hover:text-white rounded">
+                  <div class="p-2 pl-4 cursor-pointer hover:bg-{{ border }} hover:text-white rounded">
                     1 Week
                   </div>
-                  <div class="p-2 pl-4 cursor-pointer hover:bg-{{ primary_bg }} hover:text-white rounded">
+                  <div class="p-2 pl-4 cursor-pointer hover:bg-{{ border }} hover:text-white rounded">
                     2 Week
                   </div>
-                  <div class="p-2 pl-4 cursor-pointer hover:bg-{{ primary_bg }} hover:text-white rounded">
+                  <div class="p-2 pl-4 cursor-pointer hover:bg-{{ border }} hover:text-white rounded">
                     3 Week
                   </div>
                 </div>
@@ -196,11 +196,11 @@
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <span
-                  class="material-symbols-outlined cursor-pointer bg-{{ primary_bg }} text-white rounded-md p-1"
+                  class="material-symbols-outlined cursor-pointer bg-{{ border }} text-white rounded-md p-1"
                   >share</span
                 >
                 <span
-                  class="material-symbols-outlined cursor-pointer bg-{{ primary_bg }} text-white rounded-md p-1"
+                  class="material-symbols-outlined cursor-pointer bg-{{ border }} text-white rounded-md p-1"
                   >download</span
                 >
               </div>
@@ -262,15 +262,15 @@
         >
           <div class="bg-white rounded-lg w-250">
             <div
-              class="flex items-center justify-between bg-{{ primary_bg }} rounded-t-lg p-2 text-white"
+              class="flex items-center justify-between bg-{{ border }} rounded-t-lg p-2 text-white"
             >
               <div class="flex items-center gap-2">
                 <span
-                  class="material-symbols-outlined cursor-pointer bg-{{ primary_bg }} text-white rounded-md p-1"
+                  class="material-symbols-outlined cursor-pointer bg-{{ border }} text-white rounded-md p-1"
                   >share</span
                 >
                 <span
-                  class="material-symbols-outlined cursor-pointer bg-{{ primary_bg }} text-white rounded-md p-1"
+                  class="material-symbols-outlined cursor-pointer bg-{{ border }} text-white rounded-md p-1"
                   >download</span
                 >
               </div>
@@ -289,7 +289,7 @@
               <table
                 class="min-w-full table-auto whitespace-nowrap docTable bg-snow-gray"
               >
-                <thead class="bg-{{ primary_bg }} text-white">
+                <thead class="bg-{{ border }} text-white">
                   <tr>
                     <th class="font-normal text-base border border-r-2 p-2">
                       <div class="flex items-center justify-center gap-1">
@@ -328,7 +328,7 @@
           <table
             class="min-w-full table-auto whitespace-nowrap docTable bg-snow-gray"
           >
-            <thead class="bg-{{ primary_bg }} text-white">
+            <thead class="bg-{{ border }} text-white">
               <tr>
                 <th class="font-normal text-base border border-r-2 p-2">
                   <div class="flex items-center justify-center gap-1">
@@ -367,10 +367,11 @@
               </tr>
             </tbody>
           </table>
+          <div id="pagination" class="flex justify-center gap-2 pt-4"></div>
         </div>
       </div>
 {% endblock%}
 
 {% block extra_js %}
-    <script src="{% static 'js/order.js' %}"></script>
+    <script src="{% static 'js/advance.js' %}"></script>
 {% endblock %}

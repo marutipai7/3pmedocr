@@ -918,59 +918,87 @@ def add_advance_amount(request):
 def ajax_advance_history(request):
     user = request.user_obj
 
-    transactions = (
-        WalletTransaction.objects
-        .filter(user=user)
-        .order_by("-created_at")
-    )
+    search = request.GET.get("search", "")
+    filter_by = request.GET.get("filter", "")
+    page = int(request.GET.get("page", 1))
 
-    data = []
-    for tx in transactions:
-        data.append({
-            "date": tx.created_at.strftime("%d %b %Y, %I:%M %p"),
-            "tranx_id": tx.tranx_id,
-            "type": tx.transaction_type.title(),
-            "description": (
-                "Advance Payment"
-                if tx.transaction_type.lower() == "credit"
-                else "Platform Payment"
-            ),
-            "amount": f"₹{tx.amount}",
-            "status": "Successful",
-        })
+    qs = WalletTransaction.objects.filter(user=user).order_by("-created_at")
+
+    # 🔍 SEARCH
+    if search:
+        qs = qs.filter(
+            Q(tranx_id__icontains=search) |
+            Q(transaction_type__icontains=search)
+        )
+
+    # 🗂️ FILTER
+    now = timezone.now()
+    if filter_by == "week":
+        qs = qs.filter(created_at__gte=now - timedelta(days=7))
+    elif filter_by == "month":
+        qs = qs.filter(created_at__gte=now - timedelta(days=30))
+    elif filter_by == "year":
+        qs = qs.filter(created_at__gte=now - timedelta(days=365))
+
+    # 📄 PAGINATION
+    paginator = Paginator(qs, 10)
+    page_obj = paginator.get_page(page)
+
+    data = [{
+        "date": tx.created_at.strftime("%d %b %Y, %I:%M %p"),
+        "tranx_id": tx.tranx_id,
+        "type": tx.transaction_type.title(),
+        "description": (
+            "Advance Payment"
+            if tx.transaction_type.lower() == "credit"
+            else "Platform Payment"
+        ),
+        "amount": f"₹{tx.amount}",
+        "status": "Successful",
+    } for tx in page_obj]
 
     return JsonResponse({
         "success": True,
-        "data": data
+        "data": data,
+        "pagination": {
+            "current": page_obj.number,
+            "total_pages": paginator.num_pages,
+            "has_next": page_obj.has_next(),
+            "has_prev": page_obj.has_previous(),
+        }
     })
 
 @dashboard_login_required
 def ajax_advance_summary(request):
     user = request.user_obj
+    filter_by = request.GET.get("filter", "week")
 
     end_date = timezone.now()
-    start_date = end_date - timedelta(days=7)
+
+    if filter_by == "month":
+        start_date = end_date - timedelta(days=30)
+        label = "Last 30 days"
+    elif filter_by == "year":
+        start_date = end_date - timedelta(days=365)
+        label = "Last 1 year"
+    else:
+        start_date = end_date - timedelta(days=7)
+        label = "Last 7 days"
 
     qs = WalletTransaction.objects.filter(
         user=user,
         created_at__range=(start_date, end_date)
     )
 
-    credit_total = qs.filter(transaction_type="credit").aggregate(
+    credit_total = qs.filter(transaction_type="CREDIT").aggregate(
         total=Sum("amount")
     )["total"] or 0
 
-    debit_total = qs.filter(transaction_type="debit").aggregate(
+    debit_total = qs.filter(transaction_type="DEBIT").aggregate(
         total=Sum("amount")
     )["total"] or 0
 
-    latest_tx = (
-        WalletTransaction.objects
-        .filter(user=user)
-        .order_by("-created_at")
-        .first()
-    )
-
+    latest_tx = qs.order_by("-created_at").first()
     current_balance = latest_tx.current_balance if latest_tx else 0
 
     return JsonResponse({
@@ -978,7 +1006,8 @@ def ajax_advance_summary(request):
         "current_balance": float(current_balance),
         "total_credit": float(credit_total),
         "total_debit": float(debit_total),
+        "label": label,
         "from_date": start_date.strftime("%d/%m/%Y"),
         "to_date": end_date.strftime("%d/%m/%Y"),
-        "updated_at": timezone.now().strftime("%d %b %Y, %I:%M %p"),
     })
+
