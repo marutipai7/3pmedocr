@@ -23,4 +23,5 @@ urlpatterns = [
     path('advance/advance-history/', views.advance_history, name='advance-history'),
     path("advance/add/", views.add_advance_amount, name="add_advance"),
     path("advance/history/ajax/",views.ajax_advance_history, name="ajax_advance_history"),
+    path("advance/summary/ajax/",views.ajax_advance_summary,name="ajax_advance_summary"),
 ]

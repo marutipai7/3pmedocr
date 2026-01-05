@@ -943,3 +943,42 @@ def ajax_advance_history(request):
         "success": True,
         "data": data
     })
+
+@dashboard_login_required
+def ajax_advance_summary(request):
+    user = request.user_obj
+
+    end_date = timezone.now()
+    start_date = end_date - timedelta(days=7)
+
+    qs = WalletTransaction.objects.filter(
+        user=user,
+        created_at__range=(start_date, end_date)
+    )
+
+    credit_total = qs.filter(transaction_type="credit").aggregate(
+        total=Sum("amount")
+    )["total"] or 0
+
+    debit_total = qs.filter(transaction_type="debit").aggregate(
+        total=Sum("amount")
+    )["total"] or 0
+
+    latest_tx = (
+        WalletTransaction.objects
+        .filter(user=user)
+        .order_by("-created_at")
+        .first()
+    )
+
+    current_balance = latest_tx.current_balance if latest_tx else 0
+
+    return JsonResponse({
+        "success": True,
+        "current_balance": float(current_balance),
+        "total_credit": float(credit_total),
+        "total_debit": float(debit_total),
+        "from_date": start_date.strftime("%d/%m/%Y"),
+        "to_date": end_date.strftime("%d/%m/%Y"),
+        "updated_at": timezone.now().strftime("%d %b %Y, %I:%M %p"),
+    })
