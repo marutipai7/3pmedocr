@@ -2,9 +2,9 @@ $(document).ready(function () {
   $(".tab-btn").click(function () {
     var target = $(this).data("tab");
     $(".tab-btn").removeClass(
-      "border-b-2 text-light-sea-green px-4 text-18-fs"
+      "border-b-2 text-dodger-blue px-4 text-18-fs"
     );
-    $(this).addClass("border-b-2 text-light-sea-green px-4 text-18-fs");
+    $(this).addClass("border-b-2 text-dodger-blue px-4 text-18-fs");
     $(".tab-content").addClass("hidden");
     $("#" + target).removeClass("hidden");
   });

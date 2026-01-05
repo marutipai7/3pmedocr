@@ -4,7 +4,7 @@
  * - AJAX-based appointment loading
  * - Pagination + tab filtering
  * - Single dynamic modal
- * - AJAX-safe and production-ready
+ * - Status-based enquiry UI
  */
 
 let currentStatus = "all";
@@ -30,21 +30,16 @@ $(document).ready(function () {
       },
       error: function () {
         $("#cards-container").html(
-          `<p class="text-center text-red-500 mt-10">
-            Failed to load appointments
-          </p>`
+          `<p class="text-center text-red-500 mt-10">Failed to load appointments</p>`
         );
       }
     });
   }
 
-  /* ------------------------------
-   * Initial Load
-   * ------------------------------ */
   loadAppointments("all", 1);
 
   /* ------------------------------
-   * Tabs Handling
+   * Tabs
    * ------------------------------ */
   $(".tab-btn-hospital").on("click", function () {
     $(".tab-btn-hospital").removeClass("active-tab-hospital");
@@ -58,8 +53,6 @@ $(document).ready(function () {
     } else {
       $("#tab-content-area > div").addClass("hidden");
       $("#appointments-container").removeClass("hidden");
-
-      // reset to page 1 on tab switch
       loadAppointments(tab, 1);
     }
   });
@@ -68,56 +61,178 @@ $(document).ready(function () {
    * Pagination
    * ------------------------------ */
   $("#cards-container").on("click", ".pagination-btn", function () {
-    const page = $(this).data("page");
-    loadAppointments(currentStatus, page);
+    loadAppointments(currentStatus, $(this).data("page"));
   });
 
   /* ------------------------------
-   * Open Appointment Modal (Dynamic)
+   * Open Appointment Modal
    * ------------------------------ */
-$("#cards-container").on(
-  "click",
-  ".card-all-pending, .card-all-accepted, .card-all-completed, .card-all-cancelled",
-  function () {
+  $("#cards-container").on(
+    "click",
+    ".card-all-pending, .card-all-accepted, .card-all-completed, .card-all-cancelled, .card-all-missed",
+    function () {
 
-    const card = $(this);
+      const card = $(this);
+      const status = (card.data("status") || "").toLowerCase();
+      const orderId = card.data("order-id") || "-";
+      const budget = card.data("budget");
 
-    $("#modal-name").text(card.data("name") || "-");
-    $("#modal-profile-img").attr("src", card.data("profile-img"));
+      // Basic details
+      $("#modal-name").text(card.data("name") || "-");
+      $("#modal-gender").text(card.data("gender") || "-");
+      $("#modal-age").text(card.data("age") || "-");
+      $("#modal-phone").text(card.data("phone") || "-");
+      $("#modal-visit-type").text(card.data("visit-type") || "Visit");
+      $("#modal-date").text(card.data("date") || "-");
+      $("#modal-address").text(card.data("address") || "-");
+      $("#modal-service-type").text(card.data("service-type") || "-");
+      $("#modal-details").text(card.data("details") || "-");
 
-    $("#modal-gender").text(card.data("gender") || "-");
-    $("#modal-age").text(card.data("age") || "-");
-    $("#modal-phone").text(card.data("phone") || "-");
+      $("#modal-order-id").text("Order #" + orderId);
+      $("#modal-budget").text(budget ? "₹" + budget : "-");
 
-    $("#modal-visit-type").text(card.data("visit-type") || "Visit");
-    $("#modal-date").text(card.data("date") || "-");
-    $("#modal-address").text(card.data("address") || "-");
+      /* ------------------------------
+       * Status-based enquiry section
+       * ------------------------------ */
+      if (status === "cancelled") {
+        $("#modal-enquiry-detail").html(
+          ENQUIRY_TEMPLATES.cancelled(orderId, "Doctor")
+        );
+      } 
+      else if (status === "missed") {
+        $("#modal-enquiry-detail").html(
+          ENQUIRY_TEMPLATES.missed(orderId)
+        );
+      } 
+      else {
+        // pending / accepted / completed
+        $("#modal-enquiry-detail").html(
+          ENQUIRY_TEMPLATES.pending(orderId, budget)
+        );
+      }
 
-    $("#modal-test").text(card.data("test") || "-");
-    $("#modal-details").text(card.data("details") || "-");
-
-    const budget = card.data("budget");
-    $("#modal-budget").text(budget ? "₹" + budget : "-");
-
-    $("#modal-order-id").text("Order #" + (card.data("order-id") || "-"));
-
-    $(".modal-pending").removeClass("hidden");
-  }
-);
+      $(".modal-pending").removeClass("hidden");
+    }
+  );
 });
 
 /* ------------------------------
- * Close Modal (Button)
+ * Close Modal
  * ------------------------------ */
 $(document).on("click", ".modal-close-pending", function () {
   $(".modal-pending").addClass("hidden");
 });
 
-/* ------------------------------
- * Close Modal (Backdrop)
- * ------------------------------ */
 $(document).on("click", ".modal-pending", function (e) {
   if ($(e.target).is(this)) {
     $(this).addClass("hidden");
   }
 });
+
+
+const ENQUIRY_TEMPLATES = {
+
+  pending: (orderId, budget) => `
+    <div class="enquiredDetail">
+      <div class="flex flex-col mt-4 py-4 gap-4">
+        <div class="flex justify-center items-center gap-1">
+          <div class="w-2 h-2 bg-dodger-blue rounded-full"></div>
+          <div class="w-[138px] h-0.5 flex">
+            <div class="w-1/2 h-full bg-dodger-blue"></div>
+            <div class="w-1/2 h-full bg-blue-haze"></div>
+          </div>
+          <div class="w-2 h-2 bg-blue-haze rounded-full"></div>
+          <div class="w-[138px] h-0.5 bg-blue-haze"></div>
+          <div class="w-2 h-2 bg-blue-haze rounded-full"></div>
+          <div class="w-[138px] h-0.5 bg-blue-haze"></div>
+          <div class="w-2 h-2 bg-blue-haze rounded-full"></div>
+        </div>
+
+        <div class="flex items-center justify-between mx-10">
+          <p class="pl-6 text-sm">Enquiry</p>
+          <p class="pl-2 text-spanish-gray text-sm">Appointment</p>
+          <p class="text-spanish-gray text-sm">Completed</p>
+          <p class="text-spanish-gray text-sm">Cancel/Expired</p>
+        </div>
+      </div>
+
+      <div class="pt-4 flex flex-col gap-2">
+        <div class="flex justify-between">
+          <p class="text-sm">Order ID</p>
+          <p class="text-sm">Budget</p>
+        </div>
+        <div class="flex justify-between">
+          <p class="text-blue-gray text-sm">Order #${orderId}</p>
+          <p class="text-dodger-blue text-sm">₹${budget || "-"}</p>
+        </div>
+      </div>
+
+      <div class="pt-4 flex justify-center gap-2 mb-2">
+        <button class="bg-dodger-blue text-white rounded-lg w-[180px] h-10">Accept</button>
+        <button class="border border-strong-red text-strong-red rounded-lg w-[180px] h-10">Reject</button>
+      </div>
+    </div>
+  `,
+
+  cancelled: (orderId, cancelledBy = "Doctor") => `
+    <div class="enquiredDetail">
+      <div class="flex flex-col mt-4 py-4 gap-4">
+        <div class="flex justify-center gap-1">
+          <div class="w-2 h-2 bg-dodger-blue rounded-full"></div>
+          <div class="w-[192px] h-0.5 bg-dodger-blue"></div>
+          <div class="w-2 h-2 bg-dodger-blue rounded-full"></div>
+          <div class="w-[192px] h-0.5 bg-dodger-blue"></div>
+          <div class="w-2 h-2 bg-dodger-blue rounded-full"></div>
+        </div>
+
+        <div class="flex justify-between mx-20">
+          <p class="text-sm">Enquiry</p>
+          <p class="text-sm">Appointment</p>
+          <p class="text-sm">Canceled</p>
+        </div>
+      </div>
+
+      <div class="pt-4 flex flex-col gap-2">
+        <div class="flex justify-between">
+          <p class="text-sm">Order ID</p>
+          <p class="text-sm">Canceled by</p>
+        </div>
+        <div class="flex justify-between">
+          <p class="text-blue-gray text-sm">Order #${orderId}</p>
+          <p class="text-strong-red text-sm">${cancelledBy}</p>
+        </div>
+      </div>
+    </div>
+  `,
+
+  missed: (orderId, reason = "Patient didn’t show up") => `
+    <div class="enquiredDetail">
+      <div class="flex flex-col mt-4 py-4 gap-4">
+        <div class="flex justify-center gap-1">
+          <div class="w-2 h-2 bg-dodger-blue rounded-full"></div>
+          <div class="w-[192px] h-0.5 bg-dodger-blue"></div>
+          <div class="w-2 h-2 bg-dodger-blue rounded-full"></div>
+          <div class="w-[192px] h-0.5 bg-dodger-blue"></div>
+          <div class="w-2 h-2 bg-dodger-blue rounded-full"></div>
+        </div>
+
+        <div class="flex justify-between mx-20">
+          <p class="text-sm">Enquiry</p>
+          <p class="text-sm">Appointment</p>
+          <p class="text-sm">No Show</p>
+        </div>
+      </div>
+
+      <div class="pt-4 flex flex-col gap-2">
+        <div class="flex justify-between">
+          <p class="text-sm">Order ID</p>
+          <p class="text-sm">Missing Reason</p>
+        </div>
+        <div class="flex justify-between">
+          <p class="text-blue-gray text-sm">Order #${orderId}</p>
+          <p class="text-strong-red text-sm">${reason}</p>
+        </div>
+      </div>
+    </div>
+  `
+};

@@ -814,6 +814,7 @@ def advance(request):
 def advance_history(request):
     user = request.user_obj
     context = get_common_context(request, user)
+    context["sidebar_active"] = "home"
 
     profile_map = {
         'advertiser': (AdvertiserProfile, 'company_name', 'advertiser_profile'),
