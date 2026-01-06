@@ -469,8 +469,9 @@ body {
 }
 
 .support-btn-help2 {
-    @apply w-full max-w-[360px] h-[48px] rounded-[6px] text-sm text-white bg-violet-sky font-semibold cursor-pointer;
+  @apply w-full max-w-[360px] h-[48px] rounded-[6px] text-sm font-semibold cursor-pointer text-white;
 }
+
 
 .support-btn-help3 {
     @apply w-full max-w-[360px] h-[48px] rounded-[6px] text-sm text-white bg-dark-blue font-semibold cursor-pointer;

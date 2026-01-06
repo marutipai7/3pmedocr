@@ -57,9 +57,15 @@ $(document).ready(function () {
   /* ================================
      VIEW RECEIPT
   ================================ */
-  $(document).on("click", ".view-receipt", function () {
-    $(".viewModal").removeClass("hidden");
-  });
+$(document).on("click", ".view-receipt", function () {
+  $(".viewModal").removeClass("hidden");
+});
+
+$(document).on("click", ".view-file", function () {
+  $(".fileModal").removeClass("hidden");
+  loadFileModalTable(); 
+});
+
 
   /* ================================
      CLOSE MODALS
@@ -215,9 +221,29 @@ function loadAdvanceHistory(page = 1) {
 /* =========================================================
    PAGINATION UI
 ========================================================= */
+function getPaginationColorClass() {
+  const type = (window.USER_TYPE || "").toLowerCase();
+
+  if (["doctor", "lab", "hospital"].includes(type)) {
+    return "bg-dodger-blue";
+  }
+
+  if (type === "pharmacy") {
+    return "bg-deep-teal-green";
+  }
+
+  if (type === "advertiser") {
+    return "bg-living-coral";
+  }
+
+  // fallback
+  return "bg-dodger-blue";
+}
+
+
 function renderPagination(p) {
   if (!p) return;
-
+  const colorClass = getPaginationColorClass();
   let html = "";
 
   html += `
@@ -231,7 +257,7 @@ function renderPagination(p) {
   `;
 
   html += `
-    <span class="bg-dodger-blue text-white w-8 h-8 flex items-center justify-center rounded-lg font-semibold">
+    <span class="${colorClass} text-white w-8 h-8 flex items-center justify-center rounded-lg font-semibold">
       ${p.current}
     </span>
   `;
@@ -289,4 +315,54 @@ function formatDate(dateObj) {
     day % 10 === 2 && day !== 12 ? "nd" :
     day % 10 === 3 && day !== 13 ? "rd" : "th";
   return `${day}${suffix} ${month} ${year}`;
+}
+
+function loadFileModalTable() {
+  $.ajax({
+    url: "/dashboard/advance/history/ajax/",
+    data: {
+      page: 1,                       // always start from first page
+      filter: currentFilter,
+      search: currentSearch
+    },
+
+    success: function (res) {
+      if (!res.success) return;
+
+      let html = "";
+
+      if (!res.data || res.data.length === 0) {
+        html = `
+          <tr>
+            <td colspan="6" class="py-6 text-center text-gray-400">
+              No records found
+            </td>
+          </tr>`;
+      } else {
+        res.data.forEach(tx => {
+          html += `
+            <tr class="text-center">
+              <td class="p-2">${tx.date}</td>
+              <td class="p-2">${tx.tranx_id}</td>
+              <td class="p-2">${tx.type}</td>
+              <td class="p-2">${tx.description}</td>
+              <td class="p-2">${tx.amount}</td>
+              <td class="p-2">${tx.status}</td>
+            </tr>`;
+        });
+      }
+
+      $("#fileModalTableBody").html(html);
+    },
+
+    error: function () {
+      $("#fileModalTableBody").html(`
+        <tr>
+          <td colspan="6" class="py-6 text-center text-red-500">
+            Failed to load data
+          </td>
+        </tr>
+      `);
+    }
+  });
 }
