@@ -35,20 +35,6 @@ def get_seller_profile(user):
         return None
     return model.objects.filter(user=user).first()
 
-
-def get_seller_profile(user):
-    profile_map = {
-        "pharmacy": PharmacyProfile,
-        "lab": LabProfile,
-        "hospital": HospitalProfile,
-        "doctor": DoctorProfile,
-    }
-    model = profile_map.get(user.user_type)
-    if not model:
-        return None
-    return model.objects.filter(user=user).first()
-
-
 @require_POST
 @dashboard_login_required
 def create_seller_coupon(request):
@@ -142,10 +128,6 @@ def create_seller_coupon(request):
 #     )
 
 #     return JsonResponse({"success": True, "html": html})
-
-from django.core.paginator import Paginator
-from django.http import JsonResponse
-from django.template.loader import render_to_string
 
 @require_GET
 @dashboard_login_required

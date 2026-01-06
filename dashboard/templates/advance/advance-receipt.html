@@ -1,0 +1,133 @@
+{% load static %}
+            <div class="viewModal fixed inset-0 bg-semi-transparent-black flex items-center justify-center z-50 hidden">
+                <div class="bg-white rounded-lg p-2 max-w-[480px] w-full h-[80vh] overflow-y-auto scroll">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span
+                                class="material-symbols-outlined cursor-pointer bg-deep-teal-green text-white rounded-md p-1">share</span>
+                            <span
+                                class="material-symbols-outlined cursor-pointer bg-deep-teal-green text-white rounded-md p-1 download-btn">download</span>
+                        </div>
+                        <p class="font-semibold text-xl text-deep-teal-green">
+                            Advance Receipt
+                        </p>
+                        <button class="closeModal">
+                            <span class="material-symbols-outlined cursor-pointer">close</span>
+                        </button>
+                    </div>
+                    <div class="download-container p-3 text-sm leading-relaxed receipt-content">
+                        <!-- Title -->
+                        <div class="text-center mb-2">
+                            <div class="font-bold">RECEIPT VOUCHER</div>
+                            <div class="text-xs">(Under Rule 58 - GST Compliant)</div>
+                        </div>
+                        <div class="dotted-line"></div>
+                        <!-- Receipt Details -->
+                        <div class="flex items-center mb-2">
+                            <div class="flex flex-col">
+                                <span class="font-semibold">Receipt No:</span>
+                                <span id="r_date" class="font-semibold">Date:</span>
+                            </div>
+                            <div class="flex flex-col ml-8 text-xs gap-0.5">
+                                <span id="r_receipt_no" class="">ADV/2025/0007</span>
+                                <span id="r_date" class="">17-May-2025</span>
+                            </div>
+                        </div>
+                        <!-- Platform Details -->
+                        <div class="mb-2">
+                            <div><span class="font-semibold">Platform Name:</span> <span
+                                    id="r_platform_name" class="text-nowrap text-xs">MediConnect
+                                    Digital Services Pvt Ltd</span></div>
+                            <div><span class="font-semibold">GSTIN:</span> <span
+                                    id="r_gstin" class="ml-16 text-xs">27AALTFOM7890M1Z3</span>
+                            </div>
+                            <div><span class="font-semibold ">Address:</span> <span id="r_platform_address" class="ml-12 text-xs">3rd Floor
+                                    Knowledge
+                                    Tower,Bengaluru-560034</span></div>
+                            <div><span class="font-semibold text-crimson-red">Contact:</span> <span
+                                    id="r_platform_contact" class="ml-12 text-crimson-red text-xs">+91-9988776655 | billing@mediconnect.in</span>
+                            </div>
+                        </div>
+                        <div class="dotted-line"></div>
+                        <!-- Received From -->
+                        <div class="mb-2">
+                            <div class="font-semibold mb-1">Received From:</div>
+                            <div><span class="font-semibold">Name:</span> <span
+                                    id="r_customer_name" class="ml-2 text-xs">WellnessFit
+                                    Nutrition Pvt. Ltd.</span></div>
+                            <div><span class="font-semibold">GSTIN:</span> <span
+                                    class="ml-23 text-xs">27MELLFIT11234G1Z9</span>
+                            </div>
+                            <div><span id="r_customer_address" class="font-semibold">Address:</span> <span class="ml-19 text-xs">22, Link Road,
+                                    Mumbai -
+                                    400072</span></div>
+                            <div><span class="font-semibold text-crimson-red">Contact:</span> <span
+                                    id="r_customer_email" class="ml-19 text-crimson-red text-xs">info@wellnessfit.in</span></div>
+                        </div>
+                        <div class="dotted-line-red"></div>
+                        <!-- Purpose -->
+                        <div class="mb-2">
+                            <span class="font-semibold text-crimson-red">Purpose:</span>
+                            <span id="r_purpose" class="ml-14 text-crimson-red text-xs">Advance for future coupon campaign posting</span>
+                        </div>
+                        <div class="dotted-line-red"></div>
+                        <div class="mb-2">
+                            <span class="font-semibold text-crimson-red">Description:</span>
+                            <span id="r_description" class=" text-xs text-crimson-red">| SAC Code | Qty | Rate | GST% | Total (INR)</span>
+                            <div class="dotted-line-red"></div>
+                        </div>
+                            <div class="flex text-xs  mb-2">
+                                <span class="">Advance for Services | 998361</span>
+                                <span class="">| 1</span>
+                                <span id="r_amount" class="">| ₹100.00</span>
+                                <span id="r_gst" class="">| 18%</span>
+                                <span id="r_total" class="">| ₹100.00</span>
+                            </div>
+                        <!-- GST and Total -->
+                        <div class="mb-2 mt-4">
+                            <div class="flex justify-between">
+                                <span class="font-semibold text-crimson-red">Add: GST @18%</span>
+                                <span class="text-crimson-red">₹18.00</span>
+                            </div>
+                        </div>
+                        <div class="dotted-line-red"></div>
+                        <div class="mb-2">
+                            <div class="flex justify-between font-semibold">
+                                <span class="text-crimson-red">Total Amount Received (INR):</span>
+                                <span class="text-crimson-red">₹118.00</span>
+                            </div>
+                        </div>
+                        <div class="dotted-line-red"></div>
+                        <!-- Amount in Words -->
+                        <div class="mb-2 mt-6">
+                            <span class="font-semibold">Amount in Words:</span>
+                            <span id="r_amount_words" class="ml-2">INR One Hundred Eighteen Only</span>
+                        </div>
+                        <!-- Payment Mode -->
+                        <div class="mb-6">
+                            <span class="font-semibold">Mode of Payment:</span>
+                            <span id="r_payment_mode" class="ml-2">UPI (Txn ID: UPI9876SABC)</span>
+                        </div>
+                        <div class="dotted-line"></div>
+                        <!-- Notes -->
+                        <div class="mb-4">
+                            <div class="font-semibold mb-1">**Notes:**</div>
+                            <div class="text-xs leading-relaxed">
+                                <div>- GST paid on advance as per Section 13(2)(a) of CGST Act.</div>
+                                <div>- This is not a tax invoice. Final tax invoice will be issued on actual service
+                                    delivery.</div>
+                                <div class="text-crimson-red">- No Input Tax Credit (ITC) is eligible on the basis of this
+                                    voucher alone.</div>
+                            </div>
+                        </div>
+                        <div class="dotted-line-red"></div>
+                        <!-- Signature -->
+                        <div class="flex items-center justify-between mt-4">
+                            <div>
+                                <div class="font-semibold">Authorized Signatory,</div>
+                                <div class="  inline-block">[Signature]</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>

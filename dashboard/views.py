@@ -3,7 +3,7 @@ import json
 import random
 import uuid
 from decimal import Decimal
-from coupon.views import get_seller_profile
+from django.conf import settings
 from coupon.models import Coupon
 from django.utils import timezone
 from donate.models import Donation
@@ -38,8 +38,8 @@ from appointments.models import LabAppointments
 from appointments.models import HospitalAppointments
 from appointments.models import DoctorAppointment
 from orders.models import UserPurchase, OrderStatusChoices
-from django.utils.timezone import localtime
 from appointments.models import WalletTransaction
+from django.shortcuts import get_object_or_404
 
 @dashboard_login_required
 def dashboard_home(request):
@@ -795,7 +795,10 @@ def advance(request):
         .order_by("-created_at")
         .first()
     )
-
+    last_updated = (
+        last_txn.created_at.strftime("%d %B %Y")
+        if last_txn else None
+    )
     wallet_balance = last_txn.current_balance if last_txn else Decimal("0.00")
 
     context.update({
@@ -803,7 +806,8 @@ def advance(request):
         'user_display_name': getattr(profile, display_field, ''),
         'user_profile': user,
         'user': user,
-        'wallet_balance': wallet_balance,  # 👈 pass to template
+        'wallet_balance': wallet_balance,
+        'wallet_last_updated': last_updated,
     })
 
     return render(request, "advance/advance.html", context)
@@ -945,6 +949,7 @@ def ajax_advance_history(request):
     page_obj = paginator.get_page(page)
 
     data = [{
+        "id": tx.id, 
         "date": tx.created_at.strftime("%d %b %Y, %I:%M %p"),
         "tranx_id": tx.tranx_id,
         "type": tx.transaction_type.title(),
@@ -1011,3 +1016,46 @@ def ajax_advance_summary(request):
         "to_date": end_date.strftime("%d/%m/%Y"),
     })
 
+@dashboard_login_required
+def get_advance_receipt(request, advance_id):
+    user = request.user_obj
+
+    advance = get_object_or_404(
+        WalletTransaction.objects.select_related("user"),
+        id=advance_id
+    )
+
+    profile = getattr(advance.user, "userprofile", None)
+
+    response_data = {
+        "receipt_no": f"ADV/{advance.created_at.year}/{advance.id:04d}",
+        "payment_date": advance.created_at.strftime("%d-%b-%Y"),
+
+        # platform info
+        "platform_name": settings.COMPANY_NAME,
+        "gstin": settings.COMPANY_GSTIN,
+        "platform_address": settings.COMPANY_ADDRESS,
+        "platform_contact": settings.COMPANY_CONTACT,
+
+        # received from
+        "customer_name": (
+            f"{profile.first_name} {profile.last_name}".strip()
+            if profile else ""
+        ),
+        "customer_email": advance.user.email or "",
+        "customer_address": (
+            profile.address if hasattr(profile, "address") else ""
+        ),
+
+        # transaction
+        "purpose": getattr(advance, "purpose", None) or "Advance for services",
+        "description": getattr(advance, "description", None) or "Advance Payment",
+        "amount": float(advance.amount),
+        "gst_percent": 18,
+        "payment_mode": getattr(advance, "payment_mode", ""),
+        "transaction_id": getattr(advance, "transaction_id", ""),
+
+        "created_by": "Authorized Signatory",
+    }
+
+    return JsonResponse(response_data)

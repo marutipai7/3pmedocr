@@ -187,40 +187,7 @@
           </div>
         </div>
         <!--Receipt popup opens on clicking eye icon in table-->
-        <div
-          class="viewModal fixed inset-0 bg-semi-transparent-black flex items-center justify-center z-50 hidden"
-        >
-          <div
-            class="bg-white rounded-lg p-2 max-w-md w-full h-[80vh] overflow-y-auto scroll"
-          >
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span
-                  class="material-symbols-outlined cursor-pointer bg-{{ border }} text-white rounded-md p-1"
-                  >share</span
-                >
-                <span
-                  class="material-symbols-outlined cursor-pointer bg-{{ border }} text-white rounded-md p-1"
-                  >download</span
-                >
-              </div>
-              <p class="font-semibold text-xl text-{{ text }}">
-                Advance Receipt
-              </p>
-              <button class="closeModal">
-                <span class="material-symbols-outlined cursor-pointer"
-                  >close</span
-                >
-              </button>
-            </div>
-
-            <img
-              src="/static/images/advance-receipt.svg"
-              alt="Incorporation Certificate"
-              class="w-full rounded"
-            />
-          </div>
-        </div>
+        {% include "advance/advance-receipt.html" %}
             <!--Platform Bill popup-->
             <div
           class="platformBill fixed inset-0 bg-semi-transparent-black flex items-center justify-center z-50 hidden"
@@ -310,5 +277,6 @@
 {% endblock%}
 
 {% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="{% static 'js/advance.js' %}"></script>
 {% endblock %}

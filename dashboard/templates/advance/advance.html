@@ -92,7 +92,11 @@
                 &#8377;{{ wallet_balance }}
               </p>
               <p id="walletLastUpdated" class="font-normal text-base text-dark-gray">
-                Last updated on 23rd April 2025
+                {% if wallet_last_updated %}
+                  Last updated on {{ wallet_last_updated }}
+                {% else %}
+                  No transactions yet
+                {% endif %}
               </p>
             </div>
             <div class="bg-blush-petal rounded-md">
@@ -191,7 +195,7 @@
             Cancel
           </button>
           <button
-            class="bg-{{ primary_bg }} text-white px-4 py-2 rounded-md cursor-pointer recharge-btn"
+            class="bg-{{ border }} text-white px-4 py-2 rounded-md cursor-pointer recharge-btn"
           >
             Recharge
           </button>

@@ -46,6 +46,42 @@ $(document).ready(function () {
     loadAdvanceHistory(1);
   });
 
+  $(document).on('click', '.download-btn', function (event) {
+    event.stopPropagation();
+    // Find the next sibling with class 'download-container'
+    const $container = $(this).closest('.viewModal').find('.download-container');
+
+    if ($container.length === 0) {
+        console.error('[ERROR] download-container not found');
+        return;
+    }
+
+    // Clone the element properly
+    const clone = $container[0].cloneNode(true);
+    clone.style.position = 'static';
+    clone.style.visibility = 'visible';
+    clone.style.display = 'block';
+    clone.style.zIndex = '1';
+    clone.id = 'download-container-clone';
+    document.body.appendChild(clone);
+
+    const opt = {
+        margin:       0,
+        filename:     'advance-receipt.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, scrollY: 0, scrollX: 0 },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(clone).save()
+        .then(() => {
+            document.body.removeChild(clone);
+        })
+        .catch(err => {
+            console.error('[ERROR] PDF generation failed:', err);
+            document.body.removeChild(clone);
+        });
+});
   /* ================================
      PAGINATION CLICK
   ================================ */
@@ -58,8 +94,14 @@ $(document).ready(function () {
      VIEW RECEIPT
   ================================ */
 $(document).on("click", ".view-receipt", function () {
-  $(".viewModal").removeClass("hidden");
+  const id = $(this).data("id");
+  console.log("FULL ELEMENT:", this);
+  console.log("DATASET:", this.dataset);
+  console.log("ATTR:", $(this).attr("data-id"));
+
+  openAdvanceReceipt(id);
 });
+
 
 $(document).on("click", ".view-file", function () {
   $(".fileModal").removeClass("hidden");
@@ -194,7 +236,9 @@ function loadAdvanceHistory(page = 1) {
                 </div>
               </td>
               <td>
-                <span class="material-symbols-outlined cursor-pointer view-receipt">
+                <span
+                  class="material-symbols-outlined cursor-pointer view-receipt"
+                  data-id="${tx.id}">
                   visibility
                 </span>
               </td>
@@ -365,4 +409,74 @@ function loadFileModalTable() {
       `);
     }
   });
+}
+function numberToWords(num) {
+  const a = [
+    "", "One", "Two", "Three", "Four", "Five",
+    "Six", "Seven", "Eight", "Nine", "Ten",
+    "Eleven", "Twelve", "Thirteen", "Fourteen",
+    "Fifteen", "Sixteen", "Seventeen", "Eighteen",
+    "Nineteen"
+  ];
+  const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+
+  if (num === 0) return "Zero";
+
+  function inWords(n) {
+    if (n < 20) return a[n];
+    if (n < 100) return b[Math.floor(n / 10)] + " " + a[n % 10];
+    if (n < 1000) return a[Math.floor(n / 100)] + " Hundred " + inWords(n % 100);
+    if (n < 100000) return inWords(Math.floor(n / 1000)) + " Thousand " + inWords(n % 1000);
+    if (n < 10000000) return inWords(Math.floor(n / 100000)) + " Lakh " + inWords(n % 100000);
+    return inWords(Math.floor(n / 10000000)) + " Crore " + inWords(n % 10000000);
+  }
+
+  return inWords(Math.floor(num)).trim();
+}
+
+function openAdvanceReceipt(advanceId) {
+  fetch(`/dashboard/advance/receipt/${advanceId}/`)
+    .then(res => res.json())
+    .then(data => {
+      // header
+      document.getElementById("r_receipt_no").textContent = data.receipt_no;
+      document.getElementById("r_date").textContent = data.payment_date;
+
+      // platform
+      document.getElementById("r_platform_name").textContent = data.platform_name;
+      document.getElementById("r_gstin").textContent = data.gstin;
+      document.getElementById("r_platform_address").textContent = data.platform_address;
+      document.getElementById("r_platform_contact").textContent = data.platform_contact;
+
+      // customer
+      document.getElementById("r_customer_name").textContent = data.customer_name;
+      document.getElementById("r_customer_address").textContent = data.customer_address;
+      document.getElementById("r_customer_email").textContent = data.customer_email;
+
+      // purpose
+      document.getElementById("r_purpose").textContent = data.purpose;
+      document.getElementById("r_description").textContent = data.description;
+
+      // calculation
+      const amount = data.amount;
+      const gst = (amount * data.gst_percent) / 100;
+      const total = amount + gst;
+
+      document.getElementById("r_amount").textContent = `₹${amount.toFixed(2)}`;
+      document.getElementById("r_gst").textContent = `₹${gst.toFixed(2)}`;
+      document.getElementById("r_total").textContent = `₹${total.toFixed(2)}`;
+
+      document.getElementById("r_amount_words").textContent =
+        numberToWords(total) + " Only";
+
+      document.getElementById("r_payment_mode").textContent =
+        `${data.payment_mode} (${data.transaction_id})`;
+
+      // show modal
+      document.querySelector(".viewModal").classList.remove("hidden");
+    })
+    .catch(err => {
+      console.error("Receipt load failed:", err);
+      alert("Failed to load receipt");
+    });
 }
