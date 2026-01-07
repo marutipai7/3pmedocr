@@ -1,7 +1,29 @@
 {% load humanize %}
 
 <div
-  class="card-all-{{ appointment.status|lower }} bg-white mt-4 p-4 rounded-md shadow-lg transition cursor-pointer hover:bg-blue-50">
+  class="card-all-{{ appointment.status|lower }} bg-white mt-4 p-4 rounded-md shadow-lg cursor-pointer"
+
+  data-name="Pt. {{ appointment.user.userprofile.first_name }} {{ appointment.user.userprofile.last_name|default:'' }}"
+  data-profile-img="/static/images/rachel-kate.svg"
+
+  data-gender="{{ appointment.user.userprofile.gender|default:'' }}"
+  data-age="{{ appointment.user.userprofile.age|default:'' }}"
+  data-phone="{{ appointment.user.phone_number|default:'-' }}"
+
+  data-visit-type="{{ appointment.preferred_mode|default:'Visit' }}"
+  data-date="{% firstof appointment.preferred_date_time|date:'d/m/Y, h:i A' appointment.preferred_date_from|date:'d/m/Y, h:i A' '-' %}"
+
+  data-address="{{ appointment.address|default:'' }}"
+
+  data-test="{% if appointment.test_package %}{{ appointment.test_package }}{% endif %}"
+  data-service-type="{% if appointment.service_type %}{{ appointment.service_type }}{% endif %}"
+  data-details="{% if appointment.test_package %}{{ appointment.test_package }}{% elif appointment.test_type %}{{ appointment.test_type }}{% elif appointment.description %}{{ appointment.description }}{% elif appointment.health_issue_ids %}Health Consultation{% else %}-{% endif %}"
+
+  data-budget="{{ appointment.budget|default:'' }}"
+  data-order-id="R{{ appointment.id }}"
+  data-status="{{ appointment.status }}"
+>
+
 
   <div class="flex lg:justify-between items-center flex-col lg:flex-row gap-4">
 
@@ -63,7 +85,7 @@
       {% elif appointment.status == "Pending" %}
         <p class="font-semibold text-sm text-dodger-blue">Pending</p>
       {% elif appointment.status == "Accepted" %}
-        <p class="font-semibold text-sm text-burnt-orange">Today</p>
+        <p class="font-semibold text-sm text-burnt-orange">Accepted</p>
       {% else %}
         <p class="font-semibold text-sm text-spanish-gray">
           {{ appointment.status }}

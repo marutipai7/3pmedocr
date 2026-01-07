@@ -274,3 +274,74 @@ $(".createCouponForm").on("submit", function (e) {
   });
 });
 
+let currentPage = 1;
+
+function loadCreatedCoupons(page = 1) {
+    $.ajax({
+        url: "/coupons/ajax/get-created-coupons/",
+        type: "GET",
+        data: { page: page },
+        beforeSend: function () {
+            $("#created-coupons").html("<p>Loading...</p>");
+        },
+        success: function (res) {
+            if (res.success) {
+                $("#created-coupons").html(res.html);
+                currentPage = res.current_page;
+                renderPagination(res.total_pages);
+            } else {
+                $("#created-coupons").html("<p>Error loading coupons</p>");
+            }
+        },
+        error: function () {
+            $("#created-coupons").html("<p>Server error</p>");
+        }
+    });
+}
+function renderPagination(totalPages) {
+    let html = "";
+
+    for (let i = 1; i <= totalPages; i++) {
+        html += `
+            <button class="page-btn px-3 py-1 border rounded
+                ${i === currentPage ? 'bg-deep-teal-green text-white' : ''}"
+                data-page="${i}">
+                ${i}
+            </button>
+        `;
+    }
+
+    $("#pagination-numbers3").html(html);
+
+    $("#prevPage3").prop("disabled", currentPage === 1);
+    $("#nextPage3").prop("disabled", currentPage === totalPages);
+}
+$(document).on("click", ".page-btn", function () {
+    const page = $(this).data("page");
+    loadCreatedCoupons(page);
+});
+
+$("#prevPage3").on("click", function () {
+    if (currentPage > 1) loadCreatedCoupons(currentPage - 1);
+});
+
+$("#nextPage3").on("click", function () {
+    loadCreatedCoupons(currentPage + 1);
+});
+
+$(document).on("click", "[data-tab='created-coupons']", function () {
+    loadCreatedCoupons(1);
+});
+
+$(document).on("click", ".copy-coupon", function () {
+    const code = $(this).data("code");
+
+    navigator.clipboard.writeText(code).then(() => {
+        // Optional visual feedback
+        $(this).text("Redeemed!").append(` <span class="material-symbols-outlined">check_circle</span>`);
+        let btn = $(this);
+        setTimeout(() => {
+            btn.html(code + ` <span class="material-symbols-outlined">content_copy</span>`);
+        }, 1200);
+    });
+});

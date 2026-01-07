@@ -161,7 +161,7 @@
                                     <img src="/static/images/wallet-overview.svg" alt="wallet">
                                     <p class="font-normal text-sm text-leaf-green">+12%</p>
                                 </div>
-                                <p class="font-bold text-xl text-dark-navy">&#8377;8240</p>
+                                <p class="font-bold text-xl text-dark-navy">&#8377;{{ wallet_balance|default:0 }}</p>
                                 <p class="font-normal text-sm text-charcoal-gray">Wallet Balance</p>
                             </div>
 
@@ -172,7 +172,7 @@
                                     <img src="/static/images/active-bids.svg" alt="Active Bids">
                                     <p class="font-normal text-sm text-leaf-green">+8.2%</p>
                                 </div>
-                                <p class="font-bold text-xl text-dark-navy">5</p>
+                                <p class="font-bold text-xl text-dark-navy">{{ active_bids|default:0 }}</p>
                                 <p class="font-normal text-sm text-charcoal-gray">Active Bids</p>
                             </div>
 
@@ -194,7 +194,7 @@
                                     <img src="/static/images/quotes-given.svg" alt="Quotes">
                                     <p class="font-normal text-sm text-leaf-green">+12%</p>
                                 </div>
-                                <p class="font-bold text-xl text-dark-navy">12</p>
+                                <p class="font-bold text-xl text-dark-navy">{{ quotes_given|default:0 }}</p>
                                 <p class="font-normal text-sm text-charcoal-gray">Quotes Given</p>
                             </div>
 
@@ -205,7 +205,7 @@
                                     <img src="/static/images/orders-given.svg" alt="Orders">
                                     <p class="font-normal text-sm text-leaf-green">+8.2%</p>
                                 </div>
-                                <p class="font-bold text-xl text-dark-navy">5</p>
+                                <p class="font-bold text-xl text-dark-navy">{{ orders_won|default:0 }}</p>
                                 <p class="font-normal text-sm text-charcoal-gray">Orders Won</p>
                             </div>
 
@@ -216,7 +216,7 @@
                                     <img src="/static/images/delivery-bike.svg" alt="Delivery">
                                     <p class="font-normal text-sm text-crimson-red">-2</p>
                                 </div>
-                                <p class="font-bold text-xl text-dark-navy">2 Pending</p>
+                                <p class="font-bold text-xl text-dark-navy">{{ pending_orders|default:0 }} Pending</p>
                                 <p class="font-normal text-sm text-charcoal-gray">Delivery Status</p>
                             </div>
                         </div>

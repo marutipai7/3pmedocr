@@ -4,7 +4,548 @@
 
 
 {% block content %}
+      <div class="flex-grow flex flex-col gap-6 p-4 md:p-8 overflow-y-auto overflow-x-hidden scroll bg-white">
+        <div class="flex gap-2 sm:gap-3 items-center">
+          <span class="material-symbols-outlined !font-semibold text-lg sm:text-xl">patient_list</span>
+          <h1 class="font-semibold text-vase sm:text-lg ms:text-xl">Reports</h1>
+        </div>
 
+        <div class="flex flex-col sm:flex-row justify-between gap-3 sm:gap-4 sm:items-center">
+          <div class="relative">
+            <span class="material-symbols-outlined absolute top-1 left-2 !text-xl">search</span>
+            <input type="text" placeholder="Search by name or categories"
+              class="py-1.5 pl-8 pr-2 w-full sm:w-[17rem] text-sm rounded-md border border-blue-haze placeholder:text-medium-gray focus:outline-none" />
+          </div>
+
+          <div class="flex flex-wrap sm:flex-nowrap items-center justify-between sm:justify-end gap-2.5 relative">
+            <p class="text-xs sm:text-sm text-dodger-blue whitespace-nowrap">
+              Data shown: Jan 12, 2025 – Mar 14, 2025
+            </p>
+            <!-- Filter -->
+            <div class="relative shrink-0">
+              <button id="filterToggle"
+                class="flex items-center justify-center border border-blue-haze rounded-md w-8 h-8">
+                <span class="material-symbols-outlined">tune</span>
+              </button>
+
+              <!-- Dropdown -->
+              <div id="filterDropdown"
+                class="hidden absolute right-0 mt-2 w-52 bg-white rounded-lg shadow-[4px_4px_10px_2px_#00000026] z-50">
+
+                <!-- MAIN MENU -->
+                <div id="mainMenu">
+                  <div class="px-4 py-2 cursor-pointer hover:bg-pale-azure" data-open="date">
+                    Date
+                  </div>
+                  <div class="px-4 py-2 cursor-pointer hover:bg-pale-azure" data-open="visit">
+                    Visit Type
+                  </div>
+                </div>
+
+                <!-- DATE MENU -->
+                <div id="dateMenu" class="hidden">
+                  <div class="px-4 py-2 font-medium bg-gray-50 cursor-pointer" data-back>
+                    Date
+                  </div>
+
+                  <div class="option px-4 py-2 flex items-center justify-between cursor-pointer hover:bg-pale-azure"
+                    data-type="date" data-value="Week">
+                    Week
+                  </div>
+
+                  <div class="option px-4 py-2 flex items-center justify-between cursor-pointer hover:bg-pale-azure"
+                    data-type="date" data-value="Month">
+                    Month
+                  </div>
+
+                  <div class="option px-4 py-2 flex items-center justify-between cursor-pointer hover:bg-pale-azure"
+                    data-type="date" data-value="Custom">
+                    <span>Custom</span>
+                    <span class="material-symbols-outlined text-gray-400">calendar_today</span>
+                  </div>
+                </div>
+
+                <!-- VISIT TYPE MENU -->
+                <div id="visitMenu" class="hidden">
+                  <div class="px-4 py-2 font-medium bg-gray-50 cursor-pointer" data-back>
+                    Visit Type
+                  </div>
+
+                  <div class="option px-4 py-2 flex items-center justify-between cursor-pointer hover:bg-pale-azure"
+                    data-type="visit" data-value="Home">
+                    Home
+                  </div>
+
+                  <div class="option px-4 py-2 flex items-center justify-between cursor-pointer hover:bg-pale-azure"
+                    data-type="visit" data-value="Clinic">
+                    Clinic
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-ghost-white p-4 rounded-lg flex items-center justify-between gap-3">
+            <div class="flex flex-col justify-between gap-1">
+              <h2 class="text-xs sm:text-sm text-medium-gray">Total Patient</h2>
+              <p class="text-base sm:text-lg font-semibold">50</p>
+            </div>
+            <div
+              class="bg-light-dodger-blue flex justify-center items-center w-12 h-12 sm:w-14 sm:h-14 rounded-full shrink-0">
+              <span class="material-symbols-outlined !font-semibold">currency_rupee_circle</span>
+            </div>
+          </div>
+          <div class="bg-ghost-white p-4 rounded-lg flex items-center justify-between gap-3">
+            <div class="flex flex-col justify-between gap-1">
+              <h2 class="text-xs sm:text-sm text-medium-gray">Birds Received</h2>
+              <p class="text-base sm:text-lg font-semibold">84</p>
+            </div>
+            <div
+              class="bg-light-dodger-blue flex justify-center items-center w-12 h-12 sm:w-14 sm:h-14 rounded-full shrink-0">
+              <span class="material-symbols-outlined !font-semibold">star</span>
+            </div>
+          </div>
+          <div class="bg-ghost-white p-4 rounded-lg flex items-center justify-between gap-3">
+            <div class="flex flex-col justify-between gap-1">
+              <h2 class="text-xs sm:text-sm text-medium-gray">Quarter growth</h2>
+              <p class="text-base sm:text-lg font-semibold">+12.5%</p>
+            </div>
+            <div
+              class="bg-light-dodger-blue flex justify-center items-center w-12 h-12 sm:w-14 sm:h-14 rounded-full shrink-0">
+              <span class="material-symbols-outlined !font-semibold">paid</span>
+            </div>
+          </div>
+          <div class="bg-ghost-white p-4 rounded-lg flex items-center justify-between gap-3">
+            <div class="flex flex-col justify-between gap-1">
+              <h2 class="text-xs sm:text-sm text-medium-gray">Average Revenue/Patient</h2>
+              <p class="text-base sm:text-lg font-semibold">₹3,150</p>
+            </div>
+            <div
+              class="bg-light-dodger-blue flex justify-center items-center w-12 h-12 sm:w-14 sm:h-14 rounded-full shrink-0">
+              <span class="material-symbols-outlined !font-semibold">money_range</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 auto-rows-fr">
+          <!--Heat map-->
+          <div class="bg-cloud-gray p-4 rounded-xl doctor-report-shadow flex flex-col ">
+            <div class="flex justify-between items-center dropdown relative mb-2">
+              <h3 class="font-semibold">Heatmap</h3>
+              <div class="relative heatmapCalendar">
+
+                <!-- Calendar trigger -->
+                <div class="flex items-center gap-2 cursor-pointer heatmapCalendarToggle">
+                  <span class="text-sm text-medium-gray calendar-date-text">14/3/25</span>
+                  <span class="material-symbols-outlined calendar-icon">calendar_today</span>
+                </div>
+
+                <!-- Calendar Popup -->
+                <div
+                  class="heatmapCalendarPopup hidden absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-[4px_4px_10px_2px_#00000026] z-50">
+
+                  <div class="heatmap-cal-option flex items-center gap-3 px-4 py-2 cursor-pointer hover:bg-pale-azure"
+                    data-value="Today">
+                    <span class="material-symbols-outlined text-dodger-blue">check</span>
+                    Today
+                  </div>
+
+                  <div class="heatmap-cal-option flex items-center gap-3 px-4 py-2 cursor-pointer hover:bg-pale-azure"
+                    data-value="Week">
+                    <span class="material-symbols-outlined text-light-gray">check</span>
+                    Week
+                  </div>
+
+                  <div class="heatmap-cal-option flex items-center gap-3 px-4 py-2 cursor-pointer hover:bg-pale-azure"
+                    data-value="Month">
+                    <span class="material-symbols-outlined text-light-gray">check</span>
+                    Month
+                  </div>
+
+                  <div
+                    class="heatmap-cal-option flex justify-between items-center px-4 py-2 cursor-pointer hover:bg-pale-azure"
+                    data-value="Custom">
+                    <div class="flex items-center gap-3">
+                      <span class="material-symbols-outlined text-light-gray">check</span>
+                      Custom
+                    </div>
+                    <span class="material-symbols-outlined text-gray-400">calendar_today</span>
+                  </div>
+
+                </div>
+              </div>
+
+              <div
+                class="datepicker-container hidden px-4 pb-3 absolute top-full right-0 z-50 bg-white shadow-md rounded">
+                <div class="datepicker-inline"></div>
+              </div>
+            </div>
+            <!-- Time Dropdown -->
+            <div class="dropdown relative inline-block w-full mb-6 shadow-[var(--box-shadow-11)]">
+              <button
+                class="dropdown-btn cursor-pointer w-full bg-white rounded-md border border-cool-steel-blue px-4 py-2 flex justify-between items-center focus:outline-none">
+                <span class="dropdown-value font-regular text-artic-gray">10-12 AM</span>
+                <span class="material-symbols-outlined">keyboard_arrow_down</span>
+              </button>
+
+              <ul class="dropdown-menu absolute hidden mt-1 w-full bg-white rounded-md z-10">
+                <li class="px-4 py-2 hover:bg-blue-haze cursor-pointer">8-9 AM</li>
+                <li class="px-4 py-2 hover:bg-blue-haze cursor-pointer">10-12 AM</li>
+                <li class="px-4 py-2 hover:bg-blue-haze cursor-pointer">5-6 PM</li>
+                <li class="px-4 py-2 hover:bg-blue-haze cursor-pointer">9-10 PM</li>
+              </ul>
+            </div>
+            <div id="heatmap" class="h-48 sm:h-60 md:h-72"></div>
+            <div class="flex justify-center mt-4">
+              <button class="bg-dodger-blue text-white w-full sm:w-[322px] py-2 rounded-lg download-btn">
+                Download Report
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Bid Win/Loss Rate Card -->
+          <div class="bg-white rounded-xl p-4 shadow-sm w-full">
+            <!-- Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+              <h3 class="text-sm sm:text-base font-bold text-jungle-navy">
+                Bid Win/Loss Rate <span class="font-normal text-ebony">(This Week)</span>
+              </h3>
+              <div class="flex items-center gap-2 ">
+                <div class="relative">
+                  <!-- Calendar trigger -->
+                  <div class="flex items-center gap-2 cursor-pointer calendarToggle whitespace-nowrap">
+                    <span class="text-sm text-medium-gray calendar-date-text">14/3/25</span>
+                    <span class="material-symbols-outlined calendar-icon">calendar_today</span>
+                  </div>
+
+                  <!-- Calendar Popup -->
+                  <div
+                    class="calendarPopup hidden absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-[4px_4px_10px_2px_#00000026] z-50">
+
+                    <div class="calendar-option flex items-center gap-3 px-4 py-2 cursor-pointer hover:bg-pale-azure"
+                      data-value="Today">
+                      <span class="material-symbols-outlined text-dodger-blue">check</span>
+                      Today
+                    </div>
+
+                    <div class="calendar-option flex items-center gap-3 px-4 py-2 cursor-pointer hover:bg-pale-azure"
+                      data-value="Week">
+                      <span class="material-symbols-outlined text-light-gray">check</span>
+                      Week
+                    </div>
+
+                    <div class="calendar-option flex items-center gap-3 px-4 py-2 cursor-pointer hover:bg-pale-azure"
+                      data-value="Month">
+                      <span class="material-symbols-outlined text-light-gray">check</span>
+                      Month
+                    </div>
+
+                    <div
+                      class="calendar-option flex justify-between items-center px-4 py-2 cursor-pointer hover:bg-pale-azure"
+                      data-value="Custom">
+                      <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-light-gray">check</span>
+                        Custom
+                      </div>
+                      <span class="material-symbols-outlined text-gray-400">calendar_today</span>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Time Dropdown -->
+            <div class="dropdown relative inline-block w-full mb-2 shadow-[var(--box-shadow-11)]">
+              <button
+                class="dropdown-btn cursor-pointer w-full bg-white rounded-md border border-cool-steel-blue px-4 py-2 flex justify-between items-center focus:outline-none">
+                <span class="dropdown-value font-regular text-artic-gray">10-12 AM</span>
+                <span class="material-symbols-outlined">keyboard_arrow_down</span>
+              </button>
+
+              <ul class="dropdown-menu absolute hidden mt-1 w-full bg-white rounded-md z-10">
+                <li class="px-4 py-2 hover:bg-blue-haze cursor-pointer">8-9 AM</li>
+                <li class="px-4 py-2 hover:bg-blue-haze cursor-pointer">10-12 AM</li>
+                <li class="px-4 py-2 hover:bg-blue-haze cursor-pointer">5-6 PM</li>
+                <li class="px-4 py-2 hover:bg-blue-haze cursor-pointer">9-10 PM</li>
+              </ul>
+            </div>
+
+            <!-- Legend -->
+            <div class="flex items-center gap-4 mt-4 text-xs text-gray-600 mb-8">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-mint-emerald"></span>
+                Bids Won
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-bright-red"></span>
+                Bids Lost
+              </div>
+            </div>
+            <!-- Chart + Y Axis -->
+            <div class="flex gap-3 overflow-x-auto sm:overflow-visible">
+              <!-- Y Axis -->
+              <div class="hidden sm:flex flex-col justify-between text-[10px] text-gray-400 h-48">
+                <span>100</span>
+                <span>75</span>
+                <span>50</span>
+                <span>25</span>
+                <span>0</span>
+              </div>
+
+              <!-- Bars -->
+              <div class="flex-1 flex items-end justify-between h-40 sm:h-48 min-w-[480px]">
+                <!-- Bar -->
+                <div class="flex flex-col items-center gap-2">
+                  <div class="w-10 sm:w-[56px] h-36 sm:h-44 flex flex-col justify-end overflow-hidden">
+                    <div class="bar bg-bright-red h-[35%]" data-label="Lost" data-value="35"></div>
+                    <div class="bar bg-mint-emerald h-[65%]" data-label="Won" data-value="65"></div>
+                  </div>
+                  <span class="text-xs text-gray-500">Mon</span>
+                </div>
+
+                <div class="flex flex-col items-center gap-2">
+                  <div class="w-10 sm:w-[56px] h-36 sm:h-44 flex flex-col justify-end overflow-hidden">
+                    <div class="bar bg-bright-red h-[40%]" data-label="Lost" data-value="40"></div>
+                    <div class="bar bg-mint-emerald h-[60%]" data-label="Won" data-value="60"></div>
+                  </div>
+                  <span class="text-xs text-gray-500">Tue</span>
+                </div>
+
+                <div class="flex flex-col items-center gap-2">
+                  <div class="w-10 sm:w-[56px] h-36 sm:h-44 flex flex-col justify-end overflow-hidden">
+                    <div class="bar bg-bright-red h-[45%]" data-label="Lost" data-value="45"></div>
+                    <div class="bar bg-mint-emerald h-[55%]" data-label="Won" data-value="55"></div>
+                  </div>
+                  <span class="text-xs text-gray-500">Wed</span>
+                </div>
+
+                <div class="flex flex-col items-center gap-2">
+                  <div class="w-10 sm:w-[56px] h-36 sm:h-44 flex flex-col justify-end overflow-hidden">
+                    <div class="bar bg-bright-red h-[20%]" data-label="Lost" data-value="20"></div>
+                    <div class="bar bg-mint-emerald h-[40%]" data-label="Won" data-value="40"></div>
+                  </div>
+                  <span class="text-xs text-gray-500">Thu</span>
+                </div>
+
+                <div class="flex flex-col items-center gap-2">
+                  <div class="w-10 sm:w-[56px] h-36 sm:h-44 flex flex-col justify-end overflow-hidden">
+                    <div class="bar bg-bright-red h-[30%]" data-label="Lost" data-value="30"></div>
+                    <div class="bar bg-mint-emerald h-[60%]" data-label="Won" data-value="60"></div>
+                  </div>
+                  <span class="text-xs text-gray-500">Fri</span>
+                </div>
+
+                <div class="flex flex-col items-center gap-2">
+                  <div class="w-10 sm:w-[56px] h-36 sm:h-44 flex flex-col justify-end overflow-hidden">
+                    <div class="bar bg-bright-red h-[10%]" data-label="Lost" data-value="10"></div>
+                    <div class="bar bg-mint-emerald h-[75%]" data-label="Won" data-value="75"></div>
+                  </div>
+                  <span class="text-xs text-gray-500">Sat</span>
+                </div>
+
+                <div class="flex flex-col items-center gap-2">
+                  <div class="w-10 sm:w-[56px] h-36 sm:h-44 flex flex-col justify-end overflow-hidden">
+                    <div class="bar bg-bright-red h-[35%]" data-label="Lost" data-value="35"></div>
+                    <div class="bar bg-mint-emerald h-[65%]" data-label="Won" data-value="65"></div>
+                  </div>
+                  <span class="text-xs text-gray-500">Sun</span>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Note -->
+            <p class="text-xs sm:text-sm font-bold text-dark-gray mt-2">
+              (Total bids per day = Won + Lost)
+            </p>
+
+          </div>
+        </div>
+
+        <!-- Consolation Fee and Appointments -->
+        <div class="bg-white rounded-xl shadow-lg flex flex-col">
+          <!-- Header -->
+          <div class="flex items-center justify-between p-3">
+            <h3 class="text-ebony font-semibold text-base">Consolation fee and appointments</h3>
+            <div class="relative consolidationCalendar">
+
+              <div class="flex items-center gap-2 cursor-pointer consolidationCalendarToggle">
+                <span class="text-sm text-medium-gray calendar-date-text">14/3/25</span>
+                <span class="material-symbols-outlined calendar-icon">calendar_today</span>
+              </div>
+
+              <div
+                class="consolidationCalendarPopup hidden absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-[4px_4px_10px_2px_#00000026] z-50">
+
+                <div
+                  class="consolidation-cal-option flex items-center gap-3 px-4 py-2 cursor-pointer hover:bg-pale-azure"
+                  data-value="Today">
+                  <span class="material-symbols-outlined text-dodger-blue">check</span>
+                  Today
+                </div>
+
+                <div
+                  class="consolidation-cal-option flex items-center gap-3 px-4 py-2 cursor-pointer hover:bg-pale-azure"
+                  data-value="Week">
+                  <span class="material-symbols-outlined text-light-gray">check</span>
+                  Week
+                </div>
+
+                <div
+                  class="consolidation-cal-option flex items-center gap-3 px-4 py-2 cursor-pointer hover:bg-pale-azure"
+                  data-value="Month">
+                  <span class="material-symbols-outlined text-light-gray">check</span>
+                  Month
+                </div>
+
+                <div
+                  class="consolidation-cal-option flex justify-between items-center px-4 py-2 cursor-pointer hover:bg-pale-azure"
+                  data-value="Custom">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-light-gray">check</span>
+                    Custom
+                  </div>
+                  <span class="material-symbols-outlined text-gray-400">calendar_today</span>
+                </div>
+
+              </div>
+              <!-- ✅ ADD DATE PICKER HERE -->
+              <input type="date" class="absolute right-0 mt-2 hidden consolidationDatePicker z-[9999]" />
+            </div>
+
+          </div>
+          <!-- Table -->
+          <div class="overflow-x-auto p-4">
+            <table class="w-full border-seperate ">
+              <colgroup>
+                <col class="w-[45%] sm:w-[55%]">
+                <col class="w-[18%] sm:w-[15%]">
+                <col class="w-[18%] sm:w-[15%]">
+                <col class="w-[19%] sm:w-[15%]">
+              </colgroup>
+
+              <thead class="bg-lightest-blue ">
+                <tr>
+                  <th
+                    class="rounded-l-lg text-left px-4 py-3 text-dark-slate-blue-gray font-semibold text-xs sm:text-sm">
+                    Day</th>
+                  <th class="text-right px-4 py-3 text-dark-slate-blue-gray font-semibold text-xs sm:text-sm">Appt</th>
+                  <th class="text-right px-4 py-3 text-dark-slate-blue-gray font-semibold text-xs sm:text-sm">Avg. Fee
+                  </th>
+                  <th
+                    class="rounded-r-lg text-right px-4 py-3 text-dark-slate-blue-gray font-semibold text-xs sm:text-sm">
+                    Earnings
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Row 1 -->
+                <tr>
+                  <td class="px-4 py-1 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-azure-radiance"></span> Monday
+                  </td>
+                  <td class="text-right px-4 py-1 text-deep-blue font-regular text-sm">10</td>
+                  <td class="text-right px-4 py-1 text-deep-blue font-regular text-sm">₹800</td>
+                  <td class="text-right px-4 py-1 text-deep-blue font-regular text-sm">₹5,000</td>
+                </tr>
+                <!-- Row 2 -->
+                <tr class="">
+                  <td class="px-4 py-1 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-light-green"></span> Tuesday
+                  </td>
+                  <td class="text-right px-4 py-1 text-deep-blue font-regular text-sm">20</td>
+                  <td class="text-right px-4 py-1 text-deep-blue font-regular text-sm">₹800</td>
+                  <td class="text-right px-4 py-1 text-deep-blue font-regular text-sm">₹5,000</td>
+                </tr>
+                <!-- Row 3 -->
+                <tr class="">
+                  <td class="px-4 py-1 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-golden-gold"></span> Wednesday
+                  </td>
+                  <td class="text-right px-4 py-1 text-deep-blue font-regular text-sm">10</td>
+                  <td class="text-right px-4 py-1 text-deep-blue font-regular text-sm">₹800</td>
+                  <td class="text-right px-4 py-1 text-deep-blue font-regular text-sm">₹5,000</td>
+                </tr>
+                <!-- Row 4 -->
+                <tr class="">
+                  <td class="px-4 py-1 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-safety-orange"></span> Thursday
+                  </td>
+                  <td class="text-right px-4 py-1 text-deep-blue font-regular text-sm">10</td>
+                  <td class="text-right px-4 py-1 text-deep-blue font-regular text-sm">₹800</td>
+                  <td class="text-right px-4 py-1 text-deep-blue font-regular text-sm">₹5,000</td>
+                </tr>
+                <!-- Row 5 -->
+                <tr class="">
+                  <td class="px-4 py-1 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-dark-yellow"></span> Friday
+                  </td>
+                  <td class="text-right px-4 py-1 text-deep-blue font-regular text-sm">15</td>
+                  <td class="text-right px-4 py-1 text-deep-blue font-regular text-sm">₹800</td>
+                  <td class="text-right px-4 py-1 text-deep-blue font-regular text-sm">₹5,000</td>
+                </tr>
+                <!-- Row 6 -->
+                <tr class="">
+                  <td class="px-4 py-1 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-dodger-blue"></span> Saturday
+                  </td>
+                  <td class="text-right px-4 py-1 text-deep-blue font-regular text-sm">12</td>
+                  <td class="text-right px-4 py-1 text-deep-blue font-regular text-sm">₹800</td>
+                  <td class="text-right px-4 py-1 text-deep-blue font-regular text-sm">₹5,000</td>
+                </tr>
+                <!-- Row 7 -->
+                <tr class="">
+                  <td class="px-4 py-1 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-crimson-red"></span> Sunday
+                  </td>
+                  <td class="text-right px-4 py-1 text-deep-blue font-regular text-sm">10</td>
+                  <td class="text-right px-4 py-1 text-deep-blue font-regular text-sm">₹800</td>
+                  <td class="text-right px-4 py-1 text-deep-blue font-regular text-sm">₹5,000</td>
+                </tr>
+
+                <tr>
+                  <!-- Day column: empty -->
+                  <td></td>
+
+                  <!-- Appt + Avg Fee + Earnings -->
+                  <td colspan="3"
+                    class="border-t border-gray-300 py-1 text-center font-semibold text-xs sm:text-sm whitespace-normal">
+                    <span class="mr-6">Total</span>
+                    <span class="mr-15">-</span>
+                    <span class="mr-6">88</span>
+                    <span class="mr-6">=</span>
+                    <span class="font-bold">₹35,000</span>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+          <!-- FOOTER BUTTONS -->
+          <div class="flex flex-col sm:flex-row sm:justify-end gap-3 pb-4 pr-4">
+            <button
+              class="w-full sm:w-[157px] flex items-center justify-center gap-2 px-6 py-2 rounded-[10px] bg-bright-royal-blue text-white">
+              <span class="material-symbols-outlined text-lg leading-none">picture_as_pdf</span>
+              <span class="text-sm leading-none">PDF</span>
+            </button>
+
+            <button
+              class="w-full sm:w-[157px] flex items-center justify-center gap-2 px-6 py-2 rounded-[10px] bg-shamrock-green text-white">
+              <span class="material-symbols-outlined text-lg leading-none">download</span>
+              <span class="text-sm leading-none">Excel</span>
+            </button>
+          </div>
+
+        </div>
 {% endblock %}
 
 {% block extra_js %}

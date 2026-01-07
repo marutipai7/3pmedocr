@@ -1,6 +1,9 @@
 import os
 import json
 import random
+import uuid
+from decimal import Decimal
+from django.conf import settings
 from coupon.models import Coupon
 from django.utils import timezone
 from donate.models import Donation
@@ -27,6 +30,16 @@ from registration.models import (
     DoctorProfile, 
     HospitalProfile
 )
+from appointments.models import WalletTransaction
+from services.models import LabBidding, LabBidStatus
+from services.models import HospitalBidding, HospitalBidStatus
+from services.models import DoctorBidding, DoctorBidStatus
+from appointments.models import LabAppointments
+from appointments.models import HospitalAppointments
+from appointments.models import DoctorAppointment
+from orders.models import UserPurchase, OrderStatusChoices
+from appointments.models import WalletTransaction
+from django.shortcuts import get_object_or_404
 
 @dashboard_login_required
 def dashboard_home(request):
@@ -34,17 +47,31 @@ def dashboard_home(request):
     user_type = user.user_type
 
     menu_items = SettingMenu.objects.filter(
-        is_active=True, user_types__contains=[user_type]
-        ).order_by('order')
+        is_active=True,
+        user_types__contains=[user_type]
+    ).order_by('order')
+
     context = get_common_context(request, user)
     context["theme_colors"] = get_theme_colors(user_type)
     context["sidebar_menu"] = menu_items
-    
+
+    # -------------------------------
+    # Wallet Balance (All users)
+    # -------------------------------
+    context["wallet_balance"] = (
+        WalletTransaction.objects
+        .filter(user=user)
+        .order_by('-created_at')
+        .values_list('current_balance', flat=True)
+        .first()
+    ) or 0
+
     try:
+        # ================= NGO =================
         if user_type == 'ngo':
             ngo_profile = NGOProfile.objects.get(user=user)
             posts_qs = NGOPost.objects.filter(user=user)
-            events = CalendarEvent.objects.filter(user=user,is_active=True)
+            events = CalendarEvent.objects.filter(user=user, is_active=True)
 
             context.update({
                 'ngo_profile': ngo_profile,
@@ -54,26 +81,31 @@ def dashboard_home(request):
                 'total_target': posts_qs.aggregate(Sum('target_donation'))['target_donation__sum'] or 0,
                 'total_received': posts_qs.aggregate(Sum('donation_received'))['donation_received__sum'] or 0,
                 'trending_posts': posts_qs.filter(
-                    created_at__gte=timezone.now() - timezone.timedelta(days=30)
+                    created_at__gte=timezone.now() - timedelta(days=30)
                 ).order_by('-views')[:4],
                 'events': events,
                 'user': user,
             })
             return render(request, "dashboard/home_NGO.html", context)
 
+        # ================= CLIENT =================
         elif user_type == 'client':
             client_profile = ClientProfile.objects.get(user=user)
             latest_sub = SubscriptionHistory.objects.filter(user=user).order_by("-activation_date").first()
-            if latest_sub:
-                latest_sub.save() 
+
             if latest_sub and latest_sub.is_active:
-                context['current_plan'] = latest_sub.plan.name
-                context['expiry_date'] = latest_sub.expiry_date
-                context["licenses"] = latest_sub.license_count
+                context.update({
+                    'current_plan': latest_sub.plan.name,
+                    'expiry_date': latest_sub.expiry_date,
+                    'licenses': latest_sub.license_count,
+                })
             else:
-                context['current_plan'] = "Free Plan"
-                context['expiry_date'] = None
-                context["licenses"] = 1
+                context.update({
+                    'current_plan': "Free Plan",
+                    'expiry_date': None,
+                    'licenses': 1,
+                })
+
             context.update({
                 'client_profile': client_profile,
                 'user_display_name': client_profile.company_name,
@@ -81,100 +113,156 @@ def dashboard_home(request):
             })
             return render(request, "dashboard/home_client.html", context)
 
+        # ================= ADVERTISER =================
         elif user_type == 'advertiser':
             advertiser_profile = AdvertiserProfile.objects.get(user=user)
-            performance = CouponPerformance.objects.order_by('-date').first()
-            trending_coupons = TrendingCoupon.objects.order_by('-created_at')[:5]
-            performances = CouponPerformance.objects.order_by('date')[:8]
-            events = CalendarEvent.objects.all().order_by('date')
-
             today = now().date()
             last_30_days = today - timedelta(days=30)
 
-            # Coupons created in last 30 days
-            coupons = Coupon.objects.filter(advertiser=user, created_at__date__gte=last_30_days)
+            coupons = Coupon.objects.filter(
+                advertiser=user,
+                created_at__date__gte=last_30_days
+            )
 
-            # Totals (last 30 days)
-            total_coupons = coupons.count()
-            total_active_coupons = coupons.filter(validity__gte=today).count()
-            total_redemptions = coupons.aggregate(total=Sum('redeemed_count'))['total'] or 0
+            active_coupons_all = Coupon.objects.filter(
+                advertiser=user,
+                validity__gte=today
+            )
 
-            # Max days left until expiry among ALL active coupons (not just last 30 days)
-            active_coupons_all = Coupon.objects.filter(advertiser=user, validity__gte=today)
-            max_days_left = None
-            if active_coupons_all.exists():
-                max_days_left = active_coupons_all.aggregate(
-                    max_days=Max(
-                        ExpressionWrapper(F('validity') - today, output_field=DurationField())
+            max_days_left = active_coupons_all.aggregate(
+                max_days=Max(
+                    ExpressionWrapper(
+                        F('validity') - today,
+                        output_field=DurationField()
                     )
-                )['max_days']
-                if max_days_left:
-                    max_days_left = max_days_left.days  # convert timedelta to int
+                )
+            )['max_days']
 
             context.update({
                 'advertiser_profile': advertiser_profile,
                 'user_display_name': advertiser_profile.company_name,
-                'performance': performance,
-                'trending_coupons': trending_coupons,
-                'events': events,
+                'performance': CouponPerformance.objects.order_by('-date').first(),
+                'trending_coupons': TrendingCoupon.objects.order_by('-created_at')[:5],
+                'events': CalendarEvent.objects.all().order_by('date'),
+                'total_coupons': coupons.count(),
+                'total_active_coupons': coupons.filter(validity__gte=today).count(),
+                'total_redemptions': coupons.aggregate(
+                    total=Sum('redeemed_count')
+                )['total'] or 0,
+                'max_days_left': max_days_left.days if max_days_left else None,
                 'user': user,
-                'total_coupons': total_coupons,
-                'total_active_coupons': total_active_coupons,
-                'total_redemptions': total_redemptions,
-                'max_days_left': max_days_left,
             })
             return render(request, "dashboard/home_advertiser.html", context)
 
+        # ================= PHARMACY =================
         elif user_type == 'pharmacy':
             pharmacy_profile = PharmacyProfile.objects.get(user=user)
-            events = CalendarEvent.objects.all().order_by('date')
-            
+
+            pending_orders = UserPurchase.objects.filter(
+                assigned_pharmacy=pharmacy_profile,
+                order_status__in=[
+                    OrderStatusChoices.PENDING,
+                    OrderStatusChoices.CONFIRMED,
+                    OrderStatusChoices.SHIPPED
+                ]
+            ).count()
+
             context.update({
                 'pharmacy_profile': pharmacy_profile,
                 'user_display_name': pharmacy_profile.company_name,
-                'events': events,
+                'pending_orders': pending_orders,
+                'events': CalendarEvent.objects.all().order_by('date'),
                 'user': user,
             })
             return render(request, "dashboard/home_pharmacy.html", context)
-        
+
+        # ================= LAB =================
         elif user_type == 'lab':
             lab_profile = LabProfile.objects.get(user=user)
-            events = CalendarEvent.objects.all().order_by('date')
-            
+
             context.update({
                 'lab_profile': lab_profile,
                 'user_display_name': lab_profile.lab_name,
-                'events': events,
+                'quotes_given': LabBidding.objects.filter(lab=lab_profile).count(),
+                'active_bids': LabBidding.objects.filter(
+                    lab=lab_profile,
+                    bid_status__in=[
+                        LabBidStatus.PENDING,
+                        LabBidStatus.ACCEPTED
+                    ]
+                ).count(),
+                'orders_won': LabAppointments.objects.filter(
+                    accepted_lab=lab_profile,
+                    status="Accepted"
+                ).count(),
+                'pending_orders': LabAppointments.objects.filter(
+                    accepted_lab=lab_profile,
+                    status="Pending"
+                ).count(),
+                'events': CalendarEvent.objects.all().order_by('date'),
                 'user': user,
             })
             return render(request, "dashboard/home_lab.html", context)
-        
+
+        # ================= DOCTOR =================
         elif user_type == 'doctor':
             doctor_profile = DoctorProfile.objects.get(user=user)
-            events = CalendarEvent.objects.all().order_by('date')
-            
+
             context.update({
                 'doctor_profile': doctor_profile,
                 'user_display_name': doctor_profile.clinic_name,
-                'events': events,
+                'quotes_given': DoctorBidding.objects.filter(doctor=doctor_profile).count(),
+                'active_bids': DoctorBidding.objects.filter(
+                    doctor=doctor_profile,
+                    bid_status__in=[
+                        DoctorBidStatus.PENDING,
+                        DoctorBidStatus.ACCEPTED
+                    ]
+                ).count(),
+                'orders_won': DoctorAppointment.objects.filter(
+                    doctor=doctor_profile,
+                    status="Accepted"
+                ).count(),
+                'pending_orders': DoctorAppointment.objects.filter(
+                    doctor=doctor_profile,
+                    status="Pending"
+                ).count(),
+                'events': CalendarEvent.objects.all().order_by('date'),
                 'user': user,
             })
             return render(request, "dashboard/home_doctor.html", context)
-        
+
+        # ================= HOSPITAL =================
         elif user_type == 'hospital':
             hospital_profile = HospitalProfile.objects.get(user=user)
-            events = CalendarEvent.objects.all().order_by('date')
-            
+
             context.update({
                 'hospital_profile': hospital_profile,
                 'user_display_name': hospital_profile.hospital_name,
-                'events': events,
+                'quotes_given': HospitalBidding.objects.filter(hospital=hospital_profile).count(),
+                'active_bids': HospitalBidding.objects.filter(
+                    hospital=hospital_profile,
+                    bid_status__in=[
+                        HospitalBidStatus.PENDING,
+                        HospitalBidStatus.ACCEPTED
+                    ]
+                ).count(),
+                'orders_won': HospitalAppointments.objects.filter(
+                    accepted_hospital=hospital_profile,
+                    status="Accepted"
+                ).count(),
+                'pending_orders': HospitalAppointments.objects.filter(
+                    accepted_hospital=hospital_profile,
+                    status="Pending"
+                ).count(),
+                'events': CalendarEvent.objects.all().order_by('date'),
                 'user': user,
             })
             return render(request, "dashboard/home_hospital.html", context)
 
-    except Exception as e:
+    except Exception:
         return render(request, "dashboard/not_found.html")
+
     
 def get_coupon_chart_data(request):
     performances = CouponPerformance.objects.order_by('-date')[:8][::-1]  
@@ -682,75 +770,78 @@ def advance(request):
     user = request.user_obj
     context = get_common_context(request, user)
     context["sidebar_active"] = "home"
-    if user.user_type == 'advertiser':
-        advertiser_profile = AdvertiserProfile.objects.get(user=user)
-        context.update({
-            'advertiser_profile': advertiser_profile,
-            'user_display_name': advertiser_profile.company_name,
-            'user_profile': user,
-            'user': user
-        })
 
-        return render(request, "advertiser/advertiser_advance.html", context)
-    elif user.user_type == 'ngo':
-        pharmacy_profile = NGOProfile.objects.get(user=user)
-        context.update({
-            'pharmacy_profile': pharmacy_profile,
-            'user_display_name': pharmacy_profile.company_name,
-            'user_profile': user,
-            'user':user
-        })
-        return render(request, "advertiser/advertiser_advance.html", context)
-    elif user.user_type == 'pharmacy':
-        pharmacy_profile = PharmacyProfile.objects.get(user=user)
-        context.update({
-            'pharmacy_profile': pharmacy_profile,
-            'user_display_name': pharmacy_profile.company_name,
-            'user_profile': user,
-            'user':user
-        })
-        return render(request, "advertiser/advertiser_advance.html", context)
-    elif user.user_type == 'lab':
-        lab_profile = LabProfile.objects.get(user=user)
-        context.update({
-            'lab_profile': lab_profile,
-            'user_display_name': lab_profile.lab_name,
-            'user_profile': user,
-            'user':user
-        })
-        return render(request, "lab/lab_advance.html", context)
-    elif user.user_type == 'pharmacy':
-        pharmacy_profile = PharmacyProfile.objects.get(user=user)
-        context.update({
-            'pharmacy_profile': pharmacy_profile,
-            'user_display_name': pharmacy_profile.company_name,
-            'user_profile': user,
-            'user':user
-        })
-        return render(request, "pharmacy/pharmacy_advance.html", context)
+    profile_map = {
+        'advertiser': (AdvertiserProfile, 'company_name', 'advertiser_profile'),
+        'ngo': (NGOProfile, 'ngo_name', 'ngo_profile'),
+        'pharmacy': (PharmacyProfile, 'company_name', 'pharmacy_profile'),
+        'lab': (LabProfile, 'lab_name', 'lab_profile'),
+        'hospital': (HospitalProfile, 'hospital_name', 'hospital_profile'),
+        'doctor': (DoctorProfile, 'clinic_name', 'doctor_profile'),
+    }
+
+    profile_config = profile_map.get(user.user_type)
+
+    if not profile_config:
+        return render(request, "dashboard/not_found.html", context)
+
+    model, display_field, context_key = profile_config
+    profile = model.objects.get(user=user)
+
+    # ✅ Fetch wallet balance
+    last_txn = (
+        WalletTransaction.objects
+        .filter(user=user)
+        .order_by("-created_at")
+        .first()
+    )
+    last_updated = (
+        last_txn.created_at.strftime("%d %B %Y")
+        if last_txn else None
+    )
+    wallet_balance = last_txn.current_balance if last_txn else Decimal("0.00")
+
+    context.update({
+        context_key: profile,
+        'user_display_name': getattr(profile, display_field, ''),
+        'user_profile': user,
+        'user': user,
+        'wallet_balance': wallet_balance,
+        'wallet_last_updated': last_updated,
+    })
+
+    return render(request, "advance/advance.html", context)
+
+
     
 @dashboard_login_required
 def advance_history(request):
     user = request.user_obj
     context = get_common_context(request, user)
-    if user.user_type == 'advertiser':
-        advertiser_profile = AdvertiserProfile.objects.get(user=user)
-        context.update({
-            'advertiser_profile': advertiser_profile,
-            'user_display_name': advertiser_profile.company_name,
-            'user_profile': user,
-            'user': user
-        })
-        return render(request, "advertiser/advance-history.html", context)
-    elif user.user_type == 'pharmacy':
-        pharmacy_profile = PharmacyProfile.objects.get(user=user)
-        context.update({
-            'pharmacy_profile': pharmacy_profile,
-            'user_display_name': pharmacy_profile.company_name,
-            'user_profile': user,
-            'user':user
-        })
-        return render(request, "pharmacy/pharmacy_advance_history.html", context)
+    context["sidebar_active"] = "home"
+
+    profile_map = {
+        'advertiser': (AdvertiserProfile, 'company_name', 'advertiser_profile'),
+        'pharmacy': (PharmacyProfile, 'company_name', 'pharmacy_profile'),
+        'hospital': (HospitalProfile, 'hospital_name', 'hospital_profile'),
+        'doctor': (DoctorProfile, 'clinic_name', 'doctor_profile'),
+        'lab': (LabProfile, 'lab_name', 'lab_profile'),
+    }
+
+    profile_config = profile_map.get(user.user_type)
+    if not profile_config:
+        return render(request, "dashboard/not_found.html", context)
+
+    model, display_field, context_key = profile_config
+    profile = model.objects.get(user=user)
+
+    context.update({
+        context_key: profile,
+        'user_display_name': getattr(profile, display_field, ''),
+        'user_profile': user,
+        'user': user,
+    })
+    return render(request, "advance/advance-history.html", context)
 
 @dashboard_login_required
 def cart(request):
@@ -764,7 +855,6 @@ def cart(request):
             'user_profile': user,
             'user': user
         })
-
         return render(request, "dashboard/cart.html", context)
     elif user.user_type == 'pharmacy':
         pharmacy_profile = PharmacyProfile.objects.get(user=user)
@@ -775,3 +865,197 @@ def cart(request):
             'user':user
         })
         return render(request, "dashboard/cart.html", context)
+    
+
+@dashboard_login_required
+def add_advance_amount(request):
+    if request.method != "POST":
+        return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
+
+    user = request.user_obj
+
+    try:
+        amount = Decimal(request.POST.get("amount", 0))
+        payment_method = request.POST.get("payment_method")
+    except:
+        return JsonResponse({"success": False, "message": "Invalid amount"}, status=400)
+
+    if amount < 100:
+        return JsonResponse({"success": False, "message": "Minimum ₹100 required"}, status=400)
+
+    if not payment_method:
+        return JsonResponse({"success": False, "message": "Select payment method"}, status=400)
+
+    # 🔹 Get Previous Balance
+    last_txn = WalletTransaction.objects.filter(user=user).order_by("-created_at").first()
+    previous_balance = last_txn.current_balance if last_txn else Decimal("0.00")
+
+    # 🔹 New Balance
+    current_balance = previous_balance + amount
+
+    # 🔹 Calculate Points (example: 0.28% of recharge)
+    points = round(amount * Decimal("0.0028"), 2)
+
+    # 🔹 Create Transaction Entry
+    WalletTransaction.objects.create(
+        user=user,
+        tranx_id=str(uuid.uuid4()),
+        amount=amount,
+        transaction_type="CREDIT",
+        points_earned=points,
+        current_balance=current_balance,
+        created_at=timezone.now(),
+    )
+
+    return JsonResponse({
+        "success": True,
+        "previous_balance": float(previous_balance),
+        "added_amount": float(amount),
+        "current_balance": float(current_balance),
+        "points": float(points),
+        "message": "Advance added successfully"
+    })
+
+
+
+@dashboard_login_required
+def ajax_advance_history(request):
+    user = request.user_obj
+
+    search = request.GET.get("search", "")
+    filter_by = request.GET.get("filter", "")
+    page = int(request.GET.get("page", 1))
+
+    qs = WalletTransaction.objects.filter(user=user).order_by("-created_at")
+
+    # 🔍 SEARCH
+    if search:
+        qs = qs.filter(
+            Q(tranx_id__icontains=search) |
+            Q(transaction_type__icontains=search)
+        )
+
+    # 🗂️ FILTER
+    now = timezone.now()
+    if filter_by == "week":
+        qs = qs.filter(created_at__gte=now - timedelta(days=7))
+    elif filter_by == "month":
+        qs = qs.filter(created_at__gte=now - timedelta(days=30))
+    elif filter_by == "year":
+        qs = qs.filter(created_at__gte=now - timedelta(days=365))
+
+    # 📄 PAGINATION
+    paginator = Paginator(qs, 10)
+    page_obj = paginator.get_page(page)
+
+    data = [{
+        "id": tx.id, 
+        "date": tx.created_at.strftime("%d %b %Y, %I:%M %p"),
+        "tranx_id": tx.tranx_id,
+        "type": tx.transaction_type.title(),
+        "description": (
+            "Advance Payment"
+            if tx.transaction_type.lower() == "credit"
+            else "Platform Payment"
+        ),
+        "amount": f"₹{tx.amount}",
+        "status": "Successful",
+    } for tx in page_obj]
+
+    return JsonResponse({
+        "success": True,
+        "data": data,
+        "pagination": {
+            "current": page_obj.number,
+            "total_pages": paginator.num_pages,
+            "has_next": page_obj.has_next(),
+            "has_prev": page_obj.has_previous(),
+        }
+    })
+
+@dashboard_login_required
+def ajax_advance_summary(request):
+    user = request.user_obj
+    filter_by = request.GET.get("filter", "week")
+
+    end_date = timezone.now()
+
+    if filter_by == "month":
+        start_date = end_date - timedelta(days=30)
+        label = "Last 30 days"
+    elif filter_by == "year":
+        start_date = end_date - timedelta(days=365)
+        label = "Last 1 year"
+    else:
+        start_date = end_date - timedelta(days=7)
+        label = "Last 7 days"
+
+    qs = WalletTransaction.objects.filter(
+        user=user,
+        created_at__range=(start_date, end_date)
+    )
+
+    credit_total = qs.filter(transaction_type="CREDIT").aggregate(
+        total=Sum("amount")
+    )["total"] or 0
+
+    debit_total = qs.filter(transaction_type="DEBIT").aggregate(
+        total=Sum("amount")
+    )["total"] or 0
+
+    latest_tx = qs.order_by("-created_at").first()
+    current_balance = latest_tx.current_balance if latest_tx else 0
+
+    return JsonResponse({
+        "success": True,
+        "current_balance": float(current_balance),
+        "total_credit": float(credit_total),
+        "total_debit": float(debit_total),
+        "label": label,
+        "from_date": start_date.strftime("%d/%m/%Y"),
+        "to_date": end_date.strftime("%d/%m/%Y"),
+    })
+
+@dashboard_login_required
+def get_advance_receipt(request, advance_id):
+    user = request.user_obj
+
+    advance = get_object_or_404(
+        WalletTransaction.objects.select_related("user"),
+        id=advance_id
+    )
+
+    profile = getattr(advance.user, "userprofile", None)
+
+    response_data = {
+        "receipt_no": f"ADV/{advance.created_at.year}/{advance.id:04d}",
+        "payment_date": advance.created_at.strftime("%d-%b-%Y"),
+
+        # platform info
+        "platform_name": settings.COMPANY_NAME,
+        "gstin": settings.COMPANY_GSTIN,
+        "platform_address": settings.COMPANY_ADDRESS,
+        "platform_contact": settings.COMPANY_CONTACT,
+
+        # received from
+        "customer_name": (
+            f"{profile.first_name} {profile.last_name}".strip()
+            if profile else ""
+        ),
+        "customer_email": advance.user.email or "",
+        "customer_address": (
+            profile.address if hasattr(profile, "address") else ""
+        ),
+
+        # transaction
+        "purpose": getattr(advance, "purpose", None) or "Advance for services",
+        "description": getattr(advance, "description", None) or "Advance Payment",
+        "amount": float(advance.amount),
+        "gst_percent": 18,
+        "payment_mode": getattr(advance, "payment_mode", ""),
+        "transaction_id": getattr(advance, "transaction_id", ""),
+
+        "created_by": "Authorized Signatory",
+    }
+
+    return JsonResponse(response_data)

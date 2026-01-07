@@ -6027,7 +6027,6 @@ body {
   max-width: 360px;
   cursor: pointer;
   border-radius: 6px;
-  background-color: var(--color-violet-sky);
   font-size: var(--text-sm);
   line-height: var(--tw-leading, var(--text-sm--line-height));
   --tw-font-weight: var(--font-weight-semibold);

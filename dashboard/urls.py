@@ -21,4 +21,9 @@ urlpatterns = [
     path('get-donate-bill/<int:donation_id>/', views.get_donate_bill, name='get-donate-bill'),
     path('get-platform-bill/<int:donation_id>/', views.get_platform_bill, name='get-platform-bill'),
     path('advance/advance-history/', views.advance_history, name='advance-history'),
+    path("advance/add/", views.add_advance_amount, name="add_advance"),
+    path("advance/history/ajax/",views.ajax_advance_history, name="ajax_advance_history"),
+    path("advance/summary/ajax/",views.ajax_advance_summary,name="ajax_advance_summary"),
+    path("advance/receipt/<int:advance_id>/", views.get_advance_receipt, name="get_advance_receipt"),
+
 ]

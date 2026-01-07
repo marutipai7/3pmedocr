@@ -310,6 +310,9 @@ function closeModalProgress() {
 
 // File input change event of
 document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".theme-btn").forEach(btn => {
+    applyThemeButton(btn);
+  });
   // End customer upload section
   const issueImage = document.getElementById("issue-image");
   if (issueImage) {
@@ -869,7 +872,24 @@ const itemsPerPage = 5;
 let allTickets = [];
 let currentPage = 1;
 
+function getPaginationThemeColor() {
+  const type = (window.USER_TYPE || "").toLowerCase();
+
+  if (["doctor", "lab", "hospital"].includes(type)) return "dodger-blue";
+  if (type === "pharmacy") return "deep-teal-green";
+  if (type === "advertiser") return "living-coral";
+  if (type === "client") return "dark-blue";
+  if (type === "ngo") return "violet-sky";
+  if (type === "user") return "light-sea-green";
+
+  return "dodger-blue";
+}
+
 fileInput.addEventListener("change", function () {
+
+  const activeColor = getPaginationThemeColor(); // 🔥 dynamic color
+  const activeBgClass = `bg-${activeColor}`;
+
   if (fileInput.files.length > 0) {
     for (let i = 0; i < fileInput.files.length; i++) {
       const file = fileInput.files[i];
@@ -881,17 +901,36 @@ fileInput.addEventListener("change", function () {
         ngoSelectedFiles.push(file);
       }
     }
+
     updateNgoFileDisplay();
+
     submitBtn.disabled = false;
+
+    // remove disabled styles
     submitBtn.classList.remove(
       "cursor-not-allowed",
       "bg-light-gray",
       "text-medium-gray"
     );
-    submitBtn.classList.add("cursor-pointer", "bg-violet-sky", "text-white");
+
+    // add active styles (dynamic)
+    submitBtn.classList.add(
+      "cursor-pointer",
+      activeBgClass,
+      "text-white"
+    );
+
   } else {
     submitBtn.disabled = true;
-    submitBtn.classList.remove("cursor-pointer", "bg-violet-sky", "text-white");
+
+    // remove active styles
+    submitBtn.classList.remove(
+      "cursor-pointer",
+      "text-white",
+      ...Array.from(submitBtn.classList).filter(c => c.startsWith("bg-"))
+    );
+
+    // add disabled styles
     submitBtn.classList.add(
       "cursor-not-allowed",
       "bg-light-gray",
@@ -899,6 +938,20 @@ fileInput.addEventListener("change", function () {
     );
   }
 });
+
+function applyThemeButton(btn) {
+  if (!btn) return;
+
+  const color = getPaginationThemeColor();
+  const bgClass = `bg-${color}`;
+
+  // remove any existing bg-* classes
+  btn.classList.remove(
+    ...Array.from(btn.classList).filter(c => c.startsWith("bg-"))
+  );
+
+  btn.classList.add(bgClass, "text-white");
+}
 
 function updateNgoFileDisplay(submitBtn) {
   fileContainerElementNgo.innerHTML = "";
@@ -1065,34 +1118,47 @@ function renderTickets(data = allTickets) {
 }
 
 // Render pagination buttons
+// Render pagination buttons (THEME AWARE)
 function renderSupportPagination(data = allTickets) {
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const paginationBtns = document.querySelector(".paginationBtns");
   const prevBtn = document.querySelector(".prevPage");
   const nextBtn = document.querySelector(".nextPage");
 
+  const activeColor = getPaginationThemeColor();   // 🔥 dynamic
+  const activeBg = `bg-${activeColor}`;
+
   paginationBtns.innerHTML = "";
 
   const createPageBtn = (page) => {
     const btn = document.createElement("button");
-    btn.className =
-      "page-btn px-3 py-1.5 rounded-lg text-sm " +
-      (page === currentPage
-        ? "bg-violet-sky text-white"
-        : "bg-pagination text-dark-gray");
+
+    // base classes
+    btn.className = "page-btn px-3 py-1.5 rounded-lg text-sm";
+
+    if (page === currentPage) {
+      btn.classList.add(activeBg, "text-white");
+    } else {
+      btn.classList.add("bg-pagination", "text-dark-gray");
+    }
+
     btn.textContent = page;
+
     btn.addEventListener("click", () => {
       currentPage = page;
       renderTickets(data);
       renderSupportPagination(data);
     });
+
     return btn;
   };
 
+  // show first 3 pages
   for (let i = 1; i <= Math.min(3, totalPages); i++) {
     paginationBtns.appendChild(createPageBtn(i));
   }
 
+  // ellipsis + last page
   if (totalPages > 4) {
     const ellipsis = document.createElement("span");
     ellipsis.textContent = "...";
@@ -1101,13 +1167,14 @@ function renderSupportPagination(data = allTickets) {
     paginationBtns.appendChild(createPageBtn(totalPages));
   }
 
+  // Prev / Next state
   prevBtn.disabled = currentPage === 1;
   nextBtn.disabled = currentPage === totalPages;
 
   prevBtn.classList.toggle("opacity-50", currentPage === 1);
   nextBtn.classList.toggle("opacity-50", currentPage === totalPages);
 
-  // Handle prev/next clicks
+  // Prev click
   prevBtn.onclick = () => {
     if (currentPage > 1) {
       currentPage--;
@@ -1116,6 +1183,7 @@ function renderSupportPagination(data = allTickets) {
     }
   };
 
+  // Next click
   nextBtn.onclick = () => {
     if (currentPage < totalPages) {
       currentPage++;
@@ -1124,6 +1192,7 @@ function renderSupportPagination(data = allTickets) {
     }
   };
 }
+
 
 //previous pagination
 document.querySelector(".prevPage").addEventListener("click", () => {

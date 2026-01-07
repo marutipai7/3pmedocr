@@ -35,20 +35,6 @@ def get_seller_profile(user):
         return None
     return model.objects.filter(user=user).first()
 
-
-def get_seller_profile(user):
-    profile_map = {
-        "pharmacy": PharmacyProfile,
-        "lab": LabProfile,
-        "hospital": HospitalProfile,
-        "doctor": DoctorProfile,
-    }
-    model = profile_map.get(user.user_type)
-    if not model:
-        return None
-    return model.objects.filter(user=user).first()
-
-
 @require_POST
 @dashboard_login_required
 def create_seller_coupon(request):
@@ -119,6 +105,60 @@ def create_seller_coupon(request):
     )
 
     return JsonResponse({"success": True, "message": "Coupon created successfully"})
+
+# seller coupon history
+# @require_GET
+# @dashboard_login_required
+# def get_created_coupons(request):
+#     user = request.user_obj
+#     profile = get_seller_profile(user)
+
+#     if not profile:
+#         return JsonResponse({"success": False, "html": "<p>No profile found</p>"})
+
+#     coupons = SellerCoupon.objects.filter(
+#         seller_type=user.user_type,
+#         seller_id=profile.id
+#     ).order_by("-created_at")
+
+#     html = render_to_string(
+#         "partials/ajax_created_coupon_list.html",
+#         {"created_coupons": coupons},
+#         request=request
+#     )
+
+#     return JsonResponse({"success": True, "html": html})
+
+@require_GET
+@dashboard_login_required
+def get_created_coupons(request):
+    user = request.user_obj
+    profile = get_seller_profile(user)
+
+    page = int(request.GET.get("page", 1))
+    per_page = 3   # change if you want more per page
+
+    coupons_qs = SellerCoupon.objects.filter(
+        seller_type=user.user_type,
+        seller_id=profile.id
+    ).order_by("-created_at")
+
+    paginator = Paginator(coupons_qs, per_page)
+    coupons = paginator.get_page(page)
+
+    html = render_to_string(
+        "partials/ajax_created_coupon_list.html",
+        {"created_coupons": coupons},
+        request=request
+    )
+
+    return JsonResponse({
+        "success": True,
+        "html": html,
+        "current_page": coupons.number,
+        "total_pages": paginator.num_pages
+    })
+
 
 @dashboard_login_required
 def coupon_view(request):
