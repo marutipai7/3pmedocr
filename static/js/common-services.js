@@ -1,24 +1,32 @@
 /* -------- TABS HANDLER -------- */
 $('.tabs').each(function () {
     const $tabsWrapper = $(this);
-    const $buttons = $tabsWrapper.find('.tab-btn');
+    const $buttons = $tabsWrapper.find('.tab-btn, .tab-btn-lab');
     const $indicator = $tabsWrapper.find('.tab-indicator');
 
     function moveIndicator($btn) {
+        if (!$btn || !$btn.length) return;   // 🛑 safety
+
+        const pos = $btn.position();
+        if (!pos) return;                    // 🛑 safety
+
         $indicator.css({
-            left: $btn.position().left + 'px',
+            left: pos.left + 'px',
             width: $btn.outerWidth() + 'px',
             height: $btn.outerHeight() + 'px'
         });
     }
 
     // Init
-    const $activeBtn = $buttons.filter('.active');
-    moveIndicator($activeBtn);
+    const $activeBtn = $buttons.filter('.active').first();
 
-    showTabContent($activeBtn.data('type'), $tabsWrapper);
+    if ($activeBtn.length) {
+        moveIndicator($activeBtn);
+        showTabContent($activeBtn.data('type'), $tabsWrapper);
+    }
 
-    $buttons.on('click', function () {
+
+    $tabsWrapper.on('click', '.tab-btn, .tab-btn-lab', function () {
         const $btn = $(this);
         const type = $btn.data('type');
 

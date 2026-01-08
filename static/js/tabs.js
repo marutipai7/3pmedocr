@@ -9,6 +9,39 @@ $(document).ready(function () {
     $("#" + target).removeClass("hidden");
   });
   $(".tab-btn").eq(0).click();
+$(document).ready(function () {
+
+  // ------------------------------
+  // TAB SWITCH (LAB HOME)
+  // ------------------------------
+  $(document).on("click", ".tab-btn-lab", function () {
+
+    const type = $(this).data("type");
+
+    // active tab style
+    $(".tab-btn-lab").removeClass(
+      "border-b-2 text-dodger-blue px-4 text-18-fs"
+    );
+    $(this).addClass(
+      "border-b-2 text-dodger-blue px-4 text-18-fs"
+    );
+
+    // hide both lists first
+    $(".services-home-list, .collection-home-list").addClass("hidden");
+
+    // show based on tab
+    if (type === "test-packages-home") {
+      $(".services-home-list").removeClass("hidden");
+    }
+
+    if (type === "collection-mode-home") {
+      $(".collection-home-list").removeClass("hidden");
+    }
+  });
+
+  // trigger first tab by default
+  $(".tab-btn-lab").eq(0).trigger("click");
+});
 
   $(".tab-btn-customer").click(function () {
     var target = $(this).data("tab");
