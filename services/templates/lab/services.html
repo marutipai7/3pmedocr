@@ -136,7 +136,7 @@
 
                         <div class="tabs tabs-home w-[200px] sm:w-[350px]">
                             <div class="flex flex-nowrap items-center justify-between py-0.5 text-sm px-2 relative">
-                            <div class="tab-indicator"></div>
+                            <div class="tab-indicator border border-blue-tint"></div>
 
                             <button class="tab-btn-lab active shrink-0" data-type="test-packages-home">
                                 Test & Packages
@@ -171,41 +171,8 @@
 
                         </div>
                         </div>
-{% comment %} 
-                        <div class="services-empty-state w-full flex items-center justify-center mt-5">
-                            <div class="flex flex-col items-center gap-6 w-3/4 sm:w-3/5">
-                            <img src="/static/images/services-bg.svg" alt="services">
-                            <span class="text-sm sm:text-base text-center font-normal text-black">
-                                At the moment, there are no Services in queue. We'll keep you updated!
-                            </span>
-                            <button
-                                class="home-add-service w-full max-w-[352px] h-[40px] rounded-lg border border-dodger-blue
-                                    text-dodger-blue text-xs sm:text-sm font-semibold cursor-pointer">
-                                Add Services
-                            </button>
-                            </div>
-                        </div> {% endcomment %}
 
                         </div>
-
-                        {% comment %} <div class="w-full h-[415px] shadow-17 rounded-lg px-5 py-5">
-                            <div class="tabs tabs-home w-[200px] sm:w-[350px]">
-                                <div class="flex flex-nowrap items-center justify-between py-0.5 text-sm px-2 relative">
-                                    <div class="tab-indicator"></div>
-                                    <button class="tab-btn-lab active shrink-0" data-type="test-packages-home">Test & Packages</button>
-                                    <button class="tab-btn-lab shrink-0" data-type="collection-mode-home">Collection Mode</button>
-                                </div>
-                            </div>
-                            <div class="w-full flex items-center justify-center mt-5">
-                                <div class="flex flex-col items-center gap-6 w-3/4 sm:w-3/5">
-                                    <img src="/static/images/services-bg.svg" alt="services">
-                                    <span class="text-sm sm:text-base text-center font-normal text-black">At the moment, there are no Services in queue. We'll keep you updated!</span>
-                                    <button class="home-add-service w-full max-w-[352px] h-[40px] rounded-lg border border-dodger-blue text-dodger-blue text-xs sm:text-sm font-semibold cursor-pointer">
-                                        Add Services
-                                    </button>
-                                </div>
-                            </div>
-                        </div> {% endcomment %}
                     </div>    
 
                     <!-- Services Section -->
@@ -699,7 +666,10 @@
                     </div>
 
                     <!-- Premium Section -->
-                    {% include 'partials/premium_section.html' %}
+                    {% include 'partials/lab_premium_section.html' %}
+                    
+                    <!--Services Without Subscription section-->
+                    {% include 'partials/lab_services_without_subscription.html' %}
                 </div>
             </div>
 

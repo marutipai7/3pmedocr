@@ -10,6 +10,8 @@
     --color-light-sea-green-opacity-2: #3AAFA908;
     --color-dodger-blue-deep: #1167D9;
     --color-mist-teal: #3AAFA90A;
+    --color-light-sky-blue-tint: #CCE5FF;
+    --color-blue-tint: #007BFF33;
     --color-teal-veil: #3AAFA91A;
     --color-teal-shadow:#3AAFA94D;
     --color-teal-tropical:#3AAFA9E5;
@@ -427,6 +429,34 @@ body {
 .active-tab-client{
      @apply text-dark-blue border-b-3 border-dark-blue;
 
+}
+.tabs {
+  @apply sticky top-0 bg-[#F4F6F8] rounded-lg;
+}
+
+
+.tabs .flex {
+  @apply relative;
+}
+
+.tab-btn {
+  @apply py-2.5 px-3 sm:px-7 text-nowrap cursor-pointer relative z-10 transition-colors duration-300 text-black text-sm font-semibold shadow-[#00000026];
+}
+
+.tab-btn-lab {
+  @apply py-2.5 px-3 sm:px-7 text-nowrap cursor-pointer relative z-10 transition-colors duration-300 text-black text-sm font-semibold shadow-[#00000026];
+}
+
+.tab-btn.active {
+  @apply my-1 text-black;
+}
+
+.tab-btn-lab.active {
+  @apply my-1 text-black;
+}
+
+.tab-indicator {
+  @apply absolute bg-white rounded-md shadow-[4px_4px_10px_0px_#00000026] transition-all duration-500 ease-out pointer-events-none z-0;
 }
 /* Upload File CSS */
 

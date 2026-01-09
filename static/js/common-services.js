@@ -44,11 +44,12 @@ $('.tabs').each(function () {
 
 // Scoped content handler
 function showTabContent(type, $tabsWrapper) {
-    const group =
-        $tabsWrapper.hasClass('tabs-home') ? '.tabs-home-content' : '.tabs-inner-content';
+  const group = $tabsWrapper.hasClass("tabs-home")
+    ? ".tabs-home-content"
+    : ".tabs-inner-content";
 
-    $(group).addClass('hidden');
-    $(group).filter(`[data-type="${type}"]`).removeClass('hidden');
+  $(group).addClass("hidden");
+  $(group).filter(`[data-type="${type}"]`).removeClass("hidden");
 }
 
 /* -------- DROPDOWN HANDLER -------- */

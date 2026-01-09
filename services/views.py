@@ -3,8 +3,15 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.http import HttpResponse
 from dashboard.utils import dashboard_login_required, get_common_context
-from .models import LabRatePackage, LabTestCategory, LabTestPackageMaster, LabModeType, LabRegion, LabDays, LabRateMode
-
+from .models import (
+    LabRatePackage, 
+    LabTestCategory, 
+    LabTestPackageMaster, 
+    LabModeType, 
+    LabRegion, 
+    LabDays, 
+    LabRateMode
+)
 
 @dashboard_login_required
 def services(request):
@@ -44,9 +51,6 @@ def save_lab_services(request):
     saved_services    = []
     saved_collections = []
 
-    # ======================================================
-    # 1. SAVE TEST & PACKAGES
-    # ======================================================
     for s in services:
         try:
             category = LabTestCategory.objects.get(id=s["category_id"])
@@ -54,7 +58,6 @@ def save_lab_services(request):
         except (LabTestCategory.DoesNotExist, LabTestPackageMaster.DoesNotExist):
             continue
 
-        # ----- DAYS -----
         day_obj = None
         if s.get("days"):
             try:
@@ -77,9 +80,6 @@ def save_lab_services(request):
             "price": str(obj.price)
         })
 
-    # ======================================================
-    # 2. SAVE COLLECTION MODES  ✅ REAL DB SAVE
-    # ======================================================
     for c in collections:
         try:
             mode = LabModeType.objects.get(id=c["mode_id"])
@@ -93,7 +93,6 @@ def save_lab_services(request):
             except LabRegion.DoesNotExist:
                 pass
 
-        # ⛔ avoid duplicates (unique_together safe)
         obj, created = LabRateMode.objects.update_or_create(
             lab=lab,
             mode_type=mode,
@@ -119,11 +118,8 @@ def save_lab_services(request):
 
 @dashboard_login_required
 def get_lab_services(request):
-    lab = request.user_obj.lab_profile   # ✅ correct related_name
+    lab = request.user_obj.lab_profile
 
-    # ======================================================
-    # 1. TEST & PACKAGES
-    # ======================================================
     packages = LabRatePackage.objects.filter(lab=lab).select_related(
         "category", "package", "days"
     )
@@ -137,9 +133,6 @@ def get_lab_services(request):
             "price": str(p.price)
         })
 
-    # ======================================================
-    # 2. COLLECTION MODES
-    # ======================================================
     modes = LabRateMode.objects.filter(lab=lab).select_related(
         "mode_type", "region"
     )
@@ -152,9 +145,6 @@ def get_lab_services(request):
             "price": str(m.price)
         })
 
-    # ======================================================
-    # 3. RESPONSE
-    # ======================================================
     return JsonResponse({
         "success": True,
         "test_packages": test_packages,
