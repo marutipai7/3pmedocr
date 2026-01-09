@@ -2,9 +2,9 @@ $(document).ready(function () {
   $(".tab-btn").click(function () {
     var target = $(this).data("tab");
     $(".tab-btn").removeClass(
-      "border-b-2 text-dodger-blue px-4 text-18-fs"
+      "text-dodger-blue px-4 text-18-fs"
     );
-    $(this).addClass("border-b-2 text-dodger-blue px-4 text-18-fs");
+    $(this).addClass("text-dodger-blue px-4 text-18-fs");
     $(".tab-content").addClass("hidden");
     $("#" + target).removeClass("hidden");
   });
@@ -20,10 +20,10 @@ $(document).ready(function () {
 
     // active tab style
     $(".tab-btn-lab").removeClass(
-      "border-b-2 text-dodger-blue px-4 text-18-fs"
+      "text-dodger-blue px-4 text-18-fs"
     );
     $(this).addClass(
-      "border-b-2 text-dodger-blue px-4 text-18-fs"
+      "text-dodger-blue px-4 text-18-fs"
     );
 
     // hide both lists first

@@ -524,82 +524,331 @@ function renderCollectionSummary(items) {
   });
 }
 
-function fetchAddedServices() {
-  $.ajax({
-    url: "/services/get-services/",
-    method: "GET",
-    success: function (res) {
-      if (!res.success) return;
+$(document).ready(function () {
+  fetchLabServices();
+});
 
-      renderHomeTestPackages(res.test_packages);
-      renderHomeCollectionModes(res.collection_modes);
+function fetchLabServices() {
+  $.getJSON("/services/get-services/", function (res) {
 
-      toggleEmptyState(res.test_packages.length, res.collection_modes.length);
-    },
-    error: function () {
-      toastr.error("Failed to load services");
+    if (!res.success) return;
+    controlServiceSections(res);
+    // toggle sections
+    if (res.has_premium) {
+      $('.premium-section').removeClass('hidden');
+      $('.services-without-subscription').addClass('hidden');
+      renderPremiumServices(res);
+    } else {
+      $('.services-without-subscription').removeClass('hidden');
+      $('.premium-section').addClass('hidden');
+      renderNonPremiumServices(res);
     }
   });
 }
 
-function renderHomeTestPackages(items) {
-  const container = $(".services-home-list");
-  container.html("");
+function renderPremiumServices(res) {
 
-  items.forEach(i => {
-    container.append(`
-      <div class="w-full p-3 border rounded-lg flex justify-between items-center">
-        <div>
-          <p class="font-semibold text-sm">${i.category}</p>
-          <p class="text-xs text-gray-500">${i.package}</p>
-          <p class="text-xs text-gray-400">${i.days}</p>
+  /* ---------------- Test & Packages ---------------- */
+  const tpContainer = $('.premium-section [data-type="test-packages"] .grid');
+  tpContainer.html('');
+
+  res.test_packages.forEach(i => {
+    tpContainer.append(`
+      <div class="service-card bg-white border border-frost-white rounded-md shadow-12
+           h-[120px] w-full flex flex-col items-start px-4 py-3 relative"
+           data-id="${i.id || ''}">
+
+        <div class="flex items-start justify-between w-full border-b border-[#E8E8E8] pb-3">
+
+          <div class="flex flex-col gap-2">
+            <h3 class="text-sm sm:text-base font-semibold text-black">${i.category}</h3>
+            <p class="text-xs sm:text-sm font-normal text-black">${i.package}</p>
+          </div>
+
+          <!-- 3 DOT MENU -->
+          <div class="relative">
+            <span class="material-symbols-outlined cursor-pointer more-btn">more_vert</span>
+
+            <div class="more-dropdown hidden absolute right-0 top-6 bg-white rounded-2xl
+                        w-40 z-20 px-4 shadow-12">
+              <button
+                class="open-popup w-full text-left py-2.5 text-ebony text-sm font-semibold
+                       flex items-center gap-3 border-b border-light-grayish-blue cursor-pointer"
+                data-target="add-service">
+                <img src="/static/images/edit-icon.svg" alt="edit">
+                Edit
+              </button>
+              <button
+                class="delete-btn w-full text-left py-2.5 text-sm text-ebony font-semibold
+                       flex items-center gap-3 cursor-pointer">
+                <img src="/static/images/delete-icon.svg" alt="delete">
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
-        <span class="font-bold text-dodger-blue">₹${i.price}</span>
+
+        <div class="flex items-center justify-between w-full py-2">
+          <p class="text-xs sm:text-sm font-normal text-black">${i.days}</p>
+          <span class="text-base sm:text-lg text-dodger-blue font-bold">₹${i.price}</span>
+        </div>
       </div>
     `);
   });
+  tpContainer.append(`
+    <div class="flex items-center justify-end col-span-full">
+      <button
+        class="add-service-btn w-14 h-14 bg-dodger-blue rounded-full
+              flex items-center justify-center shadow-lg">
+        <span class="material-symbols-outlined text-white text-3xl">add</span>
+      </button>
+    </div>
+  `);
+
+  /* ---------------- Collection Modes ---------------- */
+  const cmContainer = $('.premium-section [data-type="collection-mode"] .grid');
+  cmContainer.html('');
+
+  res.collection_modes.forEach(i => {
+    cmContainer.append(`
+      <div class="service-card bg-white border border-frost-white rounded-md shadow-12
+           h-[120px] w-full flex flex-col items-start px-4 py-3 relative"
+           data-id="${i.id || ''}">
+
+        <div class="flex items-start justify-between w-full border-b border-[#E8E8E8] pb-3">
+
+          <div class="flex flex-col gap-2">
+            <h3 class="text-sm sm:text-base font-semibold text-black">${i.mode}</h3>
+            <p class="text-xs sm:text-sm font-normal text-black">${i.region || '-'}</p>
+          </div>
+
+          <!-- 3 DOT MENU -->
+          <div class="relative">
+            <span class="material-symbols-outlined cursor-pointer more-btn">more_vert</span>
+
+            <div class="more-dropdown hidden absolute right-0 top-6 bg-white rounded-2xl
+                        w-40 z-20 px-4 shadow-12">
+              <button
+                class="open-popup w-full text-left py-2.5 text-ebony text-sm font-semibold
+                       flex items-center gap-3 border-b border-light-grayish-blue cursor-pointer"
+                data-target="add-service">
+                <img src="/static/images/edit-icon.svg" alt="edit">
+                Edit
+              </button>
+              <button
+                class="delete-btn w-full text-left py-2.5 text-sm text-ebony font-semibold
+                       flex items-center gap-3 cursor-pointer">
+                <img src="/static/images/delete-icon.svg" alt="delete">
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center w-full py-2">
+          <span class="text-base sm:text-lg text-dodger-blue font-bold">₹${i.price}</span>
+        </div>
+      </div>
+    `);
+
+  });
+  cmContainer.append(`
+    <div class="flex items-center justify-end col-span-full">
+      <button
+        class="add-service-btn w-14 h-14 bg-dodger-blue rounded-full
+              flex items-center justify-center shadow-lg">
+        <span class="material-symbols-outlined text-white text-3xl">add</span>
+      </button>
+    </div>
+  `);
 }
 
-function renderHomeCollectionModes(items) {
-  const container = $(".collection-home-list");
-  container.html("");
 
-  items.forEach(i => {
-    container.append(`
-      <div class="w-full p-3 border rounded-lg flex justify-between items-center">
-        <div>
-          <p class="font-semibold text-sm">${i.mode}</p>
-          <p class="text-xs text-gray-400">${i.region || "-"}</p>
+function renderNonPremiumServices(res) {
+
+  /* ---------------- Test & Packages ---------------- */
+  const tpContainer = $('.services-without-subscription [data-type="test-packages"] .grid');
+  tpContainer.html('');
+
+  res.test_packages.forEach(i => {
+    tpContainer.append(`
+      <div class="service-card bg-white border border-frost-white rounded-md shadow-12
+           h-[120px] w-full flex flex-col items-start px-4 py-3 relative"
+           data-id="${i.id || ''}">
+
+        <div class="flex items-start justify-between w-full border-b border-[#E8E8E8] pb-3">
+
+          <div class="flex flex-col gap-2">
+            <h3 class="text-sm sm:text-base font-semibold text-black">${i.category}</h3>
+            <p class="text-xs sm:text-sm font-normal text-black">${i.package}</p>
+          </div>
+
+          <!-- 3 DOT MENU -->
+          <div class="relative">
+            <span class="material-symbols-outlined cursor-pointer more-btn">more_vert</span>
+
+            <div class="more-dropdown hidden absolute right-0 top-6 bg-white rounded-2xl
+                        w-40 z-20 px-4 shadow-12">
+              <button
+                class="open-popup w-full text-left py-2.5 text-ebony text-sm font-semibold
+                       flex items-center gap-3 border-b border-light-grayish-blue cursor-pointer"
+                data-target="add-service">
+                <img src="/static/images/edit-icon.svg" alt="edit">
+                Edit
+              </button>
+              <button
+                class="delete-btn w-full text-left py-2.5 text-sm text-ebony font-semibold
+                       flex items-center gap-3 cursor-pointer">
+                <img src="/static/images/delete-icon.svg" alt="delete">
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
-        <span class="font-bold text-dodger-blue">₹${i.price}</span>
+
+        <div class="flex items-center justify-between w-full py-2">
+          <p class="text-xs sm:text-sm font-normal text-black">${i.days}</p>
+          <span class="text-base sm:text-lg text-dodger-blue font-bold">₹${i.price}</span>
+        </div>
       </div>
     `);
   });
+  tpContainer.append(`
+    <div class="flex items-center justify-end col-span-full">
+      <button
+        class="add-service-btn w-14 h-14 bg-dodger-blue rounded-full
+              flex items-center justify-center shadow-lg">
+        <span class="material-symbols-outlined text-white text-3xl">add</span>
+      </button>
+    </div>
+  `);
+
+  /* ---------------- Collection Modes ---------------- */
+  const cmContainer = $('.services-without-subscription [data-type="collection-mode"] .grid');
+  cmContainer.html('');
+
+  res.collection_modes.forEach(i => {
+    cmContainer.append(`
+      <div class="service-card bg-white border border-frost-white rounded-md shadow-12
+           h-[120px] w-full flex flex-col items-start px-4 py-3 relative"
+           data-id="${i.id || ''}">
+
+        <div class="flex items-start justify-between w-full border-b border-[#E8E8E8] pb-3">
+
+          <div class="flex flex-col gap-2">
+            <h3 class="text-sm sm:text-base font-semibold text-black">${i.mode}</h3>
+            <p class="text-xs sm:text-sm font-normal text-black">${i.region || '-'}</p>
+          </div>
+
+          <!-- 3 DOT MENU -->
+          <div class="relative">
+            <span class="material-symbols-outlined cursor-pointer more-btn">more_vert</span>
+
+            <div class="more-dropdown hidden absolute right-0 top-6 bg-white rounded-2xl
+                        w-40 z-20 px-4 shadow-12">
+              <button
+                class="open-popup w-full text-left py-2.5 text-ebony text-sm font-semibold
+                       flex items-center gap-3 border-b border-light-grayish-blue cursor-pointer"
+                data-target="add-service">
+                <img src="/static/images/edit-icon.svg" alt="edit">
+                Edit
+              </button>
+              <button
+                class="delete-btn w-full text-left py-2.5 text-sm text-ebony font-semibold
+                       flex items-center gap-3 cursor-pointer">
+                <img src="/static/images/delete-icon.svg" alt="delete">
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center w-full py-2">
+          <span class="text-base sm:text-lg text-dodger-blue font-bold">₹${i.price}</span>
+        </div>
+      </div>
+    `);
+
+  });
+  cmContainer.append(`
+    <div class="flex items-center justify-end col-span-full">
+      <button
+        class="add-service-btn w-14 h-14 bg-dodger-blue rounded-full
+              flex items-center justify-center shadow-lg">
+        <span class="material-symbols-outlined text-white text-3xl">add</span>
+      </button>
+    </div>
+  `);
 }
 
-function toggleEmptyState(pkgCount, modeCount) {
 
-  const hasData = pkgCount > 0 || modeCount > 0;
+function controlServiceSections(res) {
 
-  if (hasData) {
-    // hide only the text
-    $(".empty-message").addClass("hidden");
+  const hasServices =
+    (res.test_packages && res.test_packages.length > 0) ||
+    (res.collection_modes && res.collection_modes.length > 0);
 
-    // show lists
-    $(".services-home-list, .collection-home-list").removeClass("hidden");
-  } else {
-    // show empty text
-    $(".empty-message").removeClass("hidden");
+  const homeSection    = $('.home-section');
+  const premiumSection = $('.premium-section');
+  const nonPremiumSec  = $('.services-without-subscription');
+  const fab            = $('.add-service-fab');
 
-    // hide lists
-    $(".services-home-list, .collection-home-list").addClass("hidden");
+  // hide all
+  homeSection.addClass('hidden');
+  premiumSection.addClass('hidden');
+  nonPremiumSec.addClass('hidden');
+  fab.addClass('hidden');
+
+  if (!hasServices) {
+    homeSection.removeClass('hidden');
+    return;
   }
 
-  // 🚨 DO NOT hide .services-empty-state
-  // Button must always stay visible
+  // services exist → show FAB always
+  fab.removeClass('hidden');
+
+  if (res.has_premium) {
+    premiumSection.removeClass('hidden');
+  } else {
+    nonPremiumSec.removeClass('hidden');
+  }
 }
 
+$(document).on('click', '.open-add-service', function () {
+  $('.add-service').removeClass('hidden').addClass('flex');
+});
 
-$(document).ready(function () {
-  fetchAddedServices();   // 🔥 THIS actually calls /services/get-services/
+// toggle 3-dot menu
+$(document).on('click', '.more-btn', function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+
+  // close all open menus first
+  $('.more-dropdown').addClass('hidden');
+
+  // open the menu that belongs to THIS button
+  const menu = $(this).next('.more-dropdown');
+  menu.toggleClass('hidden');
+});
+
+// close menu when clicking outside
+$(document).on('click', function () {
+  $('.more-dropdown').addClass('hidden');
+});
+
+
+
+$(document).on('click', '.open-popup', function (e) {
+  e.stopPropagation();
+
+  const target = $(this).data('target'); // "add-service"
+  $('.' + target).removeClass('hidden').addClass('flex');
+});
+
+$(document).on('click', '.close-icon', function () {
+  $(this).closest('.popup-overlay').addClass('hidden').removeClass('flex');
+});
+
+$(document).on('click', '.add-service-btn', function () {
+  $('.add-service').removeClass('hidden').addClass('flex');
 });

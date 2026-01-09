@@ -1,315 +1,61 @@
 {% load static %}
-                    <div class="premium-section space-y-4 hidden">
-                        <div class="h-[136px] bg-dodger-blue relative flex flex-col gap-3 px-7 py-6 rounded-lg">
-                            <span class="text-sm sm:text-base font-bold text-white">Subscription Details</span>
-                            <span class="text-[30px] sm:text-[35px] font-bold text-white">
-                                ₹999 <span class="text-sm sm:text-base font-bold text-white">/month</span>
-                            </span>
-                            <div
-                                class="absolute right-5 top-4 bg-premium-yellow px-5 py-0.5 text-xs sm:text-sm font-bold text-black rounded-full">
-                                PREMIUM
-                            </div>
-                        </div>
-                        <div class="w-full rounded-lg shadow-17 py-4 px-6 flex flex-col gap-5">
-                            <div class="tabs tabs-inner w-[200px] sm:w-[350px]">
-                                <div class="flex flex-nowrap items-center justify-between py-0.5 text-sm px-2 relative">
-                                    <div class="tab-indicator border border-blue-tint"></div>
-                                    <button class="tab-btn active shrink-0" data-type="test-packages">Test &
-                                        Packages</button>
-                                    <button class="tab-btn shrink-0" data-type="collection-mode">Collection
-                                        Mode</button>
-                                </div>
-                            </div>
-                            <!-- Test & Packages Content -->
-                            <div class="tab-content tabs-inner-content" data-type="test-packages">
-                                <div class="bg-[#F9FAFB] rounded-[10px] w-full p-3 space-y-3">
-                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                                        <div
-                                            class="service-card bg-white border border-frost-white rounded-md shadow-12 h-[120px] w-full flex flex-col items-start px-4 py-3 relative">
-                                            <div
-                                                class="flex items-start justify-between w-full border-b border-[#E8E8E8] pb-3">
-                                                <div class="flex flex-col gap-2">
-                                                    <h3 class="text-sm sm:text-base font-semibold text-black">Pathology
-                                                    </h3>
-                                                    <p class="text-xs sm:text-sm font-normal text-black">Thyroid Profile
-                                                        (Clinic Walk-in)</p>
-                                                </div>
-                                                <span
-                                                    class="material-symbols-outlined cursor-pointer more-btn">more_vert</span>
-                                                <!-- Dropdown -->
-                                                <div
-                                                    class="more-dropdown hidden absolute right-4 top-10 bg-white rounded-2xl w-40 z-20 px-4 shadow-12">
-                                                    <button
-                                                        class="open-popup w-full text-left py-2.5 text-ebony text-sm sm:text-base font-semibold flex items-center gap-4 border-b border-light-grayish-blue cursor-pointer"
-                                                        data-target="add-service">
-                                                        <img src="/static/images/edit-icon.svg" alt="edit">
-                                                        Edit
-                                                    </button>
-                                                    <button
-                                                        class="delete-btn w-full text-left py-2.5 text-sm sm:text-base text-ebony font-semibold flex items-center gap-4 cursor-pointer">
-                                                        <img src="/static/images/delete-icon.svg" alt="delete">
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="flex items-center justify-between w-full py-2">
-                                                <p class="text-xs sm:text-sm font-normal text-black">Same Day</p>
-                                                <span
-                                                    class="text-base sm:text-lg text-primary-blue font-bold">₹400,00</span>
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="service-card bg-white border border-frost-white rounded-md shadow-12 h-[120px] w-full flex flex-col items-start px-4 py-3 relative">
-                                            <div
-                                                class="flex items-start justify-between w-full border-b border-[#E8E8E8] pb-3">
-                                                <div class="flex flex-col gap-2">
-                                                    <h3 class="text-sm sm:text-base font-semibold text-black">Pathology
-                                                    </h3>
-                                                    <p class="text-xs sm:text-sm font-normal text-black">Thyroid Profile
-                                                        (Clinic Walk-in)</p>
-                                                </div>
-                                                <span
-                                                    class="material-symbols-outlined cursor-pointer more-btn">more_vert</span>
-                                                <!-- Dropdown -->
-                                                <div
-                                                    class="more-dropdown hidden absolute right-4 top-10 bg-white rounded-2xl w-40 z-20 px-4 shadow-12">
-                                                    <button
-                                                        class="open-popup w-full text-left py-2.5 text-ebony text-sm sm:text-base font-semibold flex items-center gap-4 border-b border-light-grayish-blue cursor-pointer"
-                                                        data-target="add-service">
-                                                        <img src="/static/images/edit-icon.svg" alt="edit">
-                                                        Edit
-                                                    </button>
-                                                    <button
-                                                        class="delete-btn w-full text-left py-2.5 text-sm sm:text-base text-ebony font-semibold flex items-center gap-4 cursor-pointer">
-                                                        <img src="/static/images/delete-icon.svg" alt="delete">
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="flex items-center justify-between w-full py-2">
-                                                <p class="text-xs sm:text-sm font-normal text-black">Same Day</p>
-                                                <span
-                                                    class="text-base sm:text-lg text-primary-blue font-bold">₹400,00</span>
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="service-card bg-white border border-frost-white rounded-md shadow-12 h-[120px] w-full flex flex-col items-start px-4 py-3 relative">
-                                            <div
-                                                class="flex items-start justify-between w-full border-b border-[#E8E8E8] pb-3">
-                                                <div class="flex flex-col gap-2">
-                                                    <h3 class="text-sm sm:text-base font-semibold text-black">Pathology
-                                                    </h3>
-                                                    <p class="text-xs sm:text-sm font-normal text-black">Thyroid Profile
-                                                        (Clinic Walk-in)</p>
-                                                </div>
-                                                <span
-                                                    class="material-symbols-outlined cursor-pointer more-btn">more_vert</span>
-                                                <!-- Dropdown -->
-                                                <div
-                                                    class="more-dropdown hidden absolute right-4 top-10 bg-white rounded-2xl w-40 z-20 px-4 shadow-12">
-                                                    <button
-                                                        class="open-popup w-full text-left py-2.5 text-ebony text-sm sm:text-base font-semibold flex items-center gap-4 border-b border-light-grayish-blue cursor-pointer"
-                                                        data-target="add-service">
-                                                        <img src="/static/images/edit-icon.svg" alt="edit">
-                                                        Edit
-                                                    </button>
-                                                    <button
-                                                        class="delete-btn w-full text-left py-2.5 text-sm sm:text-base text-ebony font-semibold flex items-center gap-4 cursor-pointer">
-                                                        <img src="/static/images/delete-icon.svg" alt="delete">
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="flex items-center justify-between w-full py-2">
-                                                <p class="text-xs sm:text-sm font-normal text-black">Same Day</p>
-                                                <span
-                                                    class="text-base sm:text-lg text-primary-blue font-bold">₹400,00</span>
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="service-card bg-white border border-frost-white rounded-md shadow-12 h-[120px] w-full flex flex-col items-start px-4 py-3 relative">
-                                            <div
-                                                class="flex items-start justify-between w-full border-b border-[#E8E8E8] pb-3">
-                                                <div class="flex flex-col gap-2">
-                                                    <h3 class="text-sm sm:text-base font-semibold text-black">Pathology
-                                                    </h3>
-                                                    <p class="text-xs sm:text-sm font-normal text-black">Thyroid Profile
-                                                        (Clinic Walk-in)</p>
-                                                </div>
-                                                <span
-                                                    class="material-symbols-outlined cursor-pointer more-btn">more_vert</span>
-                                                <!-- Dropdown -->
-                                                <div
-                                                    class="more-dropdown hidden absolute right-4 top-10 bg-white rounded-2xl w-40 z-20 px-4 shadow-12">
-                                                    <button
-                                                        class="open-popup w-full text-left py-2.5 text-ebony text-sm sm:text-base font-semibold flex items-center gap-4 border-b border-light-grayish-blue cursor-pointer"
-                                                        data-target="add-service">
-                                                        <img src="/static/images/edit-icon.svg" alt="edit">
-                                                        Edit
-                                                    </button>
-                                                    <button
-                                                        class="delete-btn w-full text-left py-2.5 text-sm sm:text-base text-ebony font-semibold flex items-center gap-4 cursor-pointer">
-                                                        <img src="/static/images/delete-icon.svg" alt="delete">
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="flex items-center justify-between w-full py-2">
-                                                <p class="text-xs sm:text-sm font-normal text-black">Same Day</p>
-                                                <span
-                                                    class="text-base sm:text-lg text-primary-blue font-bold">₹400,00</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center justify-end">
-                                        <button
-                                            class="w-14 h-14 bg-primary-blue rounded-full flex items-center justify-center cursor-pointer">
-                                            <span class="material-symbols-outlined text-white">add_2</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+<div class="premium-section space-y-4 hidden">
 
-                            <!-- Collection Mode Content -->
-                            <div class="tab-content tabs-inner-content hidden" data-type="collection-mode">
-                                <div class="bg-[#F9FAFB] rounded-[10px] w-full p-3 space-y-3">
-                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                                        <div
-                                            class="service-card bg-white border border-frost-white rounded-md shadow-12 h-[120px] w-full flex flex-col items-start px-4 py-3 relative">
-                                            <div
-                                                class="flex items-start justify-between w-full border-b border-[#E8E8E8] pb-3">
-                                                <div class="flex flex-col gap-2">
-                                                    <h3 class="text-sm sm:text-base font-semibold text-black">Walk-in
-                                                        Only</h3>
-                                                    <p class="text-xs sm:text-sm font-normal text-black">Within 5 Km</p>
-                                                </div>
-                                                <span
-                                                    class="material-symbols-outlined cursor-pointer more-btn">more_vert</span>
-                                                <!-- Dropdown -->
-                                                <div
-                                                    class="more-dropdown hidden absolute right-4 top-10 bg-white rounded-2xl w-40 z-20 px-4 shadow-12">
-                                                    <button
-                                                        class="open-popup w-full text-left py-2.5 text-ebony text-sm sm:text-base font-semibold flex items-center gap-4 border-b border-light-grayish-blue cursor-pointer"
-                                                        data-target="add-service">
-                                                        <img src="/static/images/edit-icon.svg" alt="edit">
-                                                        Edit
-                                                    </button>
-                                                    <button
-                                                        class="delete-btn w-full text-left py-2.5 text-sm sm:text-base text-ebony font-semibold flex items-center gap-4 cursor-pointer">
-                                                        <img src="/static/images/delete-icon.svg" alt="delete">
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="flex items-center w-full py-2">
-                                                <span
-                                                    class="text-base sm:text-lg text-primary-blue font-bold">₹400,00</span>
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="service-card bg-white border border-frost-white rounded-md shadow-12 h-[120px] w-full flex flex-col items-start px-4 py-3 relative">
-                                            <div
-                                                class="flex items-start justify-between w-full border-b border-[#E8E8E8] pb-3">
-                                                <div class="flex flex-col gap-2">
-                                                    <h3 class="text-sm sm:text-base font-semibold text-black">Walk-in
-                                                        Only</h3>
-                                                    <p class="text-xs sm:text-sm font-normal text-black">Within 5 Km</p>
-                                                </div>
-                                                <span
-                                                    class="material-symbols-outlined cursor-pointer more-btn">more_vert</span>
-                                                <!-- Dropdown -->
-                                                <div
-                                                    class="more-dropdown hidden absolute right-4 top-10 bg-white rounded-2xl w-40 z-20 px-4 shadow-12">
-                                                    <button
-                                                        class="open-popup w-full text-left py-2.5 text-ebony text-sm sm:text-base font-semibold flex items-center gap-4 border-b border-light-grayish-blue cursor-pointer"
-                                                        data-target="add-service">
-                                                        <img src="/static/images/edit-icon.svg" alt="edit">
-                                                        Edit
-                                                    </button>
-                                                    <button
-                                                        class="delete-btn w-full text-left py-2.5 text-sm sm:text-base text-ebony font-semibold flex items-center gap-4 cursor-pointer">
-                                                        <img src="/static/images/delete-icon.svg" alt="delete">
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="flex items-center w-full py-2">
-                                                <span
-                                                    class="text-base sm:text-lg text-primary-blue font-bold">₹400,00</span>
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="service-card bg-white border border-frost-white rounded-md shadow-12 h-[120px] w-full flex flex-col items-start px-4 py-3 relative">
-                                            <div
-                                                class="flex items-start justify-between w-full border-b border-[#E8E8E8] pb-3">
-                                                <div class="flex flex-col gap-2">
-                                                    <h3 class="text-sm sm:text-base font-semibold text-black">Walk-in
-                                                        Only</h3>
-                                                    <p class="text-xs sm:text-sm font-normal text-black">Within 5 Km</p>
-                                                </div>
-                                                <span
-                                                    class="material-symbols-outlined cursor-pointer more-btn">more_vert</span>
-                                                <!-- Dropdown -->
-                                                <div
-                                                    class="more-dropdown hidden absolute right-4 top-10 bg-white rounded-2xl w-40 z-20 px-4 shadow-12">
-                                                    <button
-                                                        class="open-popup w-full text-left py-2.5 text-ebony text-sm sm:text-base font-semibold flex items-center gap-4 border-b border-light-grayish-blue cursor-pointer"
-                                                        data-target="add-service">
-                                                        <img src="/static/images/edit-icon.svg" alt="edit">
-                                                        Edit
-                                                    </button>
-                                                    <button
-                                                        class="delete-btn w-full text-left py-2.5 text-sm sm:text-base text-ebony font-semibold flex items-center gap-4 cursor-pointer">
-                                                        <img src="/static/images/delete-icon.svg" alt="delete">
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="flex items-center w-full py-2">
-                                                <span
-                                                    class="text-base sm:text-lg text-primary-blue font-bold">₹400,00</span>
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="service-card bg-white border border-frost-white rounded-md shadow-12 h-[120px] w-full flex flex-col items-start px-4 py-3 relative">
-                                            <div
-                                                class="flex items-start justify-between w-full border-b border-[#E8E8E8] pb-3">
-                                                <div class="flex flex-col gap-2">
-                                                    <h3 class="text-sm sm:text-base font-semibold text-black">Walk-in
-                                                        Only</h3>
-                                                    <p class="text-xs sm:text-sm font-normal text-black">Within 5 Km</p>
-                                                </div>
-                                                <span
-                                                    class="material-symbols-outlined cursor-pointer more-btn">more_vert</span>
-                                                <!-- Dropdown -->
-                                                <div
-                                                    class="more-dropdown hidden absolute right-4 top-10 bg-white rounded-2xl w-40 z-20 px-4 shadow-12">
-                                                    <button
-                                                        class="open-popup w-full text-left py-2.5 text-ebony text-sm sm:text-base font-semibold flex items-center gap-4 border-b border-light-grayish-blue cursor-pointer"
-                                                        data-target="add-service">
-                                                        <img src="/static/images/edit-icon.svg" alt="edit">
-                                                        Edit
-                                                    </button>
-                                                    <button
-                                                        class="delete-btn w-full text-left py-2.5 text-sm sm:text-base text-ebony font-semibold flex items-center gap-4 cursor-pointer">
-                                                        <img src="/static/images/delete-icon.svg" alt="delete">
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="flex items-center w-full py-2">
-                                                <span
-                                                    class="text-base sm:text-lg text-primary-blue font-bold">₹400,00</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center justify-end">
-                                        <button
-                                            class="w-14 h-14 bg-primary-blue rounded-full flex items-center justify-center cursor-pointer">
-                                            <span class="material-symbols-outlined text-white">add_2</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+  <!-- Subscription Header -->
+  <div class="h-[136px] bg-dodger-blue relative flex flex-col gap-3 px-7 py-6 rounded-lg">
+    <span class="text-sm sm:text-base font-bold text-white">Subscription Details</span>
+    <span class="text-[30px] sm:text-[35px] font-bold text-white">
+      ₹999 <span class="text-sm sm:text-base">/month</span>
+    </span>
+    <div class="absolute right-5 top-4 bg-premium-yellow px-5 py-0.5 text-xs font-bold rounded-full">
+      PREMIUM
+    </div>
+  </div>
+
+  <div class="w-full rounded-lg shadow-17 py-4 px-6 flex flex-col gap-5">
+
+    <!-- Tabs -->
+    <div class="tabs tabs-inner w-[200px] sm:w-[350px]">
+      <div class="flex justify-between px-2 relative">
+        <div class="tab-indicator border border-blue-tint"></div>
+        <button class="tab-btn active" data-type="test-packages">Test & Packages</button>
+        <button class="tab-btn" data-type="collection-mode">Collection Mode</button>
+      </div>
+    </div>
+
+    <!-- ===== Test & Packages ===== -->
+    <div class="tab-content tabs-inner-content" data-type="test-packages">
+      <div class="bg-[#F9FAFB] rounded-[10px] w-full p-3 space-y-3">
+
+        <!-- 🔹 JS will render cards here -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
+
+        <!-- ➕ Add Button -->
+        <div class="flex items-center justify-end">
+          <button class="add-service-btn w-14 h-14 bg-primary-blue rounded-full flex items-center justify-center">
+            <span class="material-symbols-outlined text-white">add</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== Collection Mode ===== -->
+    <div class="tab-content tabs-inner-content hidden" data-type="collection-mode">
+      <div class="bg-[#F9FAFB] rounded-[10px] w-full p-3 space-y-3">
+
+        <!-- 🔹 JS will render cards here -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
+
+        <!-- ➕ Add Button -->
+        <div class="flex items-center justify-end">
+          <button class="add-service-btn w-14 h-14 bg-primary-blue rounded-full flex items-center justify-center">
+            <span class="material-symbols-outlined text-white">add</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

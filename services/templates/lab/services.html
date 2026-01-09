@@ -147,31 +147,17 @@
                             </div>
                         </div>
 
-                        <!-- 🔹 LISTS -->
-                        <div class="services-home-list hidden mt-5 space-y-3"></div>
-                        <div class="collection-home-list hidden mt-5 space-y-3"></div>
-
-                        <!-- 🔹 EMPTY STATE -->
-                        <div class="services-empty-state w-full flex items-center justify-center mt-5">
-                        <div class="flex flex-col items-center gap-6 w-3/4 sm:w-3/5">
-
-                            <img src="/static/images/services-bg.svg" alt="services">
-
-                            <!-- 🔹 ONLY this part will hide -->
-                            <span class="empty-message text-sm sm:text-base text-center font-normal text-black">
-                            At the moment, there are no Services in queue. We'll keep you updated!
-                            </span>
-
-                            <!-- 🔹 This must ALWAYS stay -->
-                            <button
-                            class="home-add-service w-full max-w-[352px] h-[40px] rounded-lg border border-dodger-blue
-                                    text-dodger-blue text-xs sm:text-sm font-semibold cursor-pointer">
-                            Add Services
-                            </button>
-
+                        <div class="w-full flex items-center justify-center mt-5">
+                            <div class="flex flex-col items-center gap-6 w-3/4 sm:w-3/5">
+                                <img src="/static/images/services-bg.svg" alt="services">
+                                <span class="text-sm sm:text-base text-center font-normal text-black">At the moment,
+                                    there are no Services in queue. We'll keep you updated!</span>
+                                <button
+                                    class="home-add-service w-full max-w-[352px] h-[40px] rounded-lg border border-primary-blue text-primary-blue text-xs sm:text-sm font-semibold cursor-pointer">
+                                    Add Services
+                                </button>
+                            </div>
                         </div>
-                        </div>
-
                         </div>
                     </div>    
 
@@ -664,17 +650,17 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Premium Section -->
+                    {% if has_premium %}
                     {% include 'partials/lab_premium_section.html' %}
-                    
-                    <!--Services Without Subscription section-->
+                    {% else %}
                     {% include 'partials/lab_services_without_subscription.html' %}
+                    {% endif %}
                 </div>
             </div>
 
             <!-- Add Service Popup -->
             {% include 'lab/partials/add_services_popup.html'%}
+
 {% endblock %}
 
 {% block extra_js %}

@@ -12,30 +12,34 @@ from .models import (
     LabDays, 
     LabRateMode
 )
+from settings.models import SellerSubscription
 
 @dashboard_login_required
 def services(request):
     user = request.user_obj
     context = get_common_context(request, user)
+
     if user.user_type == 'pharmacy':
         return render(request, 'pharmacy/services.html', context)
     elif user.user_type == 'lab':
+        sub = SellerSubscription.objects.filter(
+            seller_type="lab",
+            seller_profile_id=user.lab_profile.id,
+            is_active=True,
+            is_enabled=True
+        ).first()
         context["lab_categories"] = LabTestCategory.objects.all()
         context["lab_packages"] = LabTestPackageMaster.objects.select_related("category")
         context["lab_modes"] = LabModeType.objects.all()
         context["lab_regions"] = LabRegion.objects.all()
         context["lab_days"] = LabDays.objects.all()
+        context["has_premium"] = bool(sub and not sub.is_expired)
         return render(request, 'lab/services.html', context)
     elif user.user_type == 'doctor':
         return render(request, 'doctor/services.html', context)
     elif user.user_type == 'hospital':
         return render(request, 'hospital/services.html', context)
-
-from .models import LabRatePackage, LabRateMode
-from .models import LabTestCategory, LabTestPackageMaster
-from .models import LabModeType, LabRegion, LabDays
-
-
+    
 @dashboard_login_required
 def save_lab_services(request):
     if request.method != "POST":
@@ -120,6 +124,16 @@ def save_lab_services(request):
 def get_lab_services(request):
     lab = request.user_obj.lab_profile
 
+    # check premium
+    sub = SellerSubscription.objects.filter(
+        seller_type="lab",
+        seller_profile_id=lab.id,
+        is_active=True,
+        is_enabled=True
+    ).first()
+
+    has_premium = bool(sub and not sub.is_expired)
+
     packages = LabRatePackage.objects.filter(lab=lab).select_related(
         "category", "package", "days"
     )
@@ -147,6 +161,7 @@ def get_lab_services(request):
 
     return JsonResponse({
         "success": True,
+        "has_premium": has_premium,
         "test_packages": test_packages,
         "collection_modes": collection_modes
     })

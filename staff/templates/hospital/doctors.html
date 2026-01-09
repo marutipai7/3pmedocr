@@ -1,0 +1,674 @@
+{% extends "dashboard/layout.html" %}
+{% load static %}
+{% block title %}Doctors{% endblock %}
+
+
+{% block content %}
+            <div
+                class="h-full flex-1 flex flex-col gap-8 p-5 overflow-y-auto scroll bg-slate-white relative transition-all duration-300 main-content">
+                <div
+                    class="show-sidebar-toggle hidden fixed top-25 left-12 z-50 h-10 w-10 bg-light-sky-blue-tint items-center justify-center rounded-r-md cursor-pointer">
+                    <span class="material-symbols-outlined bold-weight text-dodger-blue">
+                        arrow_forward_ios
+                    </span>
+                </div>
+                <div class="p-5 max-w-full flex flex-col gap-5">
+                    <div class="flex items-center gap-2.5">
+                        <span class="material-symbols-outlined !font-semibold !text-lg">group</span>
+                        <span class="font-semibold text-base">Doctors</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button
+                            class="bg-dodger-blue w-[163px] h-10 rounded-lg flex items-center justify-center gap-1.5 cursor-pointer addDoctorBtn text-white py-2 popup-btn"
+                            data-popup="addDoctorPopup">
+                            <span class="material-symbols-outlined">add</span>
+                            <span class="font-semibold text-lg">Add Doctor</span>
+                        </button>
+
+                        <div class="flex items-center gap-3 sm:gap-4 w-full lg:w-auto">
+                            <!-- Search Input -->
+                            <div
+                                class="flex items-center w-full lg:w-[300px] h-10 rounded-[6px] border border-blue-haze px-2">
+                                <span class="material-symbols-outlined text-dark-gray">search</span>
+                                <input type="text" placeholder="Search by name or categories"
+                                    class="w-full ml-1 border-none bg-transparent focus:outline-none focus:ring-0 placeholder:text-medium-gray" />
+                            </div>
+
+                            <!-- Filter Dropdown -->
+                            <div class="relative dropdown inline-block">
+                                <button
+                                    class="filterToggle flex items-center border border-slate-gray rounded-md p-1 w-8 h-8 cursor-pointer">
+                                    <span class="material-symbols-outlined flex justify-center items-center">tune</span>
+                                </button>
+
+                                <div
+                                    class="filterDropdown absolute right-0 mt-2 bg-white text-dark-gray shadow-[4px_4px_10px_2px_#00000026] hidden rounded-md w-44 z-10">
+                                    <div
+                                        class="trigger-date p-2 pl-4 hover:bg-dodger-blue hover:text-white rounded cursor-pointer flex justify-between items-center">
+                                        Date
+                                    </div>
+                                    <div
+                                        class="trigger-status p-2 pl-4 hover:bg-dodger-blue hover:text-white rounded cursor-pointer flex justify-between items-center">
+                                        Status
+                                    </div>
+                                    <div
+                                        class="trigger-visit p-2 pl-4 hover:bg-dodger-blue hover:text-white rounded cursor-pointer flex justify-between items-center">
+                                        Visit Type
+                                    </div>
+                                </div>
+
+                                <div id="dateSubmenu"
+                                    class="submenu hidden absolute !top-10 right-44 z-50 bg-white shadow-md rounded w-40">
+                                    <div
+                                        class="p-2 pl-4 hover:bg-dodger-blue hover:text-white cursor-pointer rounded-t flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-light-gray !text-xl">check</span>
+                                        <span>Week</span>
+                                    </div>
+                                    <div
+                                        class="p-2 pl-4 hover:bg-dodger-blue hover:text-white cursor-pointer flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-light-gray !text-xl">check</span>
+                                        Month
+                                    </div>
+                                    <div
+                                        class="trigger-custom p-2 pl-4 hover:bg-dodger-blue hover:text-white cursor-pointer rounded-b flex justify-between items-center">
+                                        <div class="flex items-center gap-2">
+                                            <span
+                                                class="material-symbols-outlined text-light-gray !text-xl">check</span>
+                                            Custom
+                                        </div>
+                                        <span class="material-symbols-outlined text-sm">calendar_today</span>
+                                    </div>
+                                </div>
+
+                                <div id="calendarContainer"
+                                    class="submenu hidden absolute !top-8 !right-80 mr-4 z-[60] bg-white shadow-lg rounded border border-gray-200 p-2">
+                                    <div class="datepicker-inline"></div>
+                                </div>
+
+                                <div id="statusSubmenu"
+                                    class="submenu hidden absolute top-10 right-44 z-50 bg-white shadow-md rounded w-40 border border-gray-200">
+                                    <div
+                                        class="p-2 pl-4 hover:bg-dodger-blue hover:text-white cursor-pointer flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-light-gray !text-xl">check</span>
+                                        Accepted
+                                    </div>
+                                    <div
+                                        class="p-2 pl-4 hover:bg-dodger-blue hover:text-white cursor-pointer flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-light-gray !text-xl">check</span>
+                                        Rejected
+                                    </div>
+                                </div>
+
+                                <div id="visitSubmenu"
+                                    class="submenu hidden absolute top-10 right-44 z-50 bg-white shadow-md rounded w-40 border border-gray-200">
+                                    <div
+                                        class="p-2 pl-4 hover:bg-dodger-blue hover:text-white cursor-pointer flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-light-gray !text-xl">check</span>
+                                        Home
+                                    </div>
+                                    <div
+                                        class="p-2 pl-4 hover:bg-dodger-blue hover:text-white cursor-pointer flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-light-gray !text-xl">check</span>
+                                        Hospital
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-4 gap-5" id="doctorGrid"></div>
+                    <div class="flex items-center justify-center gap-2 pt-2" id="pagination">
+                        <button
+                            class=" font-normal text-xs transition-colors text-light-gray3 cursor-pointer  disabled:text-gray-400 disabled:cursor-not-allowed"
+                            id="prevBtn">Previous</button>
+                        <div class="flex items-center gap-2" id="pageNumbers"></div>
+                        <button
+                            class=" font-normal text-xs transition-colors text-light-gray3 cursor-pointer disabled:text-gray-400 disabled:cursor-not-allowed"
+                            id="nextBtn">Next</button>
+                    </div>
+
+                    <!--Add Doctor Popup-->
+                    <div
+                        class="fixed inset-0 bg-semi-transparent-black flex items-center justify-center hidden addDoctorPopup">
+                        <div
+                            class="bg-white w-[680px] h-[700px] overflow-y-auto scroll rounded-lg p-4 border border-cool-slate-gray shadow-appointments flex flex-col gap-4">
+                            <div class="flex items-center justify-between">
+                                <span class="font-semibold text-sm">Register as Doctor</span>
+                                <span class="material-symbols-outlined cursor-pointer close-popup"
+                                    data-popup="addDoctorPopup">close</span>
+                            </div>
+                            <hr class="text-blue-haze">
+                            <div class="p-4 flex flex-col gap-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex flex-col gap-2 items-center">
+                                        <div
+                                            class="upload-image w-[104px] h-[104px] rounded-lg border border-blue-haze flex items-center justify-center cursor-pointer">
+                                            <span
+                                                class="material-symbols-outlined text-dodger-blue text-!6xl">upload</span>
+                                        </div>
+                                        <span class="font-normal text-xs text-dodger-blue">Upload clear face
+                                            picture</span>
+                                    </div>
+
+                                    <div class="flex flex-col gap-4">
+                                        <div class="flex items-start gap-2">
+                                            <div
+                                                class="w-6 h-6 rounded-lg border border-blue-haze flex items-center justify-center">
+                                                <span
+                                                    class="material-symbols-outlined text-dodger-blue !text-lg">person</span>
+                                            </div>
+                                            <div class="flex flex-col gap-2">
+                                                <label for="name"
+                                                    class="font-normal text-xs text-spanish-gray">Name</label>
+                                                <input type="text"
+                                                    class="focus:ring-0 focus:outline-none font-normal text-sm placeholder:font-normal placeholder:text-sm placeholder:text-black"
+                                                    placeholder="Type Here...">
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-start gap-2">
+                                            <div
+                                                class="w-6 h-6 rounded-lg border border-blue-haze flex items-center justify-center">
+                                                <span
+                                                    class="material-symbols-outlined text-dodger-blue !text-lg">person</span>
+                                            </div>
+                                            <div class="flex flex-col gap-2">
+                                                <label for="phone" class="font-normal text-xs text-spanish-gray">Phone
+                                                    No.</label>
+                                                <input type="number"
+                                                    class="focus:ring-0 focus:outline-none font-normal text-sm placeholder:font-normal placeholder:text-sm placeholder:text-black"
+                                                    placeholder="Type Here...">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex flex-col gap-4">
+                                        <div class="flex items-start gap-2">
+                                            <div
+                                                class="w-6 h-6 rounded-lg border border-blue-haze flex items-center justify-center">
+                                                <span
+                                                    class="material-symbols-outlined text-dodger-blue !text-lg">person</span>
+                                            </div>
+                                            <div class="flex flex-col gap-2">
+                                                <label for="gender"
+                                                    class="font-normal text-xs text-spanish-gray">Gender</label>
+                                                <input type="text"
+                                                    class="focus:ring-0 focus:outline-none font-normal text-sm placeholder:font-normal placeholder:text-sm placeholder:text-black"
+                                                    placeholder="Type Here...">
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-start gap-2">
+                                            <div
+                                                class="w-6 h-6 rounded-lg border border-blue-haze flex items-center justify-center">
+                                                <span
+                                                    class="material-symbols-outlined text-dodger-blue !text-lg">person</span>
+                                            </div>
+                                            <div class="flex flex-col gap-2">
+                                                <label for="age"
+                                                    class="font-normal text-xs text-spanish-gray">Age</label>
+                                                <input type="number"
+                                                    class="focus:ring-0 focus:outline-none font-normal text-sm placeholder:font-normal placeholder:text-sm placeholder:text-black"
+                                                    placeholder="Type Here...">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <div
+                                            class="w-6 h-6 rounded-lg border border-blue-haze flex items-center justify-center">
+                                            <span
+                                                class="material-symbols-outlined text-dodger-blue !text-lg">medical_services</span>
+                                        </div>
+                                        <span class="font-normal text-xs text-spanish-gray">Specialty</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <input type="text"
+                                            class="focus:ring-0 focus:outline-none cursor-pointer w-10 font-normal text-sm placeholder:font-normal placeholder:text-sm placeholder:text-black"
+                                            placeholder="Select" readonly>
+                                        <span
+                                            class="material-symbols-outlined text-dodger-blue cursor-pointer">keyboard_arrow_down</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <div
+                                            class="w-6 h-6 rounded-lg border border-blue-haze flex items-center justify-center">
+                                            <span
+                                                class="material-symbols-outlined text-dodger-blue !text-lg">school</span>
+                                        </div>
+                                        <span class="font-normal text-xs text-spanish-gray">Education</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <input type="text"
+                                            class="focus:ring-0 focus:outline-none cursor-pointer w-10 font-normal text-sm placeholder:font-normal placeholder:text-sm placeholder:text-black"
+                                            placeholder="Select" readonly>
+                                        <span
+                                            class="material-symbols-outlined text-dodger-blue cursor-pointer">keyboard_arrow_down</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <div
+                                            class="w-6 h-6 rounded-lg border border-blue-haze flex items-center justify-center">
+                                            <span
+                                                class="material-symbols-outlined text-dodger-blue !text-lg">show_chart</span>
+                                        </div>
+                                        <span class="font-normal text-xs text-spanish-gray">Experience</span>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <div
+                                            class="w-6 h-6 rounded-sm bg-soft-system-gray flex items-center justify-center cursor-pointer decreaseBtn">
+                                            <span
+                                                class="material-symbols-outlined text-dodger-blue !text-base">remove</span>
+                                        </div>
+                                        <span>0</span>
+                                        <div
+                                            class="w-6 h-6 rounded-sm bg-soft-system-gray flex items-center justify-center cursor-pointer increaseBtn">
+                                            <span
+                                                class="material-symbols-outlined text-dodger-blue !text-base">add</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="text-blue-haze">
+                            <div class="flex flex-col gap-4">
+                                <span class="font-semibold text-sm">Fees</span>
+                                <div class="flex items-center justify-between">
+                                    <span class="font-normal text-sm">Home Visit</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <span
+                                            class="material-symbols-outlined text-dodger-blue !text-lg">currency_rupee</span>
+                                        <input type="number"
+                                            class="focus:ring-0 focus:outline-none border-b border-blue-haze pb-1 placeholder:font-semibold placeholder:text-sm placeholder:text-dodger-blue font-semibold text-sm text-dodger-blue w-[37px]"
+                                            placeholder="00.00">
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <span class="font-normal text-sm">Hospital Visit</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <span
+                                            class="material-symbols-outlined text-dodger-blue !text-lg">currency_rupee</span>
+                                        <input type="number"
+                                            class="focus:ring-0 focus:outline-none border-b border-blue-haze pb-1 placeholder:font-semibold placeholder:text-sm placeholder:text-dodger-blue font-semibold text-sm text-dodger-blue w-[37px]"
+                                            placeholder="00.00">
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="text-blue-haze">
+                            <div class="flex flex-col gap-4">
+                                <p class="font-semibold text-sm">Availability</p>
+                                <div class="bg-white border border-blue-haze p-4 flex flex-col gap-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center justify-between w-[140px]">
+                                            <span class="font-normal text-sm">Monday</span>
+                                            <span
+                                                class="material-symbols-outlined text-light-gray !text-lg !font-semibold cursor-pointer">check</span>
+                                        </div>
+                                        <div class="flex items-center gap-10">
+                                            <div
+                                                class="w-6 h-6 border border-blue-haze rounded-lg flex items-center justify-center">
+                                                <span
+                                                    class="material-symbols-outlined text-light-gray !text-base !font-semibold cursor-pointer">timer</span>
+                                            </div>
+                                            <span class="font-normal text-sm text-light-gray">Not Available</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center justify-between w-[140px]">
+                                            <span class="font-normal text-sm">Tuesday</span>
+                                            <span
+                                                class="material-symbols-outlined text-light-gray !text-lg !font-semibold cursor-pointer">check</span>
+                                        </div>
+                                        <div class="flex items-center gap-10">
+                                            <div
+                                                class="w-6 h-6 border border-blue-haze rounded-lg flex items-center justify-center">
+                                                <span
+                                                    class="material-symbols-outlined text-light-gray !text-base !font-semibold cursor-pointer">timer</span>
+                                            </div>
+                                            <span class="font-normal text-sm text-light-gray">Not Available</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center justify-between w-[140px]">
+                                            <span class="font-normal text-sm">Wednesday</span>
+                                            <span
+                                                class="material-symbols-outlined text-light-gray !text-lg !font-semibold cursor-pointer">check</span>
+                                        </div>
+                                        <div class="flex items-center gap-10">
+                                            <div
+                                                class="w-6 h-6 border border-blue-haze rounded-lg flex items-center justify-center">
+                                                <span
+                                                    class="material-symbols-outlined text-light-gray !text-base !font-semibold cursor-pointer">timer</span>
+                                            </div>
+                                            <span class="font-normal text-sm text-light-gray">Not Available</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center justify-between w-[140px]">
+                                            <span class="font-normal text-sm">Thursday</span>
+                                            <span
+                                                class="material-symbols-outlined text-light-gray !text-lg !font-semibold cursor-pointer">check</span>
+                                        </div>
+                                        <div class="flex items-center gap-10">
+                                            <div
+                                                class="w-6 h-6 border border-blue-haze rounded-lg flex items-center justify-center">
+                                                <span
+                                                    class="material-symbols-outlined text-light-gray !text-base !font-semibold cursor-pointer">timer</span>
+                                            </div>
+                                            <span class="font-normal text-sm text-light-gray">Not Available</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center justify-between w-[140px]">
+                                            <span class="font-normal text-sm">Friday</span>
+                                            <span
+                                                class="material-symbols-outlined text-light-gray !text-lg !font-semibold cursor-pointer">check</span>
+                                        </div>
+                                        <div class="flex items-center gap-10">
+                                            <div
+                                                class="w-6 h-6 border border-blue-haze rounded-lg flex items-center justify-center">
+                                                <span
+                                                    class="material-symbols-outlined text-light-gray !text-base !font-semibold cursor-pointer">timer</span>
+                                            </div>
+                                            <span class="font-normal text-sm text-light-gray">Not Available</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center justify-between w-[140px]">
+                                            <span class="font-normal text-sm">Saturday</span>
+                                            <span
+                                                class="material-symbols-outlined text-light-gray !text-lg !font-semibold cursor-pointer">check</span>
+                                        </div>
+                                        <div class="flex items-center gap-10">
+                                            <div
+                                                class="w-6 h-6 border border-blue-haze rounded-lg flex items-center justify-center">
+                                                <span
+                                                    class="material-symbols-outlined text-light-gray !text-base !font-semibold cursor-pointer">timer</span>
+                                            </div>
+                                            <span class="font-normal text-sm text-light-gray">Not Available</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center justify-between w-[140px]">
+                                            <span class="font-normal text-sm">Sunday</span>
+                                            <span
+                                                class="material-symbols-outlined text-light-gray !text-lg !font-semibold cursor-pointer">check</span>
+                                        </div>
+                                        <div class="flex items-center gap-10">
+                                            <div
+                                                class="w-6 h-6 border border-blue-haze rounded-lg flex items-center justify-center">
+                                                <span
+                                                    class="material-symbols-outlined text-light-gray !text-base !font-semibold cursor-pointer">timer</span>
+                                            </div>
+                                            <span class="font-normal text-sm text-light-gray">Not Available</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-center gap-4">
+                                <button
+                                    class="w-[180px] h-10 flex items-center justify-center rounded-lg bg-dodger-blue text-white cursor-pointer registerDocBtn">
+                                    <span class="font-semibold text-sm">Register</span>
+                                </button>
+                                <button
+                                    class="w-[180px] h-10 flex items-center justify-center rounded-lg border border-strong-red cursor-pointer close-popup"
+                                    data-popup="addDoctorPopup">
+                                    <span class="font-semibold text-sm text-strong-red">Cancel</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Doctor Information Popup-->
+                    <div
+                        class="fixed inset-0 bg-semi-transparent-black flex items-center justify-center hidden docInfoPopup">
+                        <div
+                            class="bg-white w-[680px] rounded-lg p-4 flex flex-col gap-4 border border-cool-slate-gray shadow-appointments">
+                            <div class="flex items-center justify-between">
+                                <p class="font-semibold text-sm">Doctor Information</p>
+                                <div class="flex items-center gap-4">
+                                    <span class="material-symbols-outlined cursor-pointer !text-lg">edit</span>
+                                    <span class="material-symbols-outlined cursor-pointer !text-lg">share</span>
+                                    <span
+                                        class="material-symbols-outlined cursor-pointer !text-lg closeInfoPopup">close</span>
+                                </div>
+                            </div>
+                            <hr class="text-blue-haze">
+                            <div class="bg-pale-azure p-4 flex items-center gap-6">
+                                <div class="flex flex-col items-center gap-4">
+                                    <img src="/static/images/rachel-kate1.jpg" alt="">
+                                    <p class="font-normal text-sm">Rachel Kate</p>
+                                </div>
+                                <div class="flex flex-col gap-4">
+                                    <div class="flex items-start gap-2">
+                                        <div
+                                            class="w-6 h-6 border border-blue-haze rounded-lg flex items-center justify-center">
+                                            <span
+                                                class="material-symbols-outlined text-dodger-blue !text-lg">female</span>
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                            <span class="font-normal text-xs text-spanish-gray">Gender</span>
+                                            <span class="font-normal text-sm">Female</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start gap-2">
+                                        <div
+                                            class="w-6 h-6 border border-blue-haze rounded-lg flex items-center justify-center">
+                                            <span
+                                                class="material-symbols-outlined text-dodger-blue !text-lg">hourglass</span>
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                            <span class="font-normal text-xs text-spanish-gray">Age</span>
+                                            <span class="font-normal text-sm">25</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start gap-2">
+                                        <div
+                                            class="w-6 h-6 border border-blue-haze rounded-lg flex items-center justify-center">
+                                            <span
+                                                class="material-symbols-outlined text-dodger-blue !text-lg">medical_services</span>
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                            <span class="font-normal text-xs text-spanish-gray">Specialty</span>
+                                            <span class="font-normal text-sm">Neurologist</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-4 ml-15">
+                                    <div class="flex items-start gap-2">
+                                        <div
+                                            class="w-6 h-6 border border-blue-haze rounded-lg flex items-center justify-center">
+                                            <span
+                                                class="material-symbols-outlined text-dodger-blue !text-lg">call</span>
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                            <span class="font-normal text-xs text-spanish-gray">Phone No.</span>
+                                            <span class="font-normal text-sm">+91 7737533456</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start gap-2">
+                                        <div
+                                            class="w-6 h-6 border border-blue-haze rounded-lg flex items-center justify-center">
+                                            <span
+                                                class="material-symbols-outlined text-dodger-blue !text-lg">school</span>
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                            <span class="font-normal text-xs text-spanish-gray">Education</span>
+                                            <span class="font-normal text-sm">MBBS, DM in neurology</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start gap-2">
+                                        <div
+                                            class="w-6 h-6 border border-blue-haze rounded-lg flex items-center justify-center">
+                                            <span
+                                                class="material-symbols-outlined text-dodger-blue !text-lg">show_chart</span>
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                            <span class="font-normal text-xs text-spanish-gray">Experience</span>
+                                            <span class="font-normal text-sm">10 Years</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="text-blue-haze">
+                            <div class="flex items-center  justify-between">
+                                <span class="font-semibold text-sm">Availability</span>
+                                <div class="flex items-center gap-2 cursor-pointer historyBtn">
+                                    <span class="font-semibold text-sm text-dodger-blue">History</span>
+                                    <span
+                                        class="material-symbols-outlined text-dodger-blue !text-xl pt-0.5">chevron_right</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="border border-blue-haze w-6 h-6 rounded-lg flex items-center justify-center">
+                                        <span
+                                            class="material-symbols-outlined text-dodger-blue !text-base">timer</span>
+                                    </div>
+                                    <span class="font-normal text-sm">Attendance</span>
+                                </div>
+                                <div class="relative flex flex-col justify-center">
+                                    <button
+                                        class="status-btn flex items-center justify-between text-dodger-blue bg-light-dodger-blue text-sm font-semibold p-2 rounded-lg  transition cursor-pointer w-[120px]">
+                                        <span class="status-text">Select</span>
+                                        <span
+                                            class="material-symbols-outlined  text-base font-semibold">keyboard_arrow_down</span>
+                                    </button>
+
+                                    <!-- Dropdown Menu -->
+                                    <div
+                                        class="status-dropdown hidden absolute left-0 top-full mt-2 w-[128px] bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                                        <p
+                                            class="dropdown-item px-3 py-2 text-sm font-semibold text-dodger-blue hover:bg-light-dodger-blue cursor-pointer">
+                                            Present</p>
+                                        <p
+                                            class="dropdown-item px-3 py-2 text-sm font-semibold text-dodger-blue hover:bg-light-dodger-blue cursor-pointer">
+                                            Absent</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <p class="font-normal text-sm">Home Visit <span
+                                        class="text-dodger-blue">&#8377;500</span></p>
+                                <p class="font-normal text-sm">Hospital Visit <span
+                                        class="text-dodger-blue">&#8377;500</span></p>
+                            </div>
+                            <div class="border border-blue-haze p-4 flex flex-col gap-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-normal text-sm">Monday</span>
+                                    <span class="font-normal text-sm text-dodger-blue">9 AM to 1 PM</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="font-normal text-sm">Tuesday</span>
+                                    <span class="font-normal text-sm text-dodger-blue">9 AM to 1 PM</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="font-normal text-sm">Friday</span>
+                                    <span class="font-normal text-sm text-dodger-blue">9 AM to 1 PM</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="font-normal text-sm">Doctor’s ID</span>
+                                <span class="font-normal text-sm text-blue-gray">#R32512</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Attendance History Popup-->
+                    <div
+                        class="fixed inset-0 bg-semi-transparent-black flex items-center justify-center hidden attendancePopup">
+                        <div
+                            class="bg-white w-[680px] rounded-lg p-4 flex flex-col gap-4 border border-cool-slate-gray shadow-appointments">
+                            <div class="flex items-center justify-between">
+                                <p class="font-semibold text-sm">Attendance History</p>
+                                <div class="flex items-center gap-2">
+                                    <span
+                                        class="material-symbols-outlined cursor-pointer !text-lg">calendar_today</span>
+                                    <span
+                                        class="material-symbols-outlined cursor-pointer !text-lg closeAttendance">close</span>
+                                </div>
+                            </div>
+                            <hr class="text-blue-haze">
+                            <div class="flex items-center justify-between">
+                                <span class="font-normal text-sm">Dr. Rachel Kate</span>
+                                <span class="font-normal text-sm text-blue-gray">Neurologist</span>
+                            </div>
+                            <hr class="text-blue-haze">
+                            <div class="p-4 border border-blue-haze">
+                                <div class="flex flex-col gap-4 h-[236px] overflow-y-auto scroll">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-normal text-sm">01/01/2025</span>
+                                        <span class="font-normal text-sm text-dodger-blue">Present</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-normal text-sm">02/01/2025</span>
+                                        <span class="font-normal text-sm text-dodger-blue">Present</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-normal text-sm">03/01/2025</span>
+                                        <span class="font-normal text-sm text-blue-haze">Not Available</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-normal text-sm">04/01/2025</span>
+                                        <span class="font-normal text-sm text-blue-haze">Not Available</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-normal text-sm">05/01/2025</span>
+                                        <span class="font-normal text-sm text-strong-red">Absent</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-normal text-sm">06/01/2025</span>
+                                        <span class="font-normal text-sm text-blue-haze">Not Available</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-normal text-sm">07/01/2025</span>
+                                        <span class="font-normal text-sm text-blue-haze">Not Available</span>
+                                    </div>
+                                     <div class="flex items-center justify-between">
+                                        <span class="font-normal text-sm">08/01/2025</span>
+                                        <span class="font-normal text-sm text-blue-haze">Not Available</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-normal text-sm">09/01/2025</span>
+                                        <span class="font-normal text-sm text-blue-haze">Not Available</span>
+                                    </div>
+                                     <div class="flex items-center justify-between">
+                                        <span class="font-normal text-sm">10/01/2025</span>
+                                        <span class="font-normal text-sm text-blue-haze">Not Available</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-normal text-sm">11/01/2025</span>
+                                        <span class="font-normal text-sm text-blue-haze">Not Available</span>
+                                    </div>
+                                     <div class="flex items-center justify-between">
+                                        <span class="font-normal text-sm">12/01/2025</span>
+                                        <span class="font-normal text-sm text-blue-haze">Not Available</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-normal text-sm">13/01/2025</span>
+                                        <span class="font-normal text-sm text-blue-haze">Not Available</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/doctors.js"></script>
+{% endblock %}
+
