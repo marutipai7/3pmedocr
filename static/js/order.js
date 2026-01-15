@@ -397,3 +397,4 @@ $("#openMap").on("click", function () {
     const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(address)}`;
     window.open(mapUrl, "_blank");
 });
+

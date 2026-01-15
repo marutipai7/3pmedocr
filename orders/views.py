@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.db.models import Count
 from dashboard.utils import dashboard_login_required, get_common_context
 from orders.models import UserPurchase, OrderStatusChoices
+from django.http import JsonResponse
+from django.views.decorators.http import require_GET
 
 @dashboard_login_required
 def orders(request):
@@ -77,3 +79,4 @@ def orders(request):
     })
 
     return render(request, "orders.html", context)
+
