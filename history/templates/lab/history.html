@@ -37,7 +37,7 @@
                                 data-tab="missed">Missed</button>
                             <button
                                 class="tab-btn-hospital text-sm sm:text-18-nr px-4 py-1.5 font-medium cursor-pointer text-dark-gray"
-                                data-tab="equipment">Bed Inventory</button>
+                                data-tab="equipment">Equipment Inventory</button>
                         </div>
 
                         <!-- Search + Filter Section -->
@@ -336,7 +336,7 @@
                                                 </div>
                                                 <div class="flex flex-col gap-2">
                                                     <p class="font-normal text-xs text-spanish-gray">Visit Type</p>
-                                                    <p class="font-normal text-sm">Home Visit</p>
+                                                    <p class="font-normal text-sm">Lab Walk-in</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -392,13 +392,13 @@
                                                 <div
                                                     class="border border-blue-haze rounded-lg w-6 h-6 flex items-center justify-center">
                                                     <span class="material-symbols-outlined text-dodger-blue !text-lg">
-                                                        medical_services
+                                                        labs
                                                     </span>
                                                 </div>
                                                 <div class="flex flex-col gap-2">
                                                     <p class="font-normal text-xs text-spanish-gray whitespace-nowrap">
-                                                        Medical Requirement</p>
-                                                    <p class="font-normal text-sm">Lung Disease</p>
+                                                        Test Requirement</p>
+                                                    <p class="font-normal text-sm">RT-PCR</p>
                                                 </div>
                                             </div>
 
@@ -412,14 +412,21 @@
                                                 </div>
                                                 <div class="flex flex-col gap-2">
                                                     <p class="font-normal text-xs text-spanish-gray">Details</p>
-                                                    <p class="font-normal text-sm">Shortness of breath and chest
-                                                        discomfort for 2 weeks. History of mild asthma — seeking
-                                                        diagnosis and treatment.</p>
+                                                    <p class="font-normal text-sm">Experiencing mild fever, sore throat,
+                                                        and body ache — requesting RT-PCR to rule out viral infection.
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
+                                    <div class="my-6 flex items-center justify-between">
+                                        <p class="font-normal text-sm">Attachment</p>
+                                        <div class="flex items-center gap-2 text-dodger-blue">
+                                            <p>image.pdf</p>
+                                            <span
+                                                class="material-symbols-outlined cursor-pointer view-attachment">visibility</span>
+                                        </div>
+                                    </div>
                                     <div class="enquiredDetail">
                                         <div class="flex flex-col mt-4 py-4 gap-4">
                                             <!-- Progress Bar -->
@@ -490,7 +497,7 @@
                                     <button
                                         class="bg-dodger-blue text-white rounded-lg w-[180px] h-10 px-4 py-2 cursor-pointer complete-btn">Complete</button>
                                     <button
-                                        class="border border-strong-red text-strong-red rounded-lg w-[180px] h-10 px-4 py-2 cursor-pointer text-nowrap popup-btn">Cancel
+                                        class="border border-strong-red text-strong-red rounded-lg w-[180px] h-10 px-4 py-2 cursor-pointer text-nowrap modal-close-all-accepted">Cancel
                                         Appointment</button>
                                 </div>
                             </div>
@@ -993,22 +1000,22 @@
                                         </div>
                                     </div>
 
-                                    <hr class="mt-4 text-blue-haze">
+                                    <hr class=" text-blue-haze">
 
                                     <div class="pt-2">
                                         <p class="font-semibold text-sm">Medical Information</p>
-                                        <div class="pt-4 flex gap-4">
+                                        <div class="pt-1 flex gap-4">
                                             <div class="flex gap-2">
                                                 <div
                                                     class="border border-blue-haze rounded-lg w-6 h-6 flex items-center justify-center">
                                                     <span class="material-symbols-outlined text-dodger-blue !text-lg">
-                                                        medical_services
+                                                        labs
                                                     </span>
                                                 </div>
                                                 <div class="flex flex-col gap-2">
                                                     <p class="font-normal text-xs text-spanish-gray whitespace-nowrap">
-                                                        Medical Requirement</p>
-                                                    <p class="font-normal text-sm">Kidney Stone</p>
+                                                        Test Requirement</p>
+                                                    <p class="font-normal text-sm">RT-PCR</p>
                                                 </div>
                                             </div>
 
@@ -1022,17 +1029,22 @@
                                                 </div>
                                                 <div class="flex flex-col gap-2">
                                                     <p class="font-normal text-xs text-spanish-gray">Details</p>
-                                                    <p class="font-normal text-sm">Severe lower back pain, burning while
-                                                        urinating, and suspected
-                                                        kidney stone. History of recurrence</p>
+                                                    <p class="font-normal text-sm">Experiencing mild fever, sore throat,
+                                                        and body ache — requesting RT-PCR to rule out viral infection.
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
-
                                 </div>
-
+                                <div class=" flex items-center justify-between">
+                                    <p class="font-normal text-sm">Attachment</p>
+                                    <div class="flex items-center gap-2 text-dodger-blue">
+                                        <p>image.pdf</p>
+                                        <span
+                                            class="material-symbols-outlined cursor-pointer view-attachment">visibility</span>
+                                    </div>
+                                </div>
                                 <div class="enquiredDetail">
                                     <div class="flex flex-col mt-4 py-4 gap-4">
                                         <div class=" flex justify-center items-center gap-1">
@@ -1068,8 +1080,7 @@
                                         <button
                                             class="bg-dodger-blue text-white rounded-lg w-[180px] h-10 px-4 py-2 cursor-pointer accept-button">Accept</button>
                                         <button
-                                            class="border border-strong-red text-strong-red rounded-lg w-[180px] h-10 px-4 py-2 cursor-pointer close-popup"
-                                            data-popup="appointmentRequestDetail">Reject</button>
+                                            class="border border-strong-red text-strong-red rounded-lg w-[180px] h-10 px-4 py-2 cursor-pointer modal-close-pending">Reject</button>
                                     </div>
                                 </div>
                             </div>
@@ -1097,7 +1108,7 @@
                                         <p class="font-normal text-sm text-jet-black">Lung Disease</p>
                                     </div>
                                     <div class="flex flex-col justify-center">
-                                        <p class="font-semibold text-sm text-strong-red">Canceled by doctor</p>
+                                        <p class="font-semibold text-sm text-strong-red">Canceled by technician</p>
                                     </div>
                                 </div>
                             </div>
@@ -1120,7 +1131,7 @@
                                         <p class="font-normal text-sm text-jet-black">Lung Disease</p>
                                     </div>
                                     <div class="flex flex-col justify-center">
-                                        <p class="font-semibold text-sm text-strong-red">Canceled by doctor</p>
+                                        <p class="font-semibold text-sm text-strong-red">Canceled by technician</p>
                                     </div>
                                 </div>
                             </div>
@@ -1143,7 +1154,7 @@
                                         <p class="font-normal text-sm text-jet-black">Lung Disease</p>
                                     </div>
                                     <div class="flex flex-col justify-center">
-                                        <p class="font-semibold text-sm text-strong-red">Canceled by doctor</p>
+                                        <p class="font-semibold text-sm text-strong-red">Canceled by technician</p>
                                     </div>
                                 </div>
                             </div>
@@ -1166,7 +1177,7 @@
                                         <p class="font-normal text-sm text-jet-black">Lung Disease</p>
                                     </div>
                                     <div class="flex flex-col justify-center">
-                                        <p class="font-semibold text-sm text-strong-red">Canceled by doctor</p>
+                                        <p class="font-semibold text-sm text-strong-red">Canceled by technician</p>
                                     </div>
                                 </div>
                             </div>
@@ -1189,7 +1200,7 @@
                                         <p class="font-normal text-sm text-jet-black">Lung Disease</p>
                                     </div>
                                     <div class="flex flex-col justify-center">
-                                        <p class="font-semibold text-sm text-strong-red">Canceled by doctor</p>
+                                        <p class="font-semibold text-sm text-strong-red">Canceled by technician</p>
                                     </div>
                                 </div>
                             </div>
@@ -1212,7 +1223,7 @@
                                         <p class="font-normal text-sm text-jet-black">Lung Disease</p>
                                     </div>
                                     <div class="flex flex-col justify-center">
-                                        <p class="font-semibold text-sm text-strong-red">Canceled by doctor</p>
+                                        <p class="font-semibold text-sm text-strong-red">Canceled by technician</p>
                                     </div>
                                 </div>
                             </div>
@@ -1327,20 +1338,20 @@
 
                                     <hr class="mt-4 text-blue-haze">
 
-                                    <div class="pt-2">
+                                    <div class="pt-1">
                                         <p class="font-semibold text-sm">Medical Information</p>
                                         <div class="pt-4 flex gap-4">
                                             <div class="flex gap-2">
                                                 <div
                                                     class="border border-blue-haze rounded-lg w-6 h-6 flex items-center justify-center">
                                                     <span class="material-symbols-outlined text-dodger-blue !text-lg">
-                                                        medical_services
+                                                        labs
                                                     </span>
                                                 </div>
                                                 <div class="flex flex-col gap-2">
                                                     <p class="font-normal text-xs text-spanish-gray whitespace-nowrap">
-                                                        Medical Requirement</p>
-                                                    <p class="font-normal text-sm">Lung Disease</p>
+                                                        Test Requirement</p>
+                                                    <p class="font-normal text-sm">RT-PCR</p>
                                                 </div>
                                             </div>
 
@@ -1354,14 +1365,21 @@
                                                 </div>
                                                 <div class="flex flex-col gap-2">
                                                     <p class="font-normal text-xs text-spanish-gray">Details</p>
-                                                    <p class="font-normal text-sm">Shortness of breath and chest
-                                                        discomfort for 2 weeks. History of mild asthma — seeking
-                                                        diagnosis and treatment.</p>
+                                                    <p class="font-normal text-sm">Experiencing mild fever, sore throat,
+                                                        and body ache — requesting RT-PCR to rule out viral infection.
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
+                                    <div class=" flex items-center justify-between">
+                                        <p class="font-normal text-sm">Attachment</p>
+                                        <div class="flex items-center gap-2 text-dodger-blue">
+                                            <p>image.pdf</p>
+                                            <span
+                                                class="material-symbols-outlined cursor-pointer view-attachment">visibility</span>
+                                        </div>
+                                    </div>
                                     <div class="enquiredDetail">
                                         <div class="flex flex-col mt-4 py-4 gap-4">
                                             <div class=" flex justify-center items-center gap-1">
@@ -1385,7 +1403,7 @@
                                             </div>
                                             <div class="flex justify-between items-center">
                                                 <p class="font-normal text-sm text-blue-gray">Order #R32512</p>
-                                                <p class="font-normal text-sm  text-strong-red">Doctor
+                                                <p class="font-normal text-sm  text-strong-red">Technician
                                                 </p>
                                             </div>
                                         </div>
@@ -1648,20 +1666,20 @@
 
                                     <hr class="mt-4 text-blue-haze">
 
-                                    <div class="pt-2">
+                                    <div class="pt-1">
                                         <p class="font-semibold text-sm">Medical Information</p>
                                         <div class="pt-4 flex gap-4">
                                             <div class="flex gap-2">
                                                 <div
                                                     class="border border-blue-haze rounded-lg w-6 h-6 flex items-center justify-center">
                                                     <span class="material-symbols-outlined text-dodger-blue !text-lg">
-                                                        medical_services
+                                                        labs
                                                     </span>
                                                 </div>
                                                 <div class="flex flex-col gap-2">
                                                     <p class="font-normal text-xs text-spanish-gray whitespace-nowrap">
-                                                        Medical Requirement</p>
-                                                    <p class="font-normal text-sm">Lung Disease</p>
+                                                        Test Requirement</p>
+                                                    <p class="font-normal text-sm">RT-PCR</p>
                                                 </div>
                                             </div>
 
@@ -1675,14 +1693,21 @@
                                                 </div>
                                                 <div class="flex flex-col gap-2">
                                                     <p class="font-normal text-xs text-spanish-gray">Details</p>
-                                                    <p class="font-normal text-sm">Shortness of breath and chest
-                                                        discomfort for 2 weeks. History of mild asthma — seeking
-                                                        diagnosis and treatment.</p>
+                                                    <p class="font-normal text-sm">Experiencing mild fever, sore throat,
+                                                        and body ache — requesting RT-PCR to rule out viral infection.
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
+                                    <div class=" flex items-center justify-between">
+                                        <p class="font-normal text-sm">Attachment</p>
+                                        <div class="flex items-center gap-2 text-dodger-blue">
+                                            <p>image.pdf</p>
+                                            <span
+                                                class="material-symbols-outlined cursor-pointer view-attachment">visibility</span>
+                                        </div>
+                                    </div>
                                     <div class="enquiredDetail">
                                         <div class="flex flex-col mt-4 py-4 gap-4">
                                             <div class=" flex justify-center items-center gap-1">
@@ -1706,7 +1731,8 @@
                                             </div>
                                             <div class="flex justify-between items-center">
                                                 <p class="font-normal text-sm text-blue-gray">Order #R32512</p>
-                                                <p class="font-normal text-sm  text-strong-red">Doctor didn’t show up
+                                                <p class="font-normal text-sm  text-strong-red">Technician didn’t show
+                                                    up
                                                 </p>
                                             </div>
                                         </div>
@@ -1724,21 +1750,21 @@
                                 <div class="flex lg:justify-between items-center flex-col lg:flex-row gap-4">
                                     <div class="flex items-center gap-3">
                                         <div class="flex flex-col">
-                                            <p class="font-semibold text-sm text-jet-black">Pt. Joleen Smith</p>
-                                            <span class="text-xs text-spanish-gray">Heart Disease</span>
+                                            <p class="font-semibold text-sm text-jet-black">MRI Scanner 1</p>
+
                                         </div>
                                     </div>
                                     <!-- Equipment Type -->
                                     <div class="flex flex-col justify-center">
-                                        <p class="font-normal text-sm ">101</p>
+                                        <p class="font-normal text-sm ">MRI</p>
                                     </div>
                                     <!-- Equipment ID -->
                                     <div class="flex flex-col justify-center">
-                                        <p class="font-normal text-sm ">ICU</p>
+                                        <p class="font-normal text-sm ">MRI-9823</p>
                                     </div>
                                     <!-- Department -->
                                     <div class="flex flex-col justify-center">
-                                        <p class="font-normal text-sm ">ICU Bed</p>
+                                        <p class="font-normal text-sm ">Radiology</p>
                                     </div>
                                     <!-- Status Dropdown -->
                                     <div class="relative flex flex-col justify-center">
@@ -1768,21 +1794,21 @@
                                 <div class="flex lg:justify-between items-center flex-col lg:flex-row gap-4">
                                     <div class="flex items-center gap-3">
                                         <div class="flex flex-col">
-                                            <p class="font-semibold text-sm text-jet-black">Pt. Joleen Smith</p>
-                                            <span class="text-xs text-spanish-gray">Heart Disease</span>
+                                            <p class="font-semibold text-sm text-jet-black">MRI Scanner 1</p>
+
                                         </div>
                                     </div>
                                     <!-- Equipment Type -->
                                     <div class="flex flex-col justify-center">
-                                        <p class="font-normal text-sm ">101</p>
+                                        <p class="font-normal text-sm ">MRI</p>
                                     </div>
                                     <!-- Equipment ID -->
                                     <div class="flex flex-col justify-center">
-                                        <p class="font-normal text-sm ">ICU</p>
+                                        <p class="font-normal text-sm ">MRI-9823</p>
                                     </div>
                                     <!-- Department -->
                                     <div class="flex flex-col justify-center">
-                                        <p class="font-normal text-sm ">ICU Bed</p>
+                                        <p class="font-normal text-sm ">Radiology</p>
                                     </div>
                                     <!-- Status Dropdown -->
                                     <div class="relative flex flex-col justify-center">
@@ -1810,32 +1836,24 @@
                             <div
                                 class="card-equipment bg-white mt-4 p-4 rounded-md shadow-appointments border border-cool-slate-gray transition cursor-pointer ">
                                 <div class="flex lg:justify-between items-center flex-col lg:flex-row gap-4">
-                                    <div class="relative flex flex-col justify-center">
-                                        <button
-                                            class="assign-btn flex items-center gap-3 text-dodger-blue bg-light-dodger-blue text-sm font-semibold p-2 rounded-md  transition cursor-pointer">
-                                            <span class="status-text">Assign to</span>
-                                            <span
-                                                class="material-symbols-outlined  text-base font-semibold">keyboard_arrow_down</span>
-                                        </button>
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex flex-col">
+                                            <p class="font-semibold text-sm text-jet-black">MRI Scanner 1</p>
 
-
+                                        </div>
                                     </div>
-
                                     <!-- Equipment Type -->
                                     <div class="flex flex-col justify-center">
-                                        <p class="font-normal text-sm ">101</p>
+                                        <p class="font-normal text-sm ">MRI</p>
                                     </div>
-
                                     <!-- Equipment ID -->
                                     <div class="flex flex-col justify-center">
-                                        <p class="font-normal text-sm ">General</p>
+                                        <p class="font-normal text-sm ">MRI-9823</p>
                                     </div>
-
                                     <!-- Department -->
                                     <div class="flex flex-col justify-center">
-                                        <p class="font-normal text-sm ">Private</p>
+                                        <p class="font-normal text-sm ">Radiology</p>
                                     </div>
-
                                     <!-- Status Dropdown -->
                                     <div class="relative flex flex-col justify-center">
                                         <button
@@ -1858,14 +1876,13 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div
                                 class="card-equipment bg-white mt-4 p-4 rounded-md shadow-appointments border border-cool-slate-gray transition cursor-pointer ">
                                 <div class="flex lg:justify-between items-center flex-col lg:flex-row gap-4">
                                     <div class="relative flex flex-col justify-center">
                                         <button
-                                            class=" assign-btn flex items-center gap-3 text-dodger-blue bg-light-dodger-blue text-sm font-semibold p-2 rounded-md  transition cursor-pointer">
-                                            <span class="status-text">Assign to</span>
+                                            class=" flex items-center gap-3 text-dodger-blue bg-light-dodger-blue text-sm font-semibold p-2 rounded-md  transition cursor-pointer">
+                                            <span class="status-text">Select</span>
                                             <span
                                                 class="material-symbols-outlined  text-base font-semibold">keyboard_arrow_down</span>
                                         </button>
@@ -1888,17 +1905,81 @@
 
                                     <!-- Equipment Type -->
                                     <div class="flex flex-col justify-center">
-                                        <p class="font-normal text-sm ">101</p>
+                                        <p class="font-normal text-sm ">-</p>
                                     </div>
 
                                     <!-- Equipment ID -->
                                     <div class="flex flex-col justify-center">
-                                        <p class="font-normal text-sm ">General</p>
+                                        <p class="font-normal text-sm ">-</p>
                                     </div>
 
                                     <!-- Department -->
                                     <div class="flex flex-col justify-center">
-                                        <p class="font-normal text-sm ">Private</p>
+                                        <p class="font-normal text-sm ">-</p>
+                                    </div>
+
+                                    <!-- Status Dropdown -->
+                                    <div class="relative flex flex-col justify-center">
+                                        <button
+                                            class="status-btn flex items-center justify-between text-dodger-blue bg-light-dodger-blue text-sm font-semibold p-2 rounded-md  transition cursor-pointer w-[128px]">
+                                            <span class="status-text">Available</span>
+                                            <span
+                                                class="material-symbols-outlined  text-base font-semibold">keyboard_arrow_down</span>
+                                        </button>
+
+                                        <!-- Dropdown Menu -->
+                                        <div
+                                            class="status-dropdown hidden absolute left-0 top-full mt-2 w-[128px] bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                                            <p
+                                                class="dropdown-item px-3 py-2 text-sm font-semibold text-dodger-blue hover:bg-light-dodger-blue cursor-pointer">
+                                                Available</p>
+                                            <p
+                                                class="dropdown-item px-3 py-2 text-sm font-semibold text-dodger-blue hover:bg-light-dodger-blue cursor-pointer">
+                                                Occupied</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                class="card-equipment bg-white mt-4 p-4 rounded-md shadow-appointments border border-cool-slate-gray transition cursor-pointer ">
+                                <div class="flex lg:justify-between items-center flex-col lg:flex-row gap-4">
+                                    <div class="relative flex flex-col justify-center">
+                                        <button
+                                            class=" flex items-center gap-3 text-dodger-blue bg-light-dodger-blue text-sm font-semibold p-2 rounded-md  transition cursor-pointer">
+                                            <span class="status-text">Select</span>
+                                            <span
+                                                class="material-symbols-outlined  text-base font-semibold">keyboard_arrow_down</span>
+                                        </button>
+
+                                        <!-- Dropdown Menu -->
+                                        <div
+                                            class="status-dropdown hidden absolute left-0 top-full mt-2 w-44 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                                            <p
+                                                class="dropdown-item px-3 py-2 text-sm font-semibold text-dodger-blue hover:bg-light-dodger-blue cursor-pointer">
+                                                Assign to</p>
+                                            <p
+                                                class="dropdown-item px-3 py-2 text-sm font-semibold text-dodger-blue hover:bg-light-dodger-blue cursor-pointer">
+                                                Pt. Rachel Kate</p>
+                                            <p
+                                                class="dropdown-item px-3 py-2 text-sm font-semibold text-dodger-blue hover:bg-light-dodger-blue cursor-pointer">
+                                                Pt. Joleen Smith</p>
+
+                                        </div>
+                                    </div>
+
+                                    <!-- Equipment Type -->
+                                    <div class="flex flex-col justify-center">
+                                        <p class="font-normal text-sm ">-</p>
+                                    </div>
+
+                                    <!-- Equipment ID -->
+                                    <div class="flex flex-col justify-center">
+                                        <p class="font-normal text-sm ">-</p>
+                                    </div>
+
+                                    <!-- Department -->
+                                    <div class="flex flex-col justify-center">
+                                        <p class="font-normal text-sm ">-</p>
                                     </div>
 
                                     <!-- Status Dropdown -->
@@ -1929,8 +2010,8 @@
                                 <div class="flex lg:justify-between items-center flex-col lg:flex-row gap-4">
                                     <div class="relative flex flex-col justify-center">
                                         <button
-                                            class=" assign-btn flex items-center gap-3 text-dodger-blue bg-light-dodger-blue text-sm font-semibold p-2 rounded-md  transition cursor-pointer">
-                                            <span class="status-text">Assign to</span>
+                                            class=" flex items-center gap-3 text-dodger-blue bg-light-dodger-blue text-sm font-semibold p-2 rounded-md  transition cursor-pointer">
+                                            <span class="status-text">Select</span>
                                             <span
                                                 class="material-symbols-outlined  text-base font-semibold">keyboard_arrow_down</span>
                                         </button>
@@ -1953,17 +2034,17 @@
 
                                     <!-- Equipment Type -->
                                     <div class="flex flex-col justify-center">
-                                        <p class="font-normal text-sm ">101</p>
+                                        <p class="font-normal text-sm ">-</p>
                                     </div>
 
                                     <!-- Equipment ID -->
                                     <div class="flex flex-col justify-center">
-                                        <p class="font-normal text-sm ">General</p>
+                                        <p class="font-normal text-sm ">-</p>
                                     </div>
 
                                     <!-- Department -->
                                     <div class="flex flex-col justify-center">
-                                        <p class="font-normal text-sm ">Private</p>
+                                        <p class="font-normal text-sm ">-</p>
                                     </div>
 
                                     <!-- Status Dropdown -->
@@ -1989,70 +2070,7 @@
                                 </div>
                             </div>
 
-                            <div
-                                class="card-equipment bg-white mt-4 p-4 rounded-md shadow-appointments border border-cool-slate-gray transition cursor-pointer ">
-                                <div class="flex lg:justify-between items-center flex-col lg:flex-row gap-4">
-                                    <div class="relative flex flex-col justify-center">
-                                        <button
-                                            class=" assign-btn flex items-center gap-3 text-dodger-blue bg-light-dodger-blue text-sm font-semibold p-2 rounded-md  transition cursor-pointer">
-                                            <span class="status-text">Assign to</span>
-                                            <span
-                                                class="material-symbols-outlined  text-base font-semibold">keyboard_arrow_down</span>
-                                        </button>
 
-                                        <!-- Dropdown Menu -->
-                                        <div
-                                            class="status-dropdown hidden absolute left-0 top-full mt-2 w-44 bg-white border border-gray-200 rounded-md shadow-lg z-50">
-                                            <p
-                                                class="dropdown-item px-3 py-2 text-sm font-semibold text-dodger-blue hover:bg-light-dodger-blue cursor-pointer">
-                                                Assign to</p>
-                                            <p
-                                                class="dropdown-item px-3 py-2 text-sm font-semibold text-dodger-blue hover:bg-light-dodger-blue cursor-pointer">
-                                                Pt. Rachel Kate</p>
-                                            <p
-                                                class="dropdown-item px-3 py-2 text-sm font-semibold text-dodger-blue hover:bg-light-dodger-blue cursor-pointer">
-                                                Pt. Joleen Smith</p>
-
-                                        </div>
-                                    </div>
-
-                                    <!-- Equipment Type -->
-                                    <div class="flex flex-col justify-center">
-                                        <p class="font-normal text-sm ">101</p>
-                                    </div>
-
-                                    <!-- Equipment ID -->
-                                    <div class="flex flex-col justify-center">
-                                        <p class="font-normal text-sm ">General</p>
-                                    </div>
-
-                                    <!-- Department -->
-                                    <div class="flex flex-col justify-center">
-                                        <p class="font-normal text-sm ">Private</p>
-                                    </div>
-
-                                    <!-- Status Dropdown -->
-                                    <div class="relative flex flex-col justify-center">
-                                        <button
-                                            class="status-btn flex items-center justify-between text-dodger-blue bg-light-dodger-blue text-sm font-semibold p-2 rounded-md  transition cursor-pointer w-[128px]">
-                                            <span class="status-text">Available</span>
-                                            <span
-                                                class="material-symbols-outlined  text-base font-semibold">keyboard_arrow_down</span>
-                                        </button>
-
-                                        <!-- Dropdown Menu -->
-                                        <div
-                                            class="status-dropdown hidden absolute left-0 top-full mt-2 w-[128px] bg-white border border-gray-200 rounded-md shadow-lg z-50">
-                                            <p
-                                                class="dropdown-item px-3 py-2 text-sm font-semibold text-dodger-blue hover:bg-light-dodger-blue cursor-pointer">
-                                                Available</p>
-                                            <p
-                                                class="dropdown-item px-3 py-2 text-sm font-semibold text-dodger-blue hover:bg-light-dodger-blue cursor-pointer">
-                                                Occupied</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -2078,7 +2096,7 @@
                     </div>
                 </div>
 
-                
+
                 <!--Assign Popup-->
                 <div
                     class="fixed inset-0 flex items-center justify-center bg-semi-transparent-black hidden assignPopup">
@@ -2173,7 +2191,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="/static/js/tabs.js"></script>
-<script src="/static/js/hospital-history.js"></script>
+<script src="/static/js/lab-history.js"></script>
 {% endblock %}
 

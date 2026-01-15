@@ -9,4 +9,9 @@ def history(request):
     context = get_common_context(request,user)
     if user.user_type == 'pharmacy':
         return render(request, 'pharmacy/history.html', context)
-    return render(request, 'history.html', context)
+    elif user.user_type == 'lab':
+        return render(request, 'lab/history.html', context)
+    elif user.user_type == 'hospital':
+        return render(request, 'hospital/history.html', context)
+    elif user.user_type == 'doctor':
+        return render(request, 'doctor/history.html', context)
