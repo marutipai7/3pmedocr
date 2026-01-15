@@ -12,7 +12,7 @@
                         arrow_forward_ios
                     </span>
                 </div>
-                <div class="p-5 max-w-full flex flex-col gap-5">
+                <div class="p-4 max-w-full flex flex-col gap-5">
                     <div class="flex items-center gap-2.5">
                         <span class="material-symbols-outlined !font-semibold !text-lg">group</span>
                         <span class="font-semibold text-base">Doctors</span>
@@ -222,12 +222,28 @@
                                         </div>
                                         <span class="font-normal text-xs text-spanish-gray">Specialty</span>
                                     </div>
-                                    <div class="flex items-center gap-2">
-                                        <input type="text"
-                                            class="focus:ring-0 focus:outline-none cursor-pointer w-10 font-normal text-sm placeholder:font-normal placeholder:text-sm placeholder:text-black"
-                                            placeholder="Select" readonly>
+                                    <div class="flex items-center gap-2 relative">
+                                        <span class="dropdown-text font-normal text-sm">Select</span>
                                         <span
-                                            class="material-symbols-outlined text-dodger-blue cursor-pointer">keyboard_arrow_down</span>
+                                            class="material-symbols-outlined text-dodger-blue cursor-pointer dropdown-btn">keyboard_arrow_down</span>
+                                        <div
+                                            class="dropdown hidden absolute right-0 top-full mt-2 w-[128px] h-[150px] overflow-y-auto scroll bg-white border border-blue-haze rounded-md shadow-lg z-50">
+                                            <p
+                                                class="dropdown-item px-3 py-2 text-sm font-normal  cursor-pointer hover:bg-dodger-blue hover:text-white hover:rounded-tr-md hover:rounded-tl-md">
+                                                Neurologist</p>
+                                            <p
+                                                class="dropdown-item px-3 py-2 text-sm font-normal  cursor-pointer hover:bg-dodger-blue hover:text-white">
+                                                Dermatologist</p>
+                                            <p
+                                                class="dropdown-item px-3 py-2 text-sm font-normal  cursor-pointer hover:bg-dodger-blue hover:text-white">
+                                                Orthopedic</p>
+                                            <p
+                                                class="dropdown-item px-3 py-2 text-sm font-normal  cursor-pointer hover:bg-dodger-blue hover:text-white">
+                                                ENT Specialist</p>
+                                            <p
+                                                class="dropdown-item px-3 py-2 text-sm font-normal  cursor-pointer hover:bg-dodger-blue hover:text-white">
+                                                Cardiologist</p>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -240,12 +256,28 @@
                                         </div>
                                         <span class="font-normal text-xs text-spanish-gray">Education</span>
                                     </div>
-                                    <div class="flex items-center gap-2">
-                                        <input type="text"
-                                            class="focus:ring-0 focus:outline-none cursor-pointer w-10 font-normal text-sm placeholder:font-normal placeholder:text-sm placeholder:text-black"
-                                            placeholder="Select" readonly>
+                                    <div class="flex items-center gap-2 relative">
+                                        <span class="dropdown-text font-normal text-sm">Select</span>
                                         <span
-                                            class="material-symbols-outlined text-dodger-blue cursor-pointer">keyboard_arrow_down</span>
+                                            class="material-symbols-outlined text-dodger-blue cursor-pointer dropdown-btn">keyboard_arrow_down</span>
+                                        <div
+                                            class="dropdown hidden absolute right-0 top-full mt-2 w-[140px] h-[150px] overflow-y-auto scroll bg-white border border-blue-haze rounded-md shadow-lg z-50">
+                                            <p
+                                                class="dropdown-item px-3 py-2 text-sm font-normal  cursor-pointer hover:bg-dodger-blue hover:text-white hover:rounded-tr-md hover:rounded-tl-md">
+                                                MBBS, DM in neurology</p>
+                                            <p
+                                                class="dropdown-item px-3 py-2 text-sm font-normal  cursor-pointer hover:bg-dodger-blue hover:text-white">
+                                                MS Ortho</p>
+                                            <p
+                                                class="dropdown-item px-3 py-2 text-sm font-normal  cursor-pointer hover:bg-dodger-blue hover:text-white">
+                                                BHMS</p>
+                                            <p
+                                                class="dropdown-item px-3 py-2 text-sm font-normal  cursor-pointer hover:bg-dodger-blue hover:text-white">
+                                                MD General Medicine</p>
+                                            <p
+                                                class="dropdown-item px-3 py-2 text-sm font-normal  cursor-pointer hover:bg-dodger-blue hover:text-white">
+                                                BUMS</p>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -421,8 +453,8 @@
                                     <span class="font-semibold text-sm">Register</span>
                                 </button>
                                 <button
-                                    class="w-[180px] h-10 flex items-center justify-center rounded-lg border border-strong-red cursor-pointer close-popup"
-                                    data-popup="addDoctorPopup">
+                                    class="w-[180px] h-10 flex items-center justify-center rounded-lg border border-strong-red cursor-pointer cancelBtn"
+                                    >
                                     <span class="font-semibold text-sm text-strong-red">Cancel</span>
                                 </button>
                             </div>
@@ -635,7 +667,7 @@
                                         <span class="font-normal text-sm">07/01/2025</span>
                                         <span class="font-normal text-sm text-blue-haze">Not Available</span>
                                     </div>
-                                     <div class="flex items-center justify-between">
+                                    <div class="flex items-center justify-between">
                                         <span class="font-normal text-sm">08/01/2025</span>
                                         <span class="font-normal text-sm text-blue-haze">Not Available</span>
                                     </div>
@@ -643,7 +675,7 @@
                                         <span class="font-normal text-sm">09/01/2025</span>
                                         <span class="font-normal text-sm text-blue-haze">Not Available</span>
                                     </div>
-                                     <div class="flex items-center justify-between">
+                                    <div class="flex items-center justify-between">
                                         <span class="font-normal text-sm">10/01/2025</span>
                                         <span class="font-normal text-sm text-blue-haze">Not Available</span>
                                     </div>
@@ -651,7 +683,7 @@
                                         <span class="font-normal text-sm">11/01/2025</span>
                                         <span class="font-normal text-sm text-blue-haze">Not Available</span>
                                     </div>
-                                     <div class="flex items-center justify-between">
+                                    <div class="flex items-center justify-between">
                                         <span class="font-normal text-sm">12/01/2025</span>
                                         <span class="font-normal text-sm text-blue-haze">Not Available</span>
                                     </div>

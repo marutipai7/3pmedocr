@@ -1366,11 +1366,16 @@
                 </div>
 
                 <!-- Premium Section -->
-                {% include 'partials/premium_section.html' %}
+                {% include 'hospital/partials/premium_section.html' %}
+
+                <!--Services without subscription section-->
+                {% include 'hospital/partials/services_without_premium.html'%}
             </div>
 
             <!-- Add Service Popup -->
              {% include 'hospital/partials/add_services_popup.html'%}
+
+             
 
 {% endblock %}
 

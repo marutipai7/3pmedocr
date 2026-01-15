@@ -306,7 +306,7 @@ $(document).ready(function () {
               <span class="font-semibold text-sm">${doctor.name}</span>
               <span class="font-normal text-sm text-spanish-gray">${doctor.phone}</span>
             </div>
-            <span class="font-semibold text-sm text-dodger-blue">${doctor.specialty}</span>
+            <span class="font-semibold text-sm text-primary-blue">${doctor.specialty}</span>
             
             <div class="bg-soft-peach-cream rounded-tr-full rounded-br-full absolute left-0 top-8 flex items-center gap-1.5 justify-center p-2.5">
               <span class="material-symbols-outlined material-filled text-warm-apricot-orange">star</span>
@@ -324,7 +324,7 @@ $(document).ready(function () {
     let pageButtons = "";
     for (let i = 1; i <= totalPages; i++) {
       const activeClass =
-        i === currentPage ? "bg-dodger-blue text-white " : "bg-gray-200 ";
+        i === currentPage ? "bg-primary-blue text-white " : "bg-gray-200 ";
       pageButtons += `<button class="w-8 h-8 cursor-pointer rounded-lg font-medium transition-all ${activeClass} page-btn" data-page="${i}">${i}</button>`;
     }
     $("#pageNumbers").html(pageButtons);
@@ -449,5 +449,510 @@ $(document).ready(function () {
       $(".material-symbols-outlined").css("transform", "rotate(0deg)");
     }
   });
-    $('.material-symbols-outlined').css('transition', 'transform 0.3s ease');
+  $(".material-symbols-outlined").css("transition", "transform 0.3s ease");
+
+  // Create a hidden file input
+  const fileInput = $("<input>", {
+    type: "file",
+    accept: "image/*",
+    style: "display: none;",
+  });
+
+  // Append it to the body
+  $("body").append(fileInput);
+
+  // Handle click on upload div
+  $(".upload-image").on("click", function () {
+    fileInput.click();
+  });
+
+  // Handle file selection
+  fileInput.on("change", function (e) {
+    const file = e.target.files[0];
+
+    if (file) {
+      // Validate if it's an image
+      if (!file.type.match("image.*")) {
+        alert("Please select an image file");
+        return;
+      }
+
+      // Create a FileReader to preview the image
+      const reader = new FileReader();
+
+      reader.onload = function (event) {
+        // Display the image with remove and reupload buttons
+        $(".upload-image").html(`
+                    <div class="relative w-full h-full">
+                        <img src="${event.target.result}" alt="Uploaded" class="w-full h-full object-cover rounded-lg">
+                        <div class="absolute -top-4 right-0 flex gap-1">
+                            <button class="btn-reupload  text-primary-blue cursor-pointer">
+                                <span class="material-symbols-outlined !text-sm">refresh</span>
+                            </button>
+                             <button class="btn-remove  text-strong-red cursor-pointer">
+                                <span class="material-symbols-outlined !text-sm">close</span>
+                            </button>
+                        </div>
+                    </div>
+                `);
+
+        // Prevent click event from bubbling to parent
+        $(".btn-remove, .btn-reupload").on("click", function (e) {
+          e.stopPropagation();
+        });
+
+        // Handle remove button
+        $(".btn-remove").on("click", function () {
+          resetUploadDiv();
+        });
+
+        // Handle reupload button
+        $(".btn-reupload").on("click", function () {
+          fileInput.click();
+        });
+      };
+
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Function to reset upload div to original state
+  function resetUploadDiv() {
+    $(".upload-image").html(`
+            <span class="material-symbols-outlined text-primary-blue text-!6xl">upload</span>
+        `);
+    fileInput.val(""); // Clear the file input
+  }
+
+  $(document).ready(function () {
+    // Toggle dropdown on button click
+    $(".dropdown-btn").on("click", function (e) {
+      e.stopPropagation();
+
+      const $dropdown = $(this).siblings(".dropdown");
+      const $arrow = $(this);
+
+      // Close other dropdowns
+      $(".dropdown").not($dropdown).addClass("hidden");
+      $(".dropdown-btn").not($arrow).css("transform", "rotate(0deg)");
+
+      // Toggle current dropdown
+      $dropdown.toggleClass("hidden");
+
+      // Toggle arrow rotation
+      if ($dropdown.hasClass("hidden")) {
+        $arrow.css("transform", "rotate(0deg)");
+      } else {
+        $arrow.css("transform", "rotate(180deg)");
+      }
+    });
+
+    // Handle dropdown item selection
+    $(".dropdown-item").on("click", function () {
+      const selectedText = $(this).text();
+      const $dropdownContainer = $(this).closest(".relative");
+      const $dropdownText = $dropdownContainer.find(".dropdown-text");
+      const $dropdown = $(this).closest(".dropdown");
+      const $arrow = $dropdownContainer.find(".dropdown-btn");
+
+      // Update the dropdown text
+      $dropdownText.text(selectedText);
+
+      // Close dropdown
+      $dropdown.addClass("hidden");
+      $arrow.css("transform", "rotate(0deg)");
+
+      // Optional: Log or handle the selection
+      console.log("Selected:", selectedText);
+    });
+
+    // Close dropdown when clicking outside
+    $(document).on("click", function (e) {
+      if (!$(e.target).closest(".relative").length) {
+        $(".dropdown").addClass("hidden");
+        $(".dropdown-btn").css("transform", "rotate(0deg)");
+      }
+    });
+
+    // Add transition to all dropdown buttons for smooth rotation
+    $(".dropdown-btn").css("transition", "transform 0.3s ease");
+  });
+
+  // Initialize value
+  let value = 0;
+
+  // Handle increase button click
+  $(".increaseBtn").on("click", function () {
+    const $counter = $(this).siblings("span");
+    value = parseInt($counter.text()) || 0;
+    value++;
+    $counter.text(value);
+  });
+
+  // Handle decrease button click
+  $(".decreaseBtn").on("click", function () {
+    const $counter = $(this).siblings("span");
+    value = parseInt($counter.text()) || 0;
+
+    // Prevent negative values
+    if (value > 0) {
+      value--;
+      $counter.text(value);
+    }
+  });
+
+  // Configure Toastr options
+  toastr.options = {
+    closeButton: true,
+    progressBar: true,
+    positionClass: "toast-top-right",
+    timeOut: "3000",
+  };
+
+  // Handle check icon click
+  $('.material-symbols-outlined:contains("check")').on("click", function () {
+    const $checkIcon = $(this);
+    const $row = $checkIcon.closest(".flex.items-center.justify-between");
+    const $timerIcon = $row.find(
+      '.material-symbols-outlined:contains("timer")'
+    );
+    const $statusText = $row.find("span.font-normal.text-sm").last();
+
+    // Toggle selection
+    if ($checkIcon.hasClass("text-primary-blue")) {
+      // Deselect - change back to gray
+      $checkIcon.removeClass("text-primary-blue").addClass("text-light-gray");
+
+      // Reset timer icon and text
+      $timerIcon.removeClass("text-primary-blue").addClass("text-light-gray");
+      $statusText
+        .text("Not Available")
+        .removeClass("text-primary-blue")
+        .addClass("text-light-gray");
+
+      // Remove time picker if exists
+      $row.find(".time-selector").remove();
+    } else {
+      // Select - change to blue (but keep text as "Not Available")
+      $checkIcon.removeClass("text-light-gray").addClass("text-primary-blue");
+    }
+  });
+
+  // Handle timer icon click
+  $('.material-symbols-outlined:contains("timer")').on("click", function () {
+    const $timerIcon = $(this);
+    const $row = $timerIcon.closest(".flex.items-center.justify-between");
+    const $checkIcon = $row.find(
+      '.material-symbols-outlined:contains("check")'
+    );
+    const $statusText = $row.find("span.font-normal.text-sm").last();
+
+    // Check if day is selected
+    if (!$checkIcon.hasClass("text-primary-blue")) {
+      toastr.error("Please select the day first by clicking the check icon");
+      return;
+    }
+
+    // Check if time selector already exists
+    if ($row.find(".time-selector").length > 0) {
+      $row.find(".time-selector").remove();
+      return;
+    }
+
+    // Create inline time selector
+    const timeSelectorHTML = `
+            <div class="time-selector absolute right-0 top-full mt-2 bg-white border border-gray-300 rounded-lg shadow-lg p-4 z-50 w-[300px]">
+                <div class="flex flex-col gap-3">
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm w-[50px]">From:</label>
+                        <input type="time" class="time-from border border-gray-300 rounded px-2 py-1 flex-1" value="09:00">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm w-[50px]">To:</label>
+                        <input type="time" class="time-to border border-gray-300 rounded px-2 py-1 flex-1" value="13:00">
+                    </div>
+                    <button class="apply-time-btn bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm">Apply</button>
+                </div>
+            </div>
+        `;
+
+    // Make the parent container relative
+    const $container = $row.find(".flex.items-center.gap-10");
+    $container.css("position", "relative");
+    $container.append(timeSelectorHTML);
+
+    // Handle apply button
+    $row.find(".apply-time-btn").on("click", function (e) {
+      e.stopPropagation();
+
+      const timeFrom = $row.find(".time-from").val();
+      const timeTo = $row.find(".time-to").val();
+
+      if (!timeFrom || !timeTo) {
+        toastr.error("Please select both start and end times");
+        return;
+      }
+
+      // Convert 24h to 12h format
+      const formatTime = (time) => {
+        const [hours, minutes] = time.split(":");
+        const hour = parseInt(hours);
+        const ampm = hour >= 12 ? "PM" : "AM";
+        const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+        return `${displayHour}:${minutes} ${ampm}`;
+      };
+
+      const formattedFrom = formatTime(timeFrom);
+      const formattedTo = formatTime(timeTo);
+
+      // Update the status text with time
+      $statusText
+        .text(`${formattedFrom} - ${formattedTo}`)
+        .removeClass("text-light-gray")
+        .addClass("text-primary-blue");
+
+      // Change timer icon color to blue
+      $timerIcon.removeClass("text-light-gray").addClass("text-primary-blue");
+
+      // Remove time selector
+      $row.find(".time-selector").remove();
+    });
+  });
+
+  // Close time selector when clicking outside
+  $(document).on("click", function (e) {
+    if (
+      !$(e.target).closest(
+        '.time-selector, .material-symbols-outlined:contains("timer")'
+      ).length
+    ) {
+      $(".time-selector").remove();
+    }
+  });
+
+  // Handle Register button click with validation
+  $(".registerDocBtn").on("click", function (e) {
+    e.preventDefault();
+
+    // Validate the form
+    if (validateAddDoctorForm()) {
+      // Show success toaster
+      toastr.success("Doctor registered successfully!");
+
+      // Close the popup
+      $(".addDoctorPopup").addClass("hidden").removeClass("flex");
+
+      // Clear all form fields after a short delay
+      setTimeout(function () {
+        clearAddDoctorForm();
+      }, 300);
+    }
+  });
+
+  // Handle Cancel button click
+  $(".cancelBtn").on("click", function (e) {
+    e.preventDefault();
+
+    // Clear the form
+    clearAddDoctorForm();
+
+    // Close the popup
+    $(".addDoctorPopup").addClass("hidden").removeClass("flex");
+  });
+
+  // Validation function
+  // Validation function
+  function validateAddDoctorForm() {
+    const $popup = $(".addDoctorPopup");
+
+    // Check if image is uploaded
+    const hasImage = $popup.find(".upload-image img").length > 0;
+    if (!hasImage) {
+      toastr.error("Please upload a doctor photo");
+      return false;
+    }
+
+    // Get all input values
+    const name = $popup.find('input[type="text"]').eq(0).val().trim();
+    const phone = $popup.find('input[type="number"]').eq(0).val().trim();
+    const gender = $popup.find('input[type="text"]').eq(1).val().trim();
+    const age = $popup.find('input[type="number"]').eq(1).val().trim();
+
+    // Validate Name
+    if (!name) {
+      toastr.error("Please enter doctor name");
+      $popup.find('input[type="text"]').eq(0).focus();
+      return false;
+    }
+
+    // Validate Phone Number
+    if (!phone) {
+      toastr.error("Please enter phone number");
+      $popup.find('input[type="number"]').eq(0).focus();
+      return false;
+    }
+
+    // Validate phone number format (10 digits)
+    if (phone.length !== 10 || !/^\d{10}$/.test(phone)) {
+      toastr.error("Please enter a valid 10-digit phone number");
+      $popup.find('input[type="number"]').eq(0).focus();
+      return false;
+    }
+
+    // Validate Gender
+    if (!gender) {
+      toastr.error("Please enter gender");
+      $popup.find('input[type="text"]').eq(1).focus();
+      return false;
+    }
+
+    // Validate Age
+    if (!age) {
+      toastr.error("Please enter age");
+      $popup.find('input[type="number"]').eq(1).focus();
+      return false;
+    }
+
+    // Validate age range
+    const ageNum = parseInt(age);
+    if (ageNum < 18 || ageNum > 100) {
+      toastr.error("Please enter a valid age between 18 and 100");
+      $popup.find('input[type="number"]').eq(1).focus();
+      return false;
+    }
+
+    // Validate Specialty dropdown
+    const specialty = $popup.find(".dropdown-text").eq(0).text().trim();
+    if (specialty === "Select") {
+      toastr.error("Please select a specialty");
+      return false;
+    }
+
+    // Validate Education dropdown
+    const education = $popup.find(".dropdown-text").eq(1).text().trim();
+    if (education === "Select") {
+      toastr.error("Please select education qualification");
+      return false;
+    }
+
+    // Validate Experience
+    const experience = parseInt(
+      $popup.find(".increaseBtn").siblings("span").text()
+    );
+    if (experience === 0) {
+      toastr.error("Please add years of experience");
+      return false;
+    }
+
+    // Validate Fees
+    const homeVisitFee = $popup.find('input[type="number"]').eq(2).val().trim();
+    const hospitalVisitFee = $popup
+      .find('input[type="number"]')
+      .eq(3)
+      .val()
+      .trim();
+
+    if (!homeVisitFee || parseFloat(homeVisitFee) <= 0) {
+      toastr.error("Please enter home visit fee");
+      $popup.find('input[type="number"]').eq(2).focus();
+      return false;
+    }
+
+    if (!hospitalVisitFee || parseFloat(hospitalVisitFee) <= 0) {
+      toastr.error("Please enter hospital visit fee");
+      $popup.find('input[type="number"]').eq(3).focus();
+      return false;
+    }
+
+    // Validate Availability - at least one day must be selected with time
+    let hasAvailability = false;
+    let selectedDaysWithoutTime = [];
+
+    $popup
+      .find(
+        ".bg-white.border.border-blue-haze.p-4 > .flex.items-center.justify-between"
+      )
+      .each(function () {
+        const $row = $(this);
+        const dayName = $row
+          .find("span.font-normal.text-sm")
+          .eq(0)
+          .text()
+          .trim();
+        const $checkIcon = $row.find(
+          '.material-symbols-outlined:contains("check")'
+        );
+        const $timerIcon = $row.find(
+          '.material-symbols-oriented:contains("timer")'
+        );
+        const $statusText = $row
+          .find(".flex.items-center.gap-10 span.font-normal.text-sm")
+          .text()
+          .trim();
+
+        // Check if day is selected (check icon is blue)
+        if ($checkIcon.hasClass("text-primary-blue")) {
+          // Check if time is also set (status text is not "Not Available")
+          if ($statusText !== "Not Available") {
+            hasAvailability = true;
+          } else {
+            selectedDaysWithoutTime.push(dayName);
+          }
+        }
+      });
+
+    // Check if any day is selected but time not set
+    if (selectedDaysWithoutTime.length > 0) {
+      toastr.warning(
+        `Please set time for: ${selectedDaysWithoutTime.join(", ")}`
+      );
+      return false;
+    }
+
+    // Check if at least one day with time is set
+    if (!hasAvailability) {
+      toastr.error("Please select at least one day and set availability time");
+      return false;
+    }
+
+    // All validations passed
+    return true;
+  }
+
+  // Function to clear all form fields in Add Doctor popup
+  function clearAddDoctorForm() {
+    // Reset image upload
+    resetUploadDiv();
+
+    // Clear all text inputs
+    $('.addDoctorPopup input[type="text"]').val("");
+    $('.addDoctorPopup input[type="number"]').val("");
+
+    // Reset dropdowns
+    $(".addDoctorPopup .dropdown-text").text("Select");
+    $(".addDoctorPopup .dropdown").addClass("hidden");
+    $(".addDoctorPopup .dropdown-btn").css("transform", "rotate(0deg)");
+
+    // Reset experience counter
+    $(".addDoctorPopup .increaseBtn").siblings("span").text("0");
+
+    // Reset all check icons to gray
+    $('.addDoctorPopup .material-symbols-outlined:contains("check")')
+      .removeClass("text-primary-blue")
+      .addClass("text-light-gray");
+
+    // Reset all timer icons to gray
+    $('.addDoctorPopup .material-symbols-outlined:contains("timer")')
+      .removeClass("text-primary-blue")
+      .addClass("text-light-gray");
+
+    // Reset all availability text to "Not Available"
+    $(".addDoctorPopup .flex.items-center.gap-10 span.font-normal.text-sm")
+      .text("Not Available")
+      .removeClass("text-primary-blue")
+      .addClass("text-light-gray");
+
+    // Remove any open time selectors
+    $(".addDoctorPopup .time-selector").remove();
+  }
 });
