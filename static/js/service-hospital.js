@@ -1,6 +1,5 @@
 /* -------- SERVICE CARD HANDLER -------- */
 
-
 const serviceCardTemplate = () => `
 <div class="service-card rounded-lg px-4 py-6 relative bg-[#F9FAFB]">
       <button class="remove-service absolute top-3 right-3 text-ebony hover:text-red-500">✕</button>
@@ -17,7 +16,7 @@ const serviceCardTemplate = () => `
                 </span>
             </button>
 
-            <ul class="dropdown-menu hidden absolute z-20 mt-1 w-1/2 bg-white border border-primary-blue rounded shadow text-sm sm:text-base text-dark-gray font-normal h-40 overflow-y-auto scroll">
+            <ul class="dropdown-menu hidden absolute z-20 mt-1 w-1/2 bg-white border border-dodger-blue rounded shadow text-sm sm:text-base text-dark-gray font-normal h-40 overflow-y-auto scroll">
                 <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Fever</li>
                 <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Cold</li>
                 <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Body Ache</li>
@@ -54,7 +53,7 @@ const serviceCardTemplate = () => `
                     </span>
                 </button>
 
-                <ul class="dropdown-menu hidden absolute z-20 mt-1 w-1/2 bg-white border border-primary-blue rounded shadow text-sm sm:text-base text-dark-gray font-normal h-40 overflow-y-auto scroll">
+                <ul class="dropdown-menu hidden absolute z-20 mt-1 w-1/2 bg-white border border-dodger-blue rounded shadow text-sm sm:text-base text-dark-gray font-normal h-40 overflow-y-auto scroll">
                     <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Next Day</li>
                     <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Emergency Surgery</li>
                     <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Day Care Surgery</li>
@@ -74,17 +73,16 @@ const serviceCardTemplate = () => `
   </div>
 `;
 
-$(document).on('click', '.add-service', function () {
-    const stepContent = $(this).closest('.step-content');
-    stepContent.find('.services-list').append(serviceCardTemplate());
+$(document).on("click", ".add-service", function () {
+  const stepContent = $(this).closest(".step-content");
+  stepContent.find(".services-list").append(serviceCardTemplate());
 });
 
-$(document).on('click', '.remove-service', function () {
-    $(this).closest('.service-card').remove();
+$(document).on("click", ".remove-service", function () {
+  $(this).closest(".service-card").remove();
 });
 
 /* -------- SERVICE CARD HANDLER -------- */
-
 
 const bedServiceCardTemplate = () => `
 <div class="service-card rounded-lg px-4 py-3 relative bg-[#F9FAFB]">
@@ -101,7 +99,7 @@ const bedServiceCardTemplate = () => `
                 </span>
             </button>
 
-            <ul class="dropdown-menu hidden absolute z-20 mt-1 w-1/2 bg-white border border-primary-blue rounded shadow text-sm sm:text-base text-dark-gray font-normal h-40 overflow-y-auto scroll">
+            <ul class="dropdown-menu hidden absolute z-20 mt-1 w-1/2 bg-white border border-dodger-blue rounded shadow text-sm sm:text-base text-dark-gray font-normal h-40 overflow-y-auto scroll">
                 <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Fever</li>
                 <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Cold</li>
                 <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Body Ache</li>
@@ -138,7 +136,7 @@ const bedServiceCardTemplate = () => `
                     </span>
                 </button>
 
-                <ul class="dropdown-menu hidden absolute z-20 mt-1 w-1/2 bg-white border border-primary-blue rounded shadow text-sm sm:text-base text-dark-gray font-normal h-40 overflow-y-auto scroll">
+                <ul class="dropdown-menu hidden absolute z-20 mt-1 w-1/2 bg-white border border-dodger-blue rounded shadow text-sm sm:text-base text-dark-gray font-normal h-40 overflow-y-auto scroll">
                     <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Next Day</li>
                     <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Emergency Surgery</li>
                     <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Day Care Surgery</li>
@@ -158,52 +156,82 @@ const bedServiceCardTemplate = () => `
   </div>
 `;
 
-$(document).on('click', '.add-service-bed', function () {
-    const stepContent = $(this).closest('.step-content');
-    stepContent.find('.bed-services-list').append(bedServiceCardTemplate());
+$(document).on("click", ".add-service-bed", function () {
+  const stepContent = $(this).closest(".step-content");
+  stepContent.find(".bed-services-list").append(bedServiceCardTemplate());
 });
 
-$(document).on('click', '.remove-service-bed', function () {
-    $(this).closest('.service-card').remove();
+$(document).on("click", ".remove-service-bed", function () {
+  $(this).closest(".service-card").remove();
 });
 
 /* ---------------- OPEN FILE MANAGER ---------------- */
-$(document).on('click', '.upload-btn, .upload-box', function (e) {
-    e.stopPropagation();
-    $(this).closest('.file-upload-wrapper').find('.file-input').trigger('click');
+$(document).on("click", ".upload-btn, .upload-box", function (e) {
+  e.stopPropagation();
+  $(this).closest(".file-upload-wrapper").find(".file-input").trigger("click");
 });
 
-$(document).on('change', '.file-input', function () {
-    const wrapper = $(this).closest('.file-upload-wrapper');
-    const file = this.files[0];
+$(document).on("change", ".file-input", function () {
+  const wrapper = $(this).closest(".file-upload-wrapper");
+  const file = this.files[0];
 
-    if (!file) return;
+  if (!file) return;
 
-    wrapper.find('.file-name').text(file.name);
-    wrapper.find('.remove-file').removeClass('hidden');
+  wrapper.find(".file-name").text(file.name);
+  wrapper.find(".remove-file").removeClass("hidden");
 
-    // Enable submit
-    wrapper.find('.submit-btn')
-        .prop('disabled', false)
-        .removeClass('bg-light-gray cursor-not-allowed')
-        .addClass('bg-primary-blue text-white');
+  // Enable submit
+  wrapper
+    .find(".submit-btn")
+    .prop("disabled", false)
+    .removeClass("bg-light-gray cursor-not-allowed")
+    .addClass("bg-dodger-blue text-white");
 });
 
-$(document).on('click', '.remove-file', function (e) {
-    e.stopPropagation();
+$(document).on("click", ".remove-file", function (e) {
+  e.stopPropagation();
 
-    const wrapper = $(this).closest('.file-upload-wrapper');
+  const wrapper = $(this).closest(".file-upload-wrapper");
 
-    // Reset input
-    wrapper.find('.file-input').val('');
+  // Reset input
+  wrapper.find(".file-input").val("");
 
-    // Reset UI
-    wrapper.find('.file-name').text('Upload CSV File');
-    $(this).addClass('hidden');
+  // Reset UI
+  wrapper.find(".file-name").text("Upload CSV File");
+  $(this).addClass("hidden");
 
-    // Disable submit again
-    wrapper.find('.submit-btn')
-        .prop('disabled', true)
-        .removeClass('bg-primary-blue text-white')
-        .addClass('bg-light-gray cursor-not-allowed');
+  // Disable submit again
+  wrapper
+    .find(".submit-btn")
+    .prop("disabled", true)
+    .removeClass("bg-dodger-blue text-white")
+    .addClass("bg-light-gray cursor-not-allowed");
+});
+
+$(document).on("click", '#step-3 button:contains("Pay Now")', function () {
+  // Hide services section
+  $(".services-section").addClass("hidden");
+
+  // Show premium section
+  $(".premium-section").removeClass("hidden");
+  initializeTabs();
+  // Scroll to top of premium section
+  $(".premium-section")[0].scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
+});
+
+$(document).on("click", '#step-3 button:contains("Next")', function () {
+  // Hide services section
+  $(".services-section").addClass("hidden");
+
+  // Show premium section
+  $(".services-without-subscription").removeClass("hidden");
+  initializeTabs();
+  // Scroll to top of premium section
+  $(".services-without-subscription")[0].scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
 });
