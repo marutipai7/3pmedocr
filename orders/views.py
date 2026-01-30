@@ -15,7 +15,6 @@ def orders(request):
         .filter(
             order_status__in=[
                 OrderStatusChoices.PENDING,
-                OrderStatusChoices.CONFIRMED,
             ]
         )
         .defer(
@@ -61,21 +60,17 @@ def orders(request):
     print(f"Cancelled : {total_cancelled}")
     print("========================\n")
 
-    print("\n===== PENDING & UPCOMING ORDERS =====")
-    for order in orders_qs:
-        print(
-            f"Order ID: {order.id} | "
-            f"Status: {order.order_status} | "
-            f"Amount: {order.final_amount}"
-        )
-    print("===== END =====\n")
+    # print("\n===== PENDING & UPCOMING ORDERS =====")
+    # for order in orders_qs:
+    #     print(
+    #         f"Order ID: {order.id} | "
+    #         f"Status: {order.order_status} | "
+    #         f"Amount: {order.final_amount}"
+    #     )
+    # print("===== END =====\n")
 
     context.update({
-        "orders": orders_qs,
-        "total_pending_orders": total_pending,
-        "total_confirmed_orders": total_confirmed,
-        "total_accepted_orders": total_accepted,
-        "total_cancelled_orders": total_cancelled,
+        "orders": orders_qs
     })
 
     return render(request, "orders.html", context)

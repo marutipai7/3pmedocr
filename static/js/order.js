@@ -398,3 +398,53 @@ $("#openMap").on("click", function () {
     window.open(mapUrl, "_blank");
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+
+    // OPEN POPUP
+    document.querySelectorAll(".open-popup").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const popupId = btn.dataset.popup;
+            const popup = document.getElementById(popupId);
+
+            if (popup) {
+                popup.classList.remove("hidden");
+                popup.classList.add("flex");
+                document.body.style.overflow = "hidden"; // prevent background scroll
+            }
+        });
+    });
+
+    // CLOSE POPUP
+    document.querySelectorAll(".close-popup").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const popupId = btn.dataset.popup;
+            const popup = document.getElementById(popupId);
+
+            if (popup) {
+                popup.classList.add("hidden");
+                popup.classList.remove("flex");
+                document.body.style.overflow = "";
+            }
+        });
+    });
+
+});
+document.querySelectorAll(".popup-overlay").forEach(popup => {
+    popup.addEventListener("click", (e) => {
+        if (e.target === popup) {
+            popup.classList.add("hidden");
+            popup.classList.remove("flex");
+            document.body.style.overflow = "";
+        }
+    });
+});
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".tab-content").forEach(tab => {
+        tab.classList.add("hidden");
+    });
+
+    const upcoming = document.querySelector(".upcoming");
+    if (upcoming) {
+        upcoming.classList.remove("hidden");
+    }
+});

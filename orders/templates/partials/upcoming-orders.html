@@ -1,18 +1,40 @@
 <div class="tab-content upcoming w-full">
 
 {% for order in orders %}
-<div class="order-card w-full mb-6 rounded-lg shadow-(--box-shadow-5) overflow-hidden"
+<div class="order-card popup-btn mb-4 mt-4 sm:mt-6 rounded-lg shadow-(--box-shadow-5) overflow-hidden cursor-pointer"
      data-popup="order-details-popup">
 
     <!-- HEADER -->
-    <div class="bg-frost-green p-4 min-h-[63px]">
-        <p class="w-fit rounded text-xs p-1 font-medium bg-lavendar-dream mb-1">
-            Order ID #{{ order.id }}
-        </p>
-        <div class="flex justify-between text-xs text-desaturated-blue">
-            <span>{{ order.created_at|date:"g:i A" }}</span>
-            <span>ETA : 20min</span>
+    <div class="bg-{{primary_bg}} p-4 rounded-xl">
+
+        <!-- Row 1 : Order ID & ETA -->
+        <div class="flex items-center justify-between">
+            <p
+                class="rounded-[6px] text-[10px] sm:text-xs px-2 py-1 font-medium text-electric-purple bg-lavendar-dream">
+                Order ID #{{ order.id }}
+            </p>
+
+            <span
+                class="flex items-center gap-1 text-[10px] sm:text-xs font-medium text-desaturated-blue">
+                <img src="/static/images/time.svg" alt="time"
+                    class="w-[10px] h-[10px] sm:w-[12px] sm:h-[12px]" />
+                ETA : 20 min
+            </span>
         </div>
+
+        <!-- Row 2 : Status & Date -->
+        <div class="flex items-center justify-between mt-1 text-[10px] sm:text-sm">
+            <span class="font-semibold text-dodger-blue">
+                Upcoming
+            </span>
+
+            <span class="flex items-center gap-1 text-desaturated-blue">
+                <img src="/static/images/alarm.svg" alt="alarm"
+                    class="w-[10px] h-[10px] sm:w-[12px] sm:h-[12px]" />
+                {{ order.created_at|date:"D · g:i A" }}
+            </span>
+        </div>
+
     </div>
 
     <!-- BODY -->
@@ -44,7 +66,11 @@
 
         <!-- BUTTONS -->
         <div class="flex gap-3 px-6 py-5">
-            <button class="border px-4 py-2 rounded text-sm">View Invoice</button>
+            <button
+                class="border px-4 py-2 rounded text-sm open-popup"
+                data-popup="order-details-popup">
+                View Invoice
+            </button>
             <button class="ml-auto bg-deep-teal-green text-white px-4 py-2 rounded text-sm">
                 Call Customer
             </button>
