@@ -2,236 +2,177 @@
 
 const serviceCardTemplate = () => `
 <div class="service-card rounded-lg px-4 py-6 relative bg-[#F9FAFB]">
-      <button class="remove-service absolute top-3 right-3 text-ebony hover:text-red-500">✕</button>
 
-    <!-- Category Dropdown -->
+    <button class="remove-service absolute top-3 right-3">✕</button>
+
+    <!-- CATEGORY -->
     <div class="mb-4 custom-dropdown">
-        <label class="text-base sm:text-lg text-jet-black font-semibold">Select Category</label>
+        <label class="font-semibold">Select Category</label>
 
         <div class="dropdown-trigger mt-2">
-            <button type="button" class="w-full border border-slate-gray rounded-md px-3 py-3 text-left flex justify-between items-center">
-                <span class="selected-text text-sm sm:text-base font-normal text-dark-gray">Surgery</span>
-                <span class="material-symbols-outlined">
-                    keyboard_arrow_down
-                </span>
+            <button type="button" class="dropdown-btn">
+                <span class="selected-text">Select Category</span>
+                <span class="material-symbols-outlined">keyboard_arrow_down</span>
             </button>
 
-            <ul class="dropdown-menu hidden absolute z-20 mt-1 w-1/2 bg-white border border-dodger-blue rounded shadow text-sm sm:text-base text-dark-gray font-normal h-40 overflow-y-auto scroll">
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Fever</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Cold</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Body Ache</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">General Advice</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Rashes</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Pimple</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Skin Infection</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Hair Fall</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Child Fever</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Vaccines</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Skin Allergy</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Irregular Periods</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">PCOS</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Pregnancy Issue</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Back Pain</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Joint Pain</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Fracture Support</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Anxiety</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Depression</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Department</li>
+            <ul class="dropdown-menu category-options hidden absolute z-20 mt-1 w-1/2 bg-white shadow">
+                ${renderCategoryOptions()}
             </ul>
         </div>
     </div>
 
-    <div class="grid grid-col-1 sm:grid-cols-2 gap-4">
-        <div class="custom-dropdown">
-            <label class="text-base sm:text-lg text-jet-black font-semibold">Select Service</label>
+    <!-- SERVICE -->
+    <div class="custom-dropdown">
+        <label class="font-semibold">Select Service</label>
 
-            <div class="dropdown-trigger mt-2">
-                <button type="button" class="w-full border border-slate-gray rounded-md px-3 py-3 text-left flex justify-between items-center">
-                    <span class="selected-text text-sm sm:text-base font-normal text-dark-gray">Elective Surgery</span>
-                    <span class="material-symbols-outlined">
-                        keyboard_arrow_down
-                    </span>
-                </button>
+        <div class="dropdown-trigger mt-2">
+            <button type="button" class="dropdown-btn">
+                <span class="selected-text">Select Service</span>
+                <span class="material-symbols-outlined">keyboard_arrow_down</span>
+            </button>
 
-                <ul class="dropdown-menu hidden absolute z-20 mt-1 w-1/2 bg-white border border-dodger-blue rounded shadow text-sm sm:text-base text-dark-gray font-normal h-40 overflow-y-auto scroll">
-                    <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Next Day</li>
-                    <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Emergency Surgery</li>
-                    <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Day Care Surgery</li>
-                    <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Notification log</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Price -->
-        <div>
-            <label class="text-base sm:text-lg text-jet-black font-semibold">Price</label>
-            <input type="text"
-                class="w-full border border-slate-gray rounded-md px-3 py-3 mt-2 focus:outline-none"
-                value="₹ 0.00">
+            <ul class="dropdown-menu service-options hidden absolute z-20 mt-1 w-1/2 bg-white shadow">
+                <!-- services injected dynamically -->
+            </ul>
         </div>
     </div>
-  </div>
+
+    <!-- PRICE -->
+    <input type="text" class="price-input mt-3" placeholder="₹ 0.00">
+</div>
 `;
 
+/* ---------- ADD / REMOVE CARDS ---------- */
+
 $(document).on("click", ".add-service", function () {
-  const stepContent = $(this).closest(".step-content");
-  stepContent.find(".services-list").append(serviceCardTemplate());
+    $(".services-list").append(serviceCardTemplate());
 });
 
 $(document).on("click", ".remove-service", function () {
-  $(this).closest(".service-card").remove();
+    $(this).closest(".service-card").remove();
 });
 
-/* -------- SERVICE CARD HANDLER -------- */
+/* ---------- CATEGORY CLICK ---------- */
 
-const bedServiceCardTemplate = () => `
-<div class="service-card rounded-lg px-4 py-3 relative bg-[#F9FAFB]">
-<button class="remove-service-bed absolute top-3 right-3 text-ebony hover:text-red-500">✕</button>
-    <!-- Category Dropdown -->
-    <div class="mb-4 custom-dropdown">
-        <label class="text-base sm:text-lg text-jet-black font-semibold">Select Category</label>
+$(document).on("click", ".category-options .dropdown-item", function () {
+    const li = $(this);
+    const card = li.closest(".service-card");
 
-        <div class="dropdown-trigger mt-2">
-            <button type="button" class="w-full border border-slate-gray rounded-md px-3 py-3 text-left flex justify-between items-center">
-                <span class="selected-text text-sm sm:text-base font-normal text-dark-gray">Surgery</span>
-                <span class="material-symbols-outlined">
-                    keyboard_arrow_down
-                </span>
-            </button>
+    // Set selected category text
+    li.closest(".custom-dropdown")
+        .find(".selected-text")
+        .text(li.text());
 
-            <ul class="dropdown-menu hidden absolute z-20 mt-1 w-1/2 bg-white border border-dodger-blue rounded shadow text-sm sm:text-base text-dark-gray font-normal h-40 overflow-y-auto scroll">
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Fever</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Cold</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Body Ache</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">General Advice</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Rashes</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Pimple</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Skin Infection</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Hair Fall</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Child Fever</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Vaccines</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Skin Allergy</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Irregular Periods</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">PCOS</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Pregnancy Issue</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Back Pain</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Joint Pain</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Fracture Support</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Anxiety</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Depression</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Department</li>
-            </ul>
-        </div>
-    </div>
+    // Hide category dropdown
+    li.closest(".dropdown-menu").addClass("hidden");
 
-    <div class="grid grid-col-1 sm:grid-cols-2 gap-4">
-        <div class="custom-dropdown">
-            <label class="text-base sm:text-lg text-jet-black font-semibold">Select Service</label>
+    const categoryId = li.data("id");
 
-            <div class="dropdown-trigger mt-2">
-                <button type="button" class="w-full border border-slate-gray rounded-md px-3 py-3 text-left flex justify-between items-center">
-                    <span class="selected-text text-sm sm:text-base font-normal text-dark-gray">Elective Surgery</span>
-                    <span class="material-symbols-outlined">
-                        keyboard_arrow_down
-                    </span>
-                </button>
+    // Load services for this category
+    const servicesHTML = renderServiceOptions(categoryId);
+    card.find(".service-options").html(servicesHTML);
 
-                <ul class="dropdown-menu hidden absolute z-20 mt-1 w-1/2 bg-white border border-dodger-blue rounded shadow text-sm sm:text-base text-dark-gray font-normal h-40 overflow-y-auto scroll">
-                    <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Next Day</li>
-                    <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Emergency Surgery</li>
-                    <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Day Care Surgery</li>
-                    <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Notification log</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Price -->
-        <div>
-            <label class="text-base sm:text-lg text-jet-black font-semibold">Price</label>
-            <input type="text"
-                class="w-full border border-slate-gray rounded-md px-3 py-3 mt-2 focus:outline-none"
-                value="₹ 0.00">
-        </div>
-    </div>
-  </div>
-`;
-
-$(document).on("click", ".add-service-bed", function () {
-  const stepContent = $(this).closest(".step-content");
-  stepContent.find(".bed-services-list").append(bedServiceCardTemplate());
+    // Reset service selection
+    card.find(".service-options")
+        .closest(".custom-dropdown")
+        .find(".selected-text")
+        .text("Select Service");
 });
 
-$(document).on("click", ".remove-service-bed", function () {
-  $(this).closest(".service-card").remove();
+/* ---------- SERVICE CLICK ---------- */
+
+$(document).on("click", ".service-options .dropdown-item", function () {
+    const li = $(this);
+
+    li.closest(".custom-dropdown")
+        .find(".selected-text")
+        .text(li.text());
+
+    li.closest(".dropdown-menu").addClass("hidden");
 });
 
-/* ---------------- OPEN FILE MANAGER ---------------- */
+/* ---------- DROPDOWN TOGGLE ---------- */
+
+$(document).on("click", ".dropdown-btn", function (e) {
+    e.stopPropagation();
+    $(".dropdown-menu").addClass("hidden");
+    $(this).closest(".dropdown-trigger").find(".dropdown-menu").toggleClass("hidden");
+});
+
+$(document).on("click", function () {
+    $(".dropdown-menu").addClass("hidden");
+});
+
+/* ---------- FILE UPLOAD ---------- */
+
 $(document).on("click", ".upload-btn, .upload-box", function (e) {
-  e.stopPropagation();
-  $(this).closest(".file-upload-wrapper").find(".file-input").trigger("click");
+    e.stopPropagation();
+    $(this).closest(".file-upload-wrapper").find(".file-input").trigger("click");
 });
 
 $(document).on("change", ".file-input", function () {
-  const wrapper = $(this).closest(".file-upload-wrapper");
-  const file = this.files[0];
+    const wrapper = $(this).closest(".file-upload-wrapper");
+    const file = this.files[0];
+    if (!file) return;
 
-  if (!file) return;
+    wrapper.find(".file-name").text(file.name);
+    wrapper.find(".remove-file").removeClass("hidden");
 
-  wrapper.find(".file-name").text(file.name);
-  wrapper.find(".remove-file").removeClass("hidden");
-
-  // Enable submit
-  wrapper
-    .find(".submit-btn")
-    .prop("disabled", false)
-    .removeClass("bg-light-gray cursor-not-allowed")
-    .addClass("bg-dodger-blue text-white");
+    wrapper.find(".submit-btn")
+        .prop("disabled", false)
+        .removeClass("bg-light-gray cursor-not-allowed")
+        .addClass("bg-primary-blue text-white");
 });
 
 $(document).on("click", ".remove-file", function (e) {
-  e.stopPropagation();
+    e.stopPropagation();
+    const wrapper = $(this).closest(".file-upload-wrapper");
 
-  const wrapper = $(this).closest(".file-upload-wrapper");
+    wrapper.find(".file-input").val("");
+    wrapper.find(".file-name").text("Upload CSV File");
+    $(this).addClass("hidden");
 
-  // Reset input
-  wrapper.find(".file-input").val("");
-
-  // Reset UI
-  wrapper.find(".file-name").text("Upload CSV File");
-  $(this).addClass("hidden");
-
-  // Disable submit again
-  wrapper
-    .find(".submit-btn")
-    .prop("disabled", true)
-    .removeClass("bg-dodger-blue text-white")
-    .addClass("bg-light-gray cursor-not-allowed");
+    wrapper.find(".submit-btn")
+        .prop("disabled", true)
+        .removeClass("bg-primary-blue text-white")
+        .addClass("bg-light-gray cursor-not-allowed");
 });
 
-$(document).on("click", '#step-3 button:contains("Pay Now")', function () {
-  // Hide services section
-  $(".services-section").addClass("hidden");
+/* ---------- DATA RENDERERS ---------- */
 
-  // Show premium section
-  $(".premium-section").removeClass("hidden");
-  initializeTabs();
-  // Scroll to top of premium section
-  $(".premium-section")[0].scrollIntoView({
-    behavior: "smooth",
-    block: "start",
-  });
-});
+function renderCategoryOptions() {
+    return HOSPITAL_CATEGORIES.map(cat => `
+        <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer"
+            data-id="${cat.id}">
+            ${cat.name}
+        </li>
+    `).join("");
+}
 
-$(document).on("click", '#step-3 button:contains("Next")', function () {
-  // Hide services section
-  $(".services-section").addClass("hidden");
+function renderServiceOptions(categoryId) {
+    const services = HOSPITAL_SERVICES.filter(
+        s => s.category_id == categoryId
+    );
 
-  // Show premium section
-  $(".services-without-subscription").removeClass("hidden");
-  initializeTabs();
-  // Scroll to top of premium section
-  $(".services-without-subscription")[0].scrollIntoView({
-    behavior: "smooth",
-    block: "start",
-  });
-});
+    if (!services.length) {
+        return `<li class="px-3 py-2 text-gray-400">No services found</li>`;
+    }
+
+    return services.map(s => `
+        <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer"
+            data-id="${s.id}">
+            ${s.description}
+        </li>
+    `).join("");
+}
+
+/* ---------- BED ROOMS (if needed later) ---------- */
+
+function renderBedRoomOptions() {
+    return HOSPITAL_BED_ROOMS.map(b => `
+        <li class="dropdown-item px-3 py-2 cursor-pointer"
+            data-id="${b.id}">
+            ${b.name}
+        </li>
+    `).join("");
+}
