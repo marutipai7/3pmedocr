@@ -1,3 +1,21 @@
+let PHARMACY_DATA = {
+    categories: [],
+    medicines: [],
+    types: []
+};
+
+function loadPharmacyData() {
+    return fetch("/services/pharmacy/dropdowns/")
+        .then(res => res.json())
+        .then(data => {
+            PHARMACY_DATA = data;
+        });
+}
+
+$(document).ready(function () {
+    loadPharmacyData();
+});
+
 /* -------- SERVICE CARD HANDLER -------- */
 const serviceCardTemplate = () => `
 <div class="service-card rounded-lg px-4 py-6 relative bg-[#F9FAFB]">
@@ -16,26 +34,7 @@ const serviceCardTemplate = () => `
             </button>
 
             <ul class="dropdown-menu hidden absolute z-20 mt-1 w-1/2 bg-white border border-primary-blue rounded shadow text-sm sm:text-base text-dark-gray font-normal h-40 overflow-y-auto scroll">
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Fever</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Cold</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Body Ache</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">General Advice</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Rashes</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Pimple</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Skin Infection</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Hair Fall</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Child Fever</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Vaccines</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Skin Allergy</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Irregular Periods</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">PCOS</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Pregnancy Issue</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Back Pain</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Joint Pain</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Fracture Support</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Anxiety</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Depression</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Department</li>
+
             </ul>
         </div>
     </div>
@@ -53,10 +52,7 @@ const serviceCardTemplate = () => `
             </button>
 
             <ul class="dropdown-menu hidden absolute z-20 mt-1 w-1/2 bg-white border border-primary-blue rounded shadow text-sm sm:text-base text-dark-gray font-normal h-40 overflow-y-auto scroll">
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Fever</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Cold</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Body Ache</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">General Advice</li>
+
             </ul>
         </div>
     </div>
@@ -74,10 +70,7 @@ const serviceCardTemplate = () => `
             </button>
 
             <ul class="dropdown-menu hidden absolute z-20 mt-1 w-1/2 bg-white border border-primary-blue rounded shadow text-sm sm:text-base text-dark-gray font-normal h-40 overflow-y-auto scroll">
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Fever</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Cold</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">Body Ache</li>
-                <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">General Advice</li>
+    
             </ul>
         </div>
     </div>
@@ -152,4 +145,62 @@ $(document).on('click', '.remove-file', function (e) {
         .prop('disabled', true)
         .removeClass('bg-primary-blue text-white')
         .addClass('bg-light-gray cursor-not-allowed');
+});
+
+function fillDropdown(menu, items, key = null) {
+    menu.empty();
+
+    items.forEach(item => {
+        const value = key ? item[key] : item;
+        menu.append(`
+            <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer"
+                data-value="${value}">
+                ${value}
+            </li>
+        `);
+    });
+}
+
+$(document).on("click", ".add-service", function () {
+    const container = $(this).closest(".step-content").find(".services-list");
+    const card = $(serviceCardTemplate());
+
+    // Category dropdown
+    fillDropdown(
+        card.find(".category-menu"),
+        PHARMACY_DATA.categories
+    );
+
+    // Medicine dropdown
+    fillDropdown(
+        card.find(".medicine-menu"),
+        PHARMACY_DATA.medicines,
+        "name"
+    );
+
+    // Type dropdown
+    fillDropdown(
+        card.find(".type-menu"),
+        PHARMACY_DATA.types
+    );
+
+    container.append(card);
+});
+
+$(document).on("click", ".dropdown-item", function () {
+    const value = $(this).data("value");
+    const dropdown = $(this).closest(".custom-dropdown");
+
+    dropdown.find(".selected-text").text(value);
+    dropdown.find(".dropdown-menu").addClass("hidden");
+});
+
+$(document).on("click", ".dropdown-trigger button", function (e) {
+    e.stopPropagation();
+    $(".dropdown-menu").addClass("hidden");
+    $(this).siblings(".dropdown-menu").toggleClass("hidden");
+});
+
+$(document).on("click", function () {
+    $(".dropdown-menu").addClass("hidden");
 });

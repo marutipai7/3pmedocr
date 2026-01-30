@@ -15,5 +15,5 @@ urlpatterns = [
     # path('pharmacy/services/save/', views.save_pharmacy_medicines, name='save_pharmacy_medicines'),
 
     # # 🔥 THIS WAS MISSING
-    # path('pharmacy/dropdowns/', views.pharmacy_dropdowns, name='pharmacy_dropdowns'),
+    path('pharmacy/dropdowns/', views.pharmacy_dropdowns, name='pharmacy_dropdowns'),
 ]
