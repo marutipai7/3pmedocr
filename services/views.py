@@ -16,10 +16,12 @@ from .models import (
     ServiceDescription, 
     VisitType,
     DoctorServiceRate,
-    DoctorVisitCharge
+    DoctorVisitCharge,
+    MedicineType,
+    PharmacyMedicine,
 )
-from django.forms.models import model_to_dict
 from settings.models import SellerSubscription
+from core.settings import MONGO_COLLECTIONS
 
 @dashboard_login_required
 def services(request):
@@ -27,7 +29,37 @@ def services(request):
     context = get_common_context(request, user)
 
     if user.user_type == 'pharmacy':
+        master_medicine = MONGO_COLLECTIONS["master_medicine"]
+        medicines = master_medicine.find(
+            {},
+            {"_id": 0, "product_name": 1, "sub_category": 1}
+        )
+        categories = set()
+        medicine_map = {}
+
+        for med in medicines:
+            cat = med.get("sub_category")
+            name = med.get("product_name")
+
+            if not cat or not name:
+                continue
+
+            cat = cat.strip()
+            name = name.strip()
+
+            categories.add(cat)
+
+            if cat not in medicine_map:
+                medicine_map[cat] = []
+
+            medicine_map[cat].append(name)
+
+        types = MedicineType.objects.filter(is_active=True).values_list("name", flat=True)
+        context["medicine_categories"] = sorted(categories)
+        context["medicine_map"] = medicine_map
+        context["medicine_types"] = list(types)
         return render(request, 'pharmacy/services.html', context)
+    
     elif user.user_type == 'lab':
         sub = SellerSubscription.objects.filter(
             seller_type="lab",
@@ -42,13 +74,12 @@ def services(request):
         context["lab_days"] = LabDays.objects.all()
         context["has_premium"] = bool(sub and not sub.is_expired)
         return render(request, 'lab/services.html', context)
+    
     elif user.user_type == 'doctor':
         context["service_categories"] = ServiceCategory.objects.all()
         context["service_descriptions"] = ServiceDescription.objects.select_related("category")
         context["visit_types"] = VisitType.objects.all()
         return render(request, 'doctor/services.html', context)
-
-
 
     elif user.user_type == 'hospital':
         from appointments.models import (

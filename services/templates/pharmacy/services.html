@@ -167,6 +167,10 @@
 {% endblock %}
 
 {% block extra_js %}
+<script>
+    window.MEDICINE_MAP = {{ medicine_map|safe }};
+</script>
+
   <script src="/static/js/tabs.js"></script>
     <script src="/static/js/common-services.js"></script>
   <script src="/static/js/table-pagination.js"></script>

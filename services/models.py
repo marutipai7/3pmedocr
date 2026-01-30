@@ -343,6 +343,16 @@ class PharmacyBidding(models.Model):
         db_table = "pharmacy_bidding"
 
 
+class MedicineType(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = "medicine_types"
+
+    def __str__(self):
+        return self.name
+    
 class PharmacyMedicine(models.Model):
     pharmacy = models.ForeignKey(
         "registration.PharmacyProfile",

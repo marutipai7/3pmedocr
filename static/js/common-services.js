@@ -157,3 +157,23 @@ $(document).on('click', '.delete-btn', function () {
     const card = $(this).closest('.service-card');
     card.remove();
 });
+document.addEventListener("click", function (e) {
+    if (e.target.classList.contains("dropdown-item") && e.target.dataset.category) {
+
+        const category = e.target.dataset.category;
+        const medicines = MEDICINE_MAP[category] || [];
+
+        const card = e.target.closest(".service-card");
+        const menu = card.querySelector(".medicine-menu");
+
+        menu.innerHTML = "";
+
+        medicines.forEach(name => {
+            menu.innerHTML += `
+              <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">
+                  ${name}
+              </li>
+            `;
+        });
+    }
+});

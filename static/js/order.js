@@ -438,13 +438,13 @@ document.querySelectorAll(".popup-overlay").forEach(popup => {
         }
     });
 });
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".tab-content").forEach(tab => {
-        tab.classList.add("hidden");
-    });
+// document.addEventListener("DOMContentLoaded", function () {
+//     document.querySelectorAll(".tab-content").forEach(tab => {
+//         tab.classList.add("hidden");
+//     });
 
-    const upcoming = document.querySelector(".upcoming");
-    if (upcoming) {
-        upcoming.classList.remove("hidden");
-    }
-});
+//     const upcoming = document.querySelector(".upcoming");
+//     if (upcoming) {
+//         upcoming.classList.remove("hidden");
+//     }
+// });
