@@ -189,7 +189,7 @@ $(document).ready(function () {
           .addClass("px-3 py-2 rounded-lg cursor-pointer font-normal text-xs")
           .addClass(
             i === activePage
-              ? `bg-deep-teal-green text-white`
+              ? `bg-dodger-blue text-white`
               : "bg-pagination text-jet-black"
           )
           .on("click", function () {
@@ -304,7 +304,7 @@ function renderPagination(totalPages) {
     for (let i = 1; i <= totalPages; i++) {
         html += `
             <button class="page-btn px-3 py-1 border rounded
-                ${i === currentPage ? 'bg-deep-teal-green text-white' : ''}"
+                ${i === currentPage ? 'bg-dodger-blue text-white' : ''}"
                 data-page="${i}">
                 ${i}
             </button>

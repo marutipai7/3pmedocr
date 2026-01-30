@@ -275,9 +275,9 @@ $(document).ready(function () {
 });
 
 $(".tab-btn-rewards").on("click", function () {
-  $(".tab-btn-rewards").removeClass("active-tab-rewards text-dark-gray border-b-2 border-deep-teal-green")
+  $(".tab-btn-rewards").removeClass("active-tab-rewards text-dark-gray border-b-2 border-dodger-blue")
     .addClass("text-light-gray1");
-  $(this).addClass("active-tab-rewards text-dark-gray border-b-2 border-deep-teal-green")
+  $(this).addClass("active-tab-rewards text-dark-gray border-b-2 border-dodger-blue")
     .removeClass("text-light-gray1");
   $(".tab-content").addClass("hidden");
   let tab = $(this).data("tab");

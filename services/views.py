@@ -30,33 +30,35 @@ def services(request):
 
     if user.user_type == 'pharmacy':
         master_medicine = MONGO_COLLECTIONS["master_medicine"]
-        medicines = master_medicine.find(
-            {},
-            {"_id": 0, "product_name": 1, "sub_category": 1}
-        )
-        categories = set()
+        pipeline = [
+            {
+                "$group": {
+                    "_id": "$sub_category",
+                    "medicines": { "$addToSet": "$product_name" }
+                }
+            },
+            {
+                "$project": {
+                    "_id": 0,
+                    "category": "$_id",
+                    "medicines": 1
+                }
+            }
+        ]
+
+        result = list(master_medicine.aggregate(pipeline))
         medicine_map = {}
+        categories = []
 
-        for med in medicines:
-            cat = med.get("sub_category")
-            name = med.get("product_name")
+        for row in result:
+            if row["category"]:
+                categories.append(row["category"])
+                medicine_map[row["category"]] = sorted(row["medicines"])
 
-            if not cat or not name:
-                continue
-
-            cat = cat.strip()
-            name = name.strip()
-
-            categories.add(cat)
-
-            if cat not in medicine_map:
-                medicine_map[cat] = []
-
-            medicine_map[cat].append(name)
-
-        types = MedicineType.objects.filter(is_active=True).values_list("name", flat=True)
         context["medicine_categories"] = sorted(categories)
         context["medicine_map"] = medicine_map
+
+        types = MedicineType.objects.filter(is_active=True).values_list("name", flat=True)
         context["medicine_types"] = list(types)
         return render(request, 'pharmacy/services.html', context)
     

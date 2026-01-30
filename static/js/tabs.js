@@ -120,12 +120,12 @@ $(document).ready(function () {
 
   // Remove active styles from all tabs
   $(".tab-btn-pharmacy")
-    .removeClass("active-tab-pharmacy font-semibold border-b-2 border-deep-teal-green text-dark-gray")
+    .removeClass("active-tab-pharmacy font-semibold border-b-2 border-dodger-blue text-dark-gray")
     .addClass("font-medium text-light-gray1");
 
   // Apply active styles to clicked tab
   $(this)
-    .addClass("active-tab-pharmacy font-semibold border-b-2 border-deep-teal-green text-dark-gray")
+    .addClass("active-tab-pharmacy font-semibold border-b-2 border-dodger-blue text-dark-gray")
     .removeClass("font-medium text-light-gray1");
 
   // Show relevant tab content

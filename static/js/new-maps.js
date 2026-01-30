@@ -5,8 +5,8 @@ const colorHexMap = {
   "light-sea-green": "#3AAFA9",
   "dodger-blue": "#007BFF",
   "light-dodger-blue": "#EEF6FF",
-  "deep-teal-green": "#1A7A5E",
-  "light-teal": "#DDEBE7",
+  "dodger-blue": "#1A7A5E",
+  "light-dodger-blue": "#DDEBE7",
 };
 
 let selectedColor = colorHexMap[window.colorData.primary_bg];

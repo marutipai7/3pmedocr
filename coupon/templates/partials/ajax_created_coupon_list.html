@@ -4,7 +4,7 @@
             <div class="flex lg:justify-between lg:items-center flex-col lg:flex-row">
 
                 <div class="flex flex-col">
-                    <p class="font-bold text-sm text-deep-teal-green tracking-[0.25em] uppercase">
+                    <p class="font-bold text-sm text-dodger-blue tracking-[0.25em] uppercase">
                         {{ c.seller_type|title }}
                     </p>
 
@@ -28,7 +28,7 @@
                     <div class="w-full max-w-md pt-4">
                         <div class="w-full bg-pale-ice-blue rounded-full h-2">
                             {% with percent=c.used_count|floatformat:0 %}
-                            <div class="bg-deep-teal-green h-2 rounded-full"
+                            <div class="bg-dodger-blue h-2 rounded-full"
                                  style="width: {{ c.used_count|divisibleby:c.usage_limit }}%">
                             </div>
                             {% endwith %}
@@ -36,11 +36,11 @@
                     </div>
                 </div>
 
-                <div class="hidden lg:block h-20 w-px bg-deep-teal-green mx-4"></div>
+                <div class="hidden lg:block h-20 w-px bg-dodger-blue mx-4"></div>
 
                 <div class="pt-4">
                     <button 
-                        class="copy-coupon bg-deep-teal-green font-bold text-lg text-white w-full rounded-md p-2 flex items-center gap-2 justify-center cursor-pointer"
+                        class="copy-coupon bg-dodger-blue font-bold text-lg text-white w-full rounded-md p-2 flex items-center gap-2 justify-center cursor-pointer"
                         data-code="{{ c.coupon_code }}"
                     >
                         {{ c.coupon_code }}
