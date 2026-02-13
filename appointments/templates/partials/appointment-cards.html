@@ -41,9 +41,7 @@
         </p>
 
         <span class="text-xs text-spanish-gray">
-          {% if appointment.test_package %}
-            {{ appointment.test_package }}
-          {% elif appointment.description %}
+          {% if appointment.description %}
             {{ appointment.description }}
           {% elif appointment.health_issue_ids %}
             Health Consultation

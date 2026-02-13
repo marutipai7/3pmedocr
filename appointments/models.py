@@ -88,6 +88,8 @@ class AppointmentStatus(models.TextChoices):
     ACCEPTED = "Accepted", "Accepted"
     COMPLETED = "Completed", "Completed"
     CANCELLED = "Cancelled", "Cancelled"
+    # MISSED = "Missed", "Missed"
+
 
 
 class LabAppointments(models.Model):
