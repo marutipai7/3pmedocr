@@ -13,7 +13,7 @@ from django.views.decorators.http import require_GET, require_http_methods, requ
 from dashboard.utils import dashboard_login_required, get_common_context
 from .models import (
     Coupon, CategoryOption, BrandOption, OfferTypeOption, CountryOption,
-    StateOption, CityOption, PincodeOption, AgeOption, GenderOption, SpendingPowerOption, PaymentStatusEnum
+    State, City, PincodeOption, AgeOption, GenderOption, SpendingPowerOption, PaymentStatusEnum
 )
 from points.models import PointsActionType, PointsHistory
 from registration.views import validate_and_save_file
@@ -190,8 +190,8 @@ def coupon_view(request):
             mappings = {
                 "category": (CategoryOption, "Category"),
                 "brand_name": (BrandOption, "Brand Name"),
-                "state": (StateOption, "State"),
-                "city": (CityOption, "City"),
+                "state": (State, "State"),
+                "city": (City, "City"),
                 "pincode": (PincodeOption, "Pincode"),
                 "age_group": (AgeOption, "Age Group"),
                 "gender": (GenderOption, "Gender"),
@@ -543,8 +543,8 @@ def get_context_data(user, form_data=None, missing_fields=None):
         'brand_options': BrandOption.objects.filter(is_active=True),
         'offer_type_options': OfferTypeOption.objects.filter(is_active=True),
         'country_options': CountryOption.objects.filter(is_active=True),
-        'state_options': StateOption.objects.filter(is_active=True),
-        'city_options': CityOption.objects.filter(is_active=True),
+        'state_options': State.objects.filter(is_active=True),
+        'city_options': City.objects.filter(is_active=True),
         'pincode_options': PincodeOption.objects.filter(is_active=True),
         'age_options': AgeOption.objects.filter(is_active=True),
         'gender_options': GenderOption.objects.filter(is_active=True),

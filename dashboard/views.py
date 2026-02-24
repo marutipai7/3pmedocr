@@ -237,6 +237,7 @@ def dashboard_home(request):
             hospital_profile = HospitalProfile.objects.get(user=user)
 
             context.update({
+                'logo': '/static/images/hospital-logo.svg',
                 'hospital_profile': hospital_profile,
                 'user_display_name': hospital_profile.hospital_name,
                 'quotes_given': HospitalBidding.objects.filter(hospital=hospital_profile).count(),

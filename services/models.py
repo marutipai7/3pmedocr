@@ -239,13 +239,36 @@ class LabTestPackageMaster(models.Model):
     class Meta:
         db_table = "lab_test_package_master"
 
+class LabModeType(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    class Meta:
+        db_table = "lab_mode_type"
+
+    def __str__(self):
+        return self.name
+
+class LabRegion(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    class Meta:
+        db_table = "lab_region"
+
+    def __str__(self):
+        return self.name
+    
+class LabDays(models.Model):
+    name = models.CharField(max_length=50)
+
+    class Meta:
+        db_table = "lab_days"
 
 class LabRatePackage(models.Model):
     lab = models.ForeignKey("registration.LabProfile", on_delete=models.CASCADE)
     category = models.ForeignKey(LabTestCategory, on_delete=models.CASCADE)
     package = models.ForeignKey(LabTestPackageMaster, on_delete=models.CASCADE)
 
-    days = models.CharField(max_length=50, blank=True, null=True)
+    days = models.ForeignKey(LabDays, on_delete=models.PROTECT)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     is_active = models.BooleanField(default=True)
 
@@ -255,6 +278,37 @@ class LabRatePackage(models.Model):
     class Meta:
         db_table = "lab_rate_package"
 
+class LabRateMode(models.Model):
+    lab = models.ForeignKey(
+        "registration.LabProfile",
+        on_delete=models.CASCADE,
+        related_name="rate_modes"
+    )
+    mode_type = models.ForeignKey(
+        LabModeType,
+        on_delete=models.CASCADE,
+        related_name="rate_modes"
+    )
+    region = models.ForeignKey(
+        LabRegion,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="rate_modes"
+    )
+
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    is_active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "lab_rate_mode"
+        unique_together = ("lab", "mode_type", "region")
+
+    def __str__(self):
+        return f"{self.lab_id} - {self.mode_type.name}"
 
 ## Pharmacy
 class PharmacyBidding(models.Model):
@@ -289,6 +343,16 @@ class PharmacyBidding(models.Model):
         db_table = "pharmacy_bidding"
 
 
+class MedicineType(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = "medicine_types"
+
+    def __str__(self):
+        return self.name
+    
 class PharmacyMedicine(models.Model):
     pharmacy = models.ForeignKey(
         "registration.PharmacyProfile",

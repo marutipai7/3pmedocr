@@ -876,7 +876,7 @@ function getPaginationThemeColor() {
   const type = (window.USER_TYPE || "").toLowerCase();
 
   if (["doctor", "lab", "hospital"].includes(type)) return "dodger-blue";
-  if (type === "pharmacy") return "deep-teal-green";
+  if (type === "pharmacy") return "dodger-blue";
   if (type === "advertiser") return "living-coral";
   if (type === "client") return "dark-blue";
   if (type === "ngo") return "violet-sky";

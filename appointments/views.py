@@ -1,51 +1,33 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
+from django.core.paginator import Paginator
+from registration.models import DoctorProfile
 from dashboard.models import SettingMenu
-from dashboard.utils import dashboard_login_required, get_common_context, get_theme_colors
-
+from dashboard.utils import (
+    dashboard_login_required,
+    get_common_context,
+    get_theme_colors,
+)
+from django.db import models
+from appointments.utils import get_appointment_stats
 from .models import (
     DoctorAppointment,
     LabAppointments,
     HospitalAppointments,
-    AppointmentStatus,
-    HospitalAppointmentStatus,
 )
-from django.core.paginator import Paginator
-from appointments.utils import get_appointment_stats
 
 
-# -------------------------------
-# STATUS MAPS (IMPORTANT)
-# -------------------------------
-
-HOSPITAL_STATUS_MAP = {
-    "pending": HospitalAppointmentStatus.PENDING,
-    "accepted": HospitalAppointmentStatus.ACCEPTED,
-    "completed": HospitalAppointmentStatus.COMPLETED,
-    "cancelled": HospitalAppointmentStatus.CANCELLED,
-    # NOTE: missed is NOT stored yet
-}
-
-LAB_DOCTOR_STATUS_MAP = {
-    "pending": "Pending",
-    "accepted": "Accepted",
-    "completed": "Completed",
-    "cancelled": "Cancelled",   # ✅ correct spelling
-    "canceled": "Cancelled",    # ✅ map US → UK
-    "missed": None,             # ❌ not stored yet
-}
-
-
-# -------------------------------
+# ======================================================
 # MAIN APPOINTMENT PAGE
-# -------------------------------
+# ======================================================
 
 @dashboard_login_required
 def appointment_view(request):
     user = request.user_obj
     user_type = user.user_type
 
+    # Sidebar menu
     menu_items = SettingMenu.objects.filter(
         is_active=True,
         user_types__contains=[user_type]
@@ -55,19 +37,19 @@ def appointment_view(request):
     context["theme_colors"] = get_theme_colors(user_type)
     context["sidebar_menu"] = menu_items
 
+    # Appointment stats
     stats = get_appointment_stats(user_type, user)
-    print("📊 Appointment Stats:", stats)
 
     context.update({
         "total_appointments": stats.get("total", 0),
         "pending_appointments": stats.get("pending", 0),
-        "cancelled_appointments": stats.get("cancelled", 0),
-        "completed_appointments": stats.get("completed", 0),
         "accepted_appointments": stats.get("accepted", 0),
+        "completed_appointments": stats.get("completed", 0),
+        "cancelled_appointments": stats.get("cancelled", 0),
         "accepted_appointed_appointments": stats.get("accepted_appointed", 0),
     })
 
-    # Initial page load (AJAX will override content)
+    # Role-based template
     if user_type == "lab":
         template = "lab/lab_appointment.html"
     elif user_type == "doctor":
@@ -80,20 +62,26 @@ def appointment_view(request):
     return render(request, template, context)
 
 
-# -------------------------------
-# AJAX APPOINTMENTS ENDPOINT
-# -------------------------------
+# ======================================================
+# AJAX APPOINTMENTS ENDPOINT (FULLY DYNAMIC)
+# ======================================================
 
 @dashboard_login_required
 def ajax_appointments(request):
     user = request.user_obj
     user_type = user.user_type
 
-    status = request.GET.get("status", "all")
+    status = request.GET.get("status", "all").strip().lower()
     page_number = request.GET.get("page", 1)
+
+    # Normalize spelling
     if status == "canceled":
         status = "cancelled"
-    # ---------------- LAB ----------------
+
+    # --------------------------------------------------
+    # BASE QUERYSET (by role)
+    # --------------------------------------------------
+
     if user_type == "lab":
         qs = LabAppointments.objects.select_related(
             "user__userprofile",
@@ -104,23 +92,26 @@ def ajax_appointments(request):
             "user",
         )
 
-        if status != "all":
-            mapped_status = LAB_DOCTOR_STATUS_MAP.get(status)
-            qs = qs.filter(status=mapped_status) if mapped_status else qs.none()
-
-    # ---------------- DOCTOR ----------------
     elif user_type == "doctor":
+
+        doctor_profile = DoctorProfile.objects.filter(user=user).first()
+
         qs = DoctorAppointment.objects.select_related(
             "user__userprofile",
             "address",
             "user",
+            # "doctor",
         )
 
-        if status != "all":
-            mapped_status = LAB_DOCTOR_STATUS_MAP.get(status)
-            qs = qs.filter(status=mapped_status) if mapped_status else qs.none()
+        # if doctor_profile:
+        #     qs = qs.filter(
+        #         models.Q(doctor=doctor_profile) |
+        #         models.Q(doctor__isnull=True)
+        #     )
 
-    # ---------------- HOSPITAL ----------------
+
+
+
     elif user_type == "hospital":
         qs = HospitalAppointments.objects.select_related(
             "user__userprofile",
@@ -132,19 +123,29 @@ def ajax_appointments(request):
             "user",
         )
 
-        if status == "missed":
-            qs = qs.none()
-        elif status != "all":
-            mapped_status = HOSPITAL_STATUS_MAP.get(status)
-            qs = qs.filter(status=mapped_status) if mapped_status else qs.none()
-
     else:
         qs = HospitalAppointments.objects.none()
 
+    # --------------------------------------------------
+    # STATUS FILTER (DYNAMIC, NO MAPS)
+    # --------------------------------------------------
+
+    if status != "all":
+        qs = qs.filter(status__iexact=status.capitalize())
+
+        if status == "missed":
+            # Not stored yet
+            qs = qs.none()
+        else:
+            qs = qs.filter(status__iexact=status)
+
+    # --------------------------------------------------
+    # ORDER + PAGINATION
+    # --------------------------------------------------
+
     qs = qs.order_by("-created_at")
 
-    # ---------------- PAGINATION ----------------
-    paginator = Paginator(qs, 5)  # 👈 5 per page (change as needed)
+    paginator = Paginator(qs, 5)
     page_obj = paginator.get_page(page_number)
 
     html = render_to_string(
@@ -153,7 +154,7 @@ def ajax_appointments(request):
             "appointments": page_obj,
             "page_obj": page_obj,
         },
-        request=request
+        request=request,
     )
 
     return JsonResponse({
@@ -163,3 +164,4 @@ def ajax_appointments(request):
         "current_page": page_obj.number,
         "total_pages": paginator.num_pages,
     })
+

@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'appointments',
     'purchase',
     'services',
+    'staff',
+    'history',
 ]
 
 MIDDLEWARE = [
@@ -131,7 +133,8 @@ MONGO_COLLECTIONS = {
     "hospital": MONGO_DB["Hospitals"],
     "pharmacy": MONGO_DB["Pharmacy"],
     "doctor":   MONGO_DB["Doctors"],
-    "lab":      MONGO_DB["Labs"]
+    "lab":      MONGO_DB["Labs"],
+    "master_medicine": MONGO_DB["master_medicine"],
 }
 
 PLACES_COORDINATES = MONGO_DB["places"]

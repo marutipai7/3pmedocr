@@ -13,7 +13,7 @@
                         arrow_forward_ios
                     </span>
                 </div>
-                <div class="bg-white px-2 sm:px-4 py-4 space-y-5">
+                <div class=" px-2 sm:px-4 py-4 space-y-5">
                     <div class="flex flex-col gap-3 sm:gap-0 sm:flex-row sm:items-center sm:justify-between">
                         <div class="flex flex-col gap-2">
                             <div class="flex items-center gap-2">
@@ -151,10 +151,9 @@
                                     </ul>
                                 </div>
                                 <div class="px-4 py-2">
-                                    <button class="w-full bg-dodger-blue py-3 text-white text-xs sm:text-sm font-semibold rounded-lg cursor-pointer">
-                                        <a href="{% url 'settings_page' %}">
+                                    <button
+                                        class="w-full bg-dodger-blue py-3 text-white text-xs sm:text-sm font-semibold rounded-lg cursor-pointer">
                                         Get Started Now
-                                        </a>
                                     </button>
                                 </div>
                             </div>
@@ -163,7 +162,7 @@
                         <div class="w-full h-[415px] shadow-17 rounded-lg px-5 py-5">
                             <div class="tabs tabs-home w-[200px] sm:w-[290px]">
                                 <div class="flex flex-nowrap items-center justify-between py-0.5 text-sm px-2 relative">
-                                    <div class="tab-indicator"></div>
+                                    <div class="tab-indicator border border-blue-tint"></div>
                                     <button class="tab-btn active shrink-0" data-type="services-home">Services</button>
                                     <button class="tab-btn shrink-0" data-type="bed-rooms-home">Bed & Rooms</button>
                                 </div>
@@ -1366,11 +1365,16 @@
                 </div>
 
                 <!-- Premium Section -->
-                {% include 'partials/premium_section.html' %}
+                 {% include 'hospital/partials/premium_section.html' %}
+
+                <!--Services without subscription section-->
+                {% include 'hospital/partials/services_without_premium.html'%}
             </div>
 
             <!-- Add Service Popup -->
-             {% include 'hospital/partials/add_services_popup.html'%}
+            {% include 'hospital/partials/add_services_popup.html'%}
+
+             
 
 {% endblock %}
 

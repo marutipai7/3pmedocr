@@ -273,7 +273,7 @@ function getPaginationColorClass() {
   }
 
   if (type === "pharmacy") {
-    return "bg-deep-teal-green";
+    return "bg-dodger-blue";
   }
 
   if (type === "advertiser") {

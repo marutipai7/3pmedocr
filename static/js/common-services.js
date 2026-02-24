@@ -1,24 +1,32 @@
 /* -------- TABS HANDLER -------- */
 $('.tabs').each(function () {
     const $tabsWrapper = $(this);
-    const $buttons = $tabsWrapper.find('.tab-btn');
+    const $buttons = $tabsWrapper.find('.tab-btn, .tab-btn-lab');
     const $indicator = $tabsWrapper.find('.tab-indicator');
 
     function moveIndicator($btn) {
+        if (!$btn || !$btn.length) return;   // 🛑 safety
+
+        const pos = $btn.position();
+        if (!pos) return;                    // 🛑 safety
+
         $indicator.css({
-            left: $btn.position().left + 'px',
+            left: pos.left + 'px',
             width: $btn.outerWidth() + 'px',
             height: $btn.outerHeight() + 'px'
         });
     }
 
     // Init
-    const $activeBtn = $buttons.filter('.active');
-    moveIndicator($activeBtn);
+    const $activeBtn = $buttons.filter('.active').first();
 
-    showTabContent($activeBtn.data('type'), $tabsWrapper);
+    if ($activeBtn.length) {
+        moveIndicator($activeBtn);
+        showTabContent($activeBtn.data('type'), $tabsWrapper);
+    }
 
-    $buttons.on('click', function () {
+
+    $tabsWrapper.on('click', '.tab-btn, .tab-btn-lab', function () {
         const $btn = $(this);
         const type = $btn.data('type');
 
@@ -36,11 +44,12 @@ $('.tabs').each(function () {
 
 // Scoped content handler
 function showTabContent(type, $tabsWrapper) {
-    const group =
-        $tabsWrapper.hasClass('tabs-home') ? '.tabs-home-content' : '.tabs-inner-content';
+  const group = $tabsWrapper.hasClass("tabs-home")
+    ? ".tabs-home-content"
+    : ".tabs-inner-content";
 
-    $(group).addClass('hidden');
-    $(group).filter(`[data-type="${type}"]`).removeClass('hidden');
+  $(group).addClass("hidden");
+  $(group).filter(`[data-type="${type}"]`).removeClass("hidden");
 }
 
 /* -------- DROPDOWN HANDLER -------- */
@@ -147,4 +156,24 @@ $(document).on('click', function () {
 $(document).on('click', '.delete-btn', function () {
     const card = $(this).closest('.service-card');
     card.remove();
+});
+document.addEventListener("click", function (e) {
+    if (e.target.classList.contains("dropdown-item") && e.target.dataset.category) {
+
+        const category = e.target.dataset.category;
+        const medicines = MEDICINE_MAP[category] || [];
+
+        const card = e.target.closest(".service-card");
+        const menu = card.querySelector(".medicine-menu");
+
+        menu.innerHTML = "";
+
+        medicines.forEach(name => {
+            menu.innerHTML += `
+              <li class="dropdown-item px-3 py-2 hover:bg-premium-light-blue cursor-pointer">
+                  ${name}
+              </li>
+            `;
+        });
+    }
 });

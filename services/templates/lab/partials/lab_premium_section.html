@@ -1,0 +1,61 @@
+{% load static %}
+<div class="premium-section space-y-4 hidden">
+
+  <!-- Subscription Header -->
+  <div class="h-[136px] bg-dodger-blue relative flex flex-col gap-3 px-7 py-6 rounded-lg">
+    <span class="text-sm sm:text-base font-bold text-white">Subscription Details</span>
+    <span class="text-[30px] sm:text-[35px] font-bold text-white">
+      ₹999 <span class="text-sm sm:text-base">/month</span>
+    </span>
+    <div class="absolute right-5 top-4 bg-premium-yellow px-5 py-0.5 text-xs font-bold rounded-full">
+      PREMIUM
+    </div>
+  </div>
+
+  <div class="w-full rounded-lg shadow-17 py-4 px-6 flex flex-col gap-5">
+
+    <!-- Tabs -->
+    <div class="tabs tabs-inner w-[200px] sm:w-[350px]">
+      <div class="flex justify-between px-2 relative">
+        <div class="tab-indicator border border-blue-tint"></div>
+        <button class="tab-btn active" data-type="test-packages">Test & Packages</button>
+        <button class="tab-btn" data-type="collection-mode">Collection Mode</button>
+      </div>
+    </div>
+
+    <!-- ===== Test & Packages ===== -->
+    <div class="tab-content tabs-inner-content" data-type="test-packages">
+      <div class="bg-[#F9FAFB] rounded-[10px] w-full p-3 space-y-3">
+
+        <!-- 🔹 JS will render cards here -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
+
+        <!-- ➕ Add Button -->
+        <div class="flex items-center justify-end">
+          <button class="add-service-btn w-14 h-14 bg-dodger-blue rounded-full flex items-center justify-center">
+            <span class="material-symbols-outlined text-white">add</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== Collection Mode ===== -->
+    <div class="tab-content tabs-inner-content hidden" data-type="collection-mode">
+      <div class="bg-[#F9FAFB] rounded-[10px] w-full p-3 space-y-3">
+
+        <!-- 🔹 JS will render cards here -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
+
+        <!-- ➕ Add Button -->
+        <div class="flex items-center justify-end">
+          <button class="add-service-btn w-14 h-14 bg-dodger-blue rounded-full flex items-center justify-center">
+            <span class="material-symbols-outlined text-white">add</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

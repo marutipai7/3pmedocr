@@ -121,7 +121,15 @@ def get_common_context(request, user):
     "doctor": "tab-btn-hospital",
     "hospital": "tab-btn-hospital",
     }
-
+    logo_map = {
+    "ngo": "/static/images/ngo.svg",
+    "client": "/static/images/client-company.svg",
+    "advertiser": "/static/images/Advertiser.svg",
+    "pharmacy": "/static/images/hospital-logo.svg",
+    "lab": "/static/images/hospital-logo.svg",
+    "doctor": "/static/images/hospital-logo.svg",
+    "hospital": "/static/images/hospital-logo.svg",
+    }
     active_tab_class_map = {
         "advertiser": "active-tab-advertiser",
         "client": "active-tab-client",
@@ -154,6 +162,7 @@ def get_common_context(request, user):
         "chart_action_types": chart_action_types,
         "trophy": trophy,
         "all_badges": PointsBadge.objects.all(),
+        "logo": logo_map.get(user_type),
     }
     context["tab_class"] = tab_class_map.get(user_type)
     context["active_tab_class"] = active_tab_class_map.get(user_type)

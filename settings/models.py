@@ -73,5 +73,13 @@ class SellerSubscription(models.Model):
 
     @property
     def is_expired(self):
-        """Check if subscription has expired"""
-        return self.expiry_date and self.expiry_date < timezone.now()
+        if not self.expiry_date:
+            return False
+
+        expiry = self.expiry_date
+
+        # 🔹 If expiry_date is naive, make it aware
+        if timezone.is_naive(expiry):
+            expiry = timezone.make_aware(expiry, timezone.get_current_timezone())
+
+        return expiry < timezone.now()

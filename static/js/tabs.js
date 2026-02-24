@@ -2,13 +2,46 @@ $(document).ready(function () {
   $(".tab-btn").click(function () {
     var target = $(this).data("tab");
     $(".tab-btn").removeClass(
-      "border-b-2 text-dodger-blue px-4 text-18-fs"
+      "text-dodger-blue px-4 text-18-fs"
     );
-    $(this).addClass("border-b-2 text-dodger-blue px-4 text-18-fs");
+    $(this).addClass("text-dodger-blue px-4 text-18-fs");
     $(".tab-content").addClass("hidden");
     $("#" + target).removeClass("hidden");
   });
   $(".tab-btn").eq(0).click();
+$(document).ready(function () {
+
+  // ------------------------------
+  // TAB SWITCH (LAB HOME)
+  // ------------------------------
+  $(document).on("click", ".tab-btn-lab", function () {
+
+    const type = $(this).data("type");
+
+    // active tab style
+    $(".tab-btn-lab").removeClass(
+      "text-dodger-blue px-4 text-18-fs"
+    );
+    $(this).addClass(
+      "text-dodger-blue px-4 text-18-fs"
+    );
+
+    // hide both lists first
+    $(".services-home-list, .collection-home-list").addClass("hidden");
+
+    // show based on tab
+    if (type === "test-packages-home") {
+      $(".services-home-list").removeClass("hidden");
+    }
+
+    if (type === "collection-mode-home") {
+      $(".collection-home-list").removeClass("hidden");
+    }
+  });
+
+  // trigger first tab by default
+  $(".tab-btn-lab").eq(0).trigger("click");
+});
 
   $(".tab-btn-customer").click(function () {
     var target = $(this).data("tab");
@@ -87,12 +120,12 @@ $(document).ready(function () {
 
   // Remove active styles from all tabs
   $(".tab-btn-pharmacy")
-    .removeClass("active-tab-pharmacy font-semibold border-b-2 border-deep-teal-green text-dark-gray")
+    .removeClass("active-tab-pharmacy font-semibold border-b-2 border-dodger-blue text-dark-gray")
     .addClass("font-medium text-light-gray1");
 
   // Apply active styles to clicked tab
   $(this)
-    .addClass("active-tab-pharmacy font-semibold border-b-2 border-deep-teal-green text-dark-gray")
+    .addClass("active-tab-pharmacy font-semibold border-b-2 border-dodger-blue text-dark-gray")
     .removeClass("font-medium text-light-gray1");
 
   // Show relevant tab content

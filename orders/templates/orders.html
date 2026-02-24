@@ -13,49 +13,14 @@
                         <p class="text-black font-semibold text-base">Orders</p>
                     </div>
                     <div
-                        class="show-sidebar-toggle hidden fixed top-[100px] left-12 z-50 h-10 w-10 bg-light-teal items-center justify-center rounded-r-md cursor-pointer">
-                        <span class="material-symbols-outlined bold-weight text-deep-teal-green">
+                        class="show-sidebar-toggle hidden fixed top-[100px] left-12 z-50 h-10 w-10 bg-light-dodger-blue items-center justify-center rounded-r-md cursor-pointer">
+                        <span class="material-symbols-outlined bold-weight text-dodger-blue">
                             arrow_forward_ios
                         </span>
                     </div>
-                    <!-- Tabs -->
-                    <div class="flex flex-col lg:flex-row lg:items-end justify-between w-full gap-3 sm:gap-4 mt-6 sm:mt-8">
-                        <!-- Tabs Section -->
-                        <div class="tabs-section flex gap-3 sm:gap-4 whitespace-nowrap pt-2 lg:pt-0 flex-1 min-w-0 overflow-x-auto lg:overflow-visible">
-                            <button
-                                class="tab-btn-rewards active-tab-rewards text-sm sm:text-18-nr py-1.5 px-4 font-semibold cursor-pointer text-dark-gray border-b-2 border-deep-teal-green"
-                                data-tab="upcoming">
-                                Upcoming
-                            </button>
-
-                            <button
-                                class="tab-btn-rewards text-sm sm:text-18-nr py-1.5 px-4 font-medium cursor-pointer text-light-gray1"
-                                data-tab="completed">
-                                Completed
-                            </button>
-
-                            <button
-                                class="tab-btn-rewards text-sm sm:text-18-nr py-1.5 px-4 font-medium cursor-pointer text-light-gray1"
-                                data-tab="cancelled">
-                                Cancelled
-                            </button>
-                        </div>
-                        <!-- Search Section -->
-                        <div class="flex items-center gap-3 sm:gap-4 w-full lg:w-auto pb-1">
-                            <div
-                                class="w-full lg:w-[310px] h-[40px] rounded-[6px] bg-white border border-blue-haze flex items-center px-2">
-                                <span class="material-symbols-outlined text-dark-gray">
-                                    search
-                                </span>
-                                <input type="text" placeholder="Search by Order ID"
-                                    class="w-full ml-1 border-none bg-transparent focus:outline-none font-regular text-sm sm:text-base focus:ring-0 placeholder:text-medium-gray" />
-                            </div>
-                        </div>
-                    </div>
                     <!-- TAB CONTENT SECTIONS -->
                     {% include 'partials/upcoming-orders.html' %}
-                    {% include 'partials/completed-orders.html' %}
-                    {% include 'partials/cancelled-orders.html' %}
+                    {% include 'partials/order_details_popup.html' %}
                 </div>
             </div>
 

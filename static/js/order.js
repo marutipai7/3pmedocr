@@ -275,9 +275,9 @@ $(document).ready(function () {
 });
 
 $(".tab-btn-rewards").on("click", function () {
-  $(".tab-btn-rewards").removeClass("active-tab-rewards text-dark-gray border-b-2 border-deep-teal-green")
+  $(".tab-btn-rewards").removeClass("active-tab-rewards text-dark-gray border-b-2 border-dodger-blue")
     .addClass("text-light-gray1");
-  $(this).addClass("active-tab-rewards text-dark-gray border-b-2 border-deep-teal-green")
+  $(this).addClass("active-tab-rewards text-dark-gray border-b-2 border-dodger-blue")
     .removeClass("text-light-gray1");
   $(".tab-content").addClass("hidden");
   let tab = $(this).data("tab");
@@ -396,4 +396,45 @@ $("#openMap").on("click", function () {
     const address = "Saket Enclave, Chhijarpur, New Delhi";
     const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(address)}`;
     window.open(mapUrl, "_blank");
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    // OPEN POPUP
+    document.querySelectorAll(".open-popup").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const popupId = btn.dataset.popup;
+            const popup = document.getElementById(popupId);
+
+            if (popup) {
+                popup.classList.remove("hidden");
+                popup.classList.add("flex");
+                document.body.style.overflow = "hidden"; // prevent background scroll
+            }
+        });
+    });
+
+    // CLOSE POPUP
+    document.querySelectorAll(".close-popup").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const popupId = btn.dataset.popup;
+            const popup = document.getElementById(popupId);
+
+            if (popup) {
+                popup.classList.add("hidden");
+                popup.classList.remove("flex");
+                document.body.style.overflow = "";
+            }
+        });
+    });
+
+});
+document.querySelectorAll(".popup-overlay").forEach(popup => {
+    popup.addEventListener("click", (e) => {
+        if (e.target === popup) {
+            popup.classList.add("hidden");
+            popup.classList.remove("flex");
+            document.body.style.overflow = "";
+        }
+    });
 });
