@@ -74,7 +74,6 @@ def dashboard_home(request):
             events = CalendarEvent.objects.filter(user=user, is_active=True)
 
             context.update({
-                'logo': '/static/images/ngo.svg',
                 'ngo_profile': ngo_profile,
                 'user_display_name': ngo_profile.ngo_name,
                 'total_posts': posts_qs.count(),
@@ -108,7 +107,6 @@ def dashboard_home(request):
                 })
 
             context.update({
-                'logo': '/static/images/client-company.svg',
                 'client_profile': client_profile,
                 'user_display_name': client_profile.company_name,
                 'user': user,
@@ -141,7 +139,6 @@ def dashboard_home(request):
             )['max_days']
 
             context.update({
-                'logo': '/static/images/Advertiser.svg',
                 'advertiser_profile': advertiser_profile,
                 'user_display_name': advertiser_profile.company_name,
                 'performance': CouponPerformance.objects.order_by('-date').first(),
@@ -171,7 +168,6 @@ def dashboard_home(request):
             ).count()
 
             context.update({
-                'logo': '/static/images/hospital-logo.svg',
                 'pharmacy_profile': pharmacy_profile,
                 'user_display_name': pharmacy_profile.company_name,
                 'pending_orders': pending_orders,
@@ -185,7 +181,6 @@ def dashboard_home(request):
             lab_profile = LabProfile.objects.get(user=user)
 
             context.update({
-                'logo': '/static/images/hospital-logo.svg',
                 'lab_profile': lab_profile,
                 'user_display_name': lab_profile.lab_name,
                 'quotes_given': LabBidding.objects.filter(lab=lab_profile).count(),
@@ -214,7 +209,6 @@ def dashboard_home(request):
             doctor_profile = DoctorProfile.objects.get(user=user)
 
             context.update({
-                'logo': '/static/images/hospital-logo.svg',
                 'doctor_profile': doctor_profile,
                 'user_display_name': doctor_profile.clinic_name,
                 'quotes_given': DoctorBidding.objects.filter(doctor=doctor_profile).count(),

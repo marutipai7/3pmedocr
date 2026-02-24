@@ -3,6 +3,27 @@ from django.utils import timezone
 from datetime import time
 from django.db import models
 
+class State(models.Model):
+    name = models.CharField(max_length=128, unique=True)
+
+    class Meta:
+        db_table = "state"
+
+    def __str__(self):
+        return self.name
+
+
+class City(models.Model):
+    name = models.CharField(max_length=128)
+    state = models.ForeignKey(State, on_delete=models.CASCADE, related_name="cities")
+
+    class Meta:
+        db_table = "city"
+        unique_together = ("name", "state")
+
+    def __str__(self):
+        return f"{self.name} - {self.state.name}"
+    
 class AdvertiserType(models.Model):
     name = models.CharField(max_length=100, unique=True)
     is_active = models.BooleanField(default=True)
@@ -175,8 +196,8 @@ class UserAddress(models.Model):
     last_name = models.CharField(max_length=255, blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     country = models.CharField(max_length=128, blank=True, null=True)
-    city = models.CharField(max_length=128, blank=True, null=True)
-    state = models.CharField(max_length=128, blank=True, null=True)
+    state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True)
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
     pincode = models.CharField(max_length=20, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
 
@@ -253,8 +274,8 @@ class NGOProfile(models.Model):
     ngo_services = models.ForeignKey(NGOService, on_delete=models.CASCADE, blank=True, null=True)
     website_url = models.CharField(max_length=255, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
-    city = models.CharField(max_length=128, blank=True, null=True)
-    state = models.CharField(max_length=128, blank=True, null=True)
+    state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True)
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
     pincode = models.CharField(max_length=20, blank=True, null=True)
     country = models.CharField(max_length=128, blank=True, null=True)
     ngo_registration_number = models.CharField(max_length=128, blank=True, null=True)
@@ -296,8 +317,8 @@ class PharmacyProfile(models.Model):
     services_offered = models.ForeignKey(PharmacyServices, on_delete=models.CASCADE, blank=True, null=True)
     pharmacy_timing = models.ForeignKey(PharmacyTiming, on_delete=models.CASCADE, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
-    city = models.CharField(max_length=128, blank=True, null=True)
-    state = models.CharField(max_length=128, blank=True, null=True)
+    state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True)
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
     pincode = models.CharField(max_length=20, blank=True, null=True)
     country = models.CharField(max_length=128, blank=True, null=True, default='India')
     incorporation_number = models.CharField(max_length=128, blank=True, null=True)
@@ -338,8 +359,8 @@ class LabProfile(models.Model):
     alt_contact_number = models.CharField(max_length=50, null=True, blank=True)
     lab_registration_number = models.CharField(max_length=100, null=True, blank=True)
     address = models.TextField(null=True, blank=True)
-    city = models.CharField(max_length=128, null=True, blank=True)
-    state = models.CharField(max_length=128, null=True, blank=True)
+    state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True)
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
     pincode = models.CharField(max_length=20, null=True, blank=True)
     country = models.CharField(max_length=128, blank=True, null=True, default='India')
     lab_timing = models.ForeignKey(LabTiming, on_delete=models.SET_NULL, null=True, blank=True, db_column="lab_timing_id", related_name="lab_profiles")
@@ -398,8 +419,8 @@ class HospitalProfile(models.Model):
     contact_no = models.CharField(max_length=20, null=True, blank=True)
     alternate_contact_no = models.CharField(max_length=20, null=True, blank=True)
     address = models.TextField(null=True, blank=True)
-    city = models.CharField(max_length=128, null=True, blank=True)
-    state = models.CharField(max_length=128, null=True, blank=True)
+    state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True)
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
     pincode = models.CharField(max_length=20, null=True, blank=True)
     country = models.CharField(max_length=128, blank=True, null=True, default='India')
     hospital_timing = models.ForeignKey(HospitalTiming, on_delete=models.SET_NULL, null=True, db_column="hospital_timing_id")
@@ -445,8 +466,8 @@ class DoctorProfile(models.Model):
     contact_number = models.CharField(max_length=50, null=True, blank=True)
     alt_contact_number = models.CharField(max_length=50, null=True, blank=True)
     full_address = models.TextField(null=True, blank=True)
-    state = models.CharField(max_length=128, null=True, blank=True)
-    city = models.CharField(max_length=128, null=True, blank=True)
+    state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True)
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
     pincode = models.CharField(max_length=20, null=True, blank=True)
     country = models.CharField(max_length=128, blank=True, null=True, default='India')
     clinic_timing_from = models.CharField(max_length=100, null=True, blank=True)

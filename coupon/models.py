@@ -1,5 +1,5 @@
 from django.db import models
-from registration.models import User
+from registration.models import User, State, City
 from datetime import date
 # --- Dropdown Options ---
 class CategoryOption(models.Model):
@@ -24,25 +24,25 @@ class CountryOption(models.Model):
     class Meta:
             db_table = 'country'
 
-class StateOption(models.Model):
-    name = models.CharField(max_length=100)
-    country = models.ForeignKey(CountryOption, on_delete=models.CASCADE, null=True, blank=True)
-    is_active = models.BooleanField(default=True)
-    def __str__(self): return self.name
-    class Meta:
-            db_table = 'state' 
+# class StateOption(models.Model):
+#     name = models.CharField(max_length=100)
+#     country = models.ForeignKey(CountryOption, on_delete=models.CASCADE, null=True, blank=True)
+#     is_active = models.BooleanField(default=True)
+#     def __str__(self): return self.name
+#     class Meta:
+#             db_table = 'state' 
 
-class CityOption(models.Model):
-    name = models.CharField(max_length=100)
-    state = models.ForeignKey(StateOption, on_delete=models.CASCADE, null=True, blank=True)
-    is_active = models.BooleanField(default=True)
-    def __str__(self): return self.name
-    class Meta:
-            db_table = 'city' 
+# class CityOption(models.Model):
+#     name = models.CharField(max_length=100)
+#     state = models.ForeignKey(StateOption, on_delete=models.CASCADE, null=True, blank=True)
+#     is_active = models.BooleanField(default=True)
+#     def __str__(self): return self.name
+#     class Meta:
+#             db_table = 'city' 
 
 class PincodeOption(models.Model):
     code = models.CharField(max_length=20, unique=True)
-    city = models.ForeignKey(CityOption, on_delete=models.CASCADE, null=True, blank=True)
+    city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     def __str__(self): return self.code
     class Meta:
@@ -92,8 +92,8 @@ class Coupon(models.Model):
     category = models.ForeignKey(CategoryOption, on_delete=models.SET_NULL, null=True)
     brand_name = models.ForeignKey(BrandOption, on_delete=models.SET_NULL, null=True)
     country = models.ForeignKey(CountryOption, on_delete=models.SET_NULL, null=True)
-    state = models.ForeignKey(StateOption, on_delete=models.SET_NULL, null=True)
-    city = models.ForeignKey(CityOption, on_delete=models.SET_NULL, null=True)
+    state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True)
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
     pincode = models.ForeignKey(PincodeOption, on_delete=models.SET_NULL, null=True)
     age_group = models.ForeignKey(AgeOption, on_delete=models.SET_NULL, null=True)
     gender = models.ForeignKey(GenderOption, on_delete=models.SET_NULL, null=True)
