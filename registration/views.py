@@ -21,12 +21,9 @@ ROLE_TO_TEMPLATE = {
     "login": "login/login.html",
     "customer": "registration/register_user.html",
     "ngoOwner": "registration/ngo_register.html",
-    "Pharmacy": "registration/pharmacy_register.html",
     "client": "registration/client_register.html",
     "advertiser": "registration/advertiser_register.html",
-    'lab': "registration/lab_register.html",
-    'hospital': "registration/hospital_register.html",
-    'doctor': "registration/doctor_register.html",
+
 }
 
 @require_POST
@@ -97,24 +94,6 @@ def register_by_role(request, role):
 
     elif role == "ngoOwner":
         context["ngo_services"] = NGOService.objects.filter(is_active=True)
-
-    elif role == "Pharmacy":
-        context["pharmacy_types"] = PharmacyType.objects.filter(is_active=True)
-        context["pharmacy_services"] = PharmacyServices.objects.filter(is_active=True)
-        context["pharmacy_timing"] = PharmacyTiming.objects.filter(is_active=True)
-    
-    elif role == "lab":
-        context["lab_services"] = LabService.objects.filter(is_active=True)
-        context["lab_facilities"] = LabFacility.objects.filter(is_active=True)
-        context["lab_timing"] = LabTiming.objects.filter(is_active=True)
-
-    elif role == "doctor":
-        context["doctor_speciality"] = DoctorSpeciality.objects.filter(is_active=True)
-        context["doctor_experience"] = DoctorExperience.objects.filter(is_active=True)
-        context["doctor_education"] = DoctorEducation.objects.filter(is_active=True)
-
-    elif role == "hospital":
-        context["hospital_timing"] = HospitalTiming.objects.filter(is_active=True)
 
     return render(request, tpl, context)
 

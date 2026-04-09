@@ -24,14 +24,7 @@ def donate_view(request):
         user_profile = AdvertiserProfile.objects.filter(user=user).first()
     elif user.user_type == 'client':
         user_profile = ClientProfile.objects.filter(user=user).first()
-    elif user.user_type == 'pharmacy':
-        user_profile = PharmacyProfile.objects.filter(user=user).first()
-    elif user.user_type == 'lab':
-        user_profile = LabProfile.objects.filter(user=user).first()
-    elif user.user_type == 'doctor':
-        user_profile = DoctorProfile.objects.filter(user=user).first()
-    elif user.user_type == 'hospital':
-        user_profile = HospitalProfile.objects.filter(user=user).first()
+
 
     donation_query = request.GET.get('donation_query', '').strip().lower()
 
@@ -49,26 +42,26 @@ def donate_view(request):
     }
     primary_bg = context.get("primary_bg")
     context["hexcolor"] = color_hex_map.get(primary_bg)
-    if user.user_type == "lab":
-        context.update({
-        "donations": donations,
-        "donation_query": donation_query,
-        'user_display_name': user_profile.lab_name,
-    })
-    elif user.user_type == "doctor":
-        context.update({
-            "donations": donations,
-            "donation_query": donation_query,
-            'user_display_name': user_profile.clinic_name,
-        })
-    elif user.user_type == "hospital":
-        context.update({
-            "donations": donations,
-            "donation_query": donation_query,
-            'user_display_name': user_profile.hospital_name,
-        })
-    else:
-        context.update({
+    # if user.user_type == "lab":
+    #     context.update({
+    #     "donations": donations,
+    #     "donation_query": donation_query,
+    #     'user_display_name': user_profile.lab_name,
+    # })
+    # elif user.user_type == "doctor":
+    #     context.update({
+    #         "donations": donations,
+    #         "donation_query": donation_query,
+    #         'user_display_name': user_profile.clinic_name,
+    #     })
+    # elif user.user_type == "hospital":
+    #     context.update({
+    #         "donations": donations,
+    #         "donation_query": donation_query,
+    #         'user_display_name': user_profile.hospital_name,
+    #     })
+    # else:
+    context.update({
             "donations": donations,
             "donation_query": donation_query,
             'user_display_name': user_profile.company_name,

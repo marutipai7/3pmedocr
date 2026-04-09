@@ -30,15 +30,11 @@ from registration.models import (
     DoctorProfile, 
     HospitalProfile
 )
-from appointments.models import WalletTransaction
-from services.models import LabBidding, LabBidStatus
-from services.models import HospitalBidding, HospitalBidStatus
-from services.models import DoctorBidding, DoctorBidStatus
-from appointments.models import LabAppointments
-from appointments.models import HospitalAppointments
-from appointments.models import DoctorAppointment
+
+
+
 from orders.models import UserPurchase, OrderStatusChoices
-from appointments.models import WalletTransaction
+
 from django.shortcuts import get_object_or_404
 
 @dashboard_login_required
@@ -154,115 +150,8 @@ def dashboard_home(request):
             })
             return render(request, "dashboard/home_advertiser.html", context)
 
-        # ================= PHARMACY =================
-        elif user_type == 'pharmacy':
-            pharmacy_profile = PharmacyProfile.objects.get(user=user)
 
-            pending_orders = UserPurchase.objects.filter(
-                assigned_pharmacy=pharmacy_profile,
-                order_status__in=[
-                    OrderStatusChoices.PENDING,
-                    OrderStatusChoices.CONFIRMED,
-                    OrderStatusChoices.SHIPPED
-                ]
-            ).count()
-
-            context.update({
-                'pharmacy_profile': pharmacy_profile,
-                'user_display_name': pharmacy_profile.company_name,
-                'pending_orders': pending_orders,
-                'events': CalendarEvent.objects.all().order_by('date'),
-                'user': user,
-            })
-            return render(request, "dashboard/home_pharmacy.html", context)
-
-        # ================= LAB =================
-        elif user_type == 'lab':
-            lab_profile = LabProfile.objects.get(user=user)
-
-            context.update({
-                'lab_profile': lab_profile,
-                'user_display_name': lab_profile.lab_name,
-                'quotes_given': LabBidding.objects.filter(lab=lab_profile).count(),
-                'active_bids': LabBidding.objects.filter(
-                    lab=lab_profile,
-                    bid_status__in=[
-                        LabBidStatus.PENDING,
-                        LabBidStatus.ACCEPTED
-                    ]
-                ).count(),
-                'orders_won': LabAppointments.objects.filter(
-                    accepted_lab=lab_profile,
-                    status="Accepted"
-                ).count(),
-                'pending_orders': LabAppointments.objects.filter(
-                    accepted_lab=lab_profile,
-                    status="Pending"
-                ).count(),
-                'events': CalendarEvent.objects.all().order_by('date'),
-                'user': user,
-            })
-            return render(request, "dashboard/home_lab.html", context)
-
-        # ================= DOCTOR =================
-        elif user_type == 'doctor':
-            doctor_profile = DoctorProfile.objects.get(user=user)
-
-            context.update({
-                'doctor_profile': doctor_profile,
-                'user_display_name': doctor_profile.clinic_name,
-                'quotes_given': DoctorBidding.objects.filter(doctor=doctor_profile).count(),
-                'active_bids': DoctorBidding.objects.filter(
-                    doctor=doctor_profile,
-                    bid_status__in=[
-                        DoctorBidStatus.PENDING,
-                        DoctorBidStatus.ACCEPTED
-                    ]
-                ).count(),
-                'orders_won': DoctorAppointment.objects.filter(
-                    doctor=doctor_profile,
-                    status="Accepted"
-                ).count(),
-                'pending_orders': DoctorAppointment.objects.filter(
-                    doctor=doctor_profile,
-                    status="Pending"
-                ).count(),
-                'events': CalendarEvent.objects.all().order_by('date'),
-                'user': user,
-            })
-            return render(request, "dashboard/home_doctor.html", context)
-
-        # ================= HOSPITAL =================
-        elif user_type == 'hospital':
-            hospital_profile = HospitalProfile.objects.get(user=user)
-
-            context.update({
-                'logo': '/static/images/hospital-logo.svg',
-                'hospital_profile': hospital_profile,
-                'user_display_name': hospital_profile.hospital_name,
-                'quotes_given': HospitalBidding.objects.filter(hospital=hospital_profile).count(),
-                'active_bids': HospitalBidding.objects.filter(
-                    hospital=hospital_profile,
-                    bid_status__in=[
-                        HospitalBidStatus.PENDING,
-                        HospitalBidStatus.ACCEPTED
-                    ]
-                ).count(),
-                'orders_won': HospitalAppointments.objects.filter(
-                    accepted_hospital=hospital_profile,
-                    status="Accepted"
-                ).count(),
-                'pending_orders': HospitalAppointments.objects.filter(
-                    accepted_hospital=hospital_profile,
-                    status="Pending"
-                ).count(),
-                'events': CalendarEvent.objects.all().order_by('date'),
-                'user': user,
-            })
-            return render(request, "dashboard/home_hospital.html", context)
-
-    except Exception:
-        return render(request, "dashboard/not_found.html")
+    
 
     
 def get_coupon_chart_data(request):
@@ -411,15 +300,6 @@ def saved(request):
         })
         return render(request, "saved/saved_advertiser.html", context)
     
-    elif user.user_type == 'pharmacy':
-        pharmacy_profile = PharmacyProfile.objects.get(user=user)
-        context.update({
-            'pharmacy_profile': pharmacy_profile,
-            'user_display_name': pharmacy_profile.company_name,
-            'user_profile': user,
-            'user': user
-        })
-        return render(request, "saved/saved_pharmacy.html", context)
     
     elif user.user_type == 'client':
         client_profile = ClientProfile.objects.get(user=user)
@@ -609,11 +489,7 @@ def get_donation_history(request):
             "donation_history": page_obj.object_list,
             'today': date.today(),
         })
-    elif user.user_type == 'pharmacy':
-        html = render_to_string("pharmacy/partials/donate-history.html", {
-            "donation_history": page_obj.object_list,
-            'today': date.today(),
-        })
+
     return JsonResponse({
         "html": html,
         "current_page": page_obj.number,
@@ -775,10 +651,6 @@ def advance(request):
     profile_map = {
         'advertiser': (AdvertiserProfile, 'company_name', 'advertiser_profile'),
         'ngo': (NGOProfile, 'ngo_name', 'ngo_profile'),
-        'pharmacy': (PharmacyProfile, 'company_name', 'pharmacy_profile'),
-        'lab': (LabProfile, 'lab_name', 'lab_profile'),
-        'hospital': (HospitalProfile, 'hospital_name', 'hospital_profile'),
-        'doctor': (DoctorProfile, 'clinic_name', 'doctor_profile'),
     }
 
     profile_config = profile_map.get(user.user_type)
@@ -823,10 +695,6 @@ def advance_history(request):
 
     profile_map = {
         'advertiser': (AdvertiserProfile, 'company_name', 'advertiser_profile'),
-        'pharmacy': (PharmacyProfile, 'company_name', 'pharmacy_profile'),
-        'hospital': (HospitalProfile, 'hospital_name', 'hospital_profile'),
-        'doctor': (DoctorProfile, 'clinic_name', 'doctor_profile'),
-        'lab': (LabProfile, 'lab_name', 'lab_profile'),
     }
 
     profile_config = profile_map.get(user.user_type)
@@ -855,15 +723,6 @@ def cart(request):
             'user_display_name': advertiser_profile.company_name,
             'user_profile': user,
             'user': user
-        })
-        return render(request, "dashboard/cart.html", context)
-    elif user.user_type == 'pharmacy':
-        pharmacy_profile = PharmacyProfile.objects.get(user=user)
-        context.update({
-            'pharmacy_profile': pharmacy_profile,
-            'user_display_name': pharmacy_profile.company_name,
-            'user_profile': user,
-            'user':user
         })
         return render(request, "dashboard/cart.html", context)
     

@@ -22,14 +22,6 @@ def map_view(request):
         profile = AdvertiserProfile.objects.filter(user=user).first()
     elif user.user_type == 'client':
         profile = ClientProfile.objects.filter(user=user).first()
-    elif user.user_type == 'pharmacy':
-        profile = PharmacyProfile.objects.filter(user=user).first()
-    elif user.user_type == 'lab':
-        profile = LabProfile.objects.filter(user=user).first()
-    elif user.user_type == 'doctor':
-        profile = DoctorProfile.objects.filter(user=user).first()
-    elif user.user_type == 'hospital':
-        profile = HospitalProfile.objects.filter(user=user).first()
     else:
         pass
 
