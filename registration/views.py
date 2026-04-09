@@ -1502,17 +1502,6 @@ def forgot_password(request):
         elif user.user_type == "ngo" and hasattr(user, "ngoprofile"):
             company_name = user.ngoprofile.ngo_name
 
-        elif user.user_type == "pharmacy" and hasattr(user, "pharmacyprofile"):
-            company_name = user.pharmacyprofile.company_name
-
-        elif user.user_type == "hospital" and hasattr(user, "hospital_profile"):
-            company_name = user.hospital_profile.hospital_name
-
-        elif user.user_type == "lab" and hasattr(user, "lab_profile"):
-            company_name = user.lab_profile.lab_name
-
-        elif user.user_type == "doctor" and hasattr(user, "doctor_profile"):
-            company_name = user.doctor_profile.clinic_name
 
         result = async_to_sync(send_forgot_password_email)(user, company_name, "http://localhost:5000")
         return JsonResponse(result)
