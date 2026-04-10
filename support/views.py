@@ -135,14 +135,7 @@ def get_bot_content_api(request):
             user_type = 'advertiser'
         elif hasattr(user, 'clientprofile'):
             user_type = 'client'
-        elif hasattr(user, 'pharmacyprofile'):
-            user_type = 'pharmacy'
-        elif hasattr(user, 'lab_profile'):
-            user_type = 'lab'
-        elif hasattr(user, 'doctor_profile'):
-            user_type = 'doctor'
-        elif hasattr(user, 'hospital_profile'):
-            user_type = 'hospital'
+
 
     try:
         chat_group = ChatOptionGroup.objects.get(
