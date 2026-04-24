@@ -24,10 +24,6 @@ urlpatterns = [
     path('shared/', include('shared.urls')),
     path('subscription/', include('subscription.urls')),
     path('reports/', include('reports.urls')),
-    path('appointment/', include('appointments.urls')),
-    path('services/', include('services.urls')),
-    path('staff/', include('staff.urls')),
-    path('history/', include('history.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

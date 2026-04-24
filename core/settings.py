@@ -33,10 +33,7 @@ INSTALLED_APPS = [
     'shared',
     'subscription',
     'reports',
-    'purchase',
-    'services',
-    'staff',
-    'history',
+    'purchase'
 ]
 
 MIDDLEWARE = [
