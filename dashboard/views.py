@@ -18,7 +18,7 @@ from django.template.loader import render_to_string
 from subscription.models import SubscriptionHistory
 from django.views.decorators.http import require_GET, require_POST
 from .utils import dashboard_login_required, get_common_context, get_theme_colors
-from .models import SettingMenu, CouponPerformance,  CalendarEvent, TrendingCoupon
+from .models import SettingMenu, CouponPerformance,  CalendarEvent, TrendingCoupon, WalletTransaction
 from django.db.models import Sum, Count, Q, Max, F, ExpressionWrapper, DurationField
 from registration.models import (
     PharmacyProfile, 
@@ -149,7 +149,8 @@ def dashboard_home(request):
                 'user': user,
             })
             return render(request, "dashboard/home_advertiser.html", context)
-
+    except Exception:
+        return render(request, "dashboard/not_found.html")
 
     
 
