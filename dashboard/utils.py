@@ -50,18 +50,6 @@ def get_common_context(request, user):
     elif user_type == "advertiser":
         chart_action_types = ["Map", "Referral", "Coupon", "Donate"]
         user_profile = AdvertiserProfile.objects.filter(user=user).first()
-    elif user_type == "pharmacy":
-        chart_action_types = ["Referral", "Share", "Donate", "Orders"]
-        user_profile = PharmacyProfile.objects.filter(user=user).first()
-    elif user_type == "lab":
-        chart_action_types = ["Referral", "Appointment", "Donate"]
-        user_profile = LabProfile.objects.filter(user=user).first()
-    elif user_type == "doctor":
-        chart_action_types = ["Referral", "Appointment", "Donate"]
-        user_profile = DoctorProfile.objects.filter(user=user).first()
-    elif user_type == "hospital":
-        chart_action_types = ["Referral", "Appointment", "Donate"]
-        user_profile = HospitalProfile.objects.filter(user=user).first()
     else:
         chart_action_types = []
         user_profile = None
@@ -85,14 +73,6 @@ def get_common_context(request, user):
 
     if user_type == "ngo":
         user_display_name = user_profile.ngo_name if user_profile else "Unknown"
-    elif user_type == "doctor":
-        user_display_name = (user_profile.clinic_name if user_profile else "Unknown")
-    elif user_type == "hospital":
-        user_display_name = (user_profile.hospital_name if user_profile else "Unknown")
-    elif user_type == "lab":
-        user_display_name = (user_profile.lab_name if user_profile else "Unknown")
-    elif user_type == "pharmacy":
-        user_display_name = (user_profile.company_name if user_profile else "Unknown")
     else:
         user_display_name = (
             user_profile.company_name if user_profile else "Unknown"
@@ -104,40 +84,20 @@ def get_common_context(request, user):
         trophy = "trophy-client.svg"
     elif user_type == "advertiser":
         trophy = "trophy-advertiser.svg"
-    elif user_type == "pharmacy":
-        trophy = "trophy-pharmacy.svg"
-    elif user_type == "lab":
-        trophy = "trophy-hospital.svg"
-    elif user_type == "doctor":
-        trophy = "trophy-hospital.svg"
-    elif user_type == "hospital":
-        trophy = "trophy-hospital.svg"
     tab_class_map = {
     "advertiser": "tab-btn-advertiser",
     "client": "tab-btn-client",
-    "pharmacy": "tab-btn-pharmacy",
     "ngo": "tab-btn-ngo",
-    "lab": "tab-btn-hospital",
-    "doctor": "tab-btn-hospital",
-    "hospital": "tab-btn-hospital",
     }
     logo_map = {
     "ngo": "/static/images/ngo.svg",
     "client": "/static/images/client-company.svg",
     "advertiser": "/static/images/Advertiser.svg",
-    "pharmacy": "/static/images/hospital-logo.svg",
-    "lab": "/static/images/hospital-logo.svg",
-    "doctor": "/static/images/hospital-logo.svg",
-    "hospital": "/static/images/hospital-logo.svg",
     }
     active_tab_class_map = {
         "advertiser": "active-tab-advertiser",
         "client": "active-tab-client",
-        "pharmacy": "active-tab-pharmacy",
         "ngo": "active-tab-ngo",
-        "lab": "active-tab-hospital",
-        "doctor": "active-tab-hospital",
-        "hospital": "active-tab-hospital",
     }
     main_tab_class_map = {
         "pharmacy": "main-tab-pharmacy",
@@ -181,59 +141,59 @@ def get_theme_colors(user_type: str) -> dict:
     
 
 
-def check_seller_verified(user_id: int, user_type: str):
-    """
-    Validates if seller profile exists and is verified.
-    Raises PermissionDenied or ValidationError if invalid.
-    Returns True if seller is verified.
-    """
+# def check_seller_verified(user_id: int, user_type: str):
+#     """
+#     Validates if seller profile exists and is verified.
+#     Raises PermissionDenied or ValidationError if invalid.
+#     Returns True if seller is verified.
+#     """
 
-    user = get_object_or_404(User, id=user_id)
+#     user = get_object_or_404(User, id=user_id)
 
-    profile_model_map = {
-        "hospital": HospitalProfile,
-        "pharmacy": PharmacyProfile,
-        "lab": LabProfile,
-        "doctor": DoctorProfile,
-    }
+#     profile_model_map = {
+#         "hospital": HospitalProfile,
+#         "pharmacy": PharmacyProfile,
+#         "lab": LabProfile,
+#         "doctor": DoctorProfile,
+#     }
 
-    if user_type not in profile_model_map:
-        raise ValidationError("Invalid seller type")
+#     if user_type not in profile_model_map:
+#         raise ValidationError("Invalid seller type")
 
-    ProfileModel = profile_model_map[user_type]
+#     ProfileModel = profile_model_map[user_type]
 
-    try:
-        profile = ProfileModel.objects.get(user_id=user_id)
-    except ProfileModel.DoesNotExist:
-        raise PermissionDenied(
-            "Please complete your profile and submit it for verification before performing this action."
-        )
+#     try:
+#         profile = ProfileModel.objects.get(user_id=user_id)
+#     except ProfileModel.DoesNotExist:
+#         raise PermissionDenied(
+#             "Please complete your profile and submit it for verification before performing this action."
+#         )
 
-    if not profile.is_verified:
-        raise PermissionDenied(
-            "Seller profile is not verified yet. Please wait for admin approval."
-        )
+#     if not profile.is_verified:
+#         raise PermissionDenied(
+#             "Seller profile is not verified yet. Please wait for admin approval."
+#         )
 
-    return True
+#     return True
 
-def seller_verified_required(view_func):
-    @wraps(view_func)
-    def _wrapped_view(request, *args, **kwargs):
-        user = request.user_obj
+# def seller_verified_required(view_func):
+#     @wraps(view_func)
+#     def _wrapped_view(request, *args, **kwargs):
+#         user = request.user_obj
         
-        # Skip verification for non-seller types (ngo, advertiser, client)
-        unverified_allowed = ["ngo", "advertiser", "client"]
-        if user.user_type not in unverified_allowed:
-            try:
-                check_seller_verified(user.id, user.user_type)
-            except (PermissionDenied, ValidationError) as e:
-                # For AJAX views return JSON instead of redirect
-                if request.headers.get("x-requested-with") == "XMLHttpRequest":
-                    return JsonResponse({"success": False, "error": str(e)}, status=403)
+#         # Skip verification for non-seller types (ngo, advertiser, client)
+#         unverified_allowed = ["ngo", "advertiser", "client"]
+#         if user.user_type not in unverified_allowed:
+#             try:
+#                 check_seller_verified(user.id, user.user_type)
+#             except (PermissionDenied, ValidationError) as e:
+#                 # For AJAX views return JSON instead of redirect
+#                 if request.headers.get("x-requested-with") == "XMLHttpRequest":
+#                     return JsonResponse({"success": False, "error": str(e)}, status=403)
 
-                # Normal page request → show message or redirect
-                return render(request, "errors/not-verified.html", {"message": str(e)})
+#                 # Normal page request → show message or redirect
+#                 return render(request, "errors/not-verified.html", {"message": str(e)})
 
-        return view_func(request, *args, **kwargs)
+#         return view_func(request, *args, **kwargs)
 
-    return _wrapped_view
+#     return _wrapped_view
