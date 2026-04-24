@@ -125,42 +125,72 @@ def login_page(request):
 @require_POST
 def login_auth(request):
     data = request.POST
-    email = data.get("email").strip()
-    password = data.get("password").strip()
+
+    email = (data.get("email") or "").strip()
+    password = (data.get("password") or "").strip()
     remember_me = data.get("remember_me")
+
     errors = {}
 
+    # ✅ Basic validation
     if not email:
         errors["email"] = "Email is required."
     if not password:
         errors["password"] = "Password is required."
+
     if errors:
-        return JsonResponse({"success": False, "errors": errors})
+        return JsonResponse({"success": False, "errors": errors}, status=400)
 
     try:
         user = User.objects.get(email=email)
+
+        # ✅ Password check
         if not check_password(password, user.password):
-            errors["password"] = "Invalid email or password."
-            return JsonResponse({"success": False, "errors": errors})
-        
+            return JsonResponse({
+                "success": False,
+                "errors": {"password": "Invalid email or password."}
+            }, status=400)
+
         if not user.is_active:
-            errors["account"] = "Your account is deleted. Please contact support."
-            return JsonResponse({"success": False, "errors": errors})
-        
-        # Update last_login here
+            return JsonResponse({
+                "success": False,
+                "errors": {"account": "Your account is deleted. Please contact support."}
+            }, status=403)
+
+
+        BLOCKED_TYPES = ["pharmacy", "doctor", "lab", "hospital"]
+
+        if user.user_type in BLOCKED_TYPES:
+            return JsonResponse({
+                "success": False,
+                "errors": {
+                    "account": "Invalid user type for CRM login."
+                }
+            }, status=403)
+
         user.last_login = timezone.now()
         user.save(update_fields=["last_login"])
-        
+
         request.session['user_id'] = user.id
+
         if remember_me:
-            request.session.set_expiry(60 * 60 * 24 * 30)
+            request.session.set_expiry(60 * 60 * 24 * 30) 
         else:
-            request.session.set_expiry(0)
+            request.session.set_expiry(0)  
+
         dashboard_url = reverse("dashboard")
-        return JsonResponse({"success": True, "redirect": dashboard_url})
+
+        return JsonResponse({
+            "success": True,
+            "redirect": dashboard_url,
+            "user_type": user.user_type 
+        })
+
     except User.DoesNotExist:
-        errors["password"] = "Invalid email or password."
-        return JsonResponse({"success": False, "errors": errors})
+        return JsonResponse({
+            "success": False,
+            "errors": {"password": "Invalid email or password."}
+        }, status=400)
 
 @csrf_protect
 @require_POST
