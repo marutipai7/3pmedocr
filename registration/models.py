@@ -5,6 +5,7 @@ from django.db import models
 
 class State(models.Model):
     name = models.CharField(max_length=128, unique=True)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         db_table = "state"
@@ -16,7 +17,7 @@ class State(models.Model):
 class City(models.Model):
     name = models.CharField(max_length=128)
     state = models.ForeignKey(State, on_delete=models.CASCADE, related_name="cities")
-
+    is_active = models.BooleanField(default=True)
     class Meta:
         db_table = "city"
         unique_together = ("name", "state")
