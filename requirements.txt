@@ -8,3 +8,4 @@ pillow
 pyotp
 aiosmtplib
 mongoengine
+djangorestframework

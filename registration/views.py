@@ -19,7 +19,6 @@ from django.utils import timezone
 
 ROLE_TO_TEMPLATE = {
     "login": "login/login.html",
-    "customer": "registration/register_user.html",
     "ngoOwner": "registration/ngo_register.html",
     "client": "registration/client_register.html",
     "advertiser": "registration/advertiser_register.html",

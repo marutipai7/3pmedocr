@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from registration.models import User
+from decimal import Decimal
+from django.utils import timezone
 
 USER_TYPE_CHOICES = [
     ('advertiser', 'Advertiser'),
