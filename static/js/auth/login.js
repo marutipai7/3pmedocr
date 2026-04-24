@@ -1,45 +1,91 @@
-$(document).ready(function () {
-  $("#login-form").validate({
-    rules: {
-      "user-name": {
-        required: true,
-        minlength: 3,
-      },
-      Password: {
-        required: true,
-        minlength: 8,
-      },
-    },
-    messages: {
-      "user-name": {
-        required: "Please enter your name",
-        minlength: "Name must be at least 3 characters",
-      },
-      Password: {
-        required: "*Wrong Password",
-        minlength: "Password must be at least 8 characters long",
-      },
-    },
-    errorPlacement: function (error, element) {
-      const name = element.attr("name");
-      $(`#${name}-error`).html(error);
-    },
-    highlight: function (element) {
-      $(element)
-        .addClass("border-dark-red placeholder:text-semi-transparent-red")
-        .removeClass("border-primary-color placeholder:text-blue-teal");
+function showError(errors) {
+  if (!errors) return false;
 
-      $(element).prev("label").addClass("text-dark-red");
-    },
-    unhighlight: function (element) {
-      $(element)
-        .removeClass("border-dark-red placeholder:text-semi-transparent-red")
-        .addClass("border-primary-color placeholder:text-blue-teal");
+  $("#email-error").html("");
+  $("#password-error").html("");
 
-      $(element).prev("label").removeClass("text-dark-red");
-    },
-  });
+  let handled = false;
 
+  if (errors.email) {
+    $("#email-error").html(errors.email);
+    toastr.error(errors.email); 
+    handled = true;
+  }
+
+  if (errors.password) {
+    $("#password-error").html(errors.password);
+    toastr.error(errors.password);
+    handled = true;
+  }
+
+  if (errors.account) {
+    toastr.error(errors.account);
+    handled = true;
+  }
+
+  return handled;
+}
+
+
+// ✅ TRACK SUBMIT COUNT
+let submitCount = 0;
+
+$("#login-form").validate({
+  submitHandler: function (form, e) {
+    e.preventDefault();
+
+    submitCount++;
+
+    const payload = {
+      email: $("#email").val().trim(),
+      password: $("#password").val().trim(),
+      csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+    };
+
+
+    $.ajax({
+      url: "/user/auth/login",
+      type: "POST",
+      data: payload,
+
+      beforeSend: function () {
+      },
+
+      success: function (response) {
+
+        if (response.success) {
+          window.location.href = response.redirect;
+          return;
+        }
+
+        const handled = showError(response.errors);
+
+        if (!handled) {
+          toastr.error("Something went wrong.");
+        }
+      },
+
+      error: function (xhr) {
+
+        let handled = false;
+
+        try {
+          const res = xhr.responseJSON || JSON.parse(xhr.responseText);
+
+          if (res && res.errors) {
+            handled = showError(res.errors);
+          }
+        } catch (e) {
+        }
+
+
+        if (!handled) {
+          toastr.error("Server error. Try again.");
+        }
+      },
+    });
+  }
+});
   // Toggle password
   $(".togglePassword").on("click", function () {
     const targetId = $(this).data("target");
@@ -261,4 +307,3 @@ function setPlaceholder() {
   }
 setPlaceholder(); // Set on load
     $(window).on("resize", setPlaceholder); 
-});

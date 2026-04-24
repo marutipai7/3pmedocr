@@ -149,13 +149,13 @@ def login_auth(request):
             return JsonResponse({
                 "success": False,
                 "errors": {"password": "Invalid email or password."}
-            }, status=400)
+            })
 
         if not user.is_active:
             return JsonResponse({
                 "success": False,
                 "errors": {"account": "Your account is deleted. Please contact support."}
-            }, status=403)
+            })
 
 
         BLOCKED_TYPES = ["pharmacy", "doctor", "lab", "hospital"]
@@ -166,7 +166,7 @@ def login_auth(request):
                 "errors": {
                     "account": "Invalid user type for CRM login."
                 }
-            }, status=403)
+            })
 
         user.last_login = timezone.now()
         user.save(update_fields=["last_login"])
@@ -190,7 +190,7 @@ def login_auth(request):
         return JsonResponse({
             "success": False,
             "errors": {"password": "Invalid email or password."}
-        }, status=400)
+        })
 
 @csrf_protect
 @require_POST

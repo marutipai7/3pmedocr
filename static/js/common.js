@@ -610,51 +610,51 @@ $(".dropdown input").on("change", function () {
 });
 
 
-$('#login-form').on('submit', function(e) {
-    e.preventDefault();
-    $('#email-error').text('');
-    $('#password-error').text('');
-    var email = $('#email').val().trim();
-    var password = $('#password').val().trim();
-    if (!email) {
-        $('#email-error').text('Email is required.');
-        toastr.error('Email is required.');
-        return;
-    }
-    if (!password) {
-        $('#password-error').text('Password is required.');
-        toastr.error('Password is required.');
-        return;
-    }
-    var formUrl = $(this).attr('action');
+// $('#login-form').on('submit', function(e) {
+//     e.preventDefault();
+//     $('#email-error').text('');
+//     $('#password-error').text('');
+//     var email = $('#email').val().trim();
+//     var password = $('#password').val().trim();
+//     if (!email) {
+//         $('#email-error').text('Email is required.');
+//         toastr.error('Email is required.');
+//         return;
+//     }
+//     if (!password) {
+//         $('#password-error').text('Password is required.');
+//         toastr.error('Password is required.');
+//         return;
+//     }
+//     var formUrl = $(this).attr('action');
 
-    $.ajax({
-        url: formUrl,
-        type: 'POST',
-        headers: { 'X-CSRFToken': csrftoken },
-        data: { email: email, password: password , remember_me:false},
-        success: function(resp) {
-            if (resp.success) {
-                toastr.success('Login successful!');
-                setTimeout(function() {
-                    window.location.href = resp.redirect;
-                }, 1000);
-            } else {
-                if (resp.errors) {
-                    if (resp.errors.email) $('#email-error').text(resp.errors.email);
-                    if (resp.errors.password) $('#password-error').text(resp.errors.password);
-                    if (resp.errors.account) toastr.error(resp.errors.account);
-                        else toastr.error('Please correct the errors.');
-                } else {
-                    toastr.error(resp.error || "Login failed.");
-                }
-            }
-        },
-        error: function(xhr) {
-            toastr.error("Server error. Try again.");
-        }
-    });
-});
+//     $.ajax({
+//         url: formUrl,
+//         type: 'POST',
+//         headers: { 'X-CSRFToken': csrftoken },
+//         data: { email: email, password: password , remember_me:false},
+//         success: function(resp) {
+//             if (resp.success) {
+//                 toastr.success('Login successful!');
+//                 setTimeout(function() {
+//                     window.location.href = resp.redirect;
+//                 }, 1000);
+//             } else {
+//                 if (resp.errors) {
+//                     if (resp.errors.email) $('#email-error').text(resp.errors.email);
+//                     if (resp.errors.password) $('#password-error').text(resp.errors.password);
+//                     if (resp.errors.account) toastr.error(resp.errors.account);
+//                         else toastr.error('Please correct the errors.');
+//                 } else {
+//                     toastr.error(resp.error || "Login failed.");
+//                 }
+//             }
+//         },
+//         error: function(xhr) {
+//             toastr.error("Server error. Try again.");
+//         }
+//     });
+// });
 
 $('.submit-form').on('submit', function(e) {
     e.preventDefault();
